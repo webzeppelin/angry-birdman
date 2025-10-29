@@ -76,7 +76,7 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 
 **Acceptance Criteria**:
 - Sign-in page prompts for username and password
-- Successful authentication redirects to clan home with management controls and menus enabled if the user is already associated with a clan, and to "Browse Clans" page if they are not.
+- Successful authentication redirects to clan home with management controls and menus enabled if the user is already associated with a clan, and to the "Browse Clans" page if they are not
 - Failed authentication shows clear error message
 - "Forgot Password" link is available
 - Session persists across browser refreshes
@@ -110,8 +110,8 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 **As a** Clan Admin that has not yet been associated with a clan or is moving between clans, **I want to** navigate to a specific clan's landing page, **so that** I can request administrative access.
 
 **Acceptance Criteria**:
-- Page displays button or link for admins to "Request Adminstrative Access"
-- After "Request Administrative Access" is initiated, the user can supply a short (less than 256 characters) message that will acommpany the request
+- Page displays button or link for admins to "Request Administrative Access"
+- After "Request Administrative Access" is initiated, the user can supply a short (less than 256 characters) message that will accompany the request
 - After requesting access, a status popup tells them that their request was submitted and is now pending review and acceptance
 
 ### Story 1.10: Select Clan (Superadmin)
@@ -180,8 +180,8 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 **As a** newly registered user, **I want to** know what I need to do next, **so that** I can either register my clan if it does not exist or find my clan and request administrative access if it does.
 
 **Acceptance Criteria**:
-- When a user successfully creates their account, they will not be associated with a clan yet, so they need to do something additional
-- Newly registered users can easily start registering their new clan or can find their existing clan page to request administrative access
+- When a user successfully creates their account, they will not be associated with a clan yet, so they need to complete an additional step
+- Newly registered users can easily start registering their new clan or can find their existing clan's page to request administrative access
 
 ### Story 2.4: Register New Clan
 
@@ -194,7 +194,7 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 - Registering user automatically becomes Clan Owner
 - Form validates all required fields
 - Successful registration navigates to clan dashboard
-- User can only register one clan and will give up ownership of a created clan if they create another
+- User can only register one clan and will relinquish ownership of any previously created clan if they create another
 
 ### Story 2.5: View My User Profile
 
@@ -212,11 +212,11 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 
 **Acceptance Criteria**:
 - User can edit: username and email address
-- Username can be changed, but must be changed to a unique value and associated with the same IdP subject ID
-- They have the option to Submit or Cancel their changes
+- Username can be changed, but must be unique and remain associated with the same IdP subject ID
+- User has the option to Submit or Cancel their changes
 - Form validates all changes before saving
 - Success message confirms profile update
-- Changes are reflected immediately upon saving changes
+- Changes are reflected immediately upon saving
 
 ### Story 2.7: Change My Password
 
@@ -262,7 +262,7 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 - User can edit: clan name, country
 - Rovio ID cannot be changed (read-only)
 - Form validates all changes
-- They have the option to Submit or Cancel their edits
+- User has the option to Submit or Cancel their edits
 - Success message confirms update
 - Changes are reflected immediately throughout the application
 
@@ -278,7 +278,7 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 
 ### Story 2.12: Accept or Reject Pending Admin Requests
 
-**As a** Clan Admin **I want to** be notified when a new admin user requests administrative access to my clan **so that** I can accept or deny the request.
+**As a** Clan Admin, **I want to** be notified when a new admin user requests administrative access to my clan, **so that** I can accept or deny the request.
 
 **Acceptance Criteria**:
 - Admin navigation area shows indicator of how many admin requests are waiting
@@ -387,7 +387,7 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 **Acceptance Criteria**:
 - Edit button appears next to each player in roster
 - Form allows editing: player name, joined date
-- Has option to Submit or Cancel changes to the player information
+- User has the option to Submit or Cancel changes to the player information
 - Changes are validated before saving
 - Success message confirms update
 - Updated information is reflected immediately
@@ -446,7 +446,7 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 
 **Acceptance Criteria**:
 - Import feature accepts CSV 
-- Format: player name, joined date (date optional, defaults to current)
+- Format: player name, joined date (date is optional, defaults to current date)
 - Import validates all entries before committing
 - Error report shows any invalid entries
 - Valid entries are imported even if some entries fail
@@ -524,10 +524,10 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 
 **Acceptance Criteria**:
 - Non-player list shows active roster members not yet entered as players
-- Automatically populates list with all non-entered active members
+- List automatically populates with all non-entered active members
 - For each non-player, fields: name (pre-filled), FP, reserve status (checkbox)
 - Tab advances through fields, Enter adds next non-player
-- Reserve checkbox indicates player is intentionally kept inactive and cannot be edited
+- Reserve checkbox indicates player is intentionally kept inactive and field cannot be edited
 
 ### Story 4.7: Assign Action Codes
 
@@ -553,7 +553,7 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 - Edit buttons allow jumping back to specific sections
 - Clear visual indication of any missing or invalid data
 - Summary statistics help verify accuracy: total players, total non-players, FP totals
-- Check made to verify that the total points recorded when entering individual performance data matches the score that was recorded (used like checksum) 
+- Verification check confirms that the total points recorded when entering individual performance data matches the clan score that was recorded (used like a checksum) 
 
 ### Story 4.9: Submit Battle Data
 
@@ -574,11 +574,11 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 
 **Acceptance Criteria**:
 - "Save Draft" button is available at any stage of entry
-- Draft is saved to user's session, not the database
+- Draft is saved to user's session, not to the database
 - User can return to draft from dashboard "Incomplete Battles" section
 - Draft expires after reasonable period (e.g., 7 days)
 - Only one draft per battle date is allowed
-- Can delete draft if no longer needed
+- User can delete draft if no longer needed
 
 ### Story 4.11: Edit Existing Battle
 
@@ -653,9 +653,9 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 
 **Acceptance Criteria**:
 - Player stats table shows all players who participated
-- Columns: ratio rank, rank (by score), player name, score, FP, ratio, 
+- Columns: ratio rank, rank (by score), player name, score, FP, ratio
 - Can sort by any column (ratio rank, rank, name, score, etc.)
-- Ratio rank highlights normalized performance, and the default sort is ratio rank ascending
+- Ratio rank highlights normalized performance, and the default sort is by ratio rank ascending
 - Color coding or icons indicate performance tiers (excellent/good/average/poor)
 - Shows count of players
 
@@ -909,7 +909,7 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 - For each opponent: country, battles played, win/loss/tie record, average FP difference
 - Identifies "rival" clans (frequent matchups)
 - Can view head-to-head history with specific opponent
-- Can view statistics on the precentage of matches against clans from each country in a selected time period (e.g. over the last month, over the last year, all time)
+- Can view statistics on the percentage of matches against clans from each country in a selected time period (e.g. over the last month, over the last year, all time)
 
 ### Story 7.8: View Roster Churn Report
 
