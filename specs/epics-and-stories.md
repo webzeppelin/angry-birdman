@@ -58,7 +58,7 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 - Page shows recent battle results (last 5-10 battles)
 - Page shows current month/year performance summary
 - Page provides navigation to detailed statistics and reports
-- URL is clan-specific (e.g., `/clans/{clanId}` or `/clans/{clanName}`)
+- URL is clan-specific (e.g., `/clans/{clanId}`)
 
 ### Story 1.5: Use Clan-Specific Navigation
 
@@ -76,7 +76,7 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 
 **Acceptance Criteria**:
 - Sign-in page prompts for username and password
-- Successful authentication redirects to admin dashboard or clan home
+- Successful authentication redirects to clan home with management controls and menus enabled if the user is already associated with a clan, and to "Browse Clans" page if they are not.
 - Failed authentication shows clear error message
 - "Forgot Password" link is available
 - Session persists across browser refreshes
@@ -88,10 +88,10 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 **As a** Clan Admin, **I want to** see an admin-specific navigation menu when authenticated, **so that** I can access management tools for my clan.
 
 **Acceptance Criteria**:
-- Admin menu appears in addition to standard navigation when authenticated
+- Admin menu appears in addition to standard navigation when authenticated and associated with a clan
 - Menu includes links to: Manage Roster, Record Battle, My Profile, Sign Out
 - Admin menu is visually distinguished from public navigation
-- Menu is only visible to authenticated admin users
+- Menu is only visible to authenticated admin users associated with the clan in context
 - Keyboard shortcut opens admin menu
 
 ### Story 1.8: Select Clan (Anonymous)
@@ -105,7 +105,16 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 - Recently viewed clans appear at the top of the selector
 - Selector works on mobile and desktop devices
 
-### Story 1.9: Select Clan (Superadmin)
+### Story 1.9: Select Clan (Clan Admin)
+
+**As a** Clan Admin that has not yet been associated with a clan or is moving between clans, **I want to** navigate to a specific clan's landing page, **so that** I can request administrative access.
+
+**Acceptance Criteria**:
+- Page displays button or link for admins to "Request Adminstrative Access"
+- After "Request Administrative Access" is initiated, the user can supply a short (less than 256 characters) message that will acommpany the request
+- After requesting access, a status popup tells them that their request was submitted and is now pending review and acceptance
+
+### Story 1.10: Select Clan (Superadmin)
 
 **As a** Superadmin, **I want to** use a clan selector to choose which clan I'm currently managing, **so that** I can administer multiple clans efficiently.
 
@@ -116,7 +125,7 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 - Selector includes all registered clans
 - Search/filter functionality helps find clans quickly
 
-### Story 1.10: Sign Out
+### Story 1.11: Sign Out
 
 **As a** Clan Admin, **I want to** sign out of the application, **so that** I can secure my session when done.
 
@@ -127,7 +136,7 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 - Confirmation message indicates successful sign out
 - Attempting to access admin pages after sign out redirects to sign-in page
 
-### Story 1.11: Use Keyboard Shortcuts for Navigation
+### Story 1.12: Use Keyboard Shortcuts for Navigation
 
 **As a** Clan Admin, **I want to** use keyboard shortcuts for common navigation tasks, **so that** I can work more efficiently without using a mouse.
 
@@ -162,36 +171,30 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 - Registration page is accessible from landing page and sign-in page
 - Form collects: username, email, password, password confirmation
 - Username must be unique across all users
-- Email must be valid format and unique
+- Email must be valid format
 - Password meets security requirements (minimum length, complexity)
-- Email verification is sent upon successful registration
-- User cannot sign in until email is verified
 - Clear validation messages guide user through any errors
 
-### Story 2.3: Verify Email Address
+### Story 2.3: Post-Registration Triage
 
-**As a** newly registered user, **I want to** verify my email address, **so that** I can activate my account and sign in.
+**As a** newly registered user, **I want to** know what I need to do next, **so that** I can either register my clan if it does not exist or find my clan and request administrative access if it does.
 
 **Acceptance Criteria**:
-- Verification email is sent immediately after registration
-- Email contains a verification link with secure token
-- Clicking link marks account as verified
-- Verified users can now sign in
-- Link expires after reasonable time period (e.g., 24 hours)
-- User can request a new verification email if needed
+- When a user successfully creates their account, they will not be associated with a clan yet, so they need to do something additional
+- Newly registered users can easily start registering their new clan or can find their existing clan page to request administrative access
 
 ### Story 2.4: Register New Clan
 
 **As a** Clan Owner (newly registered admin), **I want to** register my clan in the system, **so that** I can start tracking our clan's battle data.
 
 **Acceptance Criteria**:
-- Clan registration form is accessible after account verification
+- Clan registration form displayed and functional
 - Form collects: clan name, Rovio ID, country
 - Clan name and Rovio ID must be unique in the system
 - Registering user automatically becomes Clan Owner
 - Form validates all required fields
 - Successful registration navigates to clan dashboard
-- User can only register one clan initially (Superadmin can associate user with multiple clans)
+- User can only register one clan and will give up ownership of a created clan if they create another
 
 ### Story 2.5: View My User Profile
 
@@ -208,12 +211,12 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 **As a** Clan Admin, **I want to** edit my user profile information, **so that** I can keep my account details current.
 
 **Acceptance Criteria**:
-- User can edit: email address
-- Username cannot be changed (read-only)
-- Email change requires verification of new email address
+- User can edit: username and email address
+- Username can be changed, but must be changed to a unique value and associated with the same IdP subject ID
+- They have the option to Submit or Cancel their changes
 - Form validates all changes before saving
 - Success message confirms profile update
-- Changes are reflected immediately
+- Changes are reflected immediately upon saving changes
 
 ### Story 2.7: Change My Password
 
@@ -259,41 +262,38 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 - User can edit: clan name, country
 - Rovio ID cannot be changed (read-only)
 - Form validates all changes
+- They have the option to Submit or Cancel their edits
 - Success message confirms update
 - Changes are reflected immediately throughout the application
 
 ### Story 2.11: View Clan Admin Users
 
-**As a** Clan Owner, **I want to** view all admin users for my clan, **so that** I can see who has administrative access.
+**As a** Clan Admin, **I want to** view all admin users for my clan, **so that** I can see who has administrative access.
 
 **Acceptance Criteria**:
 - Admin users page shows list of all admins for the clan
 - Each entry shows: username, email, role (Admin/Owner), date added
-- Clan Owner entry is clearly marked
+- Clan Owner users are clearly marked
 - Page is accessible from admin menu
 
-### Story 2.12: Promote User to Clan Admin
+### Story 2.12: Accept or Reject Pending Admin Requests
 
-**As a** Clan Owner, **I want to** promote an existing user to Clan Admin for my clan, **so that** I can share management responsibilities.
+**As a** Clan Admin **I want to** be notified when a new admin user requests administrative access to my clan **so that** I can accept or deny the request.
 
 **Acceptance Criteria**:
-- Add admin form prompts for username or email
-- System validates that user exists
-- System prevents adding user who is already an admin
-- New admin receives email notification
-- New admin can now access management features for the clan
-- Activity is logged
+- Admin navigation area shows indicator of how many admin requests are waiting
+- Interacting with the indicator displays a popup list of admin requests that are pending, including the optional short request message that was entered by the requestor
+- For each pending request, the admin has controls for "Accept" or "Reject" that allow them to accept or reject the request
+- When an admin accepts the request, the requesting user is associated with the admin's clan
+- If the requesting user is an admin of another clan already, that user loses their association with the old clan because a user can only be admin of one clan at a time unless they are the Superadmin
 
 ### Story 2.13: Promote Clan Admin to Owner
 
-**As a** Clan Owner, **I want to** promote another Clan Admin to Owner, **so that** I can transfer ownership responsibilities.
+**As a** Clan Owner, **I want to** promote another Clan Admin to Owner, **so that** I can share ownership responsibilities.
 
 **Acceptance Criteria**:
 - Promote to Owner button is available next to each Clan Admin
-- Confirmation dialog warns that current owner will become regular admin
 - Promotion is immediate upon confirmation
-- Former owner becomes regular Clan Admin
-- New owner receives email notification
 - Activity is logged
 
 ### Story 2.14: Demote Clan Admin
@@ -304,7 +304,6 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 - Remove admin button is available next to each Clan Admin (not Owner)
 - Confirmation dialog prevents accidental removal
 - Removed user can no longer access admin features
-- Removed user receives email notification
 - Activity is logged
 
 ### Story 2.15: Make Clan Inactive (Superadmin/Owner)
@@ -327,7 +326,7 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 - Superadmin can view all user accounts
 - Superadmin can reset any user's password
 - Superadmin can disable/enable user accounts
-- Superadmin can change user's clan association
+- Superadmin can change or delete user's clan association
 - All admin actions are logged with timestamp and admin ID
 
 ### Story 2.17: View Audit Log (Superadmin)
@@ -353,7 +352,7 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 
 **Acceptance Criteria**:
 - Roster page shows all players with: name, active status, joined date, left/kicked date
-- Active players are shown by default, separate from inactive
+- Active players are shown by default, with inactive players filtered out
 - List can be sorted by name, join date, or status
 - Search/filter functionality helps find specific players
 - Roster shows total count of active and inactive members
@@ -375,7 +374,6 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 **Acceptance Criteria**:
 - Add player form is accessible from roster page
 - Form collects: player name, joined date
-- Player name must be unique within the clan
 - Joined date defaults to current date
 - New player is marked as active by default
 - Success message confirms addition
@@ -389,7 +387,7 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 **Acceptance Criteria**:
 - Edit button appears next to each player in roster
 - Form allows editing: player name, joined date
-- Player name must remain unique within clan
+- Has option to Submit or Cancel changes to the player information
 - Changes are validated before saving
 - Success message confirms update
 - Updated information is reflected immediately
@@ -447,24 +445,13 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 **As a** Clan Admin, **I want to** import multiple players at once, **so that** I can quickly populate the roster when first setting up.
 
 **Acceptance Criteria**:
-- Import feature accepts CSV or simple text list
+- Import feature accepts CSV 
 - Format: player name, joined date (date optional, defaults to current)
 - Import validates all entries before committing
 - Error report shows any invalid entries
 - Valid entries are imported even if some entries fail
 - Success message shows count of players imported
 - Duplicate names within import are flagged
-
-### Story 3.10: Export Roster
-
-**As a** Clan Admin, **I want to** export the roster data, **so that** I can use it for external analysis or backup.
-
-**Acceptance Criteria**:
-- Export button generates CSV file
-- Export includes: player name, active status, joined date, left date, kicked date
-- Can export active only or all players
-- File name includes clan name and export date
-- Export includes header row with column labels
 
 ---
 
@@ -474,12 +461,11 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 
 ### Story 4.1: Start New Battle Entry
 
-**As a** Clan Admin, **I want to** start recording a new battle, **so that** I can capture the results before I forget the details.
+**As a** Clan Admin, **I want to** start recording a new battle, **so that** I can capture the results before the details become unavailable in the game.
 
 **Acceptance Criteria**:
 - "Record Battle" button/link is prominently available in admin menu
 - Clicking launches battle entry workflow
-- System checks for existing battle on selected date and warns if duplicate
 - Workflow is optimized for keyboard-only data entry
 - Can save draft and return later to complete
 
@@ -488,13 +474,13 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 **As a** Clan Admin, **I want to** enter basic battle information, **so that** I can identify when and against whom the battle occurred.
 
 **Acceptance Criteria**:
-- Form fields in order: start date, end date, opponent Rovio ID, opponent name, opponent country
+- Form fields in order: start date, end date, opponent name, opponent Rovio ID, opponent country
+- System checks for existing battle on selected date and warns if duplicate
 - Start date defaults to most recent battle date + 3 days (typical cycle)
 - End date defaults to start date + 1 day
 - Battle ID (YYYYMMDD) is generated automatically from start date
 - Tab key advances through fields in optimal order
 - Field validation prevents invalid dates and missing required fields
-- Opponent information can be auto-filled from previous battles (dropdown of recent opponents)
 
 ### Story 4.3: Enter Clan Performance Data
 
@@ -505,7 +491,6 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 - Fields accept numeric input only
 - Tab advances between fields
 - Validation ensures positive integers
-- Baseline FP can default to previous battle's baseline FP (with option to override)
 
 ### Story 4.4: Enter Opponent Performance Data
 
@@ -525,9 +510,8 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 **Acceptance Criteria**:
 - For each player, fields in order: rank, player name, score, FP
 - Player name dropdown shows active roster members
-- Can also type player name for autocomplete
+- Can start typing player name for autoselect
 - Tab advances through fields, Enter adds next player
-- Duplicate player names are prevented
 - Score can be 0 (player participated but scored nothing)
 - FP must be positive integer
 - Ratio is calculated automatically
@@ -540,11 +524,10 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 
 **Acceptance Criteria**:
 - Non-player list shows active roster members not yet entered as players
-- Can automatically populate list with all non-entered active members
+- Automatically populates list with all non-entered active members
 - For each non-player, fields: name (pre-filled), FP, reserve status (checkbox)
 - Tab advances through fields, Enter adds next non-player
-- Reserve checkbox indicates player is intentionally kept inactive
-- Can mark multiple players as reserve in batch operation
+- Reserve checkbox indicates player is intentionally kept inactive and cannot be edited
 
 ### Story 4.7: Assign Action Codes
 
@@ -556,9 +539,9 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 - For each member: name, played status, action code dropdown, optional reason field
 - Action codes: HOLD, WARN, KICK, RESERVE, PASS
 - Can set default action (e.g., HOLD) for all, then override individuals
-- Non-players default to suggested actions based on participation history
 - Tab and Enter keys support rapid assignment
-- Optional reason field for KICK, WARN, or other significant actions
+- Optional reason field for KICK, WARN, or PASS
+- Changes in status (e.g. KICK, RESERVE) are executed in bulk at the time that final battle data is submitted
 
 ### Story 4.8: Review Battle Data
 
@@ -570,7 +553,7 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 - Edit buttons allow jumping back to specific sections
 - Clear visual indication of any missing or invalid data
 - Summary statistics help verify accuracy: total players, total non-players, FP totals
-- Can print or export review for offline verification
+- Check made to verify that the total points recorded when entering individual performance data matches the score that was recorded (used like checksum) 
 
 ### Story 4.9: Submit Battle Data
 
@@ -582,8 +565,8 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 - Submission triggers all calculated field updates
 - Success message confirms battle was recorded
 - Battle ID and basic results are displayed
-- User is directed to view the battle stats or return to dashboard
-- Monthly/yearly summaries are automatically updated if applicable
+- User is directed to view the battle stats for the battle just recorded
+- Monthly/yearly summaries are automatically updated
 
 ### Story 4.10: Save Battle Draft
 
@@ -591,7 +574,7 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 
 **Acceptance Criteria**:
 - "Save Draft" button is available at any stage of entry
-- Draft is saved to user's session or database
+- Draft is saved to user's session, not the database
 - User can return to draft from dashboard "Incomplete Battles" section
 - Draft expires after reasonable period (e.g., 7 days)
 - Only one draft per battle date is allowed
@@ -607,31 +590,7 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 - All sections can be modified
 - Recalculation occurs on save
 - Edit history is logged (who edited, when, what changed)
-- Monthly/yearly summaries are recalculated if affected
-
-### Story 4.12: Delete Battle
-
-**As a** Clan Admin, **I want to** delete an incorrectly entered battle, **so that** I can remove duplicate or erroneous data.
-
-**Acceptance Criteria**:
-- Delete button available on battle detail page
-- Confirmation dialog requires explicit confirmation
-- Deletion removes battle and all associated player/non-player stats
-- Monthly/yearly summaries are recalculated if affected
-- Deletion is logged in audit trail (Superadmin can see)
-- Cannot be undone (consider soft delete for Superadmin recovery)
-
-### Story 4.13: Copy Battle for Quick Entry
-
-**As a** Clan Admin, **I want to** copy data from a previous battle, **so that** I can speed up entry when rosters are similar.
-
-**Acceptance Criteria**:
-- "Copy from Previous" option is available when starting new battle
-- User selects which battle to copy from
-- Copies: baseline FP, player list with names and FPs
-- Does not copy: scores, ranks, action codes, specific dates
-- User can then update only what changed
-- Saves significant time for stable rosters
+- Monthly/yearly summaries are recalculated
 
 ---
 
@@ -648,7 +607,7 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 - List is sorted by date (most recent first) by default
 - Can filter by: date range, opponent, result (won/lost/tied)
 - Can search by opponent name
-- Pagination or infinite scroll for many battles
+- Pagination for many battles
 - Clicking a battle navigates to detailed battle stats
 
 ### Story 5.2: View Battle Overview
@@ -694,9 +653,9 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 
 **Acceptance Criteria**:
 - Player stats table shows all players who participated
-- Columns: rank (by score), player name, score, FP, ratio, ratio rank
-- Can sort by any column (rank, name, score, ratio, etc.)
-- Ratio rank highlights normalized performance
+- Columns: ratio rank, rank (by score), player name, score, FP, ratio, 
+- Can sort by any column (ratio rank, rank, name, score, etc.)
+- Ratio rank highlights normalized performance, and the default sort is ratio rank ascending
 - Color coding or icons indicate performance tiers (excellent/good/average/poor)
 - Shows count of players
 
@@ -708,8 +667,6 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 - Clicking a player opens detailed view or expands row
 - Shows: all basic stats (rank, score, FP, ratio, ratio rank)
 - Shows action code assigned after battle (for admin transparency)
-- Shows player's average ratio across all battles (for comparison)
-- Shows player's trend (improving/declining) if available
 
 ### Story 5.7: View Non-Player List
 
@@ -731,7 +688,6 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 - Shows: nonplaying FP ratio, reserve FP ratio
 - Shows projected score if all had played
 - Visual indicator of participation rate (e.g., "85% participation")
-- Comparison to clan's typical participation rate
 
 ### Story 5.9: View Reserve Player Summary
 
@@ -741,7 +697,6 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 - Reserve summary shows: count of reserve players, total reserve FP
 - Shows reserve FP as percentage of total potential FP
 - Explains purpose of reserve players (tooltip or note)
-- Shows how reserves affect matchmaking (lower reported FP)
 
 ### Story 5.10: Compare Battle to Averages
 
@@ -752,16 +707,6 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 - Includes: ratio, participation rate, nonplaying FP ratio
 - Visual indicators (arrows, colors) show above/below average
 - Uses monthly average, yearly average, or all-time average (configurable)
-
-### Story 5.11: Export Battle Data
-
-**As a** Clan Admin, **I want to** export battle data, **so that** I can perform external analysis or keep offline records.
-
-**Acceptance Criteria**:
-- Export button generates CSV or JSON file
-- Export includes all battle metadata and calculated fields
-- Includes complete player and non-player lists with all fields
-- File name includes clan name, battle ID, and export date
 
 ---
 
@@ -808,7 +753,6 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 - Can sort by any column
 - Highlights top performers (e.g., top 3 by average ratio)
 - Shows participation rate (battles played / total battles)
-- Can filter to show only highly active players (e.g., 80%+ participation)
 
 ### Story 6.4: View Monthly Trends
 
@@ -830,7 +774,6 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 - Shows same statistics side-by-side for comparison
 - Charts overlay multiple months' trends
 - Highlights biggest changes month-over-month
-- Can export comparison data
 
 ### Story 6.6: View Yearly Stats List
 
@@ -852,7 +795,6 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 - Yearly clan summary shows same statistics as monthly (aggregated over year)
 - Includes: battle count, win/loss/tie record, all average statistics
 - Shows month-by-month breakdown within the year
-- Can compare to other years or all-time average
 - Charts visualize yearly trends and distributions
 
 ### Story 6.8: View Yearly Individual Performance
@@ -876,7 +818,6 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 **Acceptance Criteria**:
 - Charts show month-by-month progression for the year
 - Shows trends in: ratio, participation, win rate
-- Identifies seasonal patterns or trends
 - Highlights best and worst months
 - Can toggle between different metrics
 
@@ -929,8 +870,6 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 - Report shows nonplaying FP ratio and reserve FP ratio over time
 - Charts show: participation rate (% of roster playing), nonplaying FP ratio, reserve FP ratio
 - Can toggle between battle-by-battle and monthly averages
-- Identifies participation trends (improving/declining)
-- Correlates participation with battle outcomes (do better participation = more wins?)
 
 ### Story 7.4: View Win/Loss Margin Report
 
@@ -940,8 +879,7 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 - Report shows margin ratio (win/loss margin as % of our score) over time
 - Bar chart with positive values (wins) and negative values (losses)
 - Shows average margin for wins and losses
-- Identifies close battles vs. blowouts
-- Can filter to show only wins, only losses, or all
+- Identifies competitive close battles vs. blowouts
 
 ### Story 7.5: View Custom Date Range Report
 
@@ -950,9 +888,6 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 **Acceptance Criteria**:
 - Date range picker allows selecting start and end dates
 - All report charts update to show only selected date range
-- Can save custom ranges as bookmarks
-- Can compare multiple custom ranges
-- Export includes date range in filename
 
 ### Story 7.6: View Player Performance Over Time
 
@@ -971,10 +906,10 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 
 **Acceptance Criteria**:
 - Matchup report lists all opponents faced
-- For each opponent: battles played, win/loss/tie record, average FP difference
+- For each opponent: country, battles played, win/loss/tie record, average FP difference
 - Identifies "rival" clans (frequent matchups)
-- Shows win rate against opponents of different FP levels
 - Can view head-to-head history with specific opponent
+- Can view statistics on the precentage of matches against clans from each country in a selected time period (e.g. over the last month, over the last year, all time)
 
 ### Story 7.8: View Roster Churn Report
 
@@ -994,41 +929,9 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 **Acceptance Criteria**:
 - Dashboard shows: recent battles (last 5), current month stats summary, next battle countdown
 - Shows key metrics: win rate (month/year), average ratio (month/year), participation rate
-- Shows alerts: upcoming actions (pending kicks), incomplete battle drafts
+- Shows alerts: incomplete battle drafts, admin user requests
 - Quick links to common tasks: Record Battle, Manage Roster, View Reports
-- Dashboard is the landing page after sign-in
-
-### Story 7.10: Export Report Data
-
-**As an** anonymous user, **I want to** export report data and charts, **so that** I can use them in presentations or external analysis.
-
-**Acceptance Criteria**:
-- Export button available on all reports
-- Can export as: CSV (data), PNG (chart image), PDF (formatted report)
-- Export includes date range and report parameters
-- File names are descriptive with clan name and date range
-
-### Story 7.11: Share Report Link
-
-**As an** anonymous user, **I want to** share a direct link to a specific report view, **so that** I can discuss results with others.
-
-**Acceptance Criteria**:
-- Share button generates a permanent URL for current report view
-- URL includes all parameters (date range, filters, selected metrics)
-- Shared link works for anyone (no authentication required)
-- Shared link includes clan context
-
-### Story 7.12: Set Performance Goals
-
-**As a** Clan Admin, **I want to** set performance goals for my clan, **so that** we can track progress toward targets.
-
-**Acceptance Criteria**:
-- Goals setting page allows defining targets:
-  - Target win rate, target average ratio, target participation rate
-- Dashboard and reports show progress toward goals
-- Visual indicators (progress bars) show how close to goals
-- Can set monthly or yearly goals
-- Notifications when goals are achieved
+- Dashboard is the landing page after sign-in if the admin user has a clan affiliation
 
 ---
 
@@ -1051,7 +954,7 @@ For implementation planning, stories should generally be prioritized as follows:
 - Epic 7 for reports and visualizations
 
 **Phase 4 - Enhancements**:
-- Advanced features in all epics (export, share, goals, etc.)
+- Advanced features in all epics
 - Performance optimizations
 - Mobile-specific improvements
 

@@ -186,6 +186,8 @@ The following metadata needs collected for each clan using Angry Birdman to mana
 | **rovioId** | Positive Integer | A unique number assigned by Rovio to the clan when it is created | Input | Yes |
 | **name** | String | The name of the clan | Input | Yes |
 | **country** | String | The country the clan is from | Input | Yes |
+| **registrationDate** | Date | The date the clan was registered with the system | Input | Yes |
+| **active** | Boolean | True if the clan is still active, false otherwise | Input | Yes |
 
 ### Clan Admin User
 
