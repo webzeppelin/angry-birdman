@@ -759,23 +759,13 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 **As an** anonymous user, **I want to** see trend visualizations for the month, **so that** I can understand how performance changed over time.
 
 **Acceptance Criteria**:
-- Charts show day-by-day or battle-by-battle progression:
+- Charts show battle-by-battle progression:
   - Ratio trend, participation trend, win/loss progression
 - Identifies upward or downward trends
 - Highlights best and worst performances
 - Can toggle between different metrics
 
-### Story 6.5: Compare Multiple Months
-
-**As an** anonymous user, **I want to** compare statistics across multiple months, **so that** I can identify longer-term trends.
-
-**Acceptance Criteria**:
-- Multi-month comparison view allows selecting 2-12 months
-- Shows same statistics side-by-side for comparison
-- Charts overlay multiple months' trends
-- Highlights biggest changes month-over-month
-
-### Story 6.6: View Yearly Stats List
+### Story 6.5: View Yearly Stats List
 
 **As an** anonymous user, **I want to** see a list of years with recorded battles, **so that** I can select a year to analyze.
 
@@ -787,7 +777,7 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 - Shows current year separately if it's incomplete
 - Shows which years are marked complete
 
-### Story 6.7: View Yearly Clan Summary
+### Story 6.6: View Yearly Clan Summary
 
 **As an** anonymous user, **I want to** view summary clan statistics for a specific year, **so that** I can understand overall performance for that period.
 
@@ -797,7 +787,7 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 - Shows month-by-month breakdown within the year
 - Charts visualize yearly trends and distributions
 
-### Story 6.8: View Yearly Individual Performance
+### Story 6.7: View Yearly Individual Performance
 
 **As an** anonymous user, **I want to** view individual player performance statistics for a year, **so that** I can identify consistent long-term performers.
 
@@ -811,7 +801,7 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 - Shows participation rate over the year
 - Can show month-by-month breakdown for specific player
 
-### Story 6.9: View Yearly Trends
+### Story 6.8: View Yearly Trends
 
 **As an** anonymous user, **I want to** see trend visualizations for the year, **so that** I can understand how performance evolved.
 
@@ -821,7 +811,7 @@ Stories are organized by epic and include acceptance criteria where appropriate.
 - Highlights best and worst months
 - Can toggle between different metrics
 
-### Story 6.10: Mark Month/Year Complete
+### Story 6.9: Mark Month/Year Complete
 
 **As a** Clan Admin, **I want to** mark a month or year as complete, **so that** the system knows the period is finalized for reporting purposes.
 
