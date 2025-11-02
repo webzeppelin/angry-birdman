@@ -1,4 +1,4 @@
-# Angry Birdman - Technology Stack Specification
+# Angry Birdman - Technology Plan
 
 ## Table of Contents
 
