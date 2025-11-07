@@ -35,9 +35,8 @@ services:
 
   # Keycloak overrides for development
   keycloak:
-    # Enable auto-import of realm configuration on startup
-    # Uncomment when realm configuration is ready
-    # command: start-dev --import-realm
+    # Start in development mode with hostname disabled for WSL2 compatibility
+    command: start-dev --hostname-strict=false
     
     # Additional environment variables for development
     environment:
@@ -45,11 +44,13 @@ services:
       KC_LOG_LEVEL: INFO
       QUARKUS_LOG_LEVEL: INFO
       
-      # Additional fixes for admin console in development
-      # These help with cookie and CORS issues when accessing admin console
-      KC_HTTP_RELATIVE_PATH: /
-      KC_HOSTNAME_ADMIN: localhost
+      # WSL2-specific fixes for admin console
+      # These settings disable strict hostname checking which is needed for WSL2
       KC_HOSTNAME_STRICT_BACKCHANNEL: false
+      KC_HTTP_RELATIVE_PATH: /
+      
+      # Disable third-party cookie checks (causes iframe timeout in WSL2)
+      KC_SPI_LOGIN_PROTOCOL_OPENID_CONNECT_SUPPRESS_LOGOUT_CONFIRMATION_SCREEN: true
 
 # Add additional services for development tools if needed
 # services:

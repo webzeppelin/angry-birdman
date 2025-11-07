@@ -67,8 +67,7 @@ services:
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN_USER:-admin}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
       
-      # Hostname configuration for development
-      KC_HOSTNAME: ${KEYCLOAK_HOSTNAME:-localhost}
+      # Hostname configuration for development (WSL2 compatible)
       KC_HOSTNAME_STRICT: false
       KC_HOSTNAME_STRICT_HTTPS: false
       KC_HTTP_ENABLED: true
@@ -78,6 +77,9 @@ services:
       
       # Fix for admin console iframe/cookie issues in development
       KC_SPI_LOGIN_PROTOCOL_OPENID_CONNECT_LEGACY_LOGOUT_REDIRECT_URI: true
+      
+      # WSL2 networking fixes - disable hostname validation
+      KC_HOSTNAME_PORT: 8080
       
       # Health check configuration
       KC_HEALTH_ENABLED: true
