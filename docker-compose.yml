@@ -76,6 +76,9 @@ services:
       # Proxy configuration (for future production deployment)
       KC_PROXY: edge
       
+      # Fix for admin console iframe/cookie issues in development
+      KC_SPI_LOGIN_PROTOCOL_OPENID_CONNECT_LEGACY_LOGOUT_REDIRECT_URI: true
+      
       # Health check configuration
       KC_HEALTH_ENABLED: true
       KC_METRICS_ENABLED: true
