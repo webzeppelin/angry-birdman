@@ -1,0 +1,24 @@
+# .gitignore entries for Docker and environment files
+
+# Environment files with sensitive data
+.env
+.env.local
+.env.*.local
+
+# Docker override files with local customizations
+docker-compose.local.yml
+
+# Database dumps and backups
+*.sql
+*.dump
+*.backup
+backup/
+backups/
+
+# Log files
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/

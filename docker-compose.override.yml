@@ -1,0 +1,77 @@
+# Docker Compose Override for Local Development
+# This file is automatically merged with docker-compose.yml when running docker-compose commands
+# Use this file for local customizations without modifying the base configuration
+
+version: '3.9'
+
+services:
+  # PostgreSQL overrides for development
+  postgres:
+    # Enable verbose logging for development
+    environment:
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --lc-collate=en_US.UTF-8 --lc-ctype=en_US.UTF-8"
+    # Additional volumes for local development
+    volumes:
+      # Uncomment to mount custom PostgreSQL configuration
+      # - ./docker/postgres/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+      # Uncomment to access PostgreSQL logs
+      # - ./docker/postgres/logs:/var/log/postgresql
+
+  # Valkey overrides for development
+  valkey:
+    # Uncomment to enable Valkey configuration file
+    # volumes:
+    #   - ./docker/valkey/valkey.conf:/usr/local/etc/valkey/valkey.conf:ro
+    # command: valkey-server /usr/local/etc/valkey/valkey.conf
+    
+    # Additional logging for development
+    command: >
+      valkey-server
+      --appendonly yes
+      --appendfsync everysec
+      --maxmemory ${VALKEY_MAXMEMORY:-256mb}
+      --maxmemory-policy allkeys-lru
+      --loglevel debug
+
+  # Keycloak overrides for development
+  keycloak:
+    # Enable auto-import of realm configuration on startup
+    # Uncomment when realm configuration is ready
+    # command: start-dev --import-realm
+    
+    # Additional environment variables for development
+    environment:
+      # Verbose logging for development
+      KC_LOG_LEVEL: INFO
+      QUARKUS_LOG_LEVEL: INFO
+
+# Add additional services for development tools if needed
+# services:
+#   # pgAdmin for database management
+#   pgadmin:
+#     image: dpage/pgadmin4:latest
+#     container_name: angrybirdman-pgadmin
+#     restart: unless-stopped
+#     environment:
+#       PGADMIN_DEFAULT_EMAIL: admin@angrybirdman.local
+#       PGADMIN_DEFAULT_PASSWORD: admin
+#     ports:
+#       - "5050:80"
+#     networks:
+#       - angrybirdman-network
+#     depends_on:
+#       - postgres
+#
+#   # Redis Commander for Valkey/Redis management
+#   redis-commander:
+#     image: rediscommander/redis-commander:latest
+#     container_name: angrybirdman-redis-commander
+#     restart: unless-stopped
+#     environment:
+#       REDIS_HOSTS: local:valkey:6379
+#     ports:
+#       - "8081:8081"
+#     networks:
+#       - angrybirdman-network
+#     depends_on:
+#       - valkey

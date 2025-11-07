@@ -1,0 +1,110 @@
+version: '3.9'
+
+services:
+  # PostgreSQL - Primary database for application data and Keycloak
+  postgres:
+    image: postgres:15-alpine
+    container_name: angrybirdman-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-angrybirdman}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-angrybirdman_dev_password}
+      POSTGRES_DB: ${POSTGRES_DB:-angrybirdman}
+      # Create additional database for Keycloak
+      POSTGRES_MULTIPLE_DATABASES: ${POSTGRES_DB:-angrybirdman},${KEYCLOAK_DB:-keycloak}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/postgres/init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - angrybirdman-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-angrybirdman}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Valkey - Redis fork for session state and caching
+  valkey:
+    image: valkey/valkey:7.2-alpine
+    container_name: angrybirdman-valkey
+    restart: unless-stopped
+    command: >
+      valkey-server
+      --appendonly yes
+      --appendfsync everysec
+      --maxmemory ${VALKEY_MAXMEMORY:-256mb}
+      --maxmemory-policy allkeys-lru
+    ports:
+      - "${VALKEY_PORT:-6379}:6379"
+    volumes:
+      - valkey_data:/data
+    networks:
+      - angrybirdman-network
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Keycloak - Identity Provider for authentication and user management
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0
+    container_name: angrybirdman-keycloak
+    restart: unless-stopped
+    command: start-dev
+    environment:
+      # Database configuration
+      KC_DB: postgres
+      KC_DB_URL_HOST: postgres
+      KC_DB_URL_DATABASE: ${KEYCLOAK_DB:-keycloak}
+      KC_DB_USERNAME: ${POSTGRES_USER:-angrybirdman}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD:-angrybirdman_dev_password}
+      KC_DB_SCHEMA: public
+      
+      # Keycloak admin credentials
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN_USER:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      
+      # Hostname configuration for development
+      KC_HOSTNAME: ${KEYCLOAK_HOSTNAME:-localhost}
+      KC_HOSTNAME_STRICT: false
+      KC_HOSTNAME_STRICT_HTTPS: false
+      KC_HTTP_ENABLED: true
+      
+      # Proxy configuration (for future production deployment)
+      KC_PROXY: edge
+      
+      # Health check configuration
+      KC_HEALTH_ENABLED: true
+      KC_METRICS_ENABLED: true
+    ports:
+      - "${KEYCLOAK_PORT:-8080}:8080"
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+      - ./keycloak/config:/opt/keycloak/data/import:ro
+    networks:
+      - angrybirdman-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/8080 && echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && cat <&3 | grep -q '200 OK'"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 90s
+
+networks:
+  angrybirdman-network:
+    name: angrybirdman-network
+    driver: bridge
+
+volumes:
+  postgres_data:
+    name: angrybirdman-postgres-data
+  valkey_data:
+    name: angrybirdman-valkey-data
+  keycloak_data:
+    name: angrybirdman-keycloak-data
