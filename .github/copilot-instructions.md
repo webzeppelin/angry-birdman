@@ -20,9 +20,11 @@ angrybirdman/
 ├── api/               # Fastify REST API
 ├── common/            # Shared TypeScript library
 ├── database/          # Prisma schema & migrations
+├── implog/            # Summary log of implementation steps
 ├── keycloak/          # IdP configuration
 ├── docker/            # Docker configs
-└── specs/             # Project specifications (source of truth)
+├── specs/             # Project specifications (source of truth)
+└── README.md          # Project overview and setup instructions
 ```
 
 ## Core Domain Concepts
