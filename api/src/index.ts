@@ -1,23 +1,57 @@
-import Fastify from 'fastify';
+import { buildApp } from './app.js';
 
-const fastify = Fastify({
-  logger: true,
-});
+/**
+ * Main entry point for the Angry Birdman API server
+ *
+ * This file:
+ * - Builds the Fastify application
+ * - Starts the HTTP server
+ * - Handles graceful shutdown
+ */
 
-// API entry point
-// Will be populated with routes, plugins, and middleware
+async function start() {
+  let fastify;
 
-fastify.get('/health', async () => {
-  return { status: 'ok' };
-});
-
-const start = async () => {
   try {
-    await fastify.listen({ port: 3001, host: '0.0.0.0' });
+    // Build application
+    fastify = await buildApp();
+
+    // Get configuration
+    const port = fastify.config.PORT;
+    const host = fastify.config.HOST;
+
+    // Start listening
+    await fastify.listen({ port, host });
+
+    fastify.log.info(`Server listening on ${host}:${port}`);
+    fastify.log.info(`API documentation available at http://${host}:${port}/docs`);
   } catch (err) {
-    fastify.log.error(err);
+    console.error('Failed to start server:', err);
     process.exit(1);
   }
-};
 
-start();
+  // Graceful shutdown handlers
+  const signals: NodeJS.Signals[] = ['SIGINT', 'SIGTERM'];
+
+  for (const signal of signals) {
+    process.on(signal, () => {
+      if (fastify) {
+        fastify.log.info(`Received ${signal}, closing server gracefully`);
+
+        void fastify
+          .close()
+          .then(() => {
+            fastify.log.info('Server closed successfully');
+            process.exit(0);
+          })
+          .catch((err) => {
+            fastify.log.error({ err }, 'Error during shutdown');
+            process.exit(1);
+          });
+      }
+    });
+  }
+}
+
+// Start the server
+void start();
