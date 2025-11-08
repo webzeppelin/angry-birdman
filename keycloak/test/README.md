@@ -5,16 +5,12 @@ This directory contains test scripts and utilities for validating the Keycloak c
 ## Files
 
 - **test-auth.js** - Node.js script to test authentication flows programmatically
-- **create-test-users.sh** - Bash script to create test users (requires Keycloak admin credentials)
+- **create-test-users.sh** - Bash script to automatically create test users
 - **README.md** - This file
 
 ## Creating Test Users
 
-Test users can be created using either an automated script (recommended) or manually through the Keycloak Admin Console.
-
-### Option 1: Automated Creation (Recommended)
-
-A script is provided to automatically create all test users with proper roles and attributes.
+An automated script is provided to create all test users with proper roles, passwords, and attributes.
 
 **Prerequisites**:
 1. Create a file `keycloak/config/.adminpwd` containing your Keycloak admin password:
@@ -33,45 +29,10 @@ A script is provided to automatically create all test users with proper roles an
 **Run the script**:
 ```bash
 cd /path/to/angrybirdman
-./keycloak/test/create-test-users-api.sh
+./keycloak/test/create-test-users.sh
 ```
 
-The script will:
-- Authenticate using the admin password from `.adminpwd`
-- Create 5 test users with appropriate roles
-- Set passwords for each user
-- Assign clan IDs where applicable
-- Report success/failure for each operation
-
-If you encounter issues with the automated script, use Option 2 (Manual Creation) below.
-
-### Option 2: Manual Creation via Admin Console
-
-### Access the Admin Console
-
-1. Navigate to http://localhost:8080/admin/
-2. Login with your admin credentials
-3. Select the "angrybirdman" realm from the dropdown (top-left)
-
-### Create Test Users
-
-For each test user below, follow these steps:
-
-1. Go to **Users** in the left sidebar
-2. Click **Create new user**
-3. Fill in the user details (see table below)
-4. Click **Create**
-5. Go to the **Credentials** tab
-6. Click **Set password**
-7. Enter the password, turn OFF "Temporary", click **Save**
-8. Go to the **Role mapping** tab
-9. Click **Assign role**
-10. Select the appropriate role from the list
-11. Go to the **Attributes** tab (for clan-associated users)
-12. Add attribute: Key = `clanId`, Value = (see table below)
-13. Click **Save**
-
-### Recommended Test Users
+The script will automatically create these test users:
 
 | Username | Email | First Name | Last Name | Password | Role | Clan ID |
 |----------|-------|------------|-----------|----------|------|---------|
@@ -82,6 +43,14 @@ For each test user below, follow these steps:
 | testowner2 | owner2@angrybirdman.test | Clan2 | Owner | ClanOwner2123! | clan-owner | 2 |
 
 **Note**: Clan IDs 1 and 2 correspond to the "Angry Avengers" and "Feather Fury" clans from the database seed data.
+
+The script will:
+- Authenticate using the admin password from `.adminpwd`
+- Create each user with all required attributes
+- Set passwords (non-temporary)
+- Assign roles
+- Set clan IDs where applicable
+- Report success/failure for each operation
 
 ## Testing Authentication
 

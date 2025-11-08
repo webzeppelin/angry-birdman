@@ -8,11 +8,7 @@ All IdP configuration is complete. The final step is creating test users to vali
 
 ## Test User Creation
 
-You have **two options** for creating test users:
-
-### Option 1: Automated Script (Recommended) ⭐
-
-The `.adminpwd` file approach allows the script to automatically create all test users.
+An automated script creates all test users with proper configuration.
 
 **Setup (one-time)**:
 ```bash
@@ -24,26 +20,22 @@ The `.adminpwd` file approach allows the script to automatically create all test
 **Run the Script**:
 ```bash
 cd /home/aford/projects/angrybirdman
-./keycloak/test/create-test-users-api.sh
+./keycloak/test/create-test-users.sh
 ```
 
-**What it creates**:
-- `testsuperadmin` - Superadmin role, no clan association
-- `testowner` - Clan owner for clan 1 (Angry Avengers)
-- `testadmin` - Clan admin for clan 1 (Angry Avengers)
-- `testuser` - Basic user for clan 1 (Angry Avengers)
-- `testowner2` - Clan owner for clan 2 (Feather Fury)
+**Test Users Created**:
 
-All users are created with passwords, roles, and clan IDs properly configured.
+| Username | Email | First Name | Last Name | Password | Role | Clan ID |
+|----------|-------|------------|-----------|----------|------|---------|
+| testsuperadmin | superadmin@angrybirdman.test | Super | Admin | SuperAdmin123! | superadmin | (none) |
+| testowner | owner@angrybirdman.test | Clan | Owner | ClanOwner123! | clan-owner | 1 |
+| testadmin | admin@angrybirdman.test | Clan | Admin | ClanAdmin123! | clan-admin | 1 |
+| testuser | user@angrybirdman.test | Test | User | TestUser123! | user | 1 |
+| testowner2 | owner2@angrybirdman.test | Clan2 | Owner | ClanOwner2123! | clan-owner | 2 |
 
-### Option 2: Manual Creation via Admin Console
+**Note**: Clan IDs 1 and 2 correspond to the "Angry Avengers" and "Feather Fury" clans from the database seed data.
 
-If the automated script encounters issues, users can be created manually:
-
-1. Navigate to http://localhost:8080/admin/
-2. Login with admin credentials
-3. Select "angrybirdman" realm
-4. Follow the detailed 13-step process in `/keycloak/test/README.md`
+All users are created with passwords (non-temporary), roles, and clan IDs properly configured
 
 ## Testing Authentication
 
