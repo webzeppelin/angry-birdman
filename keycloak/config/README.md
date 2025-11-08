@@ -4,7 +4,8 @@ This directory contains configuration files for Keycloak, the Identity Provider 
 
 ## Directory Contents
 
-- **angrybirdman-realm.json** - Keycloak realm configuration for Angry Birdman
+- **angrybirdman-realm.json** - Keycloak realm configuration for Angry Birdman (✅ imported and active)
+- **README.md** - This file (comprehensive configuration documentation)
 
 ## Keycloak Realm Configuration
 
