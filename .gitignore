@@ -21,14 +21,20 @@ build/
 .next/
 out/
 *.tsbuildinfo
+.turbo/
 
 # IDE and editor files
-.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
 .idea/
 *.swp
 *.swo
 *~
 .DS_Store
+*.code-workspace
 
 # Testing
 coverage/
@@ -68,3 +74,11 @@ Thumbs.db
 
 # Prisma
 prisma/.env
+database/prisma/dev.db
+database/prisma/dev.db-journal
+
+# Husky
+.husky/_
+
+# ESLint cache
+.eslintcache

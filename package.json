@@ -1,0 +1,74 @@
+{
+  "name": "angrybirdman",
+  "version": "0.1.0",
+  "description": "A comprehensive clan management system for Angry Birds 2",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "frontend",
+    "api",
+    "common",
+    "database"
+  ],
+  "scripts": {
+    "dev": "npm-run-all --parallel dev:*",
+    "dev:api": "npm run dev --workspace=api",
+    "dev:frontend": "npm run dev --workspace=frontend",
+    "build": "npm-run-all build:*",
+    "build:common": "npm run build --workspace=common",
+    "build:api": "npm run build --workspace=api",
+    "build:frontend": "npm run build --workspace=frontend",
+    "test": "npm run test --workspaces --if-present",
+    "test:watch": "npm run test:watch --workspaces --if-present",
+    "test:coverage": "npm run test:coverage --workspaces --if-present",
+    "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
+    "type-check": "npm run type-check --workspaces --if-present",
+    "clean": "npm run clean --workspaces --if-present && rm -rf node_modules",
+    "db:migrate:dev": "npm run migrate:dev --workspace=database",
+    "db:migrate:deploy": "npm run migrate:deploy --workspace=database",
+    "db:generate": "npm run generate --workspace=database",
+    "db:seed": "npm run seed --workspace=database",
+    "db:studio": "npm run studio --workspace=database",
+    "db:reset": "npm run migrate:reset --workspace=database",
+    "prepare": "husky"
+  },
+  "keywords": [
+    "angry-birds-2",
+    "clan-management",
+    "statistics",
+    "performance-tracking"
+  ],
+  "author": "Angry Birdman Team",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/webzeppelin/angry-birdman.git"
+  },
+  "bugs": {
+    "url": "https://github.com/webzeppelin/angry-birdman/issues"
+  },
+  "homepage": "https://github.com/webzeppelin/angry-birdman#readme",
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "husky": "^9.0.0",
+    "lint-staged": "^15.2.0",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^3.2.0",
+    "prettier-plugin-tailwindcss": "^0.5.11",
+    "typescript": "^5.3.0"
+  }
+}

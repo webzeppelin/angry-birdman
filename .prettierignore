@@ -1,0 +1,29 @@
+# Prettier ignore patterns
+node_modules/
+dist/
+build/
+coverage/
+.turbo/
+*.min.js
+*.min.css
+
+# Build outputs
+frontend/dist/
+api/dist/
+common/dist/
+
+# Dependencies
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# Prisma
+database/prisma/migrations/
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.*
+!.env.example

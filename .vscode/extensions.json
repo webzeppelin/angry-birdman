@@ -1,0 +1,16 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "bradlc.vscode-tailwindcss",
+    "prisma.prisma",
+    "vitest.explorer",
+    "christian-kohler.npm-intellisense",
+    "christian-kohler.path-intellisense",
+    "usernamehw.errorlens",
+    "ms-vscode.vscode-typescript-next",
+    "streetsidesoftware.code-spell-checker",
+    "github.copilot"
+  ],
+  "unwantedRecommendations": []
+}
