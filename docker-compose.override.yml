@@ -36,7 +36,8 @@ services:
   # Keycloak overrides for development
   keycloak:
     # Start in development mode with hostname disabled for WSL2 compatibility
-    command: start-dev --hostname-strict=false
+    # --import-realm automatically imports all JSON files from /opt/keycloak/data/import
+    command: start-dev --hostname-strict=false --import-realm
     
     # Additional environment variables for development
     environment:
