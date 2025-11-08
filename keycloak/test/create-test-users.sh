@@ -7,10 +7,36 @@ set -e
 
 CONTAINER_NAME="angrybirdman-keycloak"
 REALM="angrybirdman"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ADMIN_PWD_FILE="${SCRIPT_DIR}/../config/.adminpwd"
 
 echo "╔═══════════════════════════════════════════════════════════╗"
 echo "║   Creating Test Users in Keycloak Realm: angrybirdman    ║"
 echo "╚═══════════════════════════════════════════════════════════╝"
+echo ""
+
+# Read admin password from file
+if [ ! -f "$ADMIN_PWD_FILE" ]; then
+    echo "❌ Error: Admin password file not found at: $ADMIN_PWD_FILE"
+    echo ""
+    echo "Please create the file with your Keycloak admin password:"
+    echo "  echo 'your-admin-password' > $ADMIN_PWD_FILE"
+    echo "  chmod 600 $ADMIN_PWD_FILE"
+    echo ""
+    exit 1
+fi
+
+ADMIN_PASSWORD=$(cat "$ADMIN_PWD_FILE" | tr -d '\n\r')
+
+if [ -z "$ADMIN_PASSWORD" ]; then
+    echo "❌ Error: Admin password file is empty"
+    echo ""
+    echo "Please add your Keycloak admin password to: $ADMIN_PWD_FILE"
+    echo ""
+    exit 1
+fi
+
+echo "✅ Admin password loaded from $ADMIN_PWD_FILE"
 echo ""
 
 # Function to create a user
@@ -35,13 +61,13 @@ create_user() {
         -s enabled=true \
         -s emailVerified=true \
         --no-config --server http://localhost:8080 --realm master \
-        --user admin --password "\${KEYCLOAK_ADMIN_PASSWORD:-admin}" 2>/dev/null || true
+        --user admin --password "$ADMIN_PASSWORD" 2>/dev/null || true
     
     # Get user ID
     USER_ID=$(docker exec $CONTAINER_NAME /opt/keycloak/bin/kcadm.sh get users \
         -r $REALM -q username=$username --fields id \
         --no-config --server http://localhost:8080 --realm master \
-        --user admin --password "\${KEYCLOAK_ADMIN_PASSWORD:-admin}" 2>/dev/null | grep -o '"id" : "[^"]*"' | cut -d'"' -f4)
+        --user admin --password "$ADMIN_PASSWORD" 2>/dev/null | grep -o '"id" : "[^"]*"' | cut -d'"' -f4)
     
     if [ -z "$USER_ID" ]; then
         echo "  ⚠️  User may already exist or creation failed"
@@ -49,7 +75,7 @@ create_user() {
         USER_ID=$(docker exec $CONTAINER_NAME /opt/keycloak/bin/kcadm.sh get users \
             -r $REALM -q username=$username --fields id \
             --no-config --server http://localhost:8080 --realm master \
-            --user admin --password "\${KEYCLOAK_ADMIN_PASSWORD:-admin}" 2>/dev/null | grep -o '"id" : "[^"]*"' | cut -d'"' -f4 | head -1)
+            --user admin --password "$ADMIN_PASSWORD" 2>/dev/null | grep -o '"id" : "[^"]*"' | cut -d'"' -f4 | head -1)
     fi
     
     if [ -n "$USER_ID" ]; then
@@ -59,14 +85,14 @@ create_user() {
         docker exec $CONTAINER_NAME /opt/keycloak/bin/kcadm.sh set-password \
             -r $REALM --username $username --new-password $password \
             --no-config --server http://localhost:8080 --realm master \
-            --user admin --password "\${KEYCLOAK_ADMIN_PASSWORD:-admin}" 2>/dev/null
+            --user admin --password "$ADMIN_PASSWORD" 2>/dev/null
         echo "  ✅ Password set"
         
         # Assign role
         docker exec $CONTAINER_NAME /opt/keycloak/bin/kcadm.sh add-roles \
             -r $REALM --uusername $username --rolename $role \
             --no-config --server http://localhost:8080 --realm master \
-            --user admin --password "\${KEYCLOAK_ADMIN_PASSWORD:-admin}" 2>/dev/null
+            --user admin --password "$ADMIN_PASSWORD" 2>/dev/null
         echo "  ✅ Role '$role' assigned"
         
         # Set clanId attribute if provided
@@ -74,7 +100,7 @@ create_user() {
             docker exec $CONTAINER_NAME /opt/keycloak/bin/kcadm.sh update users/$USER_ID \
                 -r $REALM -s "attributes.clanId=$clan_id" \
                 --no-config --server http://localhost:8080 --realm master \
-                --user admin --password "\${KEYCLOAK_ADMIN_PASSWORD:-admin}" 2>/dev/null
+                --user admin --password "$ADMIN_PASSWORD" 2>/dev/null
             echo "  ✅ Clan ID '$clan_id' set"
         fi
     else

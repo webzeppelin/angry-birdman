@@ -5,6 +5,10 @@
 .env.local
 .env.*.local
 
+# Keycloak admin password file
+**/.adminpwd
+.adminpwd
+
 # Dependencies
 node_modules/
 package-lock.json

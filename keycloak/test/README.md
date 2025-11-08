@@ -10,7 +10,42 @@ This directory contains test scripts and utilities for validating the Keycloak c
 
 ## Creating Test Users
 
-Since the admin password has been changed from the default, test users must be created through the Keycloak Admin Console.
+Test users can be created using either an automated script (recommended) or manually through the Keycloak Admin Console.
+
+### Option 1: Automated Creation (Recommended)
+
+A script is provided to automatically create all test users with proper roles and attributes.
+
+**Prerequisites**:
+1. Create a file `keycloak/config/.adminpwd` containing your Keycloak admin password:
+   ```bash
+   echo 'your-admin-password-here' > keycloak/config/.adminpwd
+   chmod 600 keycloak/config/.adminpwd
+   ```
+   
+   Note: This file is excluded from version control via `.gitignore`
+
+2. Ensure Keycloak is running:
+   ```bash
+   docker ps | grep keycloak
+   ```
+
+**Run the script**:
+```bash
+cd /path/to/angrybirdman
+./keycloak/test/create-test-users-api.sh
+```
+
+The script will:
+- Authenticate using the admin password from `.adminpwd`
+- Create 5 test users with appropriate roles
+- Set passwords for each user
+- Assign clan IDs where applicable
+- Report success/failure for each operation
+
+If you encounter issues with the automated script, use Option 2 (Manual Creation) below.
+
+### Option 2: Manual Creation via Admin Console
 
 ### Access the Admin Console
 
