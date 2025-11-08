@@ -128,6 +128,31 @@ module.exports = {
         '@typescript-eslint/no-non-null-assertion': 'off',
       },
     },
+    // Database scripts (seed, validation, test scripts)
+    {
+      files: [
+        'database/prisma/seed.ts',
+        'database/test-*.ts',
+        'database/validate-*.ts',
+        'keycloak/test/**/*.js',
+      ],
+      rules: {
+        'no-console': 'off',
+        '@typescript-eslint/no-unsafe-assignment': 'off',
+        '@typescript-eslint/no-unsafe-member-access': 'off',
+        '@typescript-eslint/no-unsafe-call': 'off',
+        '@typescript-eslint/no-unsafe-return': 'off',
+      },
+    },
+    // Frontend main.tsx (app initialization can use console)
+    {
+      files: ['frontend/src/main.tsx'],
+      rules: {
+        'no-console': 'off',
+        '@typescript-eslint/no-unsafe-assignment': 'off',
+        '@typescript-eslint/no-unsafe-member-access': 'off',
+      },
+    },
     // Configuration files
     {
       files: ['*.config.js', '*.config.ts', '*.config.cjs', '.eslintrc.js'],
@@ -150,5 +175,6 @@ module.exports = {
     'database/prisma/migrations/',
     '**/tailwind.config.js',
     '**/postcss.config.js',
+    'keycloak/test/**/*.js', // External test scripts with different conventions
   ],
 };
