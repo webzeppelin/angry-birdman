@@ -1,6 +1,7 @@
 # Common - Angry Birdman
 
-Shared TypeScript library containing types, validation schemas, utilities, and constants used by both frontend and backend.
+Shared TypeScript library containing types, validation schemas, utilities, and
+constants used by both frontend and backend.
 
 ## Purpose
 
@@ -23,7 +24,10 @@ import type { Clan, RosterMember } from '@angrybirdman/common/types';
 import { clanSchema, battleSchema } from '@angrybirdman/common/schemas';
 
 // Import utility functions
-import { calculateRatioScore, generateBattleId } from '@angrybirdman/common/utils';
+import {
+  calculateRatioScore,
+  generateBattleId,
+} from '@angrybirdman/common/utils';
 
 // Import constants
 import { ACTION_CODES } from '@angrybirdman/common/constants';

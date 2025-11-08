@@ -3,11 +3,7 @@
  * Handles battle ID, month ID, and year ID generation
  */
 
-import {
-  BATTLE_ID_LENGTH,
-  MONTH_ID_LENGTH,
-  YEAR_ID_LENGTH,
-} from '../constants/index.js';
+import { BATTLE_ID_LENGTH, MONTH_ID_LENGTH, YEAR_ID_LENGTH } from '../constants/index.js';
 
 // ============================================================================
 // ID Generation from Dates
@@ -76,11 +72,7 @@ export function parseBattleId(battleId: string): Date {
   const date = new Date(year, month - 1, day);
 
   // Validate that the date is valid (e.g., not Feb 30)
-  if (
-    date.getFullYear() !== year ||
-    date.getMonth() !== month - 1 ||
-    date.getDate() !== day
-  ) {
+  if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
     throw new Error(`Invalid date in battle ID: ${battleId}`);
   }
 

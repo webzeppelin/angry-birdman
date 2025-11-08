@@ -53,11 +53,7 @@ export const nonNegativeIntegerSchema = z.number().int().nonnegative();
 /**
  * Schema for Flock Power values
  */
-export const flockPowerSchema = z
-  .number()
-  .int()
-  .min(MIN_FLOCK_POWER)
-  .max(MAX_FLOCK_POWER);
+export const flockPowerSchema = z.number().int().min(MIN_FLOCK_POWER).max(MAX_FLOCK_POWER);
 
 /**
  * Schema for battle ID (YYYYMMDD)
@@ -465,12 +461,8 @@ export type ClanBattleSchema = z.infer<typeof clanBattleSchema>;
 export type ClanBattleCreateSchema = z.infer<typeof clanBattleCreateSchema>;
 export type ClanBattleUpdateSchema = z.infer<typeof clanBattleUpdateSchema>;
 export type ClanBattlePlayerStatsSchema = z.infer<typeof clanBattlePlayerStatsSchema>;
-export type ClanBattlePlayerStatsCreateSchema = z.infer<
-  typeof clanBattlePlayerStatsCreateSchema
->;
-export type ClanBattlePlayerStatsUpdateSchema = z.infer<
-  typeof clanBattlePlayerStatsUpdateSchema
->;
+export type ClanBattlePlayerStatsCreateSchema = z.infer<typeof clanBattlePlayerStatsCreateSchema>;
+export type ClanBattlePlayerStatsUpdateSchema = z.infer<typeof clanBattlePlayerStatsUpdateSchema>;
 export type ClanBattleNonplayerStatsSchema = z.infer<typeof clanBattleNonplayerStatsSchema>;
 export type ClanBattleNonplayerStatsCreateSchema = z.infer<
   typeof clanBattleNonplayerStatsCreateSchema
@@ -479,13 +471,9 @@ export type ClanBattleNonplayerStatsUpdateSchema = z.infer<
   typeof clanBattleNonplayerStatsUpdateSchema
 >;
 export type MonthlyClanPerformanceSchema = z.infer<typeof monthlyClanPerformanceSchema>;
-export type MonthlyIndividualPerformanceSchema = z.infer<
-  typeof monthlyIndividualPerformanceSchema
->;
+export type MonthlyIndividualPerformanceSchema = z.infer<typeof monthlyIndividualPerformanceSchema>;
 export type YearlyClanPerformanceSchema = z.infer<typeof yearlyClanPerformanceSchema>;
-export type YearlyIndividualPerformanceSchema = z.infer<
-  typeof yearlyIndividualPerformanceSchema
->;
+export type YearlyIndividualPerformanceSchema = z.infer<typeof yearlyIndividualPerformanceSchema>;
 export type PaginationSchema = z.infer<typeof paginationSchema>;
 export type SortingSchema = z.infer<typeof sortingSchema>;
 export type DateRangeSchema = z.infer<typeof dateRangeSchema>;
