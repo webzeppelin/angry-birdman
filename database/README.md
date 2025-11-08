@@ -37,7 +37,7 @@ The Angry Birdman database uses **PostgreSQL** as the relational database and **
 ## Technology Stack
 
 - **Database**: PostgreSQL 15+
-- **ORM**: Prisma 5.22.0
+- **ORM**: Prisma 6.19.0 (upgraded from 5.22.0 - see [PRISMA6-UPGRADE.md](./PRISMA6-UPGRADE.md))
 - **Language**: TypeScript 5.3+
 - **Runtime**: Node.js 20 LTS+
 - **Containerization**: Docker + Docker Compose
