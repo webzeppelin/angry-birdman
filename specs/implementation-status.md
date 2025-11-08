@@ -73,7 +73,7 @@ This document tracks the progress of implementing Angry Birdman according to the
 - [x] Authentication flow configuration and testing scripts
 
 **Notes**:
-- Keycloak realm "angrybirdman" successfully imported
+- Keycloak realm "angrybirdman" successfully imported and persisted
 - Two OAuth2/OIDC clients configured: frontend (public, PKCE) and API (confidential, bearer-only)
 - Custom client scope "clan-context" provides clanId claim in JWT tokens
 - Four roles defined: superadmin, clan-owner, clan-admin, user
@@ -81,8 +81,11 @@ This document tracks the progress of implementing Angry Birdman according to the
 - Brute force protection enabled (5 attempts, 15min lockout)
 - Password policy configured (8 chars minimum, development-appropriate)
 - Comprehensive test scripts created (test-auth.js) with 242 lines
-- User creation documentation provided (manual process due to changed admin password)
+- Automated user creation script (create-test-users.sh) using secure `.adminpwd` approach
+- Five test users created and validated with different roles and clan assignments
+- Authentication flows tested successfully, JWT claims verified
 - OpenID Connect endpoints verified and accessible
+- Realm persistence fixed with `--import-realm` flag in docker-compose
 - See `/implog/2.3 - Implementation Log.md` for details
 
 ---
@@ -691,7 +694,7 @@ This document tracks the progress of implementing Angry Birdman according to the
 
 **November 8, 2025 (Latest)**: 
 - ✅ **Completed Step 2.3 - Keycloak Configuration**
-  - Imported custom Keycloak realm "angrybirdman" successfully
+  - Imported custom Keycloak realm "angrybirdman" successfully with persistent storage
   - Configured two OAuth2/OIDC clients: angrybirdman-frontend (public) and angrybirdman-api (confidential)
   - Enabled Authorization Code with PKCE for secure frontend authentication
   - Created custom client scope "clan-context" for multi-tenancy (clanId JWT claim)
@@ -699,8 +702,12 @@ This document tracks the progress of implementing Angry Birdman according to the
   - Configured token lifespans: 15min access, 30min SSO idle, 30 day refresh
   - Enabled brute force protection and password policy
   - Created comprehensive test script (test-auth.js) with 242 lines
+  - Implemented secure `.adminpwd` approach for automated user creation
+  - Created automated user creation script (create-test-users.sh)
+  - Successfully created 5 test users with different roles and clan assignments
+  - Validated authentication flows and JWT token claims (including clanId)
+  - Fixed realm persistence issue with `--import-realm` flag in docker-compose
   - Verified all OpenID Connect endpoints accessible
-  - Created user creation documentation and guides
   - Implementation log created at `/implog/2.3 - Implementation Log.md`
   - **Phase 0 (Environment Setup) now complete!**
 
@@ -732,13 +739,7 @@ This document tracks the progress of implementing Angry Birdman according to the
 
 ## Next Steps
 
-1. **Immediate Priority**: Create test users in Keycloak (manual step)
-   - Access Admin Console: http://localhost:8080/admin/
-   - Create 5 test users as documented in `/keycloak/test/README.md`
-   - Assign appropriate roles and clanId attributes
-   - Test authentication with test-auth.js script
-
-2. **Next Implementation Step**: Begin Step 3.1 - Monorepo Setup
+1. **Next Implementation Step**: Begin Step 3.1 - Monorepo Setup
    - Initialize npm workspace at project root
    - Create directory structure for all components (frontend/, api/, common/)
    - Set up shared configuration files (TypeScript, ESLint, Prettier)
