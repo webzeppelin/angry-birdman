@@ -1,0 +1,55 @@
+/**
+ * Login Page
+ *
+ * Simple page that initiates OAuth login flow.
+ */
+
+import { useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+
+import { useAuth } from '@/contexts/AuthContext';
+
+export function LoginPage() {
+  const { isAuthenticated, login } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    // If already authenticated, redirect to intended destination
+    if (isAuthenticated) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+      const from: string = location.state?.from?.pathname || '/dashboard';
+      navigate(from, { replace: true });
+    }
+  }, [isAuthenticated, navigate, location]);
+
+  const handleLogin = () => {
+    void login().catch(console.error);
+  };
+
+  return (
+    <div className="flex min-h-[60vh] items-center justify-center bg-gray-50 py-12">
+      <div className="shadow-card w-full max-w-md rounded-lg bg-white p-8">
+        <div className="mb-6 text-center">
+          <div className="mb-4 text-6xl">🔐</div>
+          <h1 className="font-display mb-2 text-3xl text-neutral-800">Sign In</h1>
+          <p className="text-neutral-600">Sign in to manage your clan&apos;s information</p>
+        </div>
+
+        <button
+          onClick={handleLogin}
+          className="bg-primary hover:bg-primary-600 w-full rounded-lg px-6 py-3 text-lg font-semibold text-white transition-colors"
+        >
+          Sign In with Keycloak
+        </button>
+
+        <p className="mt-6 text-center text-sm text-neutral-500">
+          Don&apos;t have an account?{' '}
+          <a href="#" className="text-primary hover:underline">
+            Contact a superadmin
+          </a>
+        </p>
+      </div>
+    </div>
+  );
+}

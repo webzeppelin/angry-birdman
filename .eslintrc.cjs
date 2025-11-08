@@ -130,7 +130,7 @@ module.exports = {
     },
     // Configuration files
     {
-      files: ['*.config.js', '*.config.ts', '.eslintrc.js'],
+      files: ['*.config.js', '*.config.ts', '*.config.cjs', '.eslintrc.js'],
       env: {
         node: true,
       },
@@ -148,5 +148,7 @@ module.exports = {
     '.turbo/',
     '*.min.js',
     'database/prisma/migrations/',
+    '**/tailwind.config.js',
+    '**/postcss.config.js',
   ],
 };

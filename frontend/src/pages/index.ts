@@ -1,0 +1,8 @@
+export { HomePage } from './HomePage';
+export { AboutPage } from './AboutPage';
+export { ClansPage } from './ClansPage';
+export { DashboardPage } from './DashboardPage';
+export { LoginPage } from './LoginPage';
+export { CallbackPage } from './CallbackPage';
+export { SilentCallbackPage } from './SilentCallbackPage';
+export { NotFoundPage } from './NotFoundPage';
