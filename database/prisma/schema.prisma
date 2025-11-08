@@ -1,0 +1,402 @@
+// Angry Birdman Database Schema
+// This schema defines the complete data model for the Angry Birdman clan management system
+// Based on: specs/high-level-spec.md Section 6 (Data Concepts)
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// Core Entities
+// ============================================================================
+
+/// Represents a clan using Angry Birdman to manage their data
+model Clan {
+  // Primary Key
+  clanId Int @id @default(autoincrement()) @map("clan_id")
+
+  // Core Fields
+  rovioId          Int      @unique @map("rovio_id") // Rovio-assigned clan identifier
+  name             String   @db.VarChar(100)
+  country          String   @db.VarChar(100)
+  registrationDate DateTime @default(now()) @map("registration_date") @db.Date
+  active           Boolean  @default(true)
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  users                 User[]
+  rosterMembers         RosterMember[]
+  clanBattles           ClanBattle[]
+  monthlyClanStats      MonthlyClanPerformance[]
+  yearlyClanStats       YearlyClanPerformance[]
+  monthlyIndividualStats MonthlyIndividualPerformance[]
+  yearlyIndividualStats YearlyIndividualPerformance[]
+
+  @@map("clans")
+  @@index([rovioId], name: "idx_clan_rovio_id")
+  @@index([active], name: "idx_clan_active")
+  @@index([name], name: "idx_clan_name")
+}
+
+/// Represents an administrator user managing clan data
+/// Note: User authentication is handled by Keycloak (external IdP)
+/// This table stores application-specific user metadata
+model User {
+  // Primary Key - matches Keycloak user ID
+  userId String @id @map("user_id") @db.VarChar(255)
+
+  // Core Fields
+  username String  @unique @db.VarChar(100)
+  email    String  @db.VarChar(255)
+  clanId   Int?    @map("clan_id") // Nullable - superadmins may not be associated with a clan
+  owner    Boolean @default(false) // True if user is a Clan Owner
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  clan Clan? @relation(fields: [clanId], references: [clanId], onDelete: SetNull)
+
+  @@map("users")
+  @@index([clanId], name: "idx_user_clan_id")
+  @@index([email], name: "idx_user_email")
+}
+
+/// Represents a member of a clan's roster
+model RosterMember {
+  // Primary Key
+  playerId Int @id @default(autoincrement()) @map("player_id")
+
+  // Core Fields
+  clanId      Int      @map("clan_id")
+  playerName  String   @map("player_name") @db.VarChar(100)
+  active      Boolean  @default(true)
+  joinedDate  DateTime @map("joined_date") @db.Date
+  leftDate    DateTime? @map("left_date") @db.Date
+  kickedDate  DateTime? @map("kicked_date") @db.Date
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  clan          Clan                @relation(fields: [clanId], references: [clanId], onDelete: Cascade)
+  playerStats   ClanBattlePlayerStats[]
+  nonplayerStats ClanBattleNonplayerStats[]
+  monthlyStats  MonthlyIndividualPerformance[]
+  yearlyStats   YearlyIndividualPerformance[]
+
+  @@unique([clanId, playerName], name: "unique_player_per_clan")
+  @@map("roster_members")
+  @@index([clanId], name: "idx_roster_clan_id")
+  @@index([active], name: "idx_roster_active")
+  @@index([playerName], name: "idx_roster_player_name")
+}
+
+// ============================================================================
+// Battle Data
+// ============================================================================
+
+/// Represents a Clan-vs-Clan (CvC) battle
+model ClanBattle {
+  // Composite Primary Key
+  clanId   Int    @map("clan_id")
+  battleId String @map("battle_id") @db.VarChar(8) // Format: YYYYMMDD
+
+  // Battle Metadata
+  startDate DateTime @map("start_date") @db.Date
+  endDate   DateTime @map("end_date") @db.Date
+
+  // Battle Result (Calculated)
+  result Int // 1 = Win, -1 = Loss, 0 = Tie
+
+  // Clan Performance (Input + Calculated)
+  score       Int   @db.Integer // Total clan score
+  fp          Int   @db.Integer // Sum of all FP (excluding reserves) - calculated
+  baselineFp  Int   @map("baseline_fp") @db.Integer // Clan's baseline FP at time of battle
+  ratio       Float @db.DoublePrecision // Official ratio: (score / baselineFp) * 10 - calculated
+  averageRatio Float @map("average_ratio") @db.DoublePrecision // (score / fp) * 10 - calculated
+  projectedScore Float @map("projected_score") @db.DoublePrecision // Projected score if all played - calculated
+
+  // Opponent Data
+  opponentName    String @map("opponent_name") @db.VarChar(100)
+  opponentRovioId Int    @map("opponent_rovio_id") @db.Integer
+  opponentCountry String @map("opponent_country") @db.VarChar(100)
+  opponentScore   Int    @map("opponent_score") @db.Integer
+  opponentFp      Int    @map("opponent_fp") @db.Integer
+
+  // Performance Margins (Calculated)
+  marginRatio Float @map("margin_ratio") @db.DoublePrecision // ((score - opponentScore) / score) * 100
+  fpMargin    Float @map("fp_margin") @db.DoublePrecision // ((baselineFp - opponentFp) / baselineFp) * 100
+
+  // Non-Player Statistics (Calculated)
+  nonplayingCount    Int   @map("nonplaying_count") @db.Integer // Count of non-players (excluding reserves)
+  nonplayingFpRatio  Float @map("nonplaying_fp_ratio") @db.DoublePrecision // % of FP from non-players (excluding reserves)
+  reserveCount       Int   @map("reserve_count") @db.Integer // Count of reserve players
+  reserveFpRatio     Float @map("reserve_fp_ratio") @db.DoublePrecision // % of FP from reserves
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  clan          Clan                         @relation(fields: [clanId], references: [clanId], onDelete: Cascade)
+  playerStats   ClanBattlePlayerStats[]
+  nonplayerStats ClanBattleNonplayerStats[]
+
+  @@id([clanId, battleId])
+  @@map("clan_battles")
+  @@index([clanId], name: "idx_battle_clan_id")
+  @@index([battleId], name: "idx_battle_id")
+  @@index([startDate], name: "idx_battle_start_date")
+}
+
+/// Represents individual player performance in a specific battle
+model ClanBattlePlayerStats {
+  // Composite Primary Key
+  clanId   Int    @map("clan_id")
+  battleId String @map("battle_id") @db.VarChar(8)
+  playerId Int    @map("player_id")
+
+  // Performance Data
+  rank      Int   @db.Integer // Overall score ranking in battle
+  score     Int   @db.Integer // Battle points earned (>= 0)
+  fp        Int   @db.Integer // Player's flock power
+  ratio     Float @db.DoublePrecision // Calculated: (score / fp) * 10
+  ratioRank Int   @map("ratio_rank") @db.Integer // Ranking by ratio performance
+
+  // Post-Battle Action
+  actionCode   String  @map("action_code") @db.VarChar(20)
+  actionReason String? @map("action_reason") @db.Text
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  battle       ClanBattle   @relation(fields: [clanId, battleId], references: [clanId, battleId], onDelete: Cascade)
+  player       RosterMember @relation(fields: [playerId], references: [playerId], onDelete: Cascade)
+  action       ActionCode   @relation(fields: [actionCode], references: [actionCode], onDelete: Restrict)
+
+  @@id([clanId, battleId, playerId])
+  @@map("clan_battle_player_stats")
+  @@index([clanId, battleId], name: "idx_player_stats_battle")
+  @@index([playerId], name: "idx_player_stats_player")
+  @@index([ratio], name: "idx_player_stats_ratio")
+}
+
+/// Represents non-playing roster members in a specific battle
+model ClanBattleNonplayerStats {
+  // Composite Primary Key
+  clanId   Int    @map("clan_id")
+  battleId String @map("battle_id") @db.VarChar(8)
+  playerId Int    @map("player_id")
+
+  // Nonplayer Data
+  fp      Int     @db.Integer // Player's flock power
+  reserve Boolean @default(false) // True if player is in reserve
+
+  // Post-Battle Action
+  actionCode   String  @map("action_code") @db.VarChar(20)
+  actionReason String? @map("action_reason") @db.Text
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  battle ClanBattle   @relation(fields: [clanId, battleId], references: [clanId, battleId], onDelete: Cascade)
+  player RosterMember @relation(fields: [playerId], references: [playerId], onDelete: Cascade)
+  action ActionCode   @relation(fields: [actionCode], references: [actionCode], onDelete: Restrict)
+
+  @@id([clanId, battleId, playerId])
+  @@map("clan_battle_nonplayer_stats")
+  @@index([clanId, battleId], name: "idx_nonplayer_stats_battle")
+  @@index([playerId], name: "idx_nonplayer_stats_player")
+  @@index([reserve], name: "idx_nonplayer_stats_reserve")
+}
+
+// ============================================================================
+// Lookup Tables
+// ============================================================================
+
+/// Represents post-battle action codes (HOLD, WARN, KICK, RESERVE, PASS)
+model ActionCode {
+  // Primary Key
+  actionCode String @id @map("action_code") @db.VarChar(20)
+
+  // Core Fields
+  displayName String @map("display_name") @db.VarChar(50)
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  playerStats    ClanBattlePlayerStats[]
+  nonplayerStats ClanBattleNonplayerStats[]
+
+  @@map("action_codes")
+}
+
+// ============================================================================
+// Aggregated Statistics - Monthly
+// ============================================================================
+
+/// Represents monthly clan performance summary
+model MonthlyClanPerformance {
+  // Composite Primary Key
+  clanId  Int    @map("clan_id")
+  monthId String @map("month_id") @db.VarChar(6) // Format: YYYYMM
+
+  // Battle Counts
+  battleCount Int @map("battle_count") @db.Integer
+  wonCount    Int @map("won_count") @db.Integer
+  lostCount   Int @map("lost_count") @db.Integer
+  tiedCount   Int @map("tied_count") @db.Integer
+
+  // Status
+  monthComplete Boolean @default(false) @map("month_complete")
+
+  // Average Performance Metrics
+  averageFp          Float @map("average_fp") @db.DoublePrecision
+  averageBaselineFp  Float @map("average_baseline_fp") @db.DoublePrecision
+  averageRatio       Float @map("average_ratio") @db.DoublePrecision
+  averageMarginRatio Float @map("average_margin_ratio") @db.DoublePrecision
+  averageFpMargin    Float @map("average_fp_margin") @db.DoublePrecision
+
+  // Average Non-Player Metrics
+  averageNonplayingCount   Float @map("average_nonplaying_count") @db.DoublePrecision
+  averageNonplayingFpRatio Float @map("average_nonplaying_fp_ratio") @db.DoublePrecision
+  averageReserveCount      Float @map("average_reserve_count") @db.DoublePrecision
+  averageReserveFpRatio    Float @map("average_reserve_fp_ratio") @db.DoublePrecision
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  clan Clan @relation(fields: [clanId], references: [clanId], onDelete: Cascade)
+
+  @@id([clanId, monthId])
+  @@map("monthly_clan_performance")
+  @@index([monthId], name: "idx_monthly_clan_month")
+}
+
+/// Represents monthly individual player performance summary
+/// Only includes players with 3+ battles in the month
+model MonthlyIndividualPerformance {
+  // Composite Primary Key
+  clanId   Int    @map("clan_id")
+  monthId  String @map("month_id") @db.VarChar(6) // Format: YYYYMM
+  playerId Int    @map("player_id")
+
+  // Battle Participation
+  battlesPlayed Int @map("battles_played") @db.Integer // >= 3
+
+  // Average Performance Metrics
+  averageScore     Float @map("average_score") @db.DoublePrecision
+  averageFp        Float @map("average_fp") @db.DoublePrecision
+  averageRatio     Float @map("average_ratio") @db.DoublePrecision
+  averageRank      Float @map("average_rank") @db.DoublePrecision
+  averageRatioRank Float @map("average_ratio_rank") @db.DoublePrecision
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  clan   Clan         @relation(fields: [clanId], references: [clanId], onDelete: Cascade)
+  player RosterMember @relation(fields: [playerId], references: [playerId], onDelete: Cascade)
+
+  @@id([clanId, monthId, playerId])
+  @@map("monthly_individual_performance")
+  @@index([monthId], name: "idx_monthly_individual_month")
+  @@index([playerId], name: "idx_monthly_individual_player")
+}
+
+// ============================================================================
+// Aggregated Statistics - Yearly
+// ============================================================================
+
+/// Represents yearly clan performance summary
+model YearlyClanPerformance {
+  // Composite Primary Key
+  clanId Int    @map("clan_id")
+  yearId String @map("year_id") @db.VarChar(4) // Format: YYYY
+
+  // Battle Counts
+  battleCount Int @map("battle_count") @db.Integer
+  wonCount    Int @map("won_count") @db.Integer
+  lostCount   Int @map("lost_count") @db.Integer
+  tiedCount   Int @map("tied_count") @db.Integer
+
+  // Status
+  yearComplete Boolean @default(false) @map("year_complete")
+
+  // Average Performance Metrics
+  averageFp          Float @map("average_fp") @db.DoublePrecision
+  averageBaselineFp  Float @map("average_baseline_fp") @db.DoublePrecision
+  averageRatio       Float @map("average_ratio") @db.DoublePrecision
+  averageMarginRatio Float @map("average_margin_ratio") @db.DoublePrecision
+  averageFpMargin    Float @map("average_fp_margin") @db.DoublePrecision
+
+  // Average Non-Player Metrics
+  averageNonplayingCount   Float @map("average_nonplaying_count") @db.DoublePrecision
+  averageNonplayingFpRatio Float @map("average_nonplaying_fp_ratio") @db.DoublePrecision
+  averageReserveCount      Float @map("average_reserve_count") @db.DoublePrecision
+  averageReserveFpRatio    Float @map("average_reserve_fp_ratio") @db.DoublePrecision
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  clan Clan @relation(fields: [clanId], references: [clanId], onDelete: Cascade)
+
+  @@id([clanId, yearId])
+  @@map("yearly_clan_performance")
+  @@index([yearId], name: "idx_yearly_clan_year")
+}
+
+/// Represents yearly individual player performance summary
+/// Only includes players with 3+ battles in the year
+model YearlyIndividualPerformance {
+  // Composite Primary Key
+  clanId   Int    @map("clan_id")
+  yearId   String @map("year_id") @db.VarChar(4) // Format: YYYY
+  playerId Int    @map("player_id")
+
+  // Battle Participation
+  battlesPlayed Int @map("battles_played") @db.Integer // >= 3
+
+  // Average Performance Metrics
+  averageScore     Float @map("average_score") @db.DoublePrecision
+  averageFp        Float @map("average_fp") @db.DoublePrecision
+  averageRatio     Float @map("average_ratio") @db.DoublePrecision
+  averageRank      Float @map("average_rank") @db.DoublePrecision
+  averageRatioRank Float @map("average_ratio_rank") @db.DoublePrecision
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  clan   Clan         @relation(fields: [clanId], references: [clanId], onDelete: Cascade)
+  player RosterMember @relation(fields: [playerId], references: [playerId], onDelete: Cascade)
+
+  @@id([clanId, yearId, playerId])
+  @@map("yearly_individual_performance")
+  @@index([yearId], name: "idx_yearly_individual_year")
+  @@index([playerId], name: "idx_yearly_individual_player")
+}

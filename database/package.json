@@ -1,0 +1,39 @@
+{
+  "name": "@angrybirdman/database",
+  "version": "0.1.0",
+  "description": "Database schema and migrations for Angry Birdman",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "migrate:dev": "prisma migrate dev --schema=prisma/schema.prisma",
+    "migrate:deploy": "prisma migrate deploy --schema=prisma/schema.prisma",
+    "migrate:reset": "prisma migrate reset --schema=prisma/schema.prisma --force",
+    "generate": "prisma generate --schema=prisma/schema.prisma",
+    "studio": "prisma studio --schema=prisma/schema.prisma",
+    "seed": "tsx prisma/seed.ts",
+    "db:push": "prisma db push --schema=prisma/schema.prisma",
+    "db:pull": "prisma db pull --schema=prisma/schema.prisma",
+    "format": "prisma format --schema=prisma/schema.prisma",
+    "validate": "prisma validate --schema=prisma/schema.prisma"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
+  "keywords": [
+    "angry-birds-2",
+    "clan-management",
+    "database",
+    "prisma"
+  ],
+  "author": "Angry Birdman Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "prisma": "^5.22.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.0"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.22.0"
+  }
+}

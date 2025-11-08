@@ -1,0 +1,11 @@
+# Prisma
+.env
+*.db
+*.db-journal
+
+# Prisma Client
+# Note: The client is generated to ../node_modules/.prisma/client
+# which is already covered by the root .gitignore
+
+# Migration lock files (keep in version control, but listed here for reference)
+# migrations/**/*
