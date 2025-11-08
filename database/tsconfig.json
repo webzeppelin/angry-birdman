@@ -27,12 +27,6 @@
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true
   },
-  "include": [
-    "prisma/**/*.ts",
-    "*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "include": ["prisma/**/*.ts", "*.ts"],
+  "exclude": ["node_modules", "dist"]
 }

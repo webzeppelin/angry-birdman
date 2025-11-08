@@ -15,7 +15,9 @@ async function main() {
 
   // Test 2: List action codes
   const actionCodes = await prisma.actionCode.findMany();
-  console.log(`✅ Found ${actionCodes.length} action codes: ${actionCodes.map(a => a.actionCode).join(', ')}`);
+  console.log(
+    `✅ Found ${actionCodes.length} action codes: ${actionCodes.map((a) => a.actionCode).join(', ')}`
+  );
 
   // Test 3: Get clan with users
   const clanWithUsers = await prisma.clan.findFirst({
@@ -28,7 +30,9 @@ async function main() {
       },
     },
   });
-  console.log(`✅ Clan "${clanWithUsers?.name}" has ${clanWithUsers?.users.length} users and ${clanWithUsers?.rosterMembers.length} active roster members`);
+  console.log(
+    `✅ Clan "${clanWithUsers?.name}" has ${clanWithUsers?.users.length} users and ${clanWithUsers?.rosterMembers.length} active roster members`
+  );
 
   // Test 4: Get battle with stats
   const battle = await prisma.clanBattle.findFirst({
@@ -37,7 +41,9 @@ async function main() {
       nonplayerStats: true,
     },
   });
-  console.log(`✅ Battle ${battle?.battleId} has ${battle?.playerStats.length} player stats and ${battle?.nonplayerStats.length} nonplayer stats`);
+  console.log(
+    `✅ Battle ${battle?.battleId} has ${battle?.playerStats.length} player stats and ${battle?.nonplayerStats.length} nonplayer stats`
+  );
 
   // Test 5: Test relationships
   const user = await prisma.user.findFirst({

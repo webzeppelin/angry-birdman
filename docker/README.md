@@ -1,10 +1,12 @@
 # Angry Birdman - Docker Infrastructure
 
-This directory contains Docker-related configuration and documentation for the Angry Birdman project.
+This directory contains Docker-related configuration and documentation for the
+Angry Birdman project.
 
 ## Overview
 
-Angry Birdman uses Docker and Docker Compose to provide a consistent, containerized development environment with all required services:
+Angry Birdman uses Docker and Docker Compose to provide a consistent,
+containerized development environment with all required services:
 
 - **PostgreSQL 15** - Primary database for application data and Keycloak
 - **Valkey 7.2** - Redis-compatible cache for session state and caching
@@ -25,16 +27,15 @@ Angry Birdman uses Docker and Docker Compose to provide a consistent, containeri
    ```bash
    cp .env.example .env
    ```
-   
-2. **Review and customize .env file:**
-   Edit `.env` with your preferred configuration (optional for development)
+2. **Review and customize .env file:** Edit `.env` with your preferred
+   configuration (optional for development)
 
 3. **Start all services:**
    ```bash
    docker-compose up -d
    ```
-   
 4. **View logs:**
+
    ```bash
    docker-compose logs -f
    ```
@@ -49,15 +50,19 @@ Angry Birdman uses Docker and Docker Compose to provide a consistent, containeri
 After starting the infrastructure for the first time:
 
 1. **Verify PostgreSQL:**
+
    ```bash
    docker exec -it angrybirdman-postgres psql -U angrybirdman -c "\l"
    ```
+
    You should see `angrybirdman` and `keycloak` databases.
 
 2. **Verify Valkey:**
+
    ```bash
    docker exec -it angrybirdman-valkey valkey-cli ping
    ```
+
    Should return `PONG`.
 
 3. **Access Keycloak Admin Console:**
@@ -65,8 +70,8 @@ After starting the infrastructure for the first time:
    - Username: `admin` (or value from .env)
    - Password: `admin` (or value from .env)
 
-4. **Import Keycloak Realm (if not auto-imported):**
-   See `keycloak/config/README.md` for instructions.
+4. **Import Keycloak Realm (if not auto-imported):** See
+   `keycloak/config/README.md` for instructions.
 
 ## Service Details
 
@@ -79,11 +84,13 @@ After starting the infrastructure for the first time:
 - **Initialization:** Scripts in `database/postgres/init/`
 
 **Connection String (from host):**
+
 ```
 postgresql://angrybirdman:angrybirdman_dev_password@localhost:5432/angrybirdman
 ```
 
 **Connection String (from other containers):**
+
 ```
 postgresql://angrybirdman:angrybirdman_dev_password@postgres:5432/angrybirdman
 ```
@@ -98,11 +105,13 @@ postgresql://angrybirdman:angrybirdman_dev_password@postgres:5432/angrybirdman
 - **Eviction Policy:** allkeys-lru
 
 **Connection String (from host):**
+
 ```
 redis://localhost:6379
 ```
 
 **Connection String (from other containers):**
+
 ```
 redis://valkey:6379
 ```
@@ -118,33 +127,43 @@ redis://valkey:6379
 **Admin Console:** http://localhost:8080
 
 **Realm Endpoints:**
+
 - Account Console: http://localhost:8080/realms/angrybirdman/account
-- OpenID Config: http://localhost:8080/realms/angrybirdman/.well-known/openid-configuration
+- OpenID Config:
+  http://localhost:8080/realms/angrybirdman/.well-known/openid-configuration
 
 ## Docker Compose Files
 
 ### docker-compose.yml (Base Configuration)
 
-The main Docker Compose file defining all services with production-ready defaults. This file should work across all environments with environment variable customization.
+The main Docker Compose file defining all services with production-ready
+defaults. This file should work across all environments with environment
+variable customization.
 
 **Services:**
+
 - `postgres` - PostgreSQL database
 - `valkey` - Valkey cache
 - `keycloak` - Identity provider
 
 **Networks:**
+
 - `angrybirdman-network` - Bridge network connecting all services
 
 **Volumes:**
+
 - `angrybirdman-postgres-data` - PostgreSQL data persistence
 - `angrybirdman-valkey-data` - Valkey data persistence
 - `angrybirdman-keycloak-data` - Keycloak data persistence
 
 ### docker-compose.override.yml (Local Development)
 
-Override file automatically merged with `docker-compose.yml` for local development. Contains development-specific customizations like verbose logging and optional development tools.
+Override file automatically merged with `docker-compose.yml` for local
+development. Contains development-specific customizations like verbose logging
+and optional development tools.
 
 **Customizations:**
+
 - Verbose logging enabled
 - Debug modes for troubleshooting
 - Optional pgAdmin and Redis Commander (commented out)
@@ -287,11 +306,12 @@ Uncomment pgAdmin and Redis Commander in `docker-compose.override.yml`:
 
 ```yaml
 # Uncomment these services in docker-compose.override.yml
-pgadmin:      # http://localhost:5050
-redis-commander:  # http://localhost:8081
+pgadmin: # http://localhost:5050
+redis-commander: # http://localhost:8081
 ```
 
 Then restart:
+
 ```bash
 docker-compose up -d
 ```
@@ -308,11 +328,13 @@ angrybirdman-network (172.x.x.x/16)
 ```
 
 **Inter-service communication:**
+
 - Services use service names as hostnames (e.g., `postgres:5432`)
 - No need for IP addresses, Docker DNS handles resolution
 - All services can communicate on internal network
 
 **External access:**
+
 - Ports are exposed to host via port mappings
 - Accessible via `localhost:<port>` from host machine
 
@@ -339,11 +361,13 @@ docker run --rm -v angrybirdman-postgres-data:/data -v $(pwd):/backup alpine tar
 ### Backup Strategy
 
 For development:
+
 1. **Regular database dumps** (see Database Operations above)
 2. **Version control** for initialization scripts and configuration
 3. **Volume backups** before major changes
 
 For production:
+
 1. **Automated database backups** with retention policy
 2. **Point-in-time recovery** enabled on PostgreSQL
 3. **Volume snapshots** on cloud provider
@@ -351,9 +375,11 @@ For production:
 
 ## Environment Variables
 
-All services use environment variables for configuration. See `.env.example` for complete list.
+All services use environment variables for configuration. See `.env.example` for
+complete list.
 
 **Critical Variables:**
+
 - `POSTGRES_PASSWORD` - Database password
 - `KEYCLOAK_ADMIN_PASSWORD` - Keycloak admin password
 - `VALKEY_MAXMEMORY` - Cache memory limit
@@ -378,6 +404,7 @@ docker-compose logs
 ### Port Conflicts
 
 If ports are already in use, change them in `.env`:
+
 ```
 POSTGRES_PORT=5433
 KEYCLOAK_PORT=8081
@@ -435,6 +462,7 @@ docker exec angrybirdman-keycloak ping postgres
 ### Development Environment
 
 Current configuration is optimized for development:
+
 - Weak passwords
 - HTTP (not HTTPS)
 - Debug logging enabled
@@ -462,6 +490,7 @@ For production, you must:
 ### PostgreSQL
 
 For production workloads, tune PostgreSQL in `docker/postgres/postgresql.conf`:
+
 - `shared_buffers` - 25% of available RAM
 - `effective_cache_size` - 50-75% of available RAM
 - `work_mem` - Depends on query complexity
@@ -470,6 +499,7 @@ For production workloads, tune PostgreSQL in `docker/postgres/postgresql.conf`:
 ### Valkey
 
 Adjust memory and persistence settings:
+
 - `VALKEY_MAXMEMORY` - Based on dataset size
 - Eviction policy - Choose based on use case
 - Persistence - Balance between durability and performance
@@ -477,6 +507,7 @@ Adjust memory and persistence settings:
 ### Keycloak
 
 Optimize for production:
+
 - Enable caching (Infinispan)
 - Configure connection pooling
 - Set appropriate session timeouts

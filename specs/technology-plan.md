@@ -21,13 +21,18 @@
 
 ### Technology Philosophy
 
-Angry Birdman is built using popular, well-supported open-source technologies to facilitate community collaboration and long-term maintainability. The stack prioritizes:
+Angry Birdman is built using popular, well-supported open-source technologies to
+facilitate community collaboration and long-term maintainability. The stack
+prioritizes:
 
 - **Developer Experience**: Modern tooling with excellent TypeScript support
-- **Performance**: Fast build times, efficient runtime, optimized user experience
+- **Performance**: Fast build times, efficient runtime, optimized user
+  experience
 - **Scalability**: Container-based deployment with optional orchestration
-- **Maintainability**: Clear architecture, consistent patterns, comprehensive testing
-- **Community**: Popular frameworks with large communities and extensive documentation
+- **Maintainability**: Clear architecture, consistent patterns, comprehensive
+  testing
+- **Community**: Popular frameworks with large communities and extensive
+  documentation
 
 ### Three-Tier Architecture
 
@@ -60,12 +65,14 @@ Angry Birdman is built using popular, well-supported open-source technologies to
 ### TypeScript-First Approach
 
 TypeScript is the primary development language across all layers:
+
 - **Frontend**: Full type safety in React components and business logic
 - **Backend**: Type-safe API routes, middleware, and business logic
 - **Common**: Shared types, validation schemas, and utility functions
 - **Database**: Type-safe database queries through Prisma
 
-This unified language approach enables code sharing, consistent patterns, and reduced context switching for developers.
+This unified language approach enables code sharing, consistent patterns, and
+reduced context switching for developers.
 
 ---
 
@@ -73,9 +80,11 @@ This unified language approach enables code sharing, consistent patterns, and re
 
 ### Core Framework: React 18+
 
-**Purpose**: User interface framework for building component-based web applications
+**Purpose**: User interface framework for building component-based web
+applications
 
 **Why React**:
+
 - Industry-standard with massive community and ecosystem
 - Component-based architecture aligns with design system approach
 - Excellent performance with virtual DOM and concurrent features
@@ -83,6 +92,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 - Hooks API enables clean, functional component patterns
 
 **Key Features Used**:
+
 - Functional components with Hooks (useState, useEffect, useCallback, useMemo)
 - Context API for global UI state (theme, authentication status)
 - Suspense for code splitting and lazy loading
@@ -93,6 +103,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 **Purpose**: Fast development server and optimized production bundler
 
 **Why Vite**:
+
 - Lightning-fast hot module replacement (HMR) during development
 - Native ES modules in development for instant server start
 - Optimized production builds using Rollup
@@ -100,6 +111,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 - Plugin ecosystem for extending functionality
 
 **Configuration Highlights**:
+
 - Code splitting by route for optimal loading
 - Tree shaking for minimal bundle sizes
 - Asset optimization (images, fonts, icons)
@@ -111,6 +123,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 **Purpose**: Type-safe JavaScript with enhanced developer experience
 
 **Why TypeScript**:
+
 - Catch errors at compile-time rather than runtime
 - Superior IDE support with autocomplete and refactoring
 - Self-documenting code through type annotations
@@ -118,6 +131,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 - Required for Prisma type generation
 
 **Configuration**:
+
 - Strict mode enabled for maximum type safety
 - Path aliases for clean imports (@/components, @/utils, etc.)
 - Shared types from common library
@@ -128,6 +142,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 **Purpose**: Server state synchronization and caching
 
 **Why React Query**:
+
 - Eliminates boilerplate for fetching, caching, and updating data
 - Automatic background refetching and cache invalidation
 - Optimistic updates for immediate user feedback
@@ -135,6 +150,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 - Request deduplication and retry logic
 
 **Usage Patterns**:
+
 - `useQuery` for fetching clan and battle data
 - `useMutation` for creating/updating battles and roster
 - Query invalidation after mutations for data consistency
@@ -145,6 +161,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 **Purpose**: Client-side routing and navigation
 
 **Why React Router**:
+
 - Industry standard for React applications
 - Declarative routing configuration
 - Nested routes for complex layouts
@@ -152,6 +169,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 - Search parameter and navigation state management
 
 **Route Structure**:
+
 ```
 /                           → Landing page
 /clans                      → Clan directory
@@ -172,6 +190,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 **Purpose**: Utility-first CSS framework for rapid UI development
 
 **Why Tailwind CSS**:
+
 - Utility classes enable fast, consistent styling
 - Design system tokens (colors, spacing, typography) defined in configuration
 - Responsive design with mobile-first breakpoints
@@ -179,6 +198,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 - No CSS naming conflicts or specificity issues
 
 **Configuration**:
+
 - Custom color palette matching brand identity
 - Typography scale defined in design system
 - Spacing system based on 8px grid
@@ -186,6 +206,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 - Dark mode support (future enhancement)
 
 **Plugin Ecosystem**:
+
 - `@tailwindcss/forms` for consistent form styling
 - `@tailwindcss/typography` for content-rich pages
 - Custom plugins for project-specific utilities
@@ -195,12 +216,14 @@ This unified language approach enables code sharing, consistent patterns, and re
 **Purpose**: Accessible, unstyled component primitives
 
 **Why Headless/Radix UI**:
+
 - Accessible by default (WCAG 2.1 AA compliance)
 - Unstyled components work perfectly with Tailwind
 - Keyboard navigation and focus management built-in
 - Comprehensive component library (dialogs, dropdowns, tabs, etc.)
 
 **Components Used**:
+
 - Dialog/Modal for confirmations and forms
 - Dropdown Menu for actions and navigation
 - Select for form inputs
@@ -212,12 +235,14 @@ This unified language approach enables code sharing, consistent patterns, and re
 **Purpose**: Interactive charts and data visualizations
 
 **Why Recharts**:
+
 - React-first charting library with composable API
 - Responsive charts that work across devices
 - Customizable styling to match design system
 - Touch-friendly interactions for mobile
 
 **Chart Types**:
+
 - Line charts for trend analysis (ratio over time)
 - Bar charts for comparative analysis (win/loss records)
 - Pie/donut charts for composition (participation rates)
@@ -228,6 +253,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 **Purpose**: Performant, flexible form validation and management
 
 **Why React Hook Form**:
+
 - Minimal re-renders for better performance
 - Simple API for complex forms
 - Integration with validation libraries (Zod)
@@ -235,6 +261,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 - Excellent TypeScript support
 
 **Usage in Battle Entry**:
+
 - Multi-step form with state preservation
 - Field-level validation with immediate feedback
 - Dynamic field arrays for player entries
@@ -245,6 +272,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 **Purpose**: TypeScript-first schema validation
 
 **Why Zod**:
+
 - Shared validation schemas between frontend and backend
 - Excellent TypeScript inference
 - Composable schemas for complex validation
@@ -252,6 +280,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 - Clear, customizable error messages
 
 **Shared Schemas**:
+
 - Battle data validation
 - Roster member validation
 - User registration validation
@@ -262,12 +291,14 @@ This unified language approach enables code sharing, consistent patterns, and re
 **Purpose**: HTTP requests to backend API
 
 **Why Fetch API**:
+
 - Native browser API, no additional dependencies
 - Modern, promise-based interface
 - Sufficient for REST API communication
 - Works seamlessly with React Query
 
 **Request Configuration**:
+
 - Base URL configuration per environment
 - JWT token injection for authenticated requests
 - Request/response interceptors for error handling
@@ -282,6 +313,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 **Purpose**: JavaScript runtime for server-side execution
 
 **Why Node.js**:
+
 - Same language (TypeScript) as frontend
 - Excellent performance for I/O-bound applications
 - Massive ecosystem of packages (npm)
@@ -289,6 +321,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 - Cross-platform (Windows, Linux, macOS)
 
 **Runtime Features**:
+
 - ES Modules for modern import/export syntax
 - Built-in test runner (supplemented with Vitest)
 - Performance hooks for monitoring
@@ -299,6 +332,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 **Purpose**: Fast, low-overhead web framework for building REST APIs
 
 **Why Fastify**:
+
 - Excellent performance (faster than Express)
 - Schema-based validation with JSON Schema
 - First-class TypeScript support
@@ -307,6 +341,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 - OpenAPI/Swagger documentation generation
 
 **Key Features**:
+
 - Request/response validation against schemas
 - Automatic serialization for performance
 - Lifecycle hooks for custom logic
@@ -314,6 +349,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 - Built-in testing utilities
 
 **Plugin Ecosystem**:
+
 - `@fastify/cors` for cross-origin resource sharing
 - `@fastify/helmet` for security headers
 - `@fastify/rate-limit` for API rate limiting
@@ -325,6 +361,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 **Purpose**: Standard, documented HTTP API
 
 **REST Principles**:
+
 - Resource-based URLs (`/clans/:clanId/battles`)
 - Standard HTTP methods (GET, POST, PUT, DELETE)
 - JSON request/response bodies
@@ -332,6 +369,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 - Stateless requests (state in JWT tokens)
 
 **OpenAPI Documentation**:
+
 - Auto-generated from Fastify schemas
 - Interactive API explorer (Swagger UI)
 - Request/response examples
@@ -343,6 +381,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 **Purpose**: Stateless authentication for API requests
 
 **Why JWT**:
+
 - Stateless, scalable authentication
 - Standard format (RFC 7519)
 - Contains user identity and claims
@@ -350,11 +389,13 @@ This unified language approach enables code sharing, consistent patterns, and re
 - Works across distributed systems
 
 **Token Structure**:
+
 - **Header**: Algorithm and token type
 - **Payload**: User ID, clan ID, role, expiration
 - **Signature**: Verifies token integrity
 
 **Token Lifecycle**:
+
 - Issued by Keycloak after successful authentication
 - Included in Authorization header (`Bearer <token>`)
 - Validated on each API request
@@ -366,6 +407,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 **Purpose**: Fast in-memory data store for session management
 
 **Why Valkey**:
+
 - Redis-compatible, open-source fork
 - Sub-millisecond latency for session lookups
 - Automatic expiration for session cleanup
@@ -373,6 +415,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 - Persistent storage options for durability
 
 **Usage**:
+
 - Session data storage (user preferences, draft battles)
 - Rate limiting counters
 - Cache for frequently accessed data
@@ -383,6 +426,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 **Purpose**: Type-safe JavaScript with enhanced developer experience
 
 **Backend-Specific Configuration**:
+
 - Node.js target for compatibility
 - CommonJS/ES Module interoperability
 - Strict mode for maximum safety
@@ -396,6 +440,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 ### Purpose: Shared Code Between Frontend and Backend
 
 **Why Common Library**:
+
 - Eliminates code duplication
 - Ensures consistency in business logic
 - Shared validation schemas (Zod)
@@ -405,30 +450,35 @@ This unified language approach enables code sharing, consistent patterns, and re
 ### Library Contents
 
 **Type Definitions**:
+
 - Data entity interfaces (Clan, Battle, Player, etc.)
 - API request/response types
 - Enum definitions (ActionCode, BattleResult)
 - Utility types for TypeScript magic
 
 **Validation Schemas** (Zod):
+
 - Battle data validation (matches Prisma schema)
 - Roster member validation
 - User registration validation
 - Query parameter validation
 
 **Business Logic**:
+
 - Ratio score calculations
 - Projected score calculations
 - Margin calculations
 - Monthly/yearly aggregation formulas
 
 **Utility Functions**:
+
 - Date formatting and manipulation
 - Number formatting (FP, scores, ratios)
 - Battle ID generation (YYYYMMDD format)
 - Month/Year ID generation
 
 **Constants**:
+
 - Action code definitions
 - Validation constraints (max FP, max players, etc.)
 - Default values
@@ -437,11 +487,13 @@ This unified language approach enables code sharing, consistent patterns, and re
 ### Distribution
 
 **Build Output**:
+
 - Compiled to JavaScript with TypeScript definitions
 - Separate builds for ES Modules and CommonJS
 - Tree-shakeable exports
 
 **Usage**:
+
 - Frontend imports: `import { calculateRatio } from '@angrybirdman/common'`
 - Backend imports: `import { validateBattle } from '@angrybirdman/common'`
 - Version synchronized across projects
@@ -455,6 +507,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 **Purpose**: Reliable, ACID-compliant relational database
 
 **Why PostgreSQL**:
+
 - Industry-leading open-source RDBMS
 - ACID compliance for data integrity
 - Rich data types (JSON, arrays, custom types)
@@ -463,6 +516,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 - Strong community and tooling
 
 **Key Features**:
+
 - Transactions for data consistency
 - Foreign keys for referential integrity
 - Indexes for query performance
@@ -471,6 +525,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 - Row-level security (optional enhancement)
 
 **Database Design**:
+
 - Normalized schema following data specifications
 - Composite primary keys where appropriate
 - Foreign key constraints for relationships
@@ -483,6 +538,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 **Purpose**: Type-safe database access layer
 
 **Why Prisma**:
+
 - Type-safe database queries (compile-time errors)
 - Excellent TypeScript integration
 - Declarative schema definition
@@ -491,6 +547,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 - Connection pooling built-in
 
 **Prisma Schema**:
+
 - Single source of truth for data model
 - Maps to PostgreSQL tables
 - Defines relationships between entities
@@ -498,6 +555,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 - Version controlled with migrations
 
 **Prisma Client**:
+
 - Auto-generated based on schema
 - Type-safe CRUD operations
 - Relation queries with eager/lazy loading
@@ -505,6 +563,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 - Raw SQL escape hatch when needed
 
 **Migrations**:
+
 - Version-controlled schema changes
 - Automatic migration generation from schema changes
 - Rollback capability for safe deployments
@@ -513,12 +572,14 @@ This unified language approach enables code sharing, consistent patterns, and re
 ### Data Access Patterns
 
 **Repository Pattern**:
+
 - Abstraction layer over Prisma Client
 - Business logic separated from data access
 - Reusable query functions
 - Easier testing with mocks
 
 **Query Optimization**:
+
 - Select only needed fields
 - Batch queries to reduce round-trips
 - Eager loading for related data
@@ -534,6 +595,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 **Purpose**: Enterprise-grade identity and access management
 
 **Why Keycloak**:
+
 - Open-source, mature IAM solution
 - OAuth 2.0 and OpenID Connect support
 - Built-in user management UI
@@ -542,6 +604,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 - Multi-factor authentication (future)
 
 **Keycloak Features**:
+
 - User registration and management
 - Password policies and validation
 - Email verification
@@ -550,6 +613,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 - Role-based access control
 
 **Integration with Angry Birdman**:
+
 - Backend validates JWT tokens from Keycloak
 - User roles stored in token claims
 - Frontend redirects to Keycloak for authentication
@@ -558,6 +622,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 ### Authentication Flow
 
 **Login Process**:
+
 1. User clicks "Sign In" on frontend
 2. Frontend redirects to Keycloak login page
 3. User enters credentials
@@ -567,6 +632,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 7. Frontend stores token and includes in API requests
 
 **Token Validation**:
+
 1. API receives request with JWT in Authorization header
 2. API validates token signature against Keycloak public key
 3. API checks token expiration
@@ -576,12 +642,14 @@ This unified language approach enables code sharing, consistent patterns, and re
 ### Authorization Model
 
 **Roles**:
+
 - **Anonymous**: Read-only access to all clan data
 - **Clan Admin**: Full access to their clan's data
 - **Clan Owner**: Admin access + ownership management
 - **Superadmin**: Full access to all clans and system settings
 
 **Permission Checks**:
+
 - Route-level authorization (e.g., `/admin/*` requires authentication)
 - Resource-level authorization (e.g., can only edit own clan)
 - Action-level authorization (e.g., only owners can transfer ownership)
@@ -595,6 +663,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 **Purpose**: Consistent, portable application packaging
 
 **Why Docker**:
+
 - Consistent environment across development, staging, production
 - Isolated dependencies per service
 - Easy local development setup
@@ -602,6 +671,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 - Extensive image registry (Docker Hub)
 
 **Dockerfiles**:
+
 - **Frontend**: Multi-stage build (build → serve with nginx)
 - **API**: Node.js with production dependencies only
 - **Database**: Official PostgreSQL image
@@ -609,6 +679,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 - **Valkey**: Official Redis/Valkey image
 
 **Image Optimization**:
+
 - Alpine Linux base images for smaller sizes
 - Multi-stage builds to exclude build tools
 - Layer caching for faster rebuilds
@@ -617,6 +688,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 ### Orchestration: Docker Compose (Local), Kubernetes (Production)
 
 **Docker Compose for Development**:
+
 - Single command to start entire stack (`docker-compose up`)
 - Service networking configured automatically
 - Volume mounts for hot-reloading
@@ -624,6 +696,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 - Easy scaling of services
 
 **Docker Compose Services**:
+
 - `frontend`: React application (port 3000)
 - `api`: Fastify backend (port 3001)
 - `database`: PostgreSQL (port 5432)
@@ -631,6 +704,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 - `valkey`: Session store (port 6379)
 
 **Kubernetes for Production** (Optional):
+
 - Horizontal pod autoscaling for load
 - Rolling deployments with zero downtime
 - Health checks and automatic restarts
@@ -642,6 +716,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 **Purpose**: Automated testing, building, and deployment
 
 **Why GitHub Actions**:
+
 - Integrated with GitHub (where code is hosted)
 - Free for public repositories
 - Extensive marketplace of actions
@@ -649,6 +724,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 - Matrix builds for multiple environments
 
 **Continuous Integration Workflow**:
+
 1. Trigger on push/pull request
 2. Install dependencies
 3. Run linters (ESLint, Prettier)
@@ -658,6 +734,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 7. Report status to GitHub
 
 **Continuous Deployment Workflow**:
+
 1. Trigger on push to main branch (or tag)
 2. Build Docker images
 3. Push images to registry
@@ -670,12 +747,14 @@ This unified language approach enables code sharing, consistent patterns, and re
 **Purpose**: Source code management and collaboration
 
 **Branching Strategy**:
+
 - `main`: Production-ready code
 - `develop`: Integration branch for features
 - `feature/*`: Individual feature branches
 - `hotfix/*`: Urgent production fixes
 
 **Commit Conventions**:
+
 - Conventional Commits format (`feat:`, `fix:`, `docs:`, etc.)
 - Small, focused commits
 - Descriptive commit messages
@@ -684,11 +763,13 @@ This unified language approach enables code sharing, consistent patterns, and re
 ### Environment Management
 
 **Environment Variables**:
+
 - `.env.local`: Local development overrides (not committed)
 - `.env.development`: Development defaults (committed)
 - `.env.production`: Production configuration (not committed, managed via CI/CD)
 
 **Configuration Per Environment**:
+
 - API URLs (localhost vs production)
 - Database connection strings
 - Keycloak configuration
@@ -702,6 +783,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 ### Code Editor: VS Code (Recommended)
 
 **Why VS Code**:
+
 - Excellent TypeScript support
 - Extensions for all stack technologies
 - Integrated terminal and debugging
@@ -709,6 +791,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 - Free and open-source
 
 **Recommended Extensions**:
+
 - ESLint for code linting
 - Prettier for code formatting
 - Prisma for schema editing
@@ -720,6 +803,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 **Purpose**: Enforce code quality and consistency
 
 **Configuration**:
+
 - TypeScript-aware rules
 - React-specific rules
 - Accessibility rules (eslint-plugin-jsx-a11y)
@@ -731,6 +815,7 @@ This unified language approach enables code sharing, consistent patterns, and re
 **Purpose**: Consistent code formatting
 
 **Configuration**:
+
 - Single quotes for strings
 - 2-space indentation
 - Semicolons required
@@ -742,12 +827,14 @@ This unified language approach enables code sharing, consistent patterns, and re
 **Purpose**: Dependency management and script running
 
 **Why npm**:
+
 - Default package manager for Node.js
 - Workspaces support for monorepo
 - Lock file for reproducible builds
 - Scripts for common tasks
 
 **Workspace Structure**:
+
 ```
 angrybirdman/
 ├── package.json              (root workspace)
@@ -770,6 +857,7 @@ angrybirdman/
 **Purpose**: Interactive API documentation
 
 **Features**:
+
 - Auto-generated from OpenAPI schema
 - Try-it-out functionality
 - Request/response examples
@@ -785,6 +873,7 @@ angrybirdman/
 **Purpose**: Application logging for debugging and monitoring
 
 **Pino Features**:
+
 - Extremely fast JSON logging
 - Structured log format
 - Log levels (trace, debug, info, warn, error, fatal)
@@ -792,6 +881,7 @@ angrybirdman/
 - Pretty printing for development
 
 **Log Structure**:
+
 ```json
 {
   "level": "info",
@@ -810,6 +900,7 @@ angrybirdman/
 **Purpose**: Real-time error monitoring and alerting
 
 **Why Sentry**:
+
 - Automatic error capture
 - Source map support for readable stack traces
 - User context for debugging
@@ -817,6 +908,7 @@ angrybirdman/
 - Release tracking
 
 **Integration**:
+
 - Frontend: React error boundary integration
 - Backend: Fastify plugin for error capture
 
@@ -825,18 +917,21 @@ angrybirdman/
 **Purpose**: Application and infrastructure metrics
 
 **Prometheus**:
+
 - Time-series metric storage
 - PromQL query language
 - Alerting based on metrics
 - Service discovery
 
 **Grafana**:
+
 - Metric visualization dashboards
 - Custom queries and graphs
 - Alert management UI
 - Dashboard sharing
 
 **Key Metrics**:
+
 - Request rate, duration, error rate
 - Database query performance
 - Memory and CPU usage
@@ -849,6 +944,7 @@ angrybirdman/
 ### API Architecture Patterns
 
 **Layered Architecture**:
+
 ```
 Routes (HTTP) → Controllers → Services → Repositories → Database
 ```
@@ -860,11 +956,13 @@ Routes (HTTP) → Controllers → Services → Repositories → Database
 - **Database**: Prisma + PostgreSQL
 
 **Dependency Injection**:
+
 - Services injected into controllers
 - Repositories injected into services
 - Easy testing with mocks
 
 **Error Handling**:
+
 - Custom error classes (NotFoundError, ValidationError, etc.)
 - Global error handler middleware
 - Consistent error response format
@@ -873,6 +971,7 @@ Routes (HTTP) → Controllers → Services → Repositories → Database
 ### Frontend Architecture Patterns
 
 **Component Organization**:
+
 ```
 components/
 ├── common/        (Shared, reusable components)
@@ -882,12 +981,14 @@ components/
 ```
 
 **State Management Strategy**:
+
 - Server state: React Query (battles, roster, analytics)
 - UI state: React Context + hooks (theme, modals, navigation)
 - Form state: React Hook Form (battle entry, roster management)
 - URL state: React Router (selected clan, filters, pagination)
 
 **Custom Hooks**:
+
 - `useAuth()`: Authentication state and actions
 - `useClan()`: Current clan context
 - `useBattles()`: Battle data fetching
@@ -895,11 +996,10 @@ components/
 
 ### Design Patterns
 
-**Repository Pattern**: Abstraction over data access
-**Factory Pattern**: Creating complex objects (battle summary)
-**Strategy Pattern**: Different calculation strategies
-**Observer Pattern**: Event-driven updates (React Query invalidation)
-**Singleton Pattern**: Database connection, logger instances
+**Repository Pattern**: Abstraction over data access **Factory Pattern**:
+Creating complex objects (battle summary) **Strategy Pattern**: Different
+calculation strategies **Observer Pattern**: Event-driven updates (React Query
+invalidation) **Singleton Pattern**: Database connection, logger instances
 
 ---
 
@@ -910,6 +1010,7 @@ components/
 **Purpose**: Encrypted communication between client and server
 
 **Implementation**:
+
 - Let's Encrypt certificates for production
 - Self-signed certificates for development
 - Automatic certificate renewal
@@ -920,6 +1021,7 @@ components/
 **Purpose**: Set security-related HTTP headers
 
 **Headers Set**:
+
 - Content Security Policy (CSP)
 - X-Frame-Options (prevent clickjacking)
 - X-Content-Type-Options (prevent MIME sniffing)
@@ -931,6 +1033,7 @@ components/
 **Purpose**: Control cross-origin resource sharing
 
 **Configuration**:
+
 - Allow specific origins (frontend URLs)
 - Allow credentials (cookies, auth headers)
 - Allowed methods (GET, POST, PUT, DELETE)
@@ -941,6 +1044,7 @@ components/
 **Purpose**: Prevent abuse and DDoS attacks
 
 **Configuration**:
+
 - Global rate limit (e.g., 100 requests per minute)
 - Stricter limits for authentication endpoints
 - Per-IP address tracking
@@ -951,6 +1055,7 @@ components/
 **Purpose**: Prevent injection attacks and invalid data
 
 **Implementation**:
+
 - Schema validation with Zod (frontend and backend)
 - Parameterized queries via Prisma (SQL injection prevention)
 - HTML sanitization for user-generated content
@@ -961,6 +1066,7 @@ components/
 **Purpose**: Protect user credentials
 
 **Implementation** (via Keycloak):
+
 - Bcrypt hashing with salt
 - Minimum password strength requirements
 - Password history to prevent reuse
@@ -978,18 +1084,21 @@ components/
 **Purpose**: Test individual components and functions
 
 **What to Test**:
+
 - Component rendering and behavior
 - User interactions (clicks, form input)
 - Utility functions and calculations
 - Custom hooks
 
 **Testing Approach**:
+
 - Render components with React Testing Library
 - Query elements by accessible role/text
 - Simulate user events (click, type, submit)
 - Assert expected behavior and output
 
 **Example Test**:
+
 ```typescript
 test('calculates ratio score correctly', () => {
   const ratio = calculateRatio(1000, 100);
@@ -998,6 +1107,7 @@ test('calculates ratio score correctly', () => {
 ```
 
 **Integration Testing**:
+
 - Test component interactions
 - Test routing and navigation
 - Test React Query integration
@@ -1010,30 +1120,34 @@ test('calculates ratio score correctly', () => {
 **Purpose**: Test services, repositories, and utilities
 
 **What to Test**:
+
 - Service business logic
 - Data transformation functions
 - Calculation functions
 - Error handling
 
 **Integration Testing**:
+
 - Test API routes end-to-end
 - Test database operations with test database
 - Test authentication middleware
 - Test error handling middleware
 
 **Testing Utilities**:
+
 - Fastify inject for HTTP testing (no server needed)
 - Prisma test database with migrations
 - Factory functions for test data
 
 **Example Test**:
+
 ```typescript
 test('POST /clans/:clanId/battles creates battle', async () => {
   const response = await app.inject({
     method: 'POST',
     url: '/clans/1/battles',
     headers: { authorization: `Bearer ${token}` },
-    payload: battleData
+    payload: battleData,
   });
   expect(response.statusCode).toBe(201);
   expect(response.json()).toMatchObject({ battleId: '20251101' });
@@ -1045,12 +1159,14 @@ test('POST /clans/:clanId/battles creates battle', async () => {
 **Purpose**: Test complete user flows across frontend and backend
 
 **What to Test**:
+
 - Authentication flow
 - Battle entry workflow
 - Roster management workflow
 - Data viewing and navigation
 
 **Testing Approach**:
+
 - Real browser automation (Chromium, Firefox, WebKit)
 - Visual regression testing
 - Accessibility testing
@@ -1059,12 +1175,14 @@ test('POST /clans/:clanId/battles creates battle', async () => {
 ### Test Coverage Goals
 
 **Coverage Targets**:
+
 - Overall: 80%+ coverage
 - Critical paths (battle entry, calculations): 95%+
 - Services and repositories: 90%+
 - UI components: 70%+ (focus on behavior, not markup)
 
 **Continuous Integration**:
+
 - Run tests on every commit
 - Block merges if tests fail
 - Report coverage in pull requests
@@ -1076,22 +1194,23 @@ test('POST /clans/:clanId/battles creates battle', async () => {
 
 ### Version Requirements
 
-| Technology | Minimum Version | Recommended Version |
-|:-----------|:---------------:|:-------------------:|
-| Node.js | 20.0.0 | 20.x LTS (latest) |
-| TypeScript | 5.0.0 | 5.3+ |
-| React | 18.0.0 | 18.2+ |
-| Vite | 5.0.0 | 5.0+ |
-| Fastify | 4.0.0 | 4.24+ |
-| Prisma | 5.0.0 | 5.6+ |
-| PostgreSQL | 15.0 | 15.5+ or 16.x |
-| Keycloak | 23.0.0 | 23.0+ |
-| Docker | 24.0.0 | 24.0+ |
-| Valkey | 7.2.0 | 7.2+ (Redis 7.2+ compatible) |
+| Technology | Minimum Version |     Recommended Version      |
+| :--------- | :-------------: | :--------------------------: |
+| Node.js    |     20.0.0      |      20.x LTS (latest)       |
+| TypeScript |      5.0.0      |             5.3+             |
+| React      |     18.0.0      |            18.2+             |
+| Vite       |      5.0.0      |             5.0+             |
+| Fastify    |      4.0.0      |            4.24+             |
+| Prisma     |      5.0.0      |             5.6+             |
+| PostgreSQL |      15.0       |        15.5+ or 16.x         |
+| Keycloak   |     23.0.0      |            23.0+             |
+| Docker     |     24.0.0      |            24.0+             |
+| Valkey     |      7.2.0      | 7.2+ (Redis 7.2+ compatible) |
 
 ### Browser Support
 
 **Target Browsers**:
+
 - Chrome/Edge: Last 2 versions
 - Firefox: Last 2 versions
 - Safari: Last 2 versions
@@ -1099,6 +1218,7 @@ test('POST /clans/:clanId/battles creates battle', async () => {
 - Chrome Mobile: Android 10+
 
 **Progressive Enhancement**:
+
 - Core functionality works in all modern browsers
 - Enhanced features for browsers with latest APIs
 - Graceful degradation for older browsers
@@ -1106,11 +1226,13 @@ test('POST /clans/:clanId/battles creates battle', async () => {
 ### Operating System Compatibility
 
 **Development**:
+
 - **Windows**: 10/11 with WSL2 recommended for Docker
 - **macOS**: 12 (Monterey) or later
 - **Linux**: Ubuntu 22.04+, Debian 11+, Fedora 37+, or compatible
 
 **Production**:
+
 - Linux-based containers (Alpine, Ubuntu)
 - Kubernetes on any cloud provider
 - Docker Swarm as alternative
@@ -1122,12 +1244,14 @@ test('POST /clans/:clanId/battles creates battle', async () => {
 ### Environment Requirements
 
 **Development**:
+
 - 8GB RAM minimum, 16GB recommended
 - Multi-core CPU for fast builds
 - SSD storage for Node.js dependencies
 - Docker Desktop or Docker Engine
 
 **Production** (estimated for small-medium clans):
+
 - Frontend: Static files on CDN/nginx (minimal resources)
 - API: 2 CPU cores, 4GB RAM per instance
 - Database: 2 CPU cores, 8GB RAM, SSD storage
@@ -1137,17 +1261,20 @@ test('POST /clans/:clanId/battles creates battle', async () => {
 ### Scalability Strategy
 
 **Horizontal Scaling**:
+
 - Multiple API instances behind load balancer
 - Stateless API design enables easy scaling
 - Session state in Valkey (shared across instances)
 - Database connection pooling
 
 **Vertical Scaling**:
+
 - Database can scale to larger instances
 - Caching reduces database load
 - Read replicas for analytics queries (future)
 
 **Performance Optimization**:
+
 - Frontend: CDN for static assets, code splitting, lazy loading
 - API: Response caching, query optimization, connection pooling
 - Database: Indexes, query optimization, partitioning (if needed)
@@ -1159,24 +1286,28 @@ test('POST /clans/:clanId/battles creates battle', async () => {
 ### Potential Enhancements
 
 **Real-time Features** (WebSockets):
+
 - Live battle updates during entry
 - Real-time notifications
 - Collaborative features
 - Technology: Socket.IO or native WebSockets
 
 **Mobile Applications** (React Native):
+
 - Native iOS and Android apps
 - Shared React components with web
 - Optimized mobile data entry
 - Push notifications
 
 **Advanced Analytics** (Machine Learning):
+
 - Predictive analytics for clan performance
 - Player performance trends and predictions
 - Matchup difficulty prediction
 - Technology: Python + scikit-learn or TensorFlow
 
 **Social Features**:
+
 - User profiles and achievements
 - Clan-to-clan messaging
 - Leaderboards and competitions
@@ -1185,6 +1316,7 @@ test('POST /clans/:clanId/battles creates battle', async () => {
 ### Technology Migration Paths
 
 **If needs change**, the architecture supports:
+
 - GraphQL API (in addition to or instead of REST)
 - Alternative frontend frameworks (Vue, Svelte) - API unchanged
 - Microservices architecture - split API into smaller services
@@ -1194,7 +1326,8 @@ test('POST /clans/:clanId/battles creates battle', async () => {
 
 ## Conclusion
 
-This technology stack provides a modern, scalable, and maintainable foundation for Angry Birdman. The choices prioritize:
+This technology stack provides a modern, scalable, and maintainable foundation
+for Angry Birdman. The choices prioritize:
 
 - **Developer experience** with TypeScript throughout
 - **Performance** with Vite, Fastify, and Valkey
@@ -1203,4 +1336,5 @@ This technology stack provides a modern, scalable, and maintainable foundation f
 - **Maintainability** with testing, linting, and documentation
 - **Community** with popular, well-supported technologies
 
-The stack is proven in production environments, has excellent documentation and community support, and provides clear paths for future enhancements and scaling.
+The stack is proven in production environments, has excellent documentation and
+community support, and provides clear paths for future enhancements and scaling.

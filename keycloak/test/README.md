@@ -1,24 +1,30 @@
 # Keycloak Testing
 
-This directory contains test scripts and utilities for validating the Keycloak configuration for Angry Birdman.
+This directory contains test scripts and utilities for validating the Keycloak
+configuration for Angry Birdman.
 
 ## Files
 
-- **test-auth.js** - Node.js script to test authentication flows programmatically
+- **test-auth.js** - Node.js script to test authentication flows
+  programmatically
 - **create-test-users.sh** - Bash script to automatically create test users
 - **README.md** - This file
 
 ## Creating Test Users
 
-An automated script is provided to create all test users with proper roles, passwords, and attributes.
+An automated script is provided to create all test users with proper roles,
+passwords, and attributes.
 
 **Prerequisites**:
-1. Create a file `keycloak/config/.adminpwd` containing your Keycloak admin password:
+
+1. Create a file `keycloak/config/.adminpwd` containing your Keycloak admin
+   password:
+
    ```bash
    echo 'your-admin-password-here' > keycloak/config/.adminpwd
    chmod 600 keycloak/config/.adminpwd
    ```
-   
+
    Note: This file is excluded from version control via `.gitignore`
 
 2. Ensure Keycloak is running:
@@ -27,6 +33,7 @@ An automated script is provided to create all test users with proper roles, pass
    ```
 
 **Run the script**:
+
 ```bash
 cd /path/to/angrybirdman
 ./keycloak/test/create-test-users.sh
@@ -34,17 +41,19 @@ cd /path/to/angrybirdman
 
 The script will automatically create these test users:
 
-| Username | Email | First Name | Last Name | Password | Role | Clan ID |
-|----------|-------|------------|-----------|----------|------|---------|
-| testsuperadmin | superadmin@angrybirdman.test | Super | Admin | SuperAdmin123! | superadmin | (none) |
-| testowner | owner@angrybirdman.test | Clan | Owner | ClanOwner123! | clan-owner | 1 |
-| testadmin | admin@angrybirdman.test | Clan | Admin | ClanAdmin123! | clan-admin | 1 |
-| testuser | user@angrybirdman.test | Test | User | TestUser123! | user | 1 |
-| testowner2 | owner2@angrybirdman.test | Clan2 | Owner | ClanOwner2123! | clan-owner | 2 |
+| Username       | Email                        | First Name | Last Name | Password       | Role       | Clan ID |
+| -------------- | ---------------------------- | ---------- | --------- | -------------- | ---------- | ------- |
+| testsuperadmin | superadmin@angrybirdman.test | Super      | Admin     | SuperAdmin123! | superadmin | (none)  |
+| testowner      | owner@angrybirdman.test      | Clan       | Owner     | ClanOwner123!  | clan-owner | 1       |
+| testadmin      | admin@angrybirdman.test      | Clan       | Admin     | ClanAdmin123!  | clan-admin | 1       |
+| testuser       | user@angrybirdman.test       | Test       | User      | TestUser123!   | user       | 1       |
+| testowner2     | owner2@angrybirdman.test     | Clan2      | Owner     | ClanOwner2123! | clan-owner | 2       |
 
-**Note**: Clan IDs 1 and 2 correspond to the "Angry Avengers" and "Feather Fury" clans from the database seed data.
+**Note**: Clan IDs 1 and 2 correspond to the "Angry Avengers" and "Feather Fury"
+clans from the database seed data.
 
 The script will:
+
 - Authenticate using the admin password from `.adminpwd`
 - Create each user with all required attributes
 - Set passwords (non-temporary)
@@ -85,7 +94,8 @@ Decode the JWT token at https://jwt.io to inspect claims.
 
 ## Expected JWT Claims
 
-When testing authentication, verify these claims are present in the access token:
+When testing authentication, verify these claims are present in the access
+token:
 
 - **sub** - User ID (UUID from Keycloak)
 - **preferred_username** - Username
@@ -113,7 +123,8 @@ When testing authentication, verify these claims are present in the access token
 
 To test the self-registration flow:
 
-1. Navigate to http://localhost:8080/realms/angrybirdman/protocol/openid-connect/auth?client_id=angrybirdman-frontend&redirect_uri=http://localhost:3000&response_type=code&scope=openid
+1. Navigate to
+   http://localhost:8080/realms/angrybirdman/protocol/openid-connect/auth?client_id=angrybirdman-frontend&redirect_uri=http://localhost:3000&response_type=code&scope=openid
 2. Click "Register" at the bottom of the login form
 3. Fill in registration details
 4. Complete registration
@@ -124,7 +135,8 @@ To test the self-registration flow:
 
 ### "Client not allowed for direct access grants"
 
-If you see this error, ensure the `angrybirdman-frontend` client has "Direct access grants" enabled:
+If you see this error, ensure the `angrybirdman-frontend` client has "Direct
+access grants" enabled:
 
 1. Go to **Clients** → **angrybirdman-frontend** → **Settings** tab
 2. Enable **Direct access grants**
@@ -148,6 +160,8 @@ Once testing is complete, the frontend and API applications will:
 
 1. **Frontend**: Use Authorization Code flow with PKCE for user authentication
 2. **API**: Validate JWT tokens in the Authorization header
-3. **Both**: Extract user ID, roles, and clanId from token claims for authorization
+3. **Both**: Extract user ID, roles, and clanId from token claims for
+   authorization
 
-The direct access grants flow used in testing is **for development/testing only** and should not be used in production.
+The direct access grants flow used in testing is **for development/testing
+only** and should not be used in production.

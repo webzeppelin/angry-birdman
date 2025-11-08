@@ -18,9 +18,12 @@
 
 ### Implementation Strategy
 
-This implementation plan follows a systematic approach to building Angry Birdman in three functional phases, each delivering value to users while building upon previous work. The plan emphasizes:
+This implementation plan follows a systematic approach to building Angry Birdman
+in three functional phases, each delivering value to users while building upon
+previous work. The plan emphasizes:
 
-- **Infrastructure-first approach**: Set up all dependencies and tooling before coding
+- **Infrastructure-first approach**: Set up all dependencies and tooling before
+  coding
 - **Incremental delivery**: Each phase produces working functionality
 - **Test-driven development**: Write tests alongside implementation
 - **Documentation as code**: Maintain documentation throughout development
@@ -28,6 +31,7 @@ This implementation plan follows a systematic approach to building Angry Birdman
 ### Technology Dependencies
 
 The implementation requires the following external services running locally:
+
 - **PostgreSQL 15+**: Primary database for application data
 - **Valkey/Redis**: Session storage and caching
 - **Keycloak 23+**: Identity provider for authentication
@@ -36,6 +40,7 @@ The implementation requires the following external services running locally:
 ### Success Criteria
 
 Each phase completion is measured by:
+
 - All user stories implemented and tested
 - API endpoints documented and functional
 - Frontend components responsive and accessible
@@ -48,17 +53,21 @@ Each phase completion is measured by:
 
 ### 2.1 Docker Infrastructure Setup
 
-**Purpose**: Establish containerized local development environment with all required services
+**Purpose**: Establish containerized local development environment with all
+required services
 
 **Scope**:
+
 - Create Docker Compose configuration for multi-service environment
-- Configure PostgreSQL with persistent data volumes and initial database creation
+- Configure PostgreSQL with persistent data volumes and initial database
+  creation
 - Configure Keycloak with PostgreSQL backend and custom realm setup
 - Configure Valkey instance with appropriate memory limits and persistence
 - Set up networking between services with proper port exposure
 - Create environment variable templates for service configuration
 
 **Key Deliverables**:
+
 - `docker-compose.yml` with all service definitions
 - `docker-compose.override.yml` for local development customizations
 - `.env.example` template with required environment variables
@@ -66,6 +75,7 @@ Each phase completion is measured by:
 - Keycloak realm configuration with initial admin user
 
 **Validation Steps**:
+
 - All services start successfully with `docker-compose up`
 - PostgreSQL accepts connections and creates application database
 - Keycloak admin console accessible with master realm configured
@@ -74,9 +84,11 @@ Each phase completion is measured by:
 
 ### 2.2 Database Schema Implementation
 
-**Purpose**: Create PostgreSQL database schema matching specification requirements
+**Purpose**: Create PostgreSQL database schema matching specification
+requirements
 
 **Scope**:
+
 - Implement Prisma schema file defining all data entities from specification
 - Create initial migration files for database structure
 - Set up database seeding scripts with sample data for development
@@ -84,6 +96,7 @@ Each phase completion is measured by:
 - Implement database backup and restore procedures for development
 
 **Key Deliverables**:
+
 - `prisma/schema.prisma` with complete data model
 - Initial migration files in `prisma/migrations/`
 - Seed scripts with sample clans, users, and battle data
@@ -91,6 +104,7 @@ Each phase completion is measured by:
 - Development data reset and restore scripts
 
 **Validation Steps**:
+
 - Prisma schema validates without errors
 - Database migrations run successfully
 - Seed data populates all tables with relationships intact
@@ -102,6 +116,7 @@ Each phase completion is measured by:
 **Purpose**: Configure identity provider for authentication and user management
 
 **Scope**:
+
 - Create custom Keycloak realm for Angry Birdman
 - Configure OAuth2/OpenID Connect client for frontend authentication
 - Set up JWT token configuration with appropriate claims and expiration
@@ -109,6 +124,7 @@ Each phase completion is measured by:
 - Configure password policies and user registration flows
 
 **Key Deliverables**:
+
 - Keycloak realm export with complete configuration
 - Client configuration for frontend OAuth flow
 - Role and group definitions matching application requirements
@@ -116,6 +132,7 @@ Each phase completion is measured by:
 - Integration test scripts for authentication flows
 
 **Validation Steps**:
+
 - Keycloak realm accessible and properly configured
 - User registration flow works end-to-end
 - JWT tokens contain required claims (user ID, clan ID, roles)
@@ -128,16 +145,21 @@ Each phase completion is measured by:
 
 ### 3.1 Monorepo Setup
 
-**Purpose**: Create organized project structure supporting frontend, backend, and common library
+**Purpose**: Create organized project structure supporting frontend, backend,
+and common library
 
 **Scope**:
+
 - Initialize npm workspace at project root with package.json configuration
-- Create directory structure for all project components (frontend/, api/, common/, database/)
-- Set up shared configuration files for TypeScript, ESLint, Prettier across workspaces
+- Create directory structure for all project components (frontend/, api/,
+  common/, database/)
+- Set up shared configuration files for TypeScript, ESLint, Prettier across
+  workspaces
 - Configure path aliases and module resolution for clean imports
 - Set up Git hooks for automated linting and formatting
 
 **Key Deliverables**:
+
 - Root `package.json` with workspace configuration
 - Directory structure following specification guidelines
 - Shared configuration files (tsconfig.json, .eslintrc.js, .prettierrc)
@@ -145,6 +167,7 @@ Each phase completion is measured by:
 - VS Code workspace settings and recommended extensions
 
 **Validation Steps**:
+
 - npm workspace commands work correctly across all packages
 - TypeScript compilation succeeds in all workspaces
 - Linting and formatting rules enforce consistently
@@ -153,9 +176,11 @@ Each phase completion is measured by:
 
 ### 3.2 Common Library Foundation
 
-**Purpose**: Create shared TypeScript library for types, validation, and business logic
+**Purpose**: Create shared TypeScript library for types, validation, and
+business logic
 
 **Scope**:
+
 - Set up TypeScript build configuration for library compilation
 - Implement core type definitions matching Prisma schema
 - Create Zod validation schemas for all data entities
@@ -163,6 +188,7 @@ Each phase completion is measured by:
 - Set up automated testing for shared utilities
 
 **Key Deliverables**:
+
 - `common/src/types/` with complete type definitions
 - `common/src/schemas/` with Zod validation schemas
 - `common/src/utils/` with calculation and formatting functions
@@ -170,6 +196,7 @@ Each phase completion is measured by:
 - Comprehensive test suite for all common library functions
 
 **Validation Steps**:
+
 - Common library builds successfully to JavaScript with type definitions
 - Type definitions match Prisma-generated types exactly
 - Validation schemas correctly validate test data
@@ -181,6 +208,7 @@ Each phase completion is measured by:
 **Purpose**: Initialize Fastify-based REST API with core infrastructure
 
 **Scope**:
+
 - Set up Fastify application with TypeScript and essential plugins
 - Configure database connection using Prisma Client
 - Implement authentication middleware for JWT validation
@@ -188,6 +216,7 @@ Each phase completion is measured by:
 - Create error handling middleware and logging configuration
 
 **Key Deliverables**:
+
 - `api/src/app.ts` with configured Fastify application
 - `api/src/plugins/` with database, auth, and other essential plugins
 - `api/src/middleware/` with authentication and error handling
@@ -195,6 +224,7 @@ Each phase completion is measured by:
 - Basic health check and API documentation endpoints
 
 **Validation Steps**:
+
 - API server starts successfully and responds to health checks
 - Database connection establishes and Prisma queries work
 - JWT authentication middleware validates tokens correctly
@@ -203,9 +233,11 @@ Each phase completion is measured by:
 
 ### 3.4 Frontend Foundation Setup
 
-**Purpose**: Initialize React application with routing and authentication scaffolding
+**Purpose**: Initialize React application with routing and authentication
+scaffolding
 
 **Scope**:
+
 - Set up Vite-based React application with TypeScript configuration
 - Configure Tailwind CSS with custom design system tokens
 - Implement React Router with route structure matching specification
@@ -213,6 +245,7 @@ Each phase completion is measured by:
 - Create authentication context and protected route components
 
 **Key Deliverables**:
+
 - `frontend/src/App.tsx` with router and global providers
 - `frontend/src/components/` with layout and authentication components
 - `frontend/src/pages/` with route components for all major sections
@@ -220,6 +253,7 @@ Each phase completion is measured by:
 - `frontend/src/styles/` with Tailwind configuration and custom styles
 
 **Validation Steps**:
+
 - React application builds and runs in development mode
 - All routes render without errors and navigation works
 - Tailwind CSS applies styles correctly with custom tokens
@@ -235,6 +269,7 @@ Each phase completion is measured by:
 **Purpose**: Establish comprehensive testing capabilities across all components
 
 **Scope**:
+
 - Configure Vitest for unit and integration testing in all workspaces
 - Set up React Testing Library for frontend component testing
 - Configure test databases and cleanup procedures for API testing
@@ -242,6 +277,7 @@ Each phase completion is measured by:
 - Set up code coverage reporting and quality gates
 
 **Key Deliverables**:
+
 - `vitest.config.ts` files in each workspace with appropriate configurations
 - Test utilities and helpers for common testing patterns
 - Database testing setup with isolated test instances
@@ -249,6 +285,7 @@ Each phase completion is measured by:
 - Coverage reporting configuration with minimum thresholds
 
 **Validation Steps**:
+
 - All test suites run successfully with proper isolation
 - Coverage reports generate accurately for all workspaces
 - API tests use isolated database instances without affecting development data
@@ -260,6 +297,7 @@ Each phase completion is measured by:
 **Purpose**: Implement automated code quality checks and enforcement
 
 **Scope**:
+
 - Configure ESLint with TypeScript and React-specific rules
 - Set up Prettier for consistent code formatting across all files
 - Implement automated import sorting and unused import removal
@@ -267,6 +305,7 @@ Each phase completion is measured by:
 - Set up IDE integration for real-time feedback
 
 **Key Deliverables**:
+
 - ESLint configuration with comprehensive rule sets
 - Prettier configuration integrated with Tailwind CSS plugin
 - Git hooks for automated quality checks
@@ -274,6 +313,7 @@ Each phase completion is measured by:
 - GitHub Actions workflow for continuous integration
 
 **Validation Steps**:
+
 - Linting catches common errors and enforces style consistency
 - Formatting applies consistently across all file types
 - Git commits are blocked if quality checks fail
@@ -285,6 +325,7 @@ Each phase completion is measured by:
 **Purpose**: Create efficient development workflows and automation scripts
 
 **Scope**:
+
 - Create npm scripts for common development tasks (start, build, test, lint)
 - Implement database management scripts (reset, seed, migrate)
 - Set up hot-reloading and watch modes for rapid development
@@ -292,6 +333,7 @@ Each phase completion is measured by:
 - Implement automated dependency updates and security scanning
 
 **Key Deliverables**:
+
 - Comprehensive npm scripts in all package.json files
 - Database management utilities for development workflows
 - Development server configuration with hot-reloading
@@ -299,6 +341,7 @@ Each phase completion is measured by:
 - Security scanning and dependency update workflows
 
 **Validation Steps**:
+
 - All npm scripts execute successfully and provide expected functionality
 - Database operations complete without errors and maintain data integrity
 - Hot-reloading works correctly for both frontend and backend changes
@@ -316,13 +359,16 @@ Each phase completion is measured by:
 **Purpose**: Create welcoming entry point showcasing system capabilities
 
 **Scope**:
-- Design and implement responsive landing page with hero section and feature highlights
+
+- Design and implement responsive landing page with hero section and feature
+  highlights
 - Create clan selector component for browsing available clans
 - Implement call-to-action buttons for sign-in and clan browsing
 - Add About page with system information and help content
 - Ensure mobile-first responsive design
 
 **Key Deliverables**:
+
 - `LandingPage.tsx` component with hero and feature sections
 - `ClanSelector.tsx` component with search and filtering
 - `AboutPage.tsx` with system documentation
@@ -330,6 +376,7 @@ Each phase completion is measured by:
 - SEO optimization with proper meta tags
 
 **API Requirements**:
+
 - `GET /api/clans` endpoint for clan directory listing
 - Response filtering by name and country
 - Pagination support for large clan lists
@@ -339,6 +386,7 @@ Each phase completion is measured by:
 **Purpose**: Implement consistent navigation across all pages
 
 **Scope**:
+
 - Create header component with logo, navigation menu, and authentication status
 - Implement responsive hamburger menu for mobile devices
 - Add breadcrumb navigation for deep page hierarchies
@@ -346,6 +394,7 @@ Each phase completion is measured by:
 - Implement keyboard navigation support
 
 **Key Deliverables**:
+
 - `Header.tsx` component with navigation and auth status
 - `Navigation.tsx` component with mobile-responsive menu
 - `Breadcrumbs.tsx` component for hierarchical navigation
@@ -353,6 +402,7 @@ Each phase completion is measured by:
 - Keyboard accessibility implementation
 
 **Technical Requirements**:
+
 - Navigation state management using React Context
 - Route-based active link highlighting
 - Accessibility compliance (WCAG 2.1 AA)
@@ -362,6 +412,7 @@ Each phase completion is measured by:
 **Purpose**: Integrate Keycloak authentication with frontend and backend
 
 **Scope**:
+
 - Implement OAuth2/OpenID Connect flow with Keycloak
 - Create authentication context and hooks for React application
 - Add JWT token validation middleware for API routes
@@ -369,6 +420,7 @@ Each phase completion is measured by:
 - Create protected route components for admin areas
 
 **Key Deliverables**:
+
 - `AuthProvider.tsx` context with authentication state
 - `useAuth.tsx` hook for authentication operations
 - JWT validation middleware for API (`auth.middleware.ts`)
@@ -376,6 +428,7 @@ Each phase completion is measured by:
 - Authentication error handling and user feedback
 
 **API Requirements**:
+
 - Token validation endpoint for client-side auth checks
 - User profile endpoint returning user details and permissions
 - Refresh token handling for session renewal
@@ -387,6 +440,7 @@ Each phase completion is measured by:
 **Purpose**: Enable user account creation and management
 
 **Scope**:
+
 - Create user registration form with clan association options
 - Implement user profile viewing and editing capabilities
 - Add password change and reset functionality
@@ -394,6 +448,7 @@ Each phase completion is measured by:
 - Implement form validation and error handling
 
 **Key Deliverables**:
+
 - `RegisterPage.tsx` with multi-step registration form
 - `ProfilePage.tsx` for viewing and editing user information
 - `PasswordChangePage.tsx` for secure password updates
@@ -401,6 +456,7 @@ Each phase completion is measured by:
 - Email verification integration (if Keycloak configured)
 
 **API Requirements**:
+
 - User registration endpoint with validation
 - Profile management endpoints (GET, PUT)
 - Password change endpoint with security validation
@@ -411,6 +467,7 @@ Each phase completion is measured by:
 **Purpose**: Provide clan administration capabilities
 
 **Scope**:
+
 - Create clan profile viewing and editing interface
 - Implement admin user management (promote, demote, remove)
 - Add clan deactivation capabilities for owners
@@ -418,6 +475,7 @@ Each phase completion is measured by:
 - Implement audit logging for administrative actions
 
 **Key Deliverables**:
+
 - `ClanProfilePage.tsx` for clan information management
 - `AdminManagementPage.tsx` for user administration
 - `AdminRequestsPage.tsx` for request approval workflow
@@ -425,6 +483,7 @@ Each phase completion is measured by:
 - Activity logging and audit trail display
 
 **API Requirements**:
+
 - Clan profile endpoints (GET, PUT) with owner authorization
 - Admin management endpoints (promote, demote, remove users)
 - Admin request endpoints (list, approve, reject)
@@ -435,6 +494,7 @@ Each phase completion is measured by:
 **Purpose**: Provide system-wide administration capabilities
 
 **Scope**:
+
 - Create global user management interface for superadmins
 - Implement system-wide audit log viewing
 - Add clan management capabilities across all clans
@@ -442,6 +502,7 @@ Each phase completion is measured by:
 - Implement advanced filtering and search capabilities
 
 **Key Deliverables**:
+
 - `SuperadminDashboard.tsx` with system overview
 - `GlobalUserManagement.tsx` for cross-clan user administration
 - `SystemAuditLog.tsx` for comprehensive activity tracking
@@ -449,6 +510,7 @@ Each phase completion is measured by:
 - Bulk operations for user management
 
 **API Requirements**:
+
 - Global user listing and management endpoints
 - Cross-clan data access with superadmin authorization
 - System audit log endpoints with filtering and pagination
@@ -461,6 +523,7 @@ Each phase completion is measured by:
 **Purpose**: Implement fundamental roster management capabilities
 
 **Scope**:
+
 - Create roster listing page with active and inactive players
 - Implement add player functionality with form validation
 - Add player information editing capabilities
@@ -468,6 +531,7 @@ Each phase completion is measured by:
 - Implement search and filtering for large rosters
 
 **Key Deliverables**:
+
 - `RosterPage.tsx` with comprehensive player listing
 - `AddPlayerForm.tsx` for new player addition
 - `EditPlayerForm.tsx` for player information updates
@@ -475,6 +539,7 @@ Each phase completion is measured by:
 - Search and filter components for roster management
 
 **API Requirements**:
+
 - Roster endpoints (GET, POST, PUT) with clan-scoped access
 - Player search and filtering with query parameters
 - Player validation ensuring unique names within clan
@@ -485,6 +550,7 @@ Each phase completion is measured by:
 **Purpose**: Track player membership changes and status transitions
 
 **Scope**:
+
 - Implement player departure recording (left voluntarily)
 - Add player kick recording with reason tracking
 - Create player reactivation functionality
@@ -492,6 +558,7 @@ Each phase completion is measured by:
 - Add confirmation dialogs for destructive actions
 
 **Key Deliverables**:
+
 - `PlayerStatusActions.tsx` for status change operations
 - `PlayerHistoryPage.tsx` for individual player tracking
 - Status change confirmation dialogs
@@ -499,12 +566,14 @@ Each phase completion is measured by:
 - Bulk status operations for multiple players
 
 **API Requirements**:
+
 - Player status change endpoints (left, kicked, reactivated)
 - Player history endpoints with status change tracking
 - Validation ensuring proper status transitions
 - Activity logging for all status changes
 
 **Database Schema Updates**:
+
 - Player status tracking with timestamps and reasons
 - Status change history table for audit trail
 - Proper indexing for status queries and filtering
@@ -517,9 +586,11 @@ Each phase completion is measured by:
 
 #### 6.1.1 Battle Entry Workflow Foundation (Stories 4.1-4.4)
 
-**Purpose**: Create efficient battle data entry system matching Angry Birds 2 UI flow
+**Purpose**: Create efficient battle data entry system matching Angry Birds 2 UI
+flow
 
 **Scope**:
+
 - Design multi-step battle entry form with progress indication
 - Implement battle metadata entry (dates, opponent, scores)
 - Add automatic battle ID generation and duplicate detection
@@ -527,6 +598,7 @@ Each phase completion is measured by:
 - Implement field validation with real-time feedback
 
 **Key Deliverables**:
+
 - `BattleEntryWizard.tsx` with multi-step form navigation
 - `BattleMetadataForm.tsx` for basic battle information
 - `PerformanceDataForm.tsx` for clan and opponent stats
@@ -534,6 +606,7 @@ Each phase completion is measured by:
 - Form validation schemas using Zod
 
 **API Requirements**:
+
 - Battle creation endpoint with comprehensive validation
 - Duplicate battle detection based on clan and date
 - Battle metadata validation with business rules
@@ -544,6 +617,7 @@ Each phase completion is measured by:
 **Purpose**: Efficiently capture individual player battle performance
 
 **Scope**:
+
 - Create dynamic player performance entry table
 - Implement roster member autocomplete and selection
 - Add automatic ratio calculation and display
@@ -551,6 +625,7 @@ Each phase completion is measured by:
 - Implement bulk operations and data import capabilities
 
 **Key Deliverables**:
+
 - `PlayerPerformanceTable.tsx` with dynamic row management
 - `PlayerAutocomplete.tsx` for roster member selection
 - Automatic calculation integration using common library
@@ -558,6 +633,7 @@ Each phase completion is measured by:
 - CSV import functionality for bulk data entry
 
 **API Requirements**:
+
 - Active roster member endpoints for autocomplete
 - Player performance validation with FP and score rules
 - Bulk player data processing and validation
@@ -568,6 +644,7 @@ Each phase completion is measured by:
 **Purpose**: Track non-participating players and assign post-battle actions
 
 **Scope**:
+
 - Automatically populate non-player list from roster
 - Implement reserve player designation and management
 - Create action code assignment interface for all players
@@ -575,6 +652,7 @@ Each phase completion is measured by:
 - Implement action code execution upon battle submission
 
 **Key Deliverables**:
+
 - `NonPlayerManagement.tsx` for participation tracking
 - `ActionCodeAssignment.tsx` for post-battle decisions
 - Reserve player management interface
@@ -582,6 +660,7 @@ Each phase completion is measured by:
 - Action code execution automation
 
 **API Requirements**:
+
 - Non-player identification based on roster and participants
 - Action code management endpoints with validation
 - Bulk action assignment with atomic operations
@@ -592,6 +671,7 @@ Each phase completion is measured by:
 **Purpose**: Provide comprehensive review and submission workflow
 
 **Scope**:
+
 - Create battle data review page with all entered information
 - Implement data verification and checksum validation
 - Add draft saving and restoration capabilities
@@ -599,6 +679,7 @@ Each phase completion is measured by:
 - Implement final submission with calculation processing
 
 **Key Deliverables**:
+
 - `BattleReviewPage.tsx` with comprehensive data display
 - `BattleValidation.tsx` for data integrity checking
 - Draft management system with session storage
@@ -606,6 +687,7 @@ Each phase completion is measured by:
 - Submission processing with calculation execution
 
 **API Requirements**:
+
 - Battle review endpoint with calculated statistics
 - Draft storage endpoints with session management
 - Battle update endpoints with version control
@@ -618,6 +700,7 @@ Each phase completion is measured by:
 **Purpose**: Provide detailed player performance and activity history
 
 **Scope**:
+
 - Create individual player history pages with comprehensive statistics
 - Implement battle participation tracking and analysis
 - Add action code history and pattern analysis
@@ -625,6 +708,7 @@ Each phase completion is measured by:
 - Implement player comparison and ranking features
 
 **Key Deliverables**:
+
 - `PlayerHistoryPage.tsx` with detailed statistics and trends
 - `PlayerPerformanceChart.tsx` for visual analytics
 - Battle participation analysis components
@@ -632,6 +716,7 @@ Each phase completion is measured by:
 - Player comparison utilities
 
 **API Requirements**:
+
 - Player history endpoints with battle and action data
 - Performance statistics calculation for individual players
 - Battle participation analysis with trend data
@@ -642,6 +727,7 @@ Each phase completion is measured by:
 **Purpose**: Enable efficient roster management for large clans
 
 **Scope**:
+
 - Implement CSV import functionality for roster population
 - Add bulk player operations (status changes, deletions)
 - Create roster template download and validation
@@ -649,6 +735,7 @@ Each phase completion is measured by:
 - Add roster backup and restore capabilities
 
 **Key Deliverables**:
+
 - `RosterImport.tsx` with CSV upload and validation
 - `BulkOperations.tsx` for mass roster changes
 - CSV template generation and download
@@ -656,6 +743,7 @@ Each phase completion is measured by:
 - Roster export functionality for backup
 
 **API Requirements**:
+
 - Bulk import endpoints with validation and error reporting
 - Mass operation endpoints with transaction support
 - CSV template generation with proper formatting
@@ -672,6 +760,7 @@ Each phase completion is measured by:
 **Purpose**: Provide comprehensive battle browsing and overview capabilities
 
 **Scope**:
+
 - Create battle list page with filtering, sorting, and search
 - Implement detailed battle overview with key statistics
 - Add clan and opponent performance comparison
@@ -679,6 +768,7 @@ Each phase completion is measured by:
 - Implement pagination and infinite scroll for large battle lists
 
 **Key Deliverables**:
+
 - `BattleListPage.tsx` with advanced filtering and search
 - `BattleOverviewPage.tsx` with comprehensive statistics
 - `BattlePerformanceComparison.tsx` for clan vs opponent
@@ -686,6 +776,7 @@ Each phase completion is measured by:
 - Pagination and virtual scrolling implementation
 
 **API Requirements**:
+
 - Battle listing endpoints with filtering, sorting, and pagination
 - Battle detail endpoints with calculated statistics
 - Performance comparison endpoints with historical context
@@ -696,6 +787,7 @@ Each phase completion is measured by:
 **Purpose**: Display individual player performance within battles
 
 **Scope**:
+
 - Create player performance ranking tables with sorting
 - Implement detailed player statistics display
 - Add performance tier visualization and color coding
@@ -703,6 +795,7 @@ Each phase completion is measured by:
 - Implement responsive table design for mobile viewing
 
 **Key Deliverables**:
+
 - `PlayerRankingTable.tsx` with sortable columns and performance tiers
 - `PlayerDetailModal.tsx` for expanded player statistics
 - Performance tier visualization components
@@ -710,6 +803,7 @@ Each phase completion is measured by:
 - Player performance comparison utilities
 
 **API Requirements**:
+
 - Player performance endpoints with ranking and statistics
 - Player detail endpoints with action codes and history
 - Performance tier calculation for visualization
@@ -720,6 +814,7 @@ Each phase completion is measured by:
 **Purpose**: Analyze participation patterns and reserve player management
 
 **Scope**:
+
 - Create non-player listing with reserve status distinction
 - Implement participation rate analysis and visualization
 - Add reserve player strategy analysis and recommendations
@@ -727,6 +822,7 @@ Each phase completion is measured by:
 - Implement participation trend tracking over time
 
 **Key Deliverables**:
+
 - `NonPlayerAnalysis.tsx` with participation tracking
 - `ReservePlayerManagement.tsx` for strategic analysis
 - Participation rate visualization components
@@ -734,6 +830,7 @@ Each phase completion is measured by:
 - Participation trend analysis tools
 
 **API Requirements**:
+
 - Non-player analysis endpoints with participation statistics
 - Reserve player management endpoints with strategic data
 - Participation trend endpoints with historical analysis
@@ -746,6 +843,7 @@ Each phase completion is measured by:
 **Purpose**: Provide aggregated statistics for monthly and yearly periods
 
 **Scope**:
+
 - Create monthly and yearly statistics overview pages
 - Implement time period selection and navigation
 - Add clan performance summaries with trend analysis
@@ -753,6 +851,7 @@ Each phase completion is measured by:
 - Implement comparative analysis between time periods
 
 **Key Deliverables**:
+
 - `MonthlyStatsPage.tsx` and `YearlyStatsPage.tsx` for period overviews
 - `TimePeriodSelector.tsx` for navigation between periods
 - `ClanPerformanceSummary.tsx` with aggregated statistics
@@ -760,6 +859,7 @@ Each phase completion is measured by:
 - Period comparison utilities and visualization
 
 **API Requirements**:
+
 - Monthly and yearly summary endpoints with aggregated data
 - Time period listing endpoints for navigation
 - Clan performance calculation endpoints for periods
@@ -771,6 +871,7 @@ Each phase completion is measured by:
 **Purpose**: Visualize performance trends over time periods
 
 **Scope**:
+
 - Create interactive charts for monthly and yearly trends
 - Implement performance metric visualization (ratio, participation, wins)
 - Add drill-down capabilities from period overviews to individual battles
@@ -778,6 +879,7 @@ Each phase completion is measured by:
 - Implement comparative visualization between players and periods
 
 **Key Deliverables**:
+
 - `TrendChart.tsx` with interactive time-series visualization
 - `PerformanceMetricsChart.tsx` for multiple metric display
 - Drill-down navigation from charts to detailed data
@@ -785,6 +887,7 @@ Each phase completion is measured by:
 - Comparative visualization components
 
 **API Requirements**:
+
 - Trend data endpoints with time-series formatting
 - Performance metrics endpoints for chart data
 - Drill-down data endpoints for detailed exploration
@@ -795,6 +898,7 @@ Each phase completion is measured by:
 **Purpose**: Enable administrative control over time period completion
 
 **Scope**:
+
 - Create period completion interface for clan admins
 - Implement period status tracking and visualization
 - Add completion confirmation workflows
@@ -802,6 +906,7 @@ Each phase completion is measured by:
 - Implement automated period completion triggers
 
 **Key Deliverables**:
+
 - `PeriodManagement.tsx` for admin period control
 - Period status indicators throughout the application
 - Completion confirmation dialogs and workflows
@@ -809,6 +914,7 @@ Each phase completion is measured by:
 - Automated completion scheduling utilities
 
 **API Requirements**:
+
 - Period management endpoints with admin authorization
 - Period status tracking with state validation
 - Completion workflow endpoints with confirmation
@@ -821,6 +927,7 @@ Each phase completion is measured by:
 **Purpose**: Provide detailed analytical reports for strategic decision making
 
 **Scope**:
+
 - Create Flock Power trend analysis with growth tracking
 - Implement ratio performance analysis with skill assessment
 - Add participation trend analysis with engagement metrics
@@ -828,6 +935,7 @@ Each phase completion is measured by:
 - Implement interactive charting with zoom and filter capabilities
 
 **Key Deliverables**:
+
 - `FlockPowerReport.tsx` with FP growth trend analysis
 - `RatioPerformanceReport.tsx` for skill trend tracking
 - `ParticipationReport.tsx` with engagement analysis
@@ -835,6 +943,7 @@ Each phase completion is measured by:
 - Interactive chart components with advanced controls
 
 **API Requirements**:
+
 - Trend analysis endpoints for all major metrics
 - Historical data endpoints with flexible date ranges
 - Statistical calculation endpoints for trend identification
@@ -845,6 +954,7 @@ Each phase completion is measured by:
 **Purpose**: Analyze individual performance and competitive environment
 
 **Scope**:
+
 - Create custom date range analysis tools
 - Implement individual player performance tracking over time
 - Add opponent analysis and matchup history
@@ -852,6 +962,7 @@ Each phase completion is measured by:
 - Implement player development and improvement tracking
 
 **Key Deliverables**:
+
 - `CustomDateRangeReport.tsx` with flexible period selection
 - `PlayerDevelopmentReport.tsx` for individual analysis
 - `MatchupAnalysis.tsx` for opponent assessment
@@ -859,6 +970,7 @@ Each phase completion is measured by:
 - Player improvement tracking and recommendations
 
 **API Requirements**:
+
 - Custom date range endpoints with flexible filtering
 - Player development tracking endpoints with progression data
 - Matchup history endpoints with opponent analysis
@@ -869,6 +981,7 @@ Each phase completion is measured by:
 **Purpose**: Provide clan management insights and operational dashboard
 
 **Scope**:
+
 - Create roster churn analysis with retention metrics
 - Implement administrative dashboard with key performance indicators
 - Add clan management insights and recommendations
@@ -876,6 +989,7 @@ Each phase completion is measured by:
 - Implement administrative workflow optimization tools
 
 **Key Deliverables**:
+
 - `RosterChurnReport.tsx` with retention analysis
 - `AdminDashboard.tsx` with KPI overview and quick actions
 - `ManagementInsights.tsx` with strategic recommendations
@@ -883,6 +997,7 @@ Each phase completion is measured by:
 - Administrative workflow optimization features
 
 **API Requirements**:
+
 - Roster churn analysis endpoints with retention calculations
 - Dashboard data endpoints with real-time statistics
 - Management insight endpoints with recommendation algorithms
@@ -894,9 +1009,11 @@ Each phase completion is measured by:
 
 ### 8.1 Test Implementation Strategy
 
-**Purpose**: Ensure comprehensive test coverage throughout all implementation phases
+**Purpose**: Ensure comprehensive test coverage throughout all implementation
+phases
 
 **Scope**:
+
 - Implement unit tests for all business logic and utilities
 - Create integration tests for API endpoints and database operations
 - Add component tests for React components and user interactions
@@ -904,6 +1021,7 @@ Each phase completion is measured by:
 - Set up automated testing in CI/CD pipeline
 
 **Key Deliverables**:
+
 - Unit test suites for common library functions and calculations
 - API integration tests with database isolation
 - React component tests using React Testing Library
@@ -915,6 +1033,7 @@ Each phase completion is measured by:
 **Purpose**: Validate system performance under realistic load conditions
 
 **Scope**:
+
 - Implement API performance testing with load simulation
 - Create frontend performance testing with Lighthouse integration
 - Add database query performance optimization and monitoring
@@ -922,6 +1041,7 @@ Each phase completion is measured by:
 - Create performance regression testing for ongoing development
 
 **Key Deliverables**:
+
 - Load testing suite for API endpoints
 - Frontend performance monitoring and optimization
 - Database query performance analysis and optimization
@@ -933,6 +1053,7 @@ Each phase completion is measured by:
 **Purpose**: Ensure application security throughout all layers
 
 **Scope**:
+
 - Implement authentication and authorization testing
 - Add input validation and injection attack prevention testing
 - Create security header and HTTPS configuration validation
@@ -940,6 +1061,7 @@ Each phase completion is measured by:
 - Add security code analysis and SAST integration
 
 **Key Deliverables**:
+
 - Authentication flow security testing
 - Input validation and sanitization testing
 - Security configuration validation
@@ -955,6 +1077,7 @@ Each phase completion is measured by:
 **Purpose**: Provide comprehensive API documentation for future development
 
 **Scope**:
+
 - Generate OpenAPI/Swagger documentation from code
 - Create API usage examples and integration guides
 - Add authentication and authorization documentation
@@ -962,6 +1085,7 @@ Each phase completion is measured by:
 - Create API versioning and changelog documentation
 
 **Key Deliverables**:
+
 - Auto-generated OpenAPI specification
 - API integration guides and examples
 - Authentication flow documentation
@@ -973,6 +1097,7 @@ Each phase completion is measured by:
 **Purpose**: Create user-facing documentation for system operation
 
 **Scope**:
+
 - Create user guides for all major workflows
 - Implement in-application help and tooltips
 - Add troubleshooting guides and FAQ
@@ -980,6 +1105,7 @@ Each phase completion is measured by:
 - Implement contextual help system
 
 **Key Deliverables**:
+
 - Comprehensive user guide documentation
 - In-application help system with contextual assistance
 - Troubleshooting guides and FAQ
@@ -991,6 +1117,7 @@ Each phase completion is measured by:
 **Purpose**: Prepare application for production deployment
 
 **Scope**:
+
 - Create production Docker images and configurations
 - Implement environment-specific configuration management
 - Add monitoring and logging configuration for production
@@ -998,6 +1125,7 @@ Each phase completion is measured by:
 - Implement security hardening for production deployment
 
 **Key Deliverables**:
+
 - Production-ready Docker images with optimization
 - Environment configuration management system
 - Production monitoring and logging setup
@@ -1009,26 +1137,33 @@ Each phase completion is measured by:
 ## Implementation Timeline
 
 ### Phase 1 (Weeks 1-4): Core Foundation
+
 - Week 1: Environment setup and project structure
 - Week 2: Authentication and navigation implementation
 - Week 3: User and clan management features
 - Week 4: Core roster management and testing
 
 ### Phase 2 (Weeks 5-7): Data Entry
+
 - Week 5: Battle entry workflow foundation
 - Week 6: Player performance and action code management
 - Week 7: Advanced roster features and testing
 
 ### Phase 3 (Weeks 8-11): Viewing & Analysis
+
 - Week 8: Battle stats viewing implementation
 - Week 9: Monthly and yearly statistics
 - Week 10: Advanced analytics and reporting
 - Week 11: Testing, documentation, and deployment preparation
 
-### Final Integration (Week 12): 
+### Final Integration (Week 12):
+
 - Comprehensive testing and bug fixes
 - Performance optimization and security review
 - Documentation completion and deployment preparation
 - Production readiness assessment and go-live planning
 
-This timeline provides a realistic progression through all three phases while maintaining quality and allowing for adequate testing and documentation. Each week includes buffer time for unexpected challenges and iterative improvements based on testing and feedback.
+This timeline provides a realistic progression through all three phases while
+maintaining quality and allowing for adequate testing and documentation. Each
+week includes buffer time for unexpected challenges and iterative improvements
+based on testing and feedback.

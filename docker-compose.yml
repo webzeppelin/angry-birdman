@@ -13,14 +13,14 @@ services:
       # Create additional database for Keycloak
       POSTGRES_MULTIPLE_DATABASES: ${POSTGRES_DB:-angrybirdman},${KEYCLOAK_DB:-keycloak}
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - '${POSTGRES_PORT:-5432}:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./database/postgres/init:/docker-entrypoint-initdb.d:ro
     networks:
       - angrybirdman-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-angrybirdman}"]
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-angrybirdman}']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -37,13 +37,13 @@ services:
       --maxmemory ${VALKEY_MAXMEMORY:-256mb}
       --maxmemory-policy allkeys-lru
     ports:
-      - "${VALKEY_PORT:-6379}:6379"
+      - '${VALKEY_PORT:-6379}:6379'
     volumes:
       - valkey_data:/data
     networks:
       - angrybirdman-network
     healthcheck:
-      test: ["CMD", "valkey-cli", "ping"]
+      test: ['CMD', 'valkey-cli', 'ping']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -62,30 +62,30 @@ services:
       KC_DB_USERNAME: ${POSTGRES_USER:-angrybirdman}
       KC_DB_PASSWORD: ${POSTGRES_PASSWORD:-angrybirdman_dev_password}
       KC_DB_SCHEMA: public
-      
+
       # Keycloak admin credentials
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN_USER:-admin}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
-      
+
       # Hostname configuration for development (WSL2 compatible)
       KC_HOSTNAME_STRICT: false
       KC_HOSTNAME_STRICT_HTTPS: false
       KC_HTTP_ENABLED: true
-      
+
       # Proxy configuration (for future production deployment)
       KC_PROXY: edge
-      
+
       # Fix for admin console iframe/cookie issues in development
       KC_SPI_LOGIN_PROTOCOL_OPENID_CONNECT_LEGACY_LOGOUT_REDIRECT_URI: true
-      
+
       # WSL2 networking fixes - disable hostname validation
       KC_HOSTNAME_PORT: 8080
-      
+
       # Health check configuration
       KC_HEALTH_ENABLED: true
       KC_METRICS_ENABLED: true
     ports:
-      - "${KEYCLOAK_PORT:-8080}:8080"
+      - '${KEYCLOAK_PORT:-8080}:8080'
     volumes:
       - keycloak_data:/opt/keycloak/data
       - ./keycloak/config:/opt/keycloak/data/import:ro
@@ -95,7 +95,11 @@ services:
       postgres:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/8080 && echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && cat <&3 | grep -q '200 OK'"]
+      test:
+        [
+          'CMD-SHELL',
+          "exec 3<>/dev/tcp/localhost/8080 && echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && cat <&3 | grep -q '200 OK'",
+        ]
       interval: 30s
       timeout: 10s
       retries: 10

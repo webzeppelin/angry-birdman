@@ -1,6 +1,6 @@
 /**
  * Database Seed Script for Angry Birdman
- * 
+ *
  * This script populates the database with sample data for development and testing:
  * - Action codes (HOLD, WARN, KICK, RESERVE, PASS)
  * - Sample clans with realistic data
@@ -8,7 +8,7 @@
  * - Roster members for each clan
  * - Sample battles with player and nonplayer stats
  * - Monthly and yearly performance summaries
- * 
+ *
  * Run with: npm run seed
  */
 
@@ -44,7 +44,7 @@ async function main() {
   // 2. Seed Sample Clans
   // ============================================================================
   console.log('🏛️ Seeding clans...');
-  
+
   const clan1 = await prisma.clan.upsert({
     where: { rovioId: 123456 },
     update: {},
@@ -190,28 +190,29 @@ async function main() {
   // Battle 1 - Recent battle (Won)
   const battle1Date = new Date('2024-11-01');
   const battle1Id = '20241101';
-  
+
   // Only active non-reserve players (first 10)
   const activePlayers = createdPlayers.slice(0, 10);
   // Reserve players (next 2)
   const reservePlayers = createdPlayers.slice(10, 12);
-  
+
   // Calculate battle metrics for Battle 1
   // Players 1-8 played, players 9-10 didn't play (non-reserve), players 11-12 in reserve
   const playingMembers = activePlayers.slice(0, 8);
   const nonPlayingNonReserve = activePlayers.slice(8, 10);
-  
+
   // Calculate scores (higher FP = higher base score with some variation)
   const playerStats1 = playingMembers.map((player, index) => ({
     playerId: player.playerId,
     fp: player.fp,
-    score: Math.floor((player.fp * 25) + (Math.random() * player.fp * 5)),
+    score: Math.floor(player.fp * 25 + Math.random() * player.fp * 5),
     rank: index + 1,
   }));
 
   const totalScore = playerStats1.reduce((sum, p) => sum + p.score, 0);
-  const totalFp = playingMembers.reduce((sum, p) => sum + p.fp, 0) +
-                  nonPlayingNonReserve.reduce((sum, p) => sum + p.fp, 0);
+  const totalFp =
+    playingMembers.reduce((sum, p) => sum + p.fp, 0) +
+    nonPlayingNonReserve.reduce((sum, p) => sum + p.fp, 0);
   const baselineFp = 20000;
   const ratio = (totalScore / baselineFp) * 10;
   const averageRatio = (totalScore / totalFp) * 10;
@@ -223,10 +224,10 @@ async function main() {
 
   const nonplayingFpSum = nonPlayingNonReserve.reduce((sum, p) => sum + p.fp, 0);
   const nonplayingFpRatio = (nonplayingFpSum / totalFp) * 100;
-  
+
   const reserveFpSum = reservePlayers.reduce((sum, p) => sum + p.fp, 0);
   const reserveFpRatio = (reserveFpSum / (totalFp + reserveFpSum)) * 100;
-  
+
   const projectedScore = (1 + nonplayingFpRatio / 100) * totalScore;
 
   await prisma.clanBattle.create({
@@ -258,12 +259,10 @@ async function main() {
 
   // Calculate ratio ranks first
   const sortedByRatio = [...playerStats1]
-    .map(p => ({ ...p, ratio: (p.score / p.fp) * 10 }))
+    .map((p) => ({ ...p, ratio: (p.score / p.fp) * 10 }))
     .sort((a, b) => b.ratio - a.ratio);
-  
-  const ratioRanks = new Map(
-    sortedByRatio.map((p, index) => [p.playerId, index + 1])
-  );
+
+  const ratioRanks = new Map(sortedByRatio.map((p, index) => [p.playerId, index + 1]));
 
   // Add player stats
   for (const player of playerStats1) {

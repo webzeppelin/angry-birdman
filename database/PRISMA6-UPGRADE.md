@@ -9,23 +9,27 @@
 
 ## Executive Summary
 
-Successfully upgraded Angry Birdman database layer from Prisma ORM 5.22.0 to 6.19.0 with zero breaking changes required. All validation tests pass (23/23, 100% success rate).
+Successfully upgraded Angry Birdman database layer from Prisma ORM 5.22.0 to
+6.19.0 with zero breaking changes required. All validation tests pass (23/23,
+100% success rate).
 
 ## Upgrade Process
 
 ### 1. Breaking Changes Analysis
 
-Reviewed the [official Prisma 6 upgrade guide](https://www.prisma.io/docs/orm/more/upgrade-guides/upgrading-versions/upgrading-to-prisma-6) and confirmed that **none of the breaking changes affect our codebase**:
+Reviewed the
+[official Prisma 6 upgrade guide](https://www.prisma.io/docs/orm/more/upgrade-guides/upgrading-versions/upgrading-to-prisma-6)
+and confirmed that **none of the breaking changes affect our codebase**:
 
-| Breaking Change | Our Status | Impact |
-|----------------|------------|--------|
-| **Minimum Node.js versions** | Node.js 18.19.1 | ✅ Exceeds minimum (18.18.0) |
-| **Minimum TypeScript version** | TypeScript 5.3.0 | ✅ Exceeds minimum (5.1.0) |
-| **Implicit m-n relations on PostgreSQL** | None in schema | ✅ No changes needed |
-| **fullTextSearch preview feature** | Not used | ✅ No changes needed |
-| **Buffer → Uint8Array** | No `Bytes` fields | ✅ No changes needed |
-| **NotFoundError removal** | Not used in code | ✅ No changes needed |
-| **Reserved keywords (async/await/using)** | No model names conflict | ✅ No changes needed |
+| Breaking Change                           | Our Status              | Impact                       |
+| ----------------------------------------- | ----------------------- | ---------------------------- |
+| **Minimum Node.js versions**              | Node.js 18.19.1         | ✅ Exceeds minimum (18.18.0) |
+| **Minimum TypeScript version**            | TypeScript 5.3.0        | ✅ Exceeds minimum (5.1.0)   |
+| **Implicit m-n relations on PostgreSQL**  | None in schema          | ✅ No changes needed         |
+| **fullTextSearch preview feature**        | Not used                | ✅ No changes needed         |
+| **Buffer → Uint8Array**                   | No `Bytes` fields       | ✅ No changes needed         |
+| **NotFoundError removal**                 | Not used in code        | ✅ No changes needed         |
+| **Reserved keywords (async/await/using)** | No model names conflict | ✅ No changes needed         |
 
 ### 2. Upgrade Steps Executed
 
@@ -64,10 +68,10 @@ All tests passed after upgrade:
 ```json
 {
   "devDependencies": {
-    "prisma": "^6.19.0"  // was ^5.22.0
+    "prisma": "^6.19.0" // was ^5.22.0
   },
   "dependencies": {
-    "@prisma/client": "^6.19.0"  // was ^5.22.0
+    "@prisma/client": "^6.19.0" // was ^5.22.0
   }
 }
 ```
@@ -88,26 +92,29 @@ All tests passed after upgrade:
 
 ### package.json#prisma Property
 
-Prisma 6 deprecated the `package.json#prisma` configuration property used for defining seed scripts:
+Prisma 6 deprecated the `package.json#prisma` configuration property used for
+defining seed scripts:
 
 ```json
 {
   "prisma": {
-    "seed": "tsx prisma/seed.ts"  // ⚠️ Deprecated, will be removed in Prisma 7
+    "seed": "tsx prisma/seed.ts" // ⚠️ Deprecated, will be removed in Prisma 7
   }
 }
 ```
 
-**Migration Path**: In a future update (before Prisma 7), we should migrate to a Prisma config file:
+**Migration Path**: In a future update (before Prisma 7), we should migrate to a
+Prisma config file:
 
 ```typescript
 // prisma.config.ts (future)
 export default {
-  seed: 'tsx prisma/seed.ts'
-}
+  seed: 'tsx prisma/seed.ts',
+};
 ```
 
-For now, the deprecation warning is acceptable and doesn't affect functionality. See: https://pris.ly/prisma-config
+For now, the deprecation warning is acceptable and doesn't affect functionality.
+See: https://pris.ly/prisma-config
 
 ## Benefits of Prisma 6
 
@@ -117,7 +124,8 @@ Prisma 6 brings several improvements:
 2. **Type Safety**: Enhanced TypeScript type generation
 3. **Developer Experience**: Better error messages and debugging
 4. **Stability**: Many bug fixes and stability improvements
-5. **Modern Runtime Support**: Better compatibility with modern JavaScript runtimes
+5. **Modern Runtime Support**: Better compatibility with modern JavaScript
+   runtimes
 
 ## Testing Performed
 
@@ -193,7 +201,8 @@ npm run generate
 
 ## Conclusion
 
-The Prisma 6 upgrade was **seamless and successful**. Our database layer is now running on the latest stable version of Prisma ORM with:
+The Prisma 6 upgrade was **seamless and successful**. Our database layer is now
+running on the latest stable version of Prisma ORM with:
 
 - ✅ Zero breaking changes
 - ✅ Zero schema modifications
@@ -201,12 +210,14 @@ The Prisma 6 upgrade was **seamless and successful**. Our database layer is now 
 - ✅ 100% test pass rate
 - ✅ Full backward compatibility
 
-The upgrade provides performance improvements and better developer experience while maintaining complete compatibility with our existing implementation.
+The upgrade provides performance improvements and better developer experience
+while maintaining complete compatibility with our existing implementation.
 
 ## Next Steps
 
 1. ✅ **Immediate**: Continue with Step 2.3 (Keycloak Configuration)
-2. 🔜 **Future**: Migrate from `package.json#prisma` to `prisma.config.ts` before Prisma 7
+2. 🔜 **Future**: Migrate from `package.json#prisma` to `prisma.config.ts`
+   before Prisma 7
 3. 🔜 **Future**: Review Prisma 6 new features for potential optimizations
 
 ---

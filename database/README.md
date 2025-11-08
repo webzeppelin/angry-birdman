@@ -1,6 +1,7 @@
 # Angry Birdman Database
 
-This directory contains the database schema, migrations, and seeding scripts for the Angry Birdman clan management system.
+This directory contains the database schema, migrations, and seeding scripts for
+the Angry Birdman clan management system.
 
 ---
 
@@ -24,7 +25,9 @@ This directory contains the database schema, migrations, and seeding scripts for
 
 ## Overview
 
-The Angry Birdman database uses **PostgreSQL** as the relational database and **Prisma ORM** for schema management, migrations, and type-safe database access. The schema is designed to support:
+The Angry Birdman database uses **PostgreSQL** as the relational database and
+**Prisma ORM** for schema management, migrations, and type-safe database access.
+The schema is designed to support:
 
 - Multi-clan management with role-based access control
 - Efficient battle data capture and storage
@@ -37,7 +40,8 @@ The Angry Birdman database uses **PostgreSQL** as the relational database and **
 ## Technology Stack
 
 - **Database**: PostgreSQL 15+
-- **ORM**: Prisma 6.19.0 (upgraded from 5.22.0 - see [PRISMA6-UPGRADE.md](./PRISMA6-UPGRADE.md))
+- **ORM**: Prisma 6.19.0 (upgraded from 5.22.0 - see
+  [PRISMA6-UPGRADE.md](./PRISMA6-UPGRADE.md))
 - **Language**: TypeScript 5.3+
 - **Runtime**: Node.js 20 LTS+
 - **Containerization**: Docker + Docker Compose
@@ -71,23 +75,27 @@ database/
 The database consists of **11 core tables** organized into logical groups:
 
 ### Core Entities
+
 - **clans** - Clan metadata and registration
 - **users** - Administrator user accounts (linked to Keycloak)
 - **roster_members** - Individual players in each clan
 - **action_codes** - Post-battle action lookup table
 
 ### Battle Data
+
 - **clan_battles** - Individual CvC battle records
 - **clan_battle_player_stats** - Player performance in battles
 - **clan_battle_nonplayer_stats** - Non-participating player tracking
 
 ### Aggregated Statistics
+
 - **monthly_clan_performance** - Monthly clan performance summaries
 - **monthly_individual_performance** - Monthly player performance summaries
 - **yearly_clan_performance** - Yearly clan performance summaries
 - **yearly_individual_performance** - Yearly player performance summaries
 
-For detailed field definitions, see [Data Model Reference](#data-model-reference) below.
+For detailed field definitions, see
+[Data Model Reference](#data-model-reference) below.
 
 ---
 
@@ -102,38 +110,44 @@ For detailed field definitions, see [Data Model Reference](#data-model-reference
 ### Initial Setup
 
 1. **Install dependencies:**
+
    ```bash
    npm install
    ```
 
 2. **Verify database connection:**
-   
+
    Ensure PostgreSQL is running:
+
    ```bash
    docker ps | grep postgres
    ```
-   
-   Expected output should show `angrybirdman-postgres` with status "Up" and "healthy".
+
+   Expected output should show `angrybirdman-postgres` with status "Up" and
+   "healthy".
 
 3. **Run initial migration:**
+
    ```bash
    npm run migrate:dev
    ```
-   
+
    This creates all tables, indexes, and constraints.
 
 4. **Seed the database:**
+
    ```bash
    npm run seed
    ```
-   
+
    This populates the database with sample data for development.
 
 5. **Verify setup:**
+
    ```bash
    npx tsx test-prisma.ts
    ```
-   
+
    This runs basic queries to ensure Prisma Client is working correctly.
 
 ---
@@ -145,10 +159,11 @@ For detailed field definitions, see [Data Model Reference](#data-model-reference
 1. **Edit `prisma/schema.prisma`** to modify the data model
 
 2. **Create a new migration:**
+
    ```bash
    npm run migrate:dev -- --name descriptive_name
    ```
-   
+
    This generates a new migration file and applies it to the database.
 
 3. **Review the generated migration** in `prisma/migrations/`
@@ -164,6 +179,7 @@ npm run migrate:reset
 ```
 
 This will:
+
 - Drop the database
 - Recreate it
 - Run all migrations
@@ -240,16 +256,16 @@ npm run studio
 
 Represents a clan using Angry Birdman to manage their data.
 
-| Field | Type | Description | Default | Nullable |
-|:------|:-----|:------------|:--------|:---------|
-| clanId | Int | Auto-increment primary key | autoincrement | No |
-| rovioId | Int | Unique Rovio-assigned clan ID | - | No |
-| name | String | Clan name | - | No |
-| country | String | Clan's country | - | No |
-| registrationDate | DateTime | Date registered with system | now() | No |
-| active | Boolean | Whether clan is active | true | No |
-| createdAt | DateTime | Record creation timestamp | now() | No |
-| updatedAt | DateTime | Record update timestamp | now() | No |
+| Field            | Type     | Description                   | Default       | Nullable |
+| :--------------- | :------- | :---------------------------- | :------------ | :------- |
+| clanId           | Int      | Auto-increment primary key    | autoincrement | No       |
+| rovioId          | Int      | Unique Rovio-assigned clan ID | -             | No       |
+| name             | String   | Clan name                     | -             | No       |
+| country          | String   | Clan's country                | -             | No       |
+| registrationDate | DateTime | Date registered with system   | now()         | No       |
+| active           | Boolean  | Whether clan is active        | true          | No       |
+| createdAt        | DateTime | Record creation timestamp     | now()         | No       |
+| updatedAt        | DateTime | Record update timestamp       | now()         | No       |
 
 **Indexes**: rovioId (unique), active, name  
 **Relationships**: Has many users, roster members, battles, and statistics
@@ -258,15 +274,15 @@ Represents a clan using Angry Birdman to manage their data.
 
 Administrator users managing clan data (backed by Keycloak).
 
-| Field | Type | Description | Default | Nullable |
-|:------|:-----|:------------|:--------|:---------|
-| userId | String | Primary key (matches Keycloak ID) | - | No |
-| username | String | Unique username | - | No |
-| email | String | User email address | - | No |
-| clanId | Int | Associated clan (null for superadmins) | - | Yes |
-| owner | Boolean | True if Clan Owner | false | No |
-| createdAt | DateTime | Record creation timestamp | now() | No |
-| updatedAt | DateTime | Record update timestamp | now() | No |
+| Field     | Type     | Description                            | Default | Nullable |
+| :-------- | :------- | :------------------------------------- | :------ | :------- |
+| userId    | String   | Primary key (matches Keycloak ID)      | -       | No       |
+| username  | String   | Unique username                        | -       | No       |
+| email     | String   | User email address                     | -       | No       |
+| clanId    | Int      | Associated clan (null for superadmins) | -       | Yes      |
+| owner     | Boolean  | True if Clan Owner                     | false   | No       |
+| createdAt | DateTime | Record creation timestamp              | now()   | No       |
+| updatedAt | DateTime | Record update timestamp                | now()   | No       |
 
 **Indexes**: username (unique), clanId, email  
 **Relationships**: Belongs to clan (optional)
@@ -275,17 +291,17 @@ Administrator users managing clan data (backed by Keycloak).
 
 Individual players in a clan's roster.
 
-| Field | Type | Description | Default | Nullable |
-|:------|:-----|:------------|:--------|:---------|
-| playerId | Int | Auto-increment primary key | autoincrement | No |
-| clanId | Int | Clan identifier | - | No |
-| playerName | String | Player display name | - | No |
-| active | Boolean | Currently in clan | true | No |
-| joinedDate | DateTime | Date joined clan | - | No |
-| leftDate | DateTime | Date left clan | - | Yes |
-| kickedDate | DateTime | Date kicked from clan | - | Yes |
-| createdAt | DateTime | Record creation timestamp | now() | No |
-| updatedAt | DateTime | Record update timestamp | now() | No |
+| Field      | Type     | Description                | Default       | Nullable |
+| :--------- | :------- | :------------------------- | :------------ | :------- |
+| playerId   | Int      | Auto-increment primary key | autoincrement | No       |
+| clanId     | Int      | Clan identifier            | -             | No       |
+| playerName | String   | Player display name        | -             | No       |
+| active     | Boolean  | Currently in clan          | true          | No       |
+| joinedDate | DateTime | Date joined clan           | -             | No       |
+| leftDate   | DateTime | Date left clan             | -             | Yes      |
+| kickedDate | DateTime | Date kicked from clan      | -             | Yes      |
+| createdAt  | DateTime | Record creation timestamp  | now()         | No       |
+| updatedAt  | DateTime | Record update timestamp    | now()         | No       |
 
 **Indexes**: clanId, active, playerName  
 **Unique Constraint**: (clanId, playerName)  
@@ -295,12 +311,12 @@ Individual players in a clan's roster.
 
 Lookup table for post-battle actions.
 
-| Field | Type | Description | Nullable |
-|:------|:-----|:------------|:---------|
-| actionCode | String | Primary key (e.g., "HOLD") | No |
-| displayName | String | User-friendly name | No |
-| createdAt | DateTime | Record creation timestamp | No |
-| updatedAt | DateTime | Record update timestamp | No |
+| Field       | Type     | Description                | Nullable |
+| :---------- | :------- | :------------------------- | :------- |
+| actionCode  | String   | Primary key (e.g., "HOLD") | No       |
+| displayName | String   | User-friendly name         | No       |
+| createdAt   | DateTime | Record creation timestamp  | No       |
+| updatedAt   | DateTime | Record update timestamp    | No       |
 
 **Default Values**: HOLD, WARN, KICK, RESERVE, PASS
 
@@ -308,32 +324,32 @@ Lookup table for post-battle actions.
 
 Individual Clan-vs-Clan (CvC) battle records.
 
-| Field | Type | Description | Calculated | Nullable |
-|:------|:-----|:------------|:-----------|:---------|
-| clanId | Int | Clan identifier (PK) | No | No |
-| battleId | String | Battle ID: YYYYMMDD (PK) | Yes | No |
-| startDate | DateTime | Battle start date | No | No |
-| endDate | DateTime | Battle end date | No | No |
-| result | Int | 1=Win, -1=Loss, 0=Tie | Yes | No |
-| score | Int | Clan's total score | No | No |
-| fp | Int | Sum of all FP (excl. reserves) | Yes | No |
-| baselineFp | Int | Clan baseline FP | No | No |
-| ratio | Float | (score / baselineFp) * 10 | Yes | No |
-| averageRatio | Float | (score / fp) * 10 | Yes | No |
-| projectedScore | Float | Score if all played | Yes | No |
-| opponentName | String | Opponent clan name | No | No |
-| opponentRovioId | Int | Opponent Rovio ID | No | No |
-| opponentCountry | String | Opponent country | No | No |
-| opponentScore | Int | Opponent's score | No | No |
-| opponentFp | Int | Opponent baseline FP | No | No |
-| marginRatio | Float | Win/loss margin % | Yes | No |
-| fpMargin | Float | FP difference % | Yes | No |
-| nonplayingCount | Int | Non-players (excl. reserves) | Yes | No |
-| nonplayingFpRatio | Float | % FP from non-players | Yes | No |
-| reserveCount | Int | Reserve players count | Yes | No |
-| reserveFpRatio | Float | % FP from reserves | Yes | No |
-| createdAt | DateTime | Record creation timestamp | No | No |
-| updatedAt | DateTime | Record update timestamp | No | No |
+| Field             | Type     | Description                    | Calculated | Nullable |
+| :---------------- | :------- | :----------------------------- | :--------- | :------- |
+| clanId            | Int      | Clan identifier (PK)           | No         | No       |
+| battleId          | String   | Battle ID: YYYYMMDD (PK)       | Yes        | No       |
+| startDate         | DateTime | Battle start date              | No         | No       |
+| endDate           | DateTime | Battle end date                | No         | No       |
+| result            | Int      | 1=Win, -1=Loss, 0=Tie          | Yes        | No       |
+| score             | Int      | Clan's total score             | No         | No       |
+| fp                | Int      | Sum of all FP (excl. reserves) | Yes        | No       |
+| baselineFp        | Int      | Clan baseline FP               | No         | No       |
+| ratio             | Float    | (score / baselineFp) \* 10     | Yes        | No       |
+| averageRatio      | Float    | (score / fp) \* 10             | Yes        | No       |
+| projectedScore    | Float    | Score if all played            | Yes        | No       |
+| opponentName      | String   | Opponent clan name             | No         | No       |
+| opponentRovioId   | Int      | Opponent Rovio ID              | No         | No       |
+| opponentCountry   | String   | Opponent country               | No         | No       |
+| opponentScore     | Int      | Opponent's score               | No         | No       |
+| opponentFp        | Int      | Opponent baseline FP           | No         | No       |
+| marginRatio       | Float    | Win/loss margin %              | Yes        | No       |
+| fpMargin          | Float    | FP difference %                | Yes        | No       |
+| nonplayingCount   | Int      | Non-players (excl. reserves)   | Yes        | No       |
+| nonplayingFpRatio | Float    | % FP from non-players          | Yes        | No       |
+| reserveCount      | Int      | Reserve players count          | Yes        | No       |
+| reserveFpRatio    | Float    | % FP from reserves             | Yes        | No       |
+| createdAt         | DateTime | Record creation timestamp      | No         | No       |
+| updatedAt         | DateTime | Record update timestamp        | No         | No       |
 
 **Indexes**: clanId, battleId, startDate  
 **Composite Primary Key**: (clanId, battleId)
@@ -342,20 +358,20 @@ Individual Clan-vs-Clan (CvC) battle records.
 
 Individual player performance in a battle.
 
-| Field | Type | Description | Calculated | Nullable |
-|:------|:-----|:------------|:-----------|:---------|
-| clanId | Int | Clan identifier (PK) | No | No |
-| battleId | String | Battle ID (PK) | No | No |
-| playerId | Int | Player identifier (PK) | No | No |
-| rank | Int | Overall score ranking | No | No |
-| score | Int | Battle points earned | No | No |
-| fp | Int | Player's flock power | No | No |
-| ratio | Float | (score / fp) * 10 | Yes | No |
-| ratioRank | Int | Ranking by ratio | Yes | No |
-| actionCode | String | Post-battle action | No | No |
-| actionReason | String | Optional reason | No | Yes |
-| createdAt | DateTime | Record creation timestamp | No | No |
-| updatedAt | DateTime | Record update timestamp | No | No |
+| Field        | Type     | Description               | Calculated | Nullable |
+| :----------- | :------- | :------------------------ | :--------- | :------- |
+| clanId       | Int      | Clan identifier (PK)      | No         | No       |
+| battleId     | String   | Battle ID (PK)            | No         | No       |
+| playerId     | Int      | Player identifier (PK)    | No         | No       |
+| rank         | Int      | Overall score ranking     | No         | No       |
+| score        | Int      | Battle points earned      | No         | No       |
+| fp           | Int      | Player's flock power      | No         | No       |
+| ratio        | Float    | (score / fp) \* 10        | Yes        | No       |
+| ratioRank    | Int      | Ranking by ratio          | Yes        | No       |
+| actionCode   | String   | Post-battle action        | No         | No       |
+| actionReason | String   | Optional reason           | No         | Yes      |
+| createdAt    | DateTime | Record creation timestamp | No         | No       |
+| updatedAt    | DateTime | Record update timestamp   | No         | No       |
 
 **Indexes**: (clanId, battleId), playerId, ratio  
 **Composite Primary Key**: (clanId, battleId, playerId)
@@ -364,17 +380,17 @@ Individual player performance in a battle.
 
 Non-participating roster members in a battle.
 
-| Field | Type | Description | Nullable |
-|:------|:-----|:------------|:---------|
-| clanId | Int | Clan identifier (PK) | No |
-| battleId | String | Battle ID (PK) | No |
-| playerId | Int | Player identifier (PK) | No |
-| fp | Int | Player's flock power | No |
-| reserve | Boolean | In reserve status | No |
-| actionCode | String | Post-battle action | No |
-| actionReason | String | Optional reason | Yes |
-| createdAt | DateTime | Record creation timestamp | No |
-| updatedAt | DateTime | Record update timestamp | No |
+| Field        | Type     | Description               | Nullable |
+| :----------- | :------- | :------------------------ | :------- |
+| clanId       | Int      | Clan identifier (PK)      | No       |
+| battleId     | String   | Battle ID (PK)            | No       |
+| playerId     | Int      | Player identifier (PK)    | No       |
+| fp           | Int      | Player's flock power      | No       |
+| reserve      | Boolean  | In reserve status         | No       |
+| actionCode   | String   | Post-battle action        | No       |
+| actionReason | String   | Optional reason           | Yes      |
+| createdAt    | DateTime | Record creation timestamp | No       |
+| updatedAt    | DateTime | Record update timestamp   | No       |
 
 **Indexes**: (clanId, battleId), playerId, reserve  
 **Composite Primary Key**: (clanId, battleId, playerId)
@@ -383,26 +399,26 @@ Non-participating roster members in a battle.
 
 Monthly clan performance summary (calculated/aggregated).
 
-| Field | Type | Description | Nullable |
-|:------|:-----|:------------|:---------|
-| clanId | Int | Clan identifier (PK) | No |
-| monthId | String | Month: YYYYMM (PK) | No |
-| battleCount | Int | Battles in month | No |
-| wonCount | Int | Wins in month | No |
-| lostCount | Int | Losses in month | No |
-| tiedCount | Int | Ties in month | No |
-| monthComplete | Boolean | Month closed | No |
-| averageFp | Float | Avg total FP | No |
-| averageBaselineFp | Float | Avg baseline FP | No |
-| averageRatio | Float | Avg clan ratio | No |
-| averageMarginRatio | Float | Avg win/loss margin | No |
-| averageFpMargin | Float | Avg FP margin | No |
-| averageNonplayingCount | Float | Avg non-players | No |
-| averageNonplayingFpRatio | Float | Avg non-player FP % | No |
-| averageReserveCount | Float | Avg reserves | No |
-| averageReserveFpRatio | Float | Avg reserve FP % | No |
-| createdAt | DateTime | Record creation timestamp | No |
-| updatedAt | DateTime | Record update timestamp | No |
+| Field                    | Type     | Description               | Nullable |
+| :----------------------- | :------- | :------------------------ | :------- |
+| clanId                   | Int      | Clan identifier (PK)      | No       |
+| monthId                  | String   | Month: YYYYMM (PK)        | No       |
+| battleCount              | Int      | Battles in month          | No       |
+| wonCount                 | Int      | Wins in month             | No       |
+| lostCount                | Int      | Losses in month           | No       |
+| tiedCount                | Int      | Ties in month             | No       |
+| monthComplete            | Boolean  | Month closed              | No       |
+| averageFp                | Float    | Avg total FP              | No       |
+| averageBaselineFp        | Float    | Avg baseline FP           | No       |
+| averageRatio             | Float    | Avg clan ratio            | No       |
+| averageMarginRatio       | Float    | Avg win/loss margin       | No       |
+| averageFpMargin          | Float    | Avg FP margin             | No       |
+| averageNonplayingCount   | Float    | Avg non-players           | No       |
+| averageNonplayingFpRatio | Float    | Avg non-player FP %       | No       |
+| averageReserveCount      | Float    | Avg reserves              | No       |
+| averageReserveFpRatio    | Float    | Avg reserve FP %          | No       |
+| createdAt                | DateTime | Record creation timestamp | No       |
+| updatedAt                | DateTime | Record update timestamp   | No       |
 
 **Indexes**: monthId  
 **Composite Primary Key**: (clanId, monthId)
@@ -411,35 +427,37 @@ Monthly clan performance summary (calculated/aggregated).
 
 Monthly player performance summary (calculated/aggregated).
 
-*Note: Only includes players with 3+ battles in the month.*
+_Note: Only includes players with 3+ battles in the month._
 
-| Field | Type | Description | Nullable |
-|:------|:-----|:------------|:---------|
-| clanId | Int | Clan identifier (PK) | No |
-| monthId | String | Month: YYYYMM (PK) | No |
-| playerId | Int | Player identifier (PK) | No |
-| battlesPlayed | Int | Battles played (≥3) | No |
-| averageScore | Float | Avg score | No |
-| averageFp | Float | Avg FP | No |
-| averageRatio | Float | Avg ratio | No |
-| averageRank | Float | Avg rank | No |
-| averageRatioRank | Float | Avg ratio rank | No |
-| createdAt | DateTime | Record creation timestamp | No |
-| updatedAt | DateTime | Record update timestamp | No |
+| Field            | Type     | Description               | Nullable |
+| :--------------- | :------- | :------------------------ | :------- |
+| clanId           | Int      | Clan identifier (PK)      | No       |
+| monthId          | String   | Month: YYYYMM (PK)        | No       |
+| playerId         | Int      | Player identifier (PK)    | No       |
+| battlesPlayed    | Int      | Battles played (≥3)       | No       |
+| averageScore     | Float    | Avg score                 | No       |
+| averageFp        | Float    | Avg FP                    | No       |
+| averageRatio     | Float    | Avg ratio                 | No       |
+| averageRank      | Float    | Avg rank                  | No       |
+| averageRatioRank | Float    | Avg ratio rank            | No       |
+| createdAt        | DateTime | Record creation timestamp | No       |
+| updatedAt        | DateTime | Record update timestamp   | No       |
 
 **Indexes**: monthId, playerId  
 **Composite Primary Key**: (clanId, monthId, playerId)
 
 ### Yearly Clan Performance
 
-Yearly clan performance summary (same structure as monthly, different time period).
+Yearly clan performance summary (same structure as monthly, different time
+period).
 
 **Composite Primary Key**: (clanId, yearId)  
 **yearId Format**: YYYY (e.g., "2024")
 
 ### Yearly Individual Performance
 
-Yearly player performance summary (same structure as monthly, different time period).
+Yearly player performance summary (same structure as monthly, different time
+period).
 
 **Composite Primary Key**: (clanId, yearId, playerId)  
 **yearId Format**: YYYY (e.g., "2024")
@@ -492,7 +510,8 @@ ActionCode
 
 ### Cascade Behavior
 
-- **Clan deletion**: Cascades to all related records (users, roster, battles, stats)
+- **Clan deletion**: Cascades to all related records (users, roster, battles,
+  stats)
 - **Battle deletion**: Cascades to player/nonplayer stats
 - **RosterMember deletion**: Cascades to all player/nonplayer stats
 - **ActionCode deletion**: Restricted (cannot delete if in use)
@@ -505,12 +524,14 @@ ActionCode
 ### Primary Indexes
 
 All tables have primary keys with automatic indexes:
+
 - Single-column PKs: Auto-indexed
 - Composite PKs: Indexed on all columns
 
 ### Foreign Key Indexes
 
 All foreign keys are indexed for join performance:
+
 - `users.clan_id`
 - `roster_members.clan_id`
 - `clan_battles.clan_id`
@@ -519,6 +540,7 @@ All foreign keys are indexed for join performance:
 ### Additional Indexes
 
 **Performance-critical indexes:**
+
 - `clans.rovio_id` (unique) - Clan lookup by Rovio ID
 - `clans.active` - Filtering active clans
 - `clans.name` - Clan search by name
@@ -527,6 +549,7 @@ All foreign keys are indexed for join performance:
 - `clan_battle_player_stats.ratio` - Ratio-based sorting
 
 **Unique Constraints:**
+
 - `clans.rovio_id`
 - `users.username`
 - `roster_members(clan_id, player_name)` - No duplicate names per clan
@@ -540,17 +563,19 @@ All foreign keys are indexed for join performance:
 5. **Use `include` wisely** - Avoid N+1 queries
 
 Example optimized query:
+
 ```typescript
 const battles = await prisma.clanBattle.findMany({
   where: {
-    clanId: 1,           // Indexed
+    clanId: 1, // Indexed
     startDate: {
-      gte: startDate,    // Indexed
+      gte: startDate, // Indexed
       lte: endDate,
     },
   },
   include: {
-    playerStats: {       // Single query with join
+    playerStats: {
+      // Single query with join
       include: {
         player: true,
       },
@@ -559,7 +584,7 @@ const battles = await prisma.clanBattle.findMany({
   orderBy: {
     startDate: 'desc',
   },
-  take: 20,              // Pagination
+  take: 20, // Pagination
 });
 ```
 
@@ -567,11 +592,13 @@ const battles = await prisma.clanBattle.findMany({
 
 ## Seed Data
 
-The seed script (`prisma/seed.ts`) populates the database with realistic sample data for development and testing.
+The seed script (`prisma/seed.ts`) populates the database with realistic sample
+data for development and testing.
 
 ### What Gets Seeded
 
-1. **Action Codes**: All 5 standard action codes (HOLD, WARN, KICK, RESERVE, PASS)
+1. **Action Codes**: All 5 standard action codes (HOLD, WARN, KICK, RESERVE,
+   PASS)
 2. **Clans**: 3 sample clans (2 active, 1 inactive)
 3. **Users**: 4 users with different roles
    - 2 Clan Owners
@@ -600,6 +627,7 @@ npm run migrate:reset
 ### Customizing Seed Data
 
 Edit `prisma/seed.ts` to modify:
+
 - Number of clans/users/players
 - Battle dates and scores
 - Player FP values
@@ -635,6 +663,7 @@ gunzip -c backup.sql.gz | docker exec -i angrybirdman-postgres psql -U angrybird
 ### Automated Backups
 
 For production, set up automated backups using:
+
 - PostgreSQL built-in tools (pg_dump via cron)
 - Docker volume backups
 - Cloud provider backup services (AWS RDS, Google Cloud SQL, etc.)
@@ -648,12 +677,15 @@ For production, set up automated backups using:
 **Problem**: Cannot connect to database
 
 **Solutions**:
+
 1. Verify PostgreSQL container is running:
+
    ```bash
    docker ps | grep postgres
    ```
 
 2. Check database connection string in `prisma/.env`:
+
    ```
    DATABASE_URL="postgresql://angrybirdman:angrybirdman_dev_password@localhost:5432/angrybirdman?schema=public"
    ```
@@ -668,6 +700,7 @@ For production, set up automated backups using:
 **Problem**: Migration fails with "relation already exists"
 
 **Solution**: Reset the database:
+
 ```bash
 npm run migrate:reset
 ```
@@ -675,6 +708,7 @@ npm run migrate:reset
 **Problem**: Migration history out of sync
 
 **Solution**: Mark migrations as applied without running:
+
 ```bash
 npx prisma migrate resolve --applied <migration_name> --schema=prisma/schema.prisma
 ```
@@ -684,13 +718,15 @@ npx prisma migrate resolve --applied <migration_name> --schema=prisma/schema.pri
 **Problem**: Prisma Client not generated or outdated
 
 **Solution**: Regenerate Prisma Client:
+
 ```bash
 npm run generate
 ```
 
 **Problem**: Type errors after schema changes
 
-**Solution**: 
+**Solution**:
+
 1. Run migration: `npm run migrate:dev`
 2. Regenerate client: `npm run generate`
 3. Restart TypeScript server in your IDE
@@ -700,19 +736,22 @@ npm run generate
 **Problem**: Seed script fails with constraint violations
 
 **Solution**: Reset database and run seed:
+
 ```bash
 npm run migrate:reset
 ```
 
 **Problem**: Duplicate key errors during seeding
 
-**Solution**: The seed script uses `upsert` for most records. If issues persist, check for hardcoded IDs that may conflict.
+**Solution**: The seed script uses `upsert` for most records. If issues persist,
+check for hardcoded IDs that may conflict.
 
 ### Performance Issues
 
 **Problem**: Slow queries
 
 **Solutions**:
+
 1. Check query plans using `EXPLAIN ANALYZE`
 2. Ensure you're using indexed columns in WHERE clauses
 3. Add indexes if needed (requires new migration)
@@ -722,6 +761,7 @@ npm run migrate:reset
 **Problem**: High memory usage
 
 **Solutions**:
+
 1. Limit result sets with `take` and `skip`
 2. Use streaming for large datasets
 3. Implement cursor-based pagination
@@ -732,6 +772,7 @@ npm run migrate:reset
 **Problem**: Cannot start PostgreSQL container
 
 **Solution**: Check logs:
+
 ```bash
 docker logs angrybirdman-postgres
 ```
@@ -739,6 +780,7 @@ docker logs angrybirdman-postgres
 **Problem**: Port 5432 already in use
 
 **Solution**: Either:
+
 1. Stop other PostgreSQL instances
 2. Change port in `docker-compose.yml` and update `DATABASE_URL`
 
@@ -748,7 +790,8 @@ docker logs angrybirdman-postgres
 
 - **Prisma Documentation**: https://www.prisma.io/docs
 - **PostgreSQL Documentation**: https://www.postgresql.org/docs/
-- **Project Specification**: See `/specs/high-level-spec.md` Section 6 (Data Concepts)
+- **Project Specification**: See `/specs/high-level-spec.md` Section 6 (Data
+  Concepts)
 - **Implementation Plan**: See `/specs/implementation-plan.md` Step 2.2
 
 ---

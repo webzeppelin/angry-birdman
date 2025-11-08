@@ -9,7 +9,7 @@ services:
   postgres:
     # Enable verbose logging for development
     environment:
-      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --lc-collate=en_US.UTF-8 --lc-ctype=en_US.UTF-8"
+      POSTGRES_INITDB_ARGS: '--encoding=UTF8 --lc-collate=en_US.UTF-8 --lc-ctype=en_US.UTF-8'
     # Additional volumes for local development
     volumes:
       # Uncomment to mount custom PostgreSQL configuration
@@ -23,7 +23,7 @@ services:
     # volumes:
     #   - ./docker/valkey/valkey.conf:/usr/local/etc/valkey/valkey.conf:ro
     # command: valkey-server /usr/local/etc/valkey/valkey.conf
-    
+
     # Additional logging for development
     command: >
       valkey-server
@@ -38,21 +38,20 @@ services:
     # Start in development mode with hostname disabled for WSL2 compatibility
     # --import-realm automatically imports all JSON files from /opt/keycloak/data/import
     command: start-dev --hostname-strict=false --import-realm
-    
+
     # Additional environment variables for development
     environment:
       # Verbose logging for development
       KC_LOG_LEVEL: INFO
       QUARKUS_LOG_LEVEL: INFO
-      
+
       # WSL2-specific fixes for admin console
       # These settings disable strict hostname checking which is needed for WSL2
       KC_HOSTNAME_STRICT_BACKCHANNEL: false
       KC_HTTP_RELATIVE_PATH: /
-      
+
       # Disable third-party cookie checks (causes iframe timeout in WSL2)
       KC_SPI_LOGIN_PROTOCOL_OPENID_CONNECT_SUPPRESS_LOGOUT_CONFIRMATION_SCREEN: true
-
 # Add additional services for development tools if needed
 # services:
 #   # pgAdmin for database management

@@ -1,31 +1,46 @@
 # Angry Birdman
 
-A comprehensive clan management system for Angry Birds 2, focused on tracking Clan-vs-Clan (CvC) battle performance, calculating advanced statistics, and managing clan rosters.
+A comprehensive clan management system for Angry Birds 2, focused on tracking
+Clan-vs-Clan (CvC) battle performance, calculating advanced statistics, and
+managing clan rosters.
 
 ## Overview
 
-Angry Birdman helps clan administrators efficiently manage their Angry Birds 2 clans by providing:
+Angry Birdman helps clan administrators efficiently manage their Angry Birds 2
+clans by providing:
 
 - **Battle Data Capture** - Streamlined data entry for CvC battle results
-- **Performance Analytics** - Advanced statistics including ratio scores that normalize performance across different flock power levels
-- **Roster Management** - Track active/inactive members, joins, departures, and kicks
+- **Performance Analytics** - Advanced statistics including ratio scores that
+  normalize performance across different flock power levels
+- **Roster Management** - Track active/inactive members, joins, departures, and
+  kicks
 - **Monthly/Yearly Summaries** - Automated rollup statistics for trend analysis
-- **Reporting & Visualization** - Charts and reports showing clan performance over time
+- **Reporting & Visualization** - Charts and reports showing clan performance
+  over time
 - **Multi-Clan Support** - Manage multiple clans independently within one system
 
 ## Key Concepts
 
 ### Flock Power (FP)
-Each player's base multiplier (50-4000+) that grows with game progression. Higher FP means higher potential scores.
+
+Each player's base multiplier (50-4000+) that grows with game progression.
+Higher FP means higher potential scores.
 
 ### Ratio Score
-The key performance metric: `(score / fp) * 10`. Normalizes performance across different FP levels so players can be fairly compared regardless of their power level.
+
+The key performance metric: `(score / fp) * 10`. Normalizes performance across
+different FP levels so players can be fairly compared regardless of their power
+level.
 
 ### Baseline FP
-The clan's total FP when capturing stats, used for calculating the official clan ratio score.
+
+The clan's total FP when capturing stats, used for calculating the official clan
+ratio score.
 
 ### Reserve Players
-Low-FP inactive players kept to suppress the clan's total FP for easier matchmaking.
+
+Low-FP inactive players kept to suppress the clan's total FP for easier
+matchmaking.
 
 ## Architecture
 
@@ -52,17 +67,20 @@ Three-tier web application built with modern open-source technologies:
 
 ### Technology Stack
 
-- **Frontend**: React 18+, Vite 5+, TypeScript 5+, Tailwind CSS, React Query, React Router
+- **Frontend**: React 18+, Vite 5+, TypeScript 5+, Tailwind CSS, React Query,
+  React Router
 - **Backend**: Node.js 20 LTS+, Fastify 4+, TypeScript 5+, JWT authentication
 - **Database**: PostgreSQL 15+, Prisma ORM 5+
 - **Authentication**: Keycloak 23+ (OAuth2/OpenID Connect)
 - **Cache**: Valkey (Redis fork) for session management
 - **Infrastructure**: Docker 24+, Docker Compose for local dev
-- **Common**: Shared TypeScript library for code reuse between frontend and backend
+- **Common**: Shared TypeScript library for code reuse between frontend and
+  backend
 
 ## User Roles
 
-- **Anonymous** - Read-only access to all clan statistics and reports (no login required)
+- **Anonymous** - Read-only access to all clan statistics and reports (no login
+  required)
 - **Clan Admin** - Manage roster and battle data for their clan
 - **Clan Owner** - Full control over their clan, can promote/demote admins
 - **Superadmin** - Full access to all clans and system settings
@@ -70,6 +88,7 @@ Three-tier web application built with modern open-source technologies:
 ## Key Features
 
 ### Battle Data Entry (Epic 4)
+
 - Efficient keyboard-first data entry workflow
 - Field order matches game UI for quick tab navigation
 - Automatic calculation of ratio scores and rankings
@@ -77,18 +96,21 @@ Three-tier web application built with modern open-source technologies:
 - Validation to prevent data entry errors
 
 ### Performance Statistics (Epic 5-6)
+
 - Individual battle stats with player rankings
 - Participation tracking (players, non-players, reserves)
 - Monthly and yearly aggregated statistics
 - Minimum 3 battles required for inclusion in summaries
 
 ### Analytics & Reporting (Epic 7)
+
 - Flock power trends over time
 - Ratio score performance tracking
 - Win/loss margin analysis
 - Participation rate monitoring
 
 ### Roster Management (Epic 3)
+
 - Track active/inactive members
 - Record join, leave, and kick dates
 - Post-battle action assignments (HOLD, WARN, KICK, RESERVE, PASS)
@@ -125,22 +147,26 @@ angrybirdman/
 ### Local Development Setup
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/yourusername/angrybirdman.git
    cd angrybirdman
    ```
 
 2. **Start infrastructure services**
+
    ```bash
    docker-compose up -d database keycloak valkey
    ```
 
 3. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 4. **Initialize database**
+
    ```bash
    cd database/postgres
    psql -U postgres -d angrybirdman -f schema.sql
@@ -148,11 +174,13 @@ angrybirdman/
    ```
 
 5. **Generate Prisma Client**
+
    ```bash
    npx prisma generate
    ```
 
 6. **Start development servers**
+
    ```bash
    # Terminal 1 - API
    cd api
@@ -182,17 +210,24 @@ All services will start automatically with hot-reloading enabled.
 
 Comprehensive documentation is available in the `specs/` directory:
 
-- **[high-level-spec.md](specs/high-level-spec.md)** - Complete system specification including data model and calculations
-- **[user-experience-specs.md](specs/user-experience-specs.md)** - UX design, components, and interaction patterns
-- **[epics-and-stories.md](specs/epics-and-stories.md)** - User stories organized into 7 epics
-- **[technology-plan.md](specs/technology-plan.md)** - Detailed technology stack documentation
-- **[implementation-plan.md](specs/implementation-plan.md)** - 12-week implementation strategy
-- **[implementation-status.md](specs/implementation-status.md)** - Progress tracking
+- **[high-level-spec.md](specs/high-level-spec.md)** - Complete system
+  specification including data model and calculations
+- **[user-experience-specs.md](specs/user-experience-specs.md)** - UX design,
+  components, and interaction patterns
+- **[epics-and-stories.md](specs/epics-and-stories.md)** - User stories
+  organized into 7 epics
+- **[technology-plan.md](specs/technology-plan.md)** - Detailed technology stack
+  documentation
+- **[implementation-plan.md](specs/implementation-plan.md)** - 12-week
+  implementation strategy
+- **[implementation-status.md](specs/implementation-status.md)** - Progress
+  tracking
 - **[index.md](specs/index.md)** - Complete specification index
 
 Additional documentation:
 
-- **[database/postgres/README.md](database/postgres/README.md)** - Database schema documentation
+- **[database/postgres/README.md](database/postgres/README.md)** - Database
+  schema documentation
 
 ## Development Workflow
 
@@ -206,6 +241,7 @@ Additional documentation:
 ### Commit Conventions
 
 Follow Conventional Commits format:
+
 - `feat:` - New features
 - `fix:` - Bug fixes
 - `docs:` - Documentation changes
@@ -253,33 +289,39 @@ npm run type-check
 ### Key Calculations
 
 **Clan Ratio (Official)**:
+
 ```
 ratio = (score / baselineFp) * 10
 ```
 
 **Average Ratio**:
+
 ```
 averageRatio = (score / fp) * 10
 ```
 
 **Player Ratio**:
+
 ```
 playerRatio = (score / fp) * 10
 ```
 
 **Margin Ratio** (Win/Loss margin):
+
 ```
 marginRatio = ((score - opponentScore) / score) * 100
 ```
 
 **FP Margin** (Power advantage/disadvantage):
+
 ```
 fpMargin = ((baselineFp - opponentFp) / baselineFp) * 100
 ```
 
 ## Contributing
 
-This project will be open-sourced to enable community collaboration. Contributions are welcome!
+This project will be open-sourced to enable community collaboration.
+Contributions are welcome!
 
 ### Guidelines
 
@@ -302,7 +344,8 @@ This project will be open-sourced to enable community collaboration. Contributio
 
 - **Authentication**: Keycloak with JWT tokens
 - **Authorization**: Role-based access control (RBAC)
-- **Data Access**: Anonymous users have read-only access, admins can modify their clan data
+- **Data Access**: Anonymous users have read-only access, admins can modify
+  their clan data
 - **API Security**: Rate limiting, CORS, security headers via Helmet
 - **Password Management**: Handled by Keycloak (bcrypt, password policies)
 - **Audit Trail**: All admin actions logged in `audit_log` table
@@ -328,7 +371,8 @@ Apache 2.0
 
 ## Acknowledgments
 
-Built for the Angry Birds 2 clan management community to make clan administration easier and more data-driven.
+Built for the Angry Birds 2 clan management community to make clan
+administration easier and more data-driven.
 
 ## Contact & Support
 
@@ -338,4 +382,5 @@ Built for the Angry Birds 2 clan management community to make clan administratio
 
 **Status**: 🟡 In Development
 
-See [implementation-status.md](specs/implementation-status.md) for current progress.
+See [implementation-status.md](specs/implementation-status.md) for current
+progress.
