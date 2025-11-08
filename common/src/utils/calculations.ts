@@ -3,11 +3,8 @@
  * Implements all calculation formulas from high-level-spec.md Section 7
  */
 
-import {
-  BATTLE_RESULTS,
-  PERCENTAGE_MULTIPLIER,
-  RATIO_MULTIPLIER,
-} from '../constants/index.js';
+import { BATTLE_RESULTS, PERCENTAGE_MULTIPLIER, RATIO_MULTIPLIER } from '../constants/index.js';
+
 import type { BattleResult } from '../constants/index.js';
 
 // ============================================================================
