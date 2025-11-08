@@ -1,4 +1,10 @@
-// Utility functions entry point
-// Will be populated with calculation functions and other utilities
+/**
+ * Utility functions for Angry Birdman
+ * Re-exports all utility modules for convenient importing
+ */
 
-export {};
+// Calculation utilities
+export * from './calculations.js';
+
+// Date formatting utilities
+export * from './date-formatting.js';

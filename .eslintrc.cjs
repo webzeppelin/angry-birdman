@@ -71,7 +71,7 @@ module.exports = {
           './tsconfig.json',
           './frontend/tsconfig.json',
           './api/tsconfig.json',
-          './common/tsconfig.json',
+          './common/tsconfig.eslint.json',
           './database/tsconfig.json',
         ],
       },
@@ -107,6 +107,14 @@ module.exports = {
       files: ['api/**/*.ts'],
       rules: {
         'no-console': 'off', // Allow console in backend
+      },
+    },
+    // Common library - use eslint-specific tsconfig that includes tests
+    {
+      files: ['common/**/*.ts'],
+      parserOptions: {
+        project: './common/tsconfig.eslint.json',
+        tsconfigRootDir: __dirname,
       },
     },
     // Test files

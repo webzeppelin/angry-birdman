@@ -1,6 +1,14 @@
-// Common library entry point
-// This file will be populated with exports for types, schemas, utils, and constants
+/**
+ * @angrybirdman/common
+ * Shared TypeScript library for Angry Birdman
+ *
+ * This library contains types, validation schemas, constants, and utility functions
+ * shared between the frontend and backend applications.
+ *
+ * @module @angrybirdman/common
+ */
 
+// Re-export all modules
 export * from './types/index.js';
 export * from './schemas/index.js';
 export * from './utils/index.js';

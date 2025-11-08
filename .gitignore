@@ -40,6 +40,10 @@ out/
 coverage/
 .nyc_output/
 *.lcov
+# Don't commit compiled test files
+tests/**/*.js
+tests/**/*.d.ts
+tests/**/*.map
 
 # Database
 *.sql
