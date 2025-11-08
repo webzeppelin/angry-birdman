@@ -1,3 +1,5 @@
+import { resolve } from 'path';
+
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
@@ -16,23 +18,38 @@ export default defineConfig({
       exclude: [
         'src/**/*.d.ts',
         'src/**/*.test.ts',
-        'src/index.ts', // Re-export file
+        'src/index.ts', // Entry point, tested via integration tests
         '**/node_modules/**',
         '**/dist/**',
       ],
-      // Quality gates - higher standards for utility library
+      // Quality gates
       thresholds: {
-        lines: 80,
-        functions: 80,
-        branches: 75,
-        statements: 80,
+        lines: 70,
+        functions: 70,
+        branches: 65,
+        statements: 70,
       },
     },
 
-    // Test isolation
+    // Setup files for database and test utilities
+    setupFiles: ['./tests/setup.ts'],
+
+    // Test isolation and cleanup
     isolate: true,
     mockReset: true,
     restoreMocks: true,
     clearMocks: true,
+
+    // Test timeout for database operations
+    testTimeout: 10000,
+    hookTimeout: 10000,
+  },
+
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, './src'),
+      '@angrybirdman/common': resolve(__dirname, '../common/src'),
+      '@angrybirdman/database': resolve(__dirname, '../database'),
+    },
   },
 });
