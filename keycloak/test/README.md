@@ -44,13 +44,24 @@ The script will automatically create these test users:
 | Username       | Email                        | First Name | Last Name | Password       | Role       | Clan ID |
 | -------------- | ---------------------------- | ---------- | --------- | -------------- | ---------- | ------- |
 | testsuperadmin | superadmin@angrybirdman.test | Super      | Admin     | SuperAdmin123! | superadmin | (none)  |
-| testowner      | owner@angrybirdman.test      | Clan       | Owner     | ClanOwner123!  | clan-owner | 1       |
-| testadmin      | admin@angrybirdman.test      | Clan       | Admin     | ClanAdmin123!  | clan-admin | 1       |
-| testuser       | user@angrybirdman.test       | Test       | User      | TestUser123!   | user       | 1       |
-| testowner2     | owner2@angrybirdman.test     | Clan2      | Owner     | ClanOwner2123! | clan-owner | 2       |
+| testowner      | owner@angrybirdman.test      | Clan       | Owner     | ClanOwner123!  | clan-owner | 54      |
+| testadmin      | admin@angrybirdman.test      | Clan       | Admin     | ClanAdmin123!  | clan-admin | 54      |
+| testuser       | user@angrybirdman.test       | Test       | User      | TestUser123!   | user       | 54      |
+| testowner2     | owner2@angrybirdman.test     | Clan2      | Owner     | ClanOwner2123! | clan-owner | 55      |
 
-**Note**: Clan IDs 1 and 2 correspond to the "Angry Avengers" and "Feather Fury"
-clans from the database seed data.
+**Note**: Clan IDs correspond to the database seed data:
+
+- **Clan ID 54**: "Angry Avengers" (United States) - rovioId: 123456
+- **Clan ID 55**: "Feather Fury" (Canada) - rovioId: 789012
+- **Clan ID 56**: "Bird Brain Battalion" (United Kingdom, inactive) - rovioId:
+  345678
+
+**Important**: If you reset the database, clan IDs may change. Check current IDs
+with:
+
+```bash
+docker exec angrybirdman-postgres psql -U angrybirdman -d angrybirdman -c "SELECT clan_id, rovio_id, name FROM clans ORDER BY clan_id;"
+```
 
 The script will:
 

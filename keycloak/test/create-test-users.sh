@@ -117,17 +117,17 @@ echo ""
 # Superadmin user (no clan association)
 create_user "testsuperadmin" "superadmin@angrybirdman.test" "Super" "Admin" "SuperAdmin123!" "superadmin" ""
 
-# Clan Owner user (clan ID 1 - Angry Avengers from seed data)
-create_user "testowner" "owner@angrybirdman.test" "Clan" "Owner" "ClanOwner123!" "clan-owner" "1"
+# Clan Owner user (clan ID 54 - Angry Avengers from seed data)
+create_user "testowner" "owner@angrybirdman.test" "Clan" "Owner" "ClanOwner123!" "clan-owner" "54"
 
-# Clan Admin user (clan ID 1 - Angry Avengers)
-create_user "testadmin" "admin@angrybirdman.test" "Clan" "Admin" "ClanAdmin123!" "clan-admin" "1"
+# Clan Admin user (clan ID 54 - Angry Avengers)
+create_user "testadmin" "admin@angrybirdman.test" "Clan" "Admin" "ClanAdmin123!" "clan-admin" "54"
 
-# Basic user (clan ID 1 - Angry Avengers)
-create_user "testuser" "user@angrybirdman.test" "Test" "User" "TestUser123!" "user" "1"
+# Basic user (clan ID 54 - Angry Avengers)
+create_user "testuser" "user@angrybirdman.test" "Test" "User" "TestUser123!" "user" "54"
 
-# Additional clan owner for different clan (clan ID 2 - Feather Fury from seed data)
-create_user "testowner2" "owner2@angrybirdman.test" "Clan2" "Owner" "ClanOwner2123!" "clan-owner" "2"
+# Additional clan owner for different clan (clan ID 55 - Feather Fury from seed data)
+create_user "testowner2" "owner2@angrybirdman.test" "Clan2" "Owner" "ClanOwner2123!" "clan-owner" "55"
 
 echo "═══════════════════════════════════════════════════════════"
 echo "Test user creation completed!"
@@ -135,10 +135,10 @@ echo "════════════════════════�
 echo ""
 echo "Created users:"
 echo "  • testsuperadmin / SuperAdmin123!     (superadmin, no clan)"
-echo "  • testowner      / ClanOwner123!      (clan-owner, clan 1)"
-echo "  • testadmin      / ClanAdmin123!      (clan-admin, clan 1)"
-echo "  • testuser       / TestUser123!       (user, clan 1)"
-echo "  • testowner2     / ClanOwner2123!     (clan-owner, clan 2)"
+echo "  • testowner      / ClanOwner123!      (clan-owner, clan 54)"
+echo "  • testadmin      / ClanAdmin123!      (clan-admin, clan 54)"
+echo "  • testuser       / TestUser123!       (user, clan 54)"
+echo "  • testowner2     / ClanOwner2123!     (clan-owner, clan 55)"
 echo ""
 echo "You can now test authentication with these credentials."
 echo ""
