@@ -30,7 +30,7 @@ const userManagerConfig: UserManagerSettings = {
   redirect_uri: `${APP_URL}/callback`,
   post_logout_redirect_uri: APP_URL,
   response_type: 'code',
-  scope: 'openid profile email',
+  scope: 'openid clan-context',
 
   // PKCE enabled for security (Authorization Code Flow with PKCE)
   response_mode: 'query',
