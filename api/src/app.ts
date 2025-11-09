@@ -10,6 +10,7 @@ import configPlugin from './plugins/config.js';
 import databasePlugin from './plugins/database.js';
 import swaggerPlugin from './plugins/swagger.js';
 import authRoutes from './routes/auth.js';
+import clanRoutes from './routes/clans.js';
 import healthRoutes from './routes/health.js';
 
 /**
@@ -90,6 +91,7 @@ export async function buildApp() {
 
   // Register routes
   await fastify.register(authRoutes);
+  await fastify.register(clanRoutes);
   await fastify.register(healthRoutes);
 
   // Error handlers

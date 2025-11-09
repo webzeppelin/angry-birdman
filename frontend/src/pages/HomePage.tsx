@@ -1,11 +1,12 @@
 /**
  * Home Page / Landing Page
  *
- * Welcome page with introduction and CTAs.
+ * Welcome page with introduction, CTAs, and clan selector.
  */
 
 import { Link } from 'react-router-dom';
 
+import { ClanSelector } from '@/components/clans/ClanSelector';
 import { useAuth } from '@/contexts/AuthContext';
 
 export function HomePage() {
@@ -77,6 +78,18 @@ export function HomePage() {
               </p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Clan Browser Section */}
+      <section className="py-16">
+        <div className="container mx-auto px-4">
+          <h2 className="font-display mb-8 text-center text-3xl text-neutral-800">Browse Clans</h2>
+          <p className="mx-auto mb-8 max-w-2xl text-center text-neutral-600">
+            Explore clan statistics and battle performance. Find your clan or check out the
+            competition!
+          </p>
+          <ClanSelector maxDisplay={6} />
         </div>
       </section>
 

@@ -14,6 +14,7 @@ import {
   HomePage,
   AboutPage,
   ClansPage,
+  ClanPage,
   DashboardPage,
   LoginPage,
   CallbackPage,
@@ -60,6 +61,14 @@ function App() {
               element={
                 <Layout>
                   <ClansPage />
+                </Layout>
+              }
+            />
+            <Route
+              path="/clans/:clanId"
+              element={
+                <Layout>
+                  <ClanPage />
                 </Layout>
               }
             />

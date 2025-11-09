@@ -50,7 +50,7 @@ interface DecodedToken {
   iat: number;
 }
 
-export default function authRoutes(fastify: FastifyInstance) {
+export default function authRoutes(fastify: FastifyInstance, _opts: unknown, done: () => void) {
   /**
    * POST /auth/token
    * Exchange authorization code for tokens, store in httpOnly cookies
@@ -408,4 +408,6 @@ export default function authRoutes(fastify: FastifyInstance) {
       return { authenticated };
     }
   );
+
+  done();
 }

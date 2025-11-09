@@ -1,6 +1,7 @@
 export { HomePage } from './HomePage';
 export { AboutPage } from './AboutPage';
 export { ClansPage } from './ClansPage';
+export { ClanPage } from './ClanPage';
 export { DashboardPage } from './DashboardPage';
 export { LoginPage } from './LoginPage';
 export { CallbackPage } from './CallbackPage';
