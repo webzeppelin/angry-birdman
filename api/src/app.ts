@@ -9,6 +9,7 @@ import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 import configPlugin from './plugins/config.js';
 import databasePlugin from './plugins/database.js';
 import swaggerPlugin from './plugins/swagger.js';
+import adminRequestsRoutes from './routes/admin-requests.js';
 import authRoutes from './routes/auth.js';
 import clanRoutes from './routes/clans.js';
 import healthRoutes from './routes/health.js';
@@ -95,6 +96,7 @@ export async function buildApp() {
   await fastify.register(authRoutes, { prefix: '/api/auth' });
   await fastify.register(clanRoutes, { prefix: '/api/clans' });
   await fastify.register(usersRoutes, { prefix: '/api/users' });
+  await fastify.register(adminRequestsRoutes, { prefix: '/api/admin-requests' });
   await fastify.register(healthRoutes);
 
   // Error handlers
