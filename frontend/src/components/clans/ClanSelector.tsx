@@ -134,8 +134,7 @@ export function ClanSelector({
       {/* Results */}
       {isLoading ? (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {/* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */}
-          {[...Array(6)].map((_, i) => (
+          {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="shadow-card animate-pulse rounded-lg bg-white p-4">
               <div className="mb-2 h-6 w-3/4 rounded bg-neutral-200"></div>
               <div className="mb-3 h-4 w-1/2 rounded bg-neutral-200"></div>

@@ -54,8 +54,7 @@ export function ClanPage() {
               <div className="mb-4 h-10 w-1/2 animate-pulse rounded bg-neutral-200"></div>
               <div className="mb-8 h-6 w-1/3 animate-pulse rounded bg-neutral-200"></div>
               <div className="grid gap-4 md:grid-cols-3">
-                {/* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */}
-                {[...Array(3)].map((_, i) => (
+                {Array.from({ length: 3 }).map((_, i) => (
                   <div key={i} className="h-24 animate-pulse rounded bg-neutral-100"></div>
                 ))}
               </div>
