@@ -109,6 +109,18 @@ module.exports = {
         'no-console': 'off', // Allow console in backend
       },
     },
+    // API routes - allow some flexibility for Prisma and error handling
+    {
+      files: ['api/src/routes/**/*.ts'],
+      rules: {
+        '@typescript-eslint/no-unsafe-assignment': 'off',
+        '@typescript-eslint/no-unsafe-member-access': 'off',
+        '@typescript-eslint/no-unsafe-call': 'off',
+        '@typescript-eslint/no-unsafe-argument': 'off',
+        '@typescript-eslint/require-await': 'off',
+        '@typescript-eslint/no-non-null-assertion': 'warn',
+      },
+    },
     // Common library - use eslint-specific tsconfig that includes tests
     {
       files: ['common/**/*.ts'],

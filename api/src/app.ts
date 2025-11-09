@@ -12,6 +12,7 @@ import swaggerPlugin from './plugins/swagger.js';
 import authRoutes from './routes/auth.js';
 import clanRoutes from './routes/clans.js';
 import healthRoutes from './routes/health.js';
+import usersRoutes from './routes/users.js';
 
 /**
  * Build Fastify application with all plugins and routes
@@ -91,8 +92,9 @@ export async function buildApp() {
   await fastify.register(swaggerPlugin);
 
   // Register routes
-  await fastify.register(authRoutes);
-  await fastify.register(clanRoutes);
+  await fastify.register(authRoutes, { prefix: '/api/auth' });
+  await fastify.register(clanRoutes, { prefix: '/api/clans' });
+  await fastify.register(usersRoutes, { prefix: '/api/users' });
   await fastify.register(healthRoutes);
 
   // Error handlers
