@@ -14,7 +14,14 @@ import {
 } from '../services/audit.service.js';
 import { createKeycloakService } from '../services/keycloak.service.js';
 
+import type { PrismaClient } from '@prisma/client';
 import type { FastifyPluginAsync } from 'fastify';
+
+// Type for Prisma transaction callback
+type PrismaTransaction = Omit<
+  PrismaClient,
+  '$connect' | '$disconnect' | '$on' | '$transaction' | '$extends'
+>;
 
 interface UserSearchQuery {
   search?: string;
@@ -356,7 +363,7 @@ const adminRoutes: FastifyPluginAsync = async (fastify) => {
           }
         }
 
-        await fastify.prisma.$transaction(async (tx: typeof fastify.prisma) => {
+        await fastify.prisma.$transaction(async (tx: PrismaTransaction) => {
           if (makeOwner && clanId !== null) {
             await tx.user.updateMany({
               where: { clanId, owner: true },

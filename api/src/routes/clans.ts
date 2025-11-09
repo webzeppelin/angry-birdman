@@ -9,7 +9,14 @@
 
 import { z } from 'zod';
 
+import type { PrismaClient } from '@prisma/client';
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
+
+// Type for Prisma transaction callback
+type PrismaTransaction = Omit<
+  PrismaClient,
+  '$connect' | '$disconnect' | '$on' | '$transaction' | '$extends'
+>;
 
 // Validation schemas
 const clanQuerySchema = z.object({
@@ -401,7 +408,7 @@ export default function clanRoutes(fastify: FastifyInstance, _opts: unknown, don
         }
 
         // Create clan and update user as owner in a transaction
-        const clan = await fastify.prisma.$transaction(async (tx: typeof fastify.prisma) => {
+        const clan = await fastify.prisma.$transaction(async (tx: PrismaTransaction) => {
           // Create the clan
           const newClan = await tx.clan.create({
             data: {
@@ -871,7 +878,7 @@ export default function clanRoutes(fastify: FastifyInstance, _opts: unknown, don
         }
 
         // Perform promotion in transaction
-        await fastify.prisma.$transaction(async (tx: typeof fastify.prisma) => {
+        await fastify.prisma.$transaction(async (tx: PrismaTransaction) => {
           // Demote current owner(s)
           await tx.user.updateMany({
             where: {

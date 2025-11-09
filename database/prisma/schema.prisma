@@ -61,6 +61,7 @@ model User {
   email    String  @db.VarChar(255)
   clanId   Int?    @map("clan_id") // Nullable - superadmins may not be associated with a clan
   owner    Boolean @default(false) // True if user is a Clan Owner
+  enabled  Boolean @default(true) // Account enabled status (synced from Keycloak)
 
   // Timestamps
   createdAt DateTime @default(now()) @map("created_at")
