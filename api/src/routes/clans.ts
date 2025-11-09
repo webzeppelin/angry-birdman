@@ -158,8 +158,9 @@ export default function clanRoutes(fastify: FastifyInstance, _opts: unknown, don
           take: limit,
         });
 
+        type ClanListItem = (typeof clans)[number];
         return {
-          clans: clans.map((clan) => ({
+          clans: clans.map((clan: ClanListItem) => ({
             clanId: clan.clanId,
             rovioId: clan.rovioId,
             name: clan.name,
@@ -400,7 +401,7 @@ export default function clanRoutes(fastify: FastifyInstance, _opts: unknown, don
         }
 
         // Create clan and update user as owner in a transaction
-        const clan = await fastify.prisma.$transaction(async (tx) => {
+        const clan = await fastify.prisma.$transaction(async (tx: typeof fastify.prisma) => {
           // Create the clan
           const newClan = await tx.clan.create({
             data: {
@@ -627,6 +628,551 @@ export default function clanRoutes(fastify: FastifyInstance, _opts: unknown, don
         return reply.status(500).send({
           error: 'Internal Server Error',
           message: 'Failed to update clan',
+        });
+      }
+    }
+  );
+
+  /**
+   * GET /api/clans/:clanId/admins
+   * Story 2.11: List all admin users for a clan
+   *
+   * Returns clan owner and all clan admins
+   * Accessible by: clan admins, clan owner, superadmin
+   */
+  fastify.get<{ Params: { clanId: string } }>(
+    '/api/clans/:clanId/admins',
+    {
+      schema: {
+        description: 'List all admin users for a clan',
+        tags: ['Clans'],
+        security: [{ bearerAuth: [] }],
+        params: {
+          type: 'object',
+          required: ['clanId'],
+          properties: {
+            clanId: { type: 'string' },
+          },
+        },
+        response: {
+          200: {
+            type: 'object',
+            properties: {
+              admins: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    userId: { type: 'string' },
+                    username: { type: 'string' },
+                    email: { type: 'string' },
+                    owner: { type: 'boolean' },
+                    roles: { type: 'array', items: { type: 'string' } },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    async (request: FastifyRequest<{ Params: { clanId: string } }>, reply: FastifyReply) => {
+      const token = request.cookies.access_token;
+      if (!token) {
+        return reply.status(401).send({
+          error: 'Unauthorized',
+          message: 'Authentication required',
+        });
+      }
+
+      const clanId = parseInt(request.params.clanId, 10);
+      if (isNaN(clanId)) {
+        return reply.status(400).send({
+          error: 'Validation Error',
+          message: 'Invalid clan ID',
+        });
+      }
+
+      try {
+        const decoded = fastify.jwt.decode(token) as {
+          sub: string;
+          realm_access?: { roles: string[] };
+        };
+        const userId = decoded.sub;
+        const userRoles = decoded.realm_access?.roles || [];
+        const isSuperadmin = userRoles.includes('superadmin');
+
+        // Get requesting user
+        const user = await fastify.prisma.user.findUnique({
+          where: { userId },
+        });
+
+        if (!user) {
+          return reply.status(401).send({
+            error: 'Unauthorized',
+            message: 'User not found',
+          });
+        }
+
+        // Check authorization
+        const isClanMember = user.clanId === clanId;
+        if (!isSuperadmin && !isClanMember) {
+          return reply.status(403).send({
+            error: 'Forbidden',
+            message: 'You do not have access to this clan',
+          });
+        }
+
+        // Get all admin users for this clan
+        const admins = await fastify.prisma.user.findMany({
+          where: {
+            clanId,
+          },
+          select: {
+            userId: true,
+            username: true,
+            email: true,
+            owner: true,
+          },
+          orderBy: [
+            { owner: 'desc' }, // Owner first
+            { username: 'asc' },
+          ],
+        });
+
+        // Note: In a full implementation, you'd also fetch roles from Keycloak
+        // For now, we'll derive from the owner flag
+        type AdminDetails = (typeof admins)[number];
+        return {
+          admins: admins.map((admin: AdminDetails) => ({
+            userId: admin.userId,
+            username: admin.username,
+            email: admin.email,
+            owner: admin.owner,
+            roles: admin.owner ? ['clan-owner'] : ['clan-admin'],
+          })),
+        };
+      } catch (error) {
+        fastify.log.error(error, 'Failed to list clan admins');
+        return reply.status(500).send({
+          error: 'Internal Server Error',
+          message: 'Failed to list clan admins',
+        });
+      }
+    }
+  );
+
+  /**
+   * POST /api/clans/:clanId/admins/:userId/promote
+   * Story 2.13: Promote an admin to owner
+   *
+   * Transfers ownership from current owner to the specified admin
+   * Only current owner or superadmin can promote
+   */
+  fastify.post<{ Params: { clanId: string; userId: string } }>(
+    '/api/clans/:clanId/admins/:userId/promote',
+    {
+      schema: {
+        description: 'Promote an admin to owner',
+        tags: ['Clans'],
+        security: [{ bearerAuth: [] }],
+        params: {
+          type: 'object',
+          required: ['clanId', 'userId'],
+          properties: {
+            clanId: { type: 'string' },
+            userId: { type: 'string' },
+          },
+        },
+        response: {
+          200: {
+            type: 'object',
+            properties: {
+              message: { type: 'string' },
+            },
+          },
+        },
+      },
+    },
+    async (
+      request: FastifyRequest<{ Params: { clanId: string; userId: string } }>,
+      reply: FastifyReply
+    ) => {
+      const token = request.cookies.access_token;
+      if (!token) {
+        return reply.status(401).send({
+          error: 'Unauthorized',
+          message: 'Authentication required',
+        });
+      }
+
+      const clanId = parseInt(request.params.clanId, 10);
+      const targetUserId = request.params.userId;
+
+      if (isNaN(clanId)) {
+        return reply.status(400).send({
+          error: 'Validation Error',
+          message: 'Invalid clan ID',
+        });
+      }
+
+      try {
+        const decoded = fastify.jwt.decode(token) as {
+          sub: string;
+          realm_access?: { roles: string[] };
+        };
+        const actorId = decoded.sub;
+        const userRoles = decoded.realm_access?.roles || [];
+        const isSuperadmin = userRoles.includes('superadmin');
+
+        // Get actor and target users
+        const [actor, targetUser] = await Promise.all([
+          fastify.prisma.user.findUnique({ where: { userId: actorId } }),
+          fastify.prisma.user.findUnique({ where: { userId: targetUserId } }),
+        ]);
+
+        if (!actor) {
+          return reply.status(401).send({
+            error: 'Unauthorized',
+            message: 'User not found',
+          });
+        }
+
+        if (!targetUser) {
+          return reply.status(404).send({
+            error: 'Not Found',
+            message: 'Target user not found',
+          });
+        }
+
+        // Check authorization - must be current owner or superadmin
+        const isOwner = actor.owner && actor.clanId === clanId;
+        if (!isOwner && !isSuperadmin) {
+          return reply.status(403).send({
+            error: 'Forbidden',
+            message: 'Only clan owner or superadmin can promote users',
+          });
+        }
+
+        // Check that target user is a member of this clan
+        if (targetUser.clanId !== clanId) {
+          return reply.status(400).send({
+            error: 'Bad Request',
+            message: 'Target user is not a member of this clan',
+          });
+        }
+
+        // Check that target user is not already owner
+        if (targetUser.owner) {
+          return reply.status(400).send({
+            error: 'Bad Request',
+            message: 'User is already the clan owner',
+          });
+        }
+
+        // Perform promotion in transaction
+        await fastify.prisma.$transaction(async (tx: typeof fastify.prisma) => {
+          // Demote current owner(s)
+          await tx.user.updateMany({
+            where: {
+              clanId,
+              owner: true,
+            },
+            data: {
+              owner: false,
+            },
+          });
+
+          // Promote target user
+          await tx.user.update({
+            where: { userId: targetUserId },
+            data: {
+              owner: true,
+            },
+          });
+        });
+
+        // Note: In full implementation, would also update Keycloak roles
+        // and create audit log entry
+
+        fastify.log.info({ clanId, targetUserId, actorId }, 'User promoted to owner');
+
+        return {
+          message: 'User promoted to owner successfully',
+        };
+      } catch (error) {
+        fastify.log.error(error, 'Failed to promote user');
+        return reply.status(500).send({
+          error: 'Internal Server Error',
+          message: 'Failed to promote user',
+        });
+      }
+    }
+  );
+
+  /**
+   * DELETE /api/clans/:clanId/admins/:userId
+   * Story 2.14: Remove an admin from clan
+   *
+   * Removes the user's clan association and admin role
+   * Only owner or superadmin can remove admins
+   * Cannot remove the owner (must transfer ownership first)
+   */
+  fastify.delete<{ Params: { clanId: string; userId: string } }>(
+    '/api/clans/:clanId/admins/:userId',
+    {
+      schema: {
+        description: 'Remove an admin from clan',
+        tags: ['Clans'],
+        security: [{ bearerAuth: [] }],
+        params: {
+          type: 'object',
+          required: ['clanId', 'userId'],
+          properties: {
+            clanId: { type: 'string' },
+            userId: { type: 'string' },
+          },
+        },
+        response: {
+          200: {
+            type: 'object',
+            properties: {
+              message: { type: 'string' },
+            },
+          },
+        },
+      },
+    },
+    async (
+      request: FastifyRequest<{ Params: { clanId: string; userId: string } }>,
+      reply: FastifyReply
+    ) => {
+      const token = request.cookies.access_token;
+      if (!token) {
+        return reply.status(401).send({
+          error: 'Unauthorized',
+          message: 'Authentication required',
+        });
+      }
+
+      const clanId = parseInt(request.params.clanId, 10);
+      const targetUserId = request.params.userId;
+
+      if (isNaN(clanId)) {
+        return reply.status(400).send({
+          error: 'Validation Error',
+          message: 'Invalid clan ID',
+        });
+      }
+
+      try {
+        const decoded = fastify.jwt.decode(token) as {
+          sub: string;
+          realm_access?: { roles: string[] };
+        };
+        const actorId = decoded.sub;
+        const userRoles = decoded.realm_access?.roles || [];
+        const isSuperadmin = userRoles.includes('superadmin');
+
+        // Get actor and target users
+        const [actor, targetUser] = await Promise.all([
+          fastify.prisma.user.findUnique({ where: { userId: actorId } }),
+          fastify.prisma.user.findUnique({ where: { userId: targetUserId } }),
+        ]);
+
+        if (!actor) {
+          return reply.status(401).send({
+            error: 'Unauthorized',
+            message: 'User not found',
+          });
+        }
+
+        if (!targetUser) {
+          return reply.status(404).send({
+            error: 'Not Found',
+            message: 'Target user not found',
+          });
+        }
+
+        // Check authorization - must be owner or superadmin
+        const isOwner = actor.owner && actor.clanId === clanId;
+        if (!isOwner && !isSuperadmin) {
+          return reply.status(403).send({
+            error: 'Forbidden',
+            message: 'Only clan owner or superadmin can remove admins',
+          });
+        }
+
+        // Check that target user is a member of this clan
+        if (targetUser.clanId !== clanId) {
+          return reply.status(400).send({
+            error: 'Bad Request',
+            message: 'Target user is not a member of this clan',
+          });
+        }
+
+        // Cannot remove owner
+        if (targetUser.owner) {
+          return reply.status(400).send({
+            error: 'Bad Request',
+            message: 'Cannot remove clan owner. Transfer ownership first.',
+          });
+        }
+
+        // Cannot remove yourself
+        if (targetUserId === actorId) {
+          return reply.status(400).send({
+            error: 'Bad Request',
+            message: 'Cannot remove yourself. Transfer ownership first if you are the owner.',
+          });
+        }
+
+        // Remove user's clan association
+        await fastify.prisma.user.update({
+          where: { userId: targetUserId },
+          data: {
+            clanId: null,
+            owner: false,
+          },
+        });
+
+        // Note: In full implementation, would also remove Keycloak roles
+        // and create audit log entry
+
+        fastify.log.info({ clanId, targetUserId, actorId }, 'Admin removed from clan');
+
+        return {
+          message: 'Admin removed from clan successfully',
+        };
+      } catch (error) {
+        fastify.log.error(error, 'Failed to remove admin');
+        return reply.status(500).send({
+          error: 'Internal Server Error',
+          message: 'Failed to remove admin',
+        });
+      }
+    }
+  );
+
+  /**
+   * POST /api/clans/:clanId/deactivate
+   * Story 2.15: Deactivate a clan
+   *
+   * Marks the clan as inactive (soft delete)
+   * Only owner or superadmin can deactivate
+   */
+  fastify.post<{ Params: { clanId: string } }>(
+    '/api/clans/:clanId/deactivate',
+    {
+      schema: {
+        description: 'Deactivate a clan',
+        tags: ['Clans'],
+        security: [{ bearerAuth: [] }],
+        params: {
+          type: 'object',
+          required: ['clanId'],
+          properties: {
+            clanId: { type: 'string' },
+          },
+        },
+        response: {
+          200: {
+            type: 'object',
+            properties: {
+              message: { type: 'string' },
+            },
+          },
+        },
+      },
+    },
+    async (request: FastifyRequest<{ Params: { clanId: string } }>, reply: FastifyReply) => {
+      const token = request.cookies.access_token;
+      if (!token) {
+        return reply.status(401).send({
+          error: 'Unauthorized',
+          message: 'Authentication required',
+        });
+      }
+
+      const clanId = parseInt(request.params.clanId, 10);
+
+      if (isNaN(clanId)) {
+        return reply.status(400).send({
+          error: 'Validation Error',
+          message: 'Invalid clan ID',
+        });
+      }
+
+      try {
+        const decoded = fastify.jwt.decode(token) as {
+          sub: string;
+          realm_access?: { roles: string[] };
+        };
+        const userId = decoded.sub;
+        const userRoles = decoded.realm_access?.roles || [];
+        const isSuperadmin = userRoles.includes('superadmin');
+
+        // Get user
+        const user = await fastify.prisma.user.findUnique({
+          where: { userId },
+        });
+
+        if (!user) {
+          return reply.status(401).send({
+            error: 'Unauthorized',
+            message: 'User not found',
+          });
+        }
+
+        // Check if clan exists
+        const clan = await fastify.prisma.clan.findUnique({
+          where: { clanId },
+        });
+
+        if (!clan) {
+          return reply.status(404).send({
+            error: 'Not Found',
+            message: 'Clan not found',
+          });
+        }
+
+        // Check if already inactive
+        if (!clan.active) {
+          return reply.status(400).send({
+            error: 'Bad Request',
+            message: 'Clan is already inactive',
+          });
+        }
+
+        // Check authorization - must be owner or superadmin
+        const isOwner = user.owner && user.clanId === clanId;
+        if (!isOwner && !isSuperadmin) {
+          return reply.status(403).send({
+            error: 'Forbidden',
+            message: 'Only clan owner or superadmin can deactivate clan',
+          });
+        }
+
+        // Deactivate clan
+        await fastify.prisma.clan.update({
+          where: { clanId },
+          data: {
+            active: false,
+          },
+        });
+
+        // Note: In full implementation, would create audit log entry
+
+        fastify.log.info({ clanId, userId }, 'Clan deactivated');
+
+        return {
+          message: 'Clan deactivated successfully',
+        };
+      } catch (error) {
+        fastify.log.error(error, 'Failed to deactivate clan');
+        return reply.status(500).send({
+          error: 'Internal Server Error',
+          message: 'Failed to deactivate clan',
         });
       }
     }
