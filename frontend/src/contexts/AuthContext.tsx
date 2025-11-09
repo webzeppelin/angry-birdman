@@ -1,14 +1,14 @@
 /**
- * Authentication Context
+ * Authentication Context - Token Proxy Pattern
  *
  * Provides authentication state and methods throughout the application.
- * Integrates with Keycloak via oidc-client-ts for OAuth2/OIDC flows.
+ * Uses Backend Token Proxy Pattern for secure token management.
+ * Tokens are stored in httpOnly cookies (XSS-safe), never exposed to JavaScript.
  */
 
-import { type User } from 'oidc-client-ts';
 import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 
-import { userManager } from '@/lib/auth-config';
+import { type User, getCurrentUser, logout as logoutUser, userManager } from '@/lib/auth-config';
 
 import type React from 'react';
 
@@ -28,9 +28,9 @@ export interface AuthState {
 export interface AuthContextValue extends AuthState {
   login: () => Promise<void>;
   logout: () => Promise<void>;
-  getAccessToken: () => string | undefined;
+  refreshUser: () => Promise<void>;
   hasRole: (role: string) => boolean;
-  getClanId: () => string | undefined;
+  getClanId: () => number | undefined;
 }
 
 /**
@@ -52,7 +52,8 @@ export function useAuth(): AuthContextValue {
 /**
  * Authentication Provider Component
  *
- * Manages OAuth2/OIDC authentication state and provides auth methods to children.
+ * Manages authentication state using Backend Token Proxy Pattern.
+ * Tokens are stored in httpOnly cookies set by the backend (XSS-safe).
  */
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -60,18 +61,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [error, setError] = useState<string | null>(null);
 
   /**
-   * Load user from storage on mount
+   * Load user from backend on mount
    */
   useEffect(() => {
     const loadUser = async () => {
       try {
-        const storedUser = await userManager.getUser();
-        setUser(storedUser);
-
-        // Store access token for API client
-        if (storedUser?.access_token) {
-          localStorage.setItem('access_token', storedUser.access_token);
-        }
+        const currentUser = await getCurrentUser();
+        setUser(currentUser);
       } catch (err) {
         console.error('Error loading user:', err);
         setError('Failed to load authentication state');
@@ -84,68 +80,46 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   /**
-   * Handle user loaded event
+   * Set up automatic token refresh
+   * Tokens are automatically refreshed 1 minute before expiration (typical token lifetime: 15 minutes)
    */
   useEffect(() => {
-    const handleUserLoaded = (loadedUser: User) => {
-      setUser(loadedUser);
-      setError(null);
+    if (!user) return;
 
-      // Store access token for API client
-      if (loadedUser?.access_token) {
-        localStorage.setItem('access_token', loadedUser.access_token);
-      }
-    };
+    // Refresh token every 14 minutes (tokens typically expire in 15 minutes)
+    const interval = setInterval(
+      () => {
+        void (async () => {
+          try {
+            // refreshToken will use the refresh_token from httpOnly cookie
+            const response = await fetch(
+              `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/auth/refresh`,
+              {
+                method: 'POST',
+                credentials: 'include',
+              }
+            );
 
-    userManager.events.addUserLoaded(handleUserLoaded);
-    return () => userManager.events.removeUserLoaded(handleUserLoaded);
-  }, []);
+            if (!response.ok) {
+              // Refresh failed, clear user and require re-login
+              setUser(null);
+              setError('Session expired. Please sign in again.');
+            }
+          } catch (err) {
+            console.error('Token refresh failed:', err);
+            setUser(null);
+            setError('Session expired. Please sign in again.');
+          }
+        })();
+      },
+      14 * 60 * 1000
+    ); // 14 minutes
 
-  /**
-   * Handle user unloaded event
-   */
-  useEffect(() => {
-    const handleUserUnloaded = () => {
-      setUser(null);
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
-    };
-
-    userManager.events.addUserUnloaded(handleUserUnloaded);
-    return () => userManager.events.removeUserUnloaded(handleUserUnloaded);
-  }, []);
-
-  /**
-   * Handle access token expiring event
-   */
-  useEffect(() => {
-    const handleTokenExpiring = () => {
-      // Silent renewal is automatic, this is just for logging in development
-      if (import.meta.env.DEV) {
-        // eslint-disable-next-line no-console
-        console.log('Access token expiring, attempting silent renewal...');
-      }
-    };
-
-    userManager.events.addAccessTokenExpiring(handleTokenExpiring);
-    return () => userManager.events.removeAccessTokenExpiring(handleTokenExpiring);
-  }, []);
+    return () => clearInterval(interval);
+  }, [user]);
 
   /**
-   * Handle silent renew error
-   */
-  useEffect(() => {
-    const handleSilentRenewError = (error: Error) => {
-      console.error('Silent renew error:', error);
-      setError('Session renewal failed. Please sign in again.');
-    };
-
-    userManager.events.addSilentRenewError(handleSilentRenewError);
-    return () => userManager.events.removeSilentRenewError(handleSilentRenewError);
-  }, []);
-
-  /**
-   * Listen for logout events from other tabs or API interceptor
+   * Listen for logout events from other tabs
    */
   useEffect(() => {
     const handleLogoutEvent = () => {
@@ -158,7 +132,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   /**
-   * Initiate login flow
+   * Initiate login flow (redirect to Keycloak)
    */
   const login = useCallback(async () => {
     try {
@@ -172,12 +146,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   /**
-   * Initiate logout flow
+   * Logout (clear cookies and redirect to Keycloak logout)
    */
   const logout = useCallback(async () => {
     try {
       setError(null);
-      await userManager.signoutRedirect();
+      setUser(null);
+      await logoutUser();
     } catch (err) {
       console.error('Logout error:', err);
       setError('Failed to logout');
@@ -186,85 +161,46 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   /**
-   * Get current access token
+   * Refresh user information from backend
    */
-  const getAccessToken = useCallback(() => {
-    return user?.access_token;
-  }, [user]);
+  const refreshUser = useCallback(async () => {
+    try {
+      const currentUser = await getCurrentUser();
+      setUser(currentUser);
+    } catch (err) {
+      console.error('Error refreshing user:', err);
+    }
+  }, []);
 
   /**
    * Check if user has specific role
    */
   const hasRole = useCallback(
     (role: string): boolean => {
-      if (!user?.profile) return false;
-
-      // Keycloak stores roles in realm_access.roles
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-      const realmRoles = (user.profile as any).realm_access?.roles || [];
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-      return realmRoles.includes(role);
+      if (!user) return false;
+      return user.roles.includes(role);
     },
     [user]
   );
 
   /**
-   * Get user's clan ID from token claims
+   * Get user's clan ID
    */
-  const getClanId = useCallback((): string | undefined => {
-    if (!user?.profile) return undefined;
-
-    // Custom clanId claim from Keycloak
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
-    return (user.profile as any).clanId;
+  const getClanId = useCallback((): number | undefined => {
+    return user?.clanId;
   }, [user]);
 
   const value: AuthContextValue = {
     user,
-    isAuthenticated: !!user && !user.expired,
+    isAuthenticated: !!user,
     isLoading,
     error,
     login,
     logout,
-    getAccessToken,
+    refreshUser,
     hasRole,
     getClanId,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-
-/**
- * Callback handler for OAuth redirect
- * Call this from your /callback route component
- */
-export async function handleAuthCallback(): Promise<void> {
-  try {
-    const user = await userManager.signinRedirectCallback();
-
-    // Store access token for API client
-    if (user?.access_token) {
-      localStorage.setItem('access_token', user.access_token);
-    }
-
-    // Navigate to intended destination or home
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
-    const returnUrl: string = (user.state as any)?.returnUrl || '/';
-    window.location.href = returnUrl;
-  } catch (err) {
-    console.error('Auth callback error:', err);
-    throw err;
-  }
-}
-
-/**
- * Silent callback handler for token renewal
- * Call this from your /silent-callback route component
- */
-export async function handleSilentCallback(): Promise<void> {
-  try {
-    await userManager.signinSilentCallback();
-  } catch (err) {
-    console.error('Silent callback error:', err);
-  }
 }

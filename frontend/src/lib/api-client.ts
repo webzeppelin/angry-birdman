@@ -1,8 +1,9 @@
 /**
- * API Client Configuration
+ * API Client Configuration - Token Proxy Pattern
  *
  * Axios instance configured for communication with the Angry Birdman API.
- * Includes request/response interceptors for authentication and error handling.
+ * Uses httpOnly cookies for authentication (set by backend token proxy).
+ * Includes request/response interceptors for error handling.
  */
 
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios';
@@ -12,6 +13,9 @@ const API_BASE_URL = (import.meta.env.VITE_API_URL as string) || 'http://localho
 
 /**
  * Configured Axios instance for API requests
+ *
+ * Authentication is handled via httpOnly cookies automatically included with requests.
+ * No need to manually add Authorization headers.
  */
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -19,19 +23,20 @@ export const apiClient = axios.create({
     'Content-Type': 'application/json',
   },
   timeout: 30000, // 30 second timeout
+  withCredentials: true, // Include cookies in cross-origin requests
 });
 
 /**
- * Request interceptor to add authentication token
+ * Request interceptor for logging and custom modifications
  */
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    // Get token from auth context (will be set by AuthProvider)
-    const token = localStorage.getItem('access_token');
+    // Cookies are automatically included with withCredentials: true
+    // No need to manually add Authorization header
 
-    if (token && config.headers) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+    // Log requests in development (disabled for production)
+    // eslint-disable-next-line no-console
+    if (import.meta.env.DEV) console.log(`[API] ${config.method?.toUpperCase()} ${config.url}`);
 
     return config;
   },
@@ -54,9 +59,8 @@ apiClient.interceptors.response.use(
 
       switch (status) {
         case 401:
-          // Unauthorized - clear auth state and redirect to login
-          localStorage.removeItem('access_token');
-          localStorage.removeItem('refresh_token');
+          // Unauthorized - session expired or invalid
+          // Dispatch logout event to clear frontend state
           window.dispatchEvent(new CustomEvent('auth:logout'));
           break;
 

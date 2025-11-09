@@ -376,16 +376,17 @@ applications
 - Authentication requirements documented
 - Client SDK generation potential
 
-### Authentication: JWT (JSON Web Tokens)
+### Authentication: JWT (JSON Web Tokens) + httpOnly Cookies
 
-**Purpose**: Stateless authentication for API requests
+**Purpose**: Stateless, secure authentication for API requests
 
-**Why JWT**:
+**Why JWT + httpOnly Cookies**:
 
 - Stateless, scalable authentication
 - Standard format (RFC 7519)
 - Contains user identity and claims
-- Can be validated without database lookup
+- **XSS-safe**: Tokens stored in httpOnly cookies (JavaScript cannot access)
+- **CSRF-protected**: SameSite cookie attribute
 - Works across distributed systems
 
 **Token Structure**:
@@ -394,13 +395,34 @@ applications
 - **Payload**: User ID, clan ID, role, expiration
 - **Signature**: Verifies token integrity
 
+**Token Proxy Pattern** (Backend Token Management):
+
+1. Frontend initiates OAuth2 authorization code flow with Keycloak
+2. Keycloak redirects back with authorization code
+3. Frontend sends code to backend `/auth/token` endpoint
+4. Backend exchanges code for tokens with Keycloak
+5. Backend sets tokens in httpOnly cookies (XSS-safe)
+6. All subsequent API requests automatically include cookies
+7. Backend validates tokens from cookies (not Authorization header)
+
+**Token Storage**:
+
+- **Access Token**: httpOnly cookie, 15-minute expiration, `SameSite=lax`
+- **Refresh Token**: httpOnly cookie, 30-day expiration, `SameSite=lax`
+- **Security Benefits**:
+  - ✅ XSS attacks cannot steal tokens (JavaScript cannot access httpOnly
+    cookies)
+  - ✅ CSRF protection via SameSite attribute
+  - ✅ Secure flag for HTTPS-only in production
+
 **Token Lifecycle**:
 
 - Issued by Keycloak after successful authentication
-- Included in Authorization header (`Bearer <token>`)
-- Validated on each API request
-- Short expiration (15-30 minutes)
-- Refresh tokens for renewal
+- Exchanged via backend proxy and stored in httpOnly cookies
+- Validated on each API request (extracted from cookie)
+- Short expiration (15 minutes for access token)
+- Automatic frontend refresh every 14 minutes
+- Refresh tokens for renewal (30 days)
 
 ### Session State: Valkey (Redis fork)
 

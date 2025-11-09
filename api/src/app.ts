@@ -1,5 +1,7 @@
+import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
+import jwt from '@fastify/jwt';
 import rateLimit from '@fastify/rate-limit';
 import Fastify from 'fastify';
 
@@ -7,6 +9,7 @@ import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 import configPlugin from './plugins/config.js';
 import databasePlugin from './plugins/database.js';
 import swaggerPlugin from './plugins/swagger.js';
+import authRoutes from './routes/auth.js';
 import healthRoutes from './routes/health.js';
 
 /**
@@ -33,6 +36,22 @@ export async function buildApp() {
 
   // Register configuration plugin first (other plugins depend on it)
   await fastify.register(configPlugin);
+
+  // Cookie plugin (for httpOnly cookie token storage)
+  await fastify.register(cookie, {
+    secret:
+      fastify.config.COOKIE_SECRET ||
+      process.env.COOKIE_SECRET ||
+      'default-secret-change-in-production',
+    parseOptions: {},
+  });
+
+  // JWT plugin (for token decoding and validation)
+  await fastify.register(jwt, {
+    secret:
+      fastify.config.JWT_SECRET || process.env.JWT_SECRET || 'default-secret-change-in-production',
+    // We're using Keycloak tokens, so we primarily use decode(), not sign()
+  });
 
   // Security plugins
   await fastify.register(helmet, {
@@ -70,6 +89,7 @@ export async function buildApp() {
   await fastify.register(swaggerPlugin);
 
   // Register routes
+  await fastify.register(authRoutes);
   await fastify.register(healthRoutes);
 
   // Error handlers

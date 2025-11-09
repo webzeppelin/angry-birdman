@@ -61,8 +61,7 @@ export function ProtectedRoute({ children, requiredRoles = [] }: ProtectedRouteP
               {/* eslint-disable-next-line react/no-unescaped-entities */}
               Required role: {requiredRoles.join(' or ')}
               <br />
-              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */}
-              Your roles: {(user?.profile as any)?.realm_access?.roles?.join(', ') || 'none'}
+              Your roles: {user?.roles?.join(', ') || 'none'}
             </p>
             <a
               href="/"

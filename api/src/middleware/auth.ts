@@ -22,10 +22,10 @@ export interface JWTPayload {
   iat: number; // Issued at timestamp
 }
 
-// Extend Fastify's request type to include user
+// Extend Fastify's request type to include authUser
 declare module 'fastify' {
   interface FastifyRequest {
-    user?: JWTPayload;
+    authUser?: JWTPayload;
   }
 }
 
@@ -84,7 +84,8 @@ export async function verifyToken(token: string): Promise<JWTPayload> {
  * Authentication middleware - validates JWT tokens
  *
  * This middleware:
- * - Extracts the JWT token from the Authorization header
+ * - Extracts the JWT token from httpOnly cookies (XSS-safe token storage)
+ * - Falls back to Authorization header for backwards compatibility
  * - Verifies the token signature using Keycloak's public keys
  * - Validates token expiration and issuer
  * - Attaches decoded user information to request.user
@@ -93,23 +94,28 @@ export async function verifyToken(token: string): Promise<JWTPayload> {
  */
 export async function authenticate(request: FastifyRequest, reply: FastifyReply): Promise<void> {
   try {
-    // Extract token from Authorization header
-    const authHeader = request.headers.authorization;
+    // Extract token from httpOnly cookie (primary method) or Authorization header (fallback)
+    let token: string | undefined;
 
-    if (!authHeader) {
-      return reply.status(401).send({
-        error: 'Unauthorized',
-        message: 'No authorization header provided',
-      });
+    // Try to get token from cookie first (Token Proxy Pattern)
+    if (request.cookies?.access_token) {
+      token = request.cookies.access_token;
+    }
+    // Fallback to Authorization header for backwards compatibility
+    else if (request.headers.authorization) {
+      const authHeader = request.headers.authorization;
+      const [scheme, bearerToken] = authHeader.split(' ');
+
+      if (scheme === 'Bearer' && bearerToken) {
+        token = bearerToken;
+      }
     }
 
-    // Expect "Bearer <token>" format
-    const [scheme, token] = authHeader.split(' ');
-
-    if (scheme !== 'Bearer' || !token) {
+    // No token found in either location
+    if (!token) {
       return reply.status(401).send({
         error: 'Unauthorized',
-        message: 'Invalid authorization header format. Expected: Bearer <token>',
+        message: 'No authentication token provided',
       });
     }
 
@@ -117,7 +123,7 @@ export async function authenticate(request: FastifyRequest, reply: FastifyReply)
     const decoded = await verifyToken(token);
 
     // Attach user info to request
-    request.user = decoded;
+    request.authUser = decoded;
   } catch (error) {
     request.log.warn({ error }, 'JWT verification failed');
 
@@ -153,7 +159,8 @@ export async function authenticate(request: FastifyRequest, reply: FastifyReply)
 export function authorize(allowedRoles: string[]) {
   return async (request: FastifyRequest, reply: FastifyReply): Promise<void> => {
     // Ensure user is authenticated
-    if (!request.user) {
+    const user = request.authUser;
+    if (!user) {
       return reply.status(401).send({
         error: 'Unauthorized',
         message: 'Authentication required',
@@ -161,14 +168,14 @@ export function authorize(allowedRoles: string[]) {
     }
 
     // Extract user roles
-    const userRoles = request.user.realm_access?.roles || [];
+    const userRoles = user.realm_access?.roles || [];
 
     // Check if user has any of the allowed roles
     const hasPermission = allowedRoles.some((role) => userRoles.includes(role));
 
     if (!hasPermission) {
       request.log.warn(
-        { userId: request.user.sub, requiredRoles: allowedRoles, userRoles },
+        { userId: user.sub, requiredRoles: allowedRoles, userRoles },
         'Insufficient permissions'
       );
 
@@ -189,7 +196,8 @@ export function authorize(allowedRoles: string[]) {
 export function authorizeClan(clanIdParam: string = 'clanId') {
   return async (request: FastifyRequest, reply: FastifyReply): Promise<void> => {
     // Ensure user is authenticated
-    if (!request.user) {
+    const user = request.authUser;
+    if (!user) {
       return reply.status(401).send({
         error: 'Unauthorized',
         message: 'Authentication required',
@@ -208,19 +216,16 @@ export function authorizeClan(clanIdParam: string = 'clanId') {
     }
 
     // Superadmins can access all clans
-    const userRoles = request.user.realm_access?.roles || [];
+    const userRoles = user.realm_access?.roles || [];
     if (userRoles.includes('superadmin')) {
       return; // Allow access
     }
 
     // Check if user's clan matches requested clan
-    const userClanId = request.user.clanId;
+    const userClanId = user.clanId;
 
     if (userClanId !== requestedClanId) {
-      request.log.warn(
-        { userId: request.user.sub, userClanId, requestedClanId },
-        'Clan access denied'
-      );
+      request.log.warn({ userId: user.sub, userClanId, requestedClanId }, 'Clan access denied');
 
       return reply.status(403).send({
         error: 'Forbidden',

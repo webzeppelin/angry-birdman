@@ -1,22 +1,70 @@
 /**
- * OAuth Callback Page
+ * OAuth Callback Page - Token Proxy Pattern
  *
  * Handles the OAuth redirect callback from Keycloak.
+ * Exchanges authorization code for tokens via backend proxy.
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { handleAuthCallback } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { exchangeCodeForToken } from '@/lib/auth-config';
 
 export function CallbackPage() {
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const { refreshUser } = useAuth();
+  const hasProcessed = useRef(false);
 
   useEffect(() => {
-    handleAuthCallback().catch((err: Error) => {
-      console.error('Callback error:', err);
-      setError(err.message || 'Authentication failed');
-    });
-  }, []);
+    // Prevent double execution in React StrictMode
+    if (hasProcessed.current) return;
+    hasProcessed.current = true;
+
+    const handleCallback = async () => {
+      try {
+        // Get authorization code and state from URL
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get('code');
+        const state = params.get('state');
+        const errorParam = params.get('error');
+
+        if (errorParam) {
+          console.error('Authentication error:', errorParam);
+          setError(`Authentication failed: ${errorParam}`);
+          return;
+        }
+
+        if (!code) {
+          setError('No authorization code received');
+          return;
+        }
+
+        if (!state) {
+          setError('No state parameter received');
+          return;
+        }
+
+        // Exchange code for tokens (stored in httpOnly cookies)
+        const success = await exchangeCodeForToken(code, state);
+
+        if (success) {
+          // Refresh user data from backend
+          await refreshUser();
+          // Redirect to home or intended page
+          navigate('/', { replace: true });
+        } else {
+          setError('Token exchange failed');
+        }
+      } catch (err) {
+        console.error('Callback error:', err);
+        setError(err instanceof Error ? err.message : 'Authentication failed');
+      }
+    };
+
+    void handleCallback();
+  }, [navigate, refreshUser]);
 
   if (error) {
     return (

@@ -84,13 +84,8 @@ export function Header() {
             {isAuthenticated ? (
               <>
                 <div className="text-right text-sm text-white/90">
-                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access */}
-                  <div className="font-medium">{(user?.profile as any)?.preferred_username}</div>
-                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access */}
-                  {(user?.profile as any)?.clanId && (
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
-                    <div className="text-xs">Clan: {(user?.profile as any)?.clanId}</div>
-                  )}
+                  <div className="font-medium">{user?.preferred_username}</div>
+                  {user?.clanId && <div className="text-xs">Clan: {user?.clanId}</div>}
                 </div>
                 <button
                   onClick={handleLogout}
@@ -166,13 +161,8 @@ export function Header() {
               {isAuthenticated ? (
                 <>
                   <div className="mb-3 px-4 text-sm text-white/90">
-                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access */}
-                    <div className="font-medium">{(user?.profile as any)?.preferred_username}</div>
-                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access */}
-                    {(user?.profile as any)?.clanId && (
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
-                      <div className="text-xs">Clan: {(user?.profile as any)?.clanId}</div>
-                    )}
+                    <div className="font-medium">{user?.preferred_username}</div>
+                    {user?.clanId && <div className="text-xs">Clan: {user?.clanId}</div>}
                   </div>
                   <button
                     onClick={() => {

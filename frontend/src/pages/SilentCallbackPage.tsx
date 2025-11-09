@@ -1,19 +1,17 @@
 /**
  * Silent Callback Page
  *
- * Handles silent token renewal in an iframe.
+ * Note: Silent token renewal is no longer needed with the Backend Token Proxy Pattern.
+ * Tokens are automatically refreshed every 14 minutes by the AuthContext.
+ * This page is kept for backwards compatibility with existing routes.
  */
 
-import { useEffect } from 'react';
-
-import { handleSilentCallback } from '@/contexts/AuthContext';
-
 export function SilentCallbackPage() {
-  useEffect(() => {
-    handleSilentCallback().catch((err) => {
-      console.error('Silent callback error:', err);
-    });
-  }, []);
-
-  return null;
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-gray-50">
+      <div className="text-center">
+        <p className="text-neutral-600">Token renewal is handled automatically.</p>
+      </div>
+    </div>
+  );
 }

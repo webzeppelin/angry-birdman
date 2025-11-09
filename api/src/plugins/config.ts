@@ -15,9 +15,12 @@ export interface Config {
   DATABASE_URL: string;
   KEYCLOAK_URL: string;
   KEYCLOAK_REALM: string;
+  KEYCLOAK_CLIENT_ID: string;
   CORS_ORIGIN: string;
   RATE_LIMIT_MAX: number;
   RATE_LIMIT_TIME_WINDOW: string;
+  COOKIE_SECRET: string;
+  JWT_SECRET: string;
 }
 
 /**
@@ -40,9 +43,12 @@ function getConfig(): Config {
     DATABASE_URL: process.env.DATABASE_URL || '',
     KEYCLOAK_URL: process.env.KEYCLOAK_URL || 'http://localhost:8080',
     KEYCLOAK_REALM: process.env.KEYCLOAK_REALM || 'angrybirdman',
+    KEYCLOAK_CLIENT_ID: process.env.KEYCLOAK_CLIENT_ID || 'angrybirdman-frontend',
     CORS_ORIGIN: process.env.CORS_ORIGIN || 'http://localhost:5173',
     RATE_LIMIT_MAX: parseInt(process.env.RATE_LIMIT_MAX || '100', 10),
     RATE_LIMIT_TIME_WINDOW: process.env.RATE_LIMIT_TIME_WINDOW || '1 minute',
+    COOKIE_SECRET: process.env.COOKIE_SECRET || 'change-me-in-production-min-32-chars',
+    JWT_SECRET: process.env.JWT_SECRET || 'change-me-in-production-min-32-chars',
   };
 }
 
