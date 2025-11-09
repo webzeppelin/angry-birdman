@@ -4,6 +4,11 @@ import helmet from '@fastify/helmet';
 import jwt from '@fastify/jwt';
 import rateLimit from '@fastify/rate-limit';
 import Fastify from 'fastify';
+import {
+  serializerCompiler,
+  validatorCompiler,
+  type ZodTypeProvider,
+} from 'fastify-type-provider-zod';
 
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 import configPlugin from './plugins/config.js';
@@ -37,7 +42,11 @@ export async function buildApp() {
         },
       }),
     },
-  });
+  }).withTypeProvider<ZodTypeProvider>();
+
+  // Set Zod as the validator and serializer for schemas
+  fastify.setValidatorCompiler(validatorCompiler);
+  fastify.setSerializerCompiler(serializerCompiler);
 
   // Register configuration plugin first (other plugins depend on it)
   await fastify.register(configPlugin);

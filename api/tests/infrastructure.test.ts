@@ -37,6 +37,9 @@ describe('API Testing Infrastructure', () => {
       url: '/health',
     });
 
+    if (response.statusCode !== 200) {
+      console.log('Health check error:', response.body);
+    }
     expect(response.statusCode).toBe(200);
     expect(JSON.parse(response.payload)).toHaveProperty('status', 'ok');
   });

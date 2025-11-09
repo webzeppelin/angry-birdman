@@ -1,4 +1,5 @@
 import { type FastifyPluginCallback } from 'fastify';
+import { z } from 'zod';
 
 /**
  * Health check routes
@@ -19,13 +20,9 @@ const healthRoutes: FastifyPluginCallback = (fastify, _opts, done) => {
         description: 'Basic health check endpoint',
         tags: ['health'],
         response: {
-          200: {
-            description: 'API is healthy',
-            type: 'object',
-            properties: {
-              status: { type: 'string', example: 'ok' },
-            },
-          },
+          200: z.object({
+            status: z.string(),
+          }),
         },
       },
     },
@@ -46,32 +43,21 @@ const healthRoutes: FastifyPluginCallback = (fastify, _opts, done) => {
         description: 'Detailed health check with database status',
         tags: ['health'],
         response: {
-          200: {
-            description: 'Detailed health status',
-            type: 'object',
-            properties: {
-              status: { type: 'string', example: 'healthy' },
-              timestamp: { type: 'string', format: 'date-time' },
-              uptime: { type: 'number', description: 'Process uptime in seconds' },
-              environment: { type: 'string', example: 'development' },
-              database: {
-                type: 'object',
-                properties: {
-                  status: { type: 'string', example: 'connected' },
-                  responseTime: { type: 'number', description: 'Database response time in ms' },
-                },
-              },
-            },
-          },
-          503: {
-            description: 'Service unavailable',
-            type: 'object',
-            properties: {
-              status: { type: 'string', example: 'unhealthy' },
-              timestamp: { type: 'string', format: 'date-time' },
-              errors: { type: 'array', items: { type: 'string' } },
-            },
-          },
+          200: z.object({
+            status: z.string(),
+            timestamp: z.string(),
+            uptime: z.number(),
+            environment: z.string(),
+            database: z.object({
+              status: z.string(),
+              responseTime: z.number(),
+            }),
+          }),
+          503: z.object({
+            status: z.string(),
+            timestamp: z.string(),
+            errors: z.array(z.string()).optional(),
+          }),
         },
       },
     },
@@ -124,21 +110,13 @@ const healthRoutes: FastifyPluginCallback = (fastify, _opts, done) => {
         description: 'Readiness check for orchestration platforms',
         tags: ['health'],
         response: {
-          200: {
-            description: 'Service is ready',
-            type: 'object',
-            properties: {
-              ready: { type: 'boolean', example: true },
-            },
-          },
-          503: {
-            description: 'Service is not ready',
-            type: 'object',
-            properties: {
-              ready: { type: 'boolean', example: false },
-              reason: { type: 'string' },
-            },
-          },
+          200: z.object({
+            ready: z.boolean(),
+          }),
+          503: z.object({
+            ready: z.boolean(),
+            reason: z.string(),
+          }),
         },
       },
     },
@@ -170,13 +148,9 @@ const healthRoutes: FastifyPluginCallback = (fastify, _opts, done) => {
         description: 'Liveness check for orchestration platforms',
         tags: ['health'],
         response: {
-          200: {
-            description: 'Service is alive',
-            type: 'object',
-            properties: {
-              alive: { type: 'boolean', example: true },
-            },
-          },
+          200: z.object({
+            alive: z.boolean(),
+          }),
         },
       },
     },
