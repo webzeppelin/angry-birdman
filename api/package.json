@@ -26,6 +26,7 @@
     "@fastify/rate-limit": "^9.1.0",
     "@fastify/swagger": "^8.14.0",
     "@fastify/swagger-ui": "^2.0.1",
+    "@keycloak/keycloak-admin-client": "^26.4.4",
     "@prisma/client": "^6.19.0",
     "axios": "^1.13.2",
     "dotenv": "^17.2.3",

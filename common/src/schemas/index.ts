@@ -5,6 +5,9 @@
 
 import { z } from 'zod';
 
+// Re-export user management schemas
+export * from './user-management.js';
+
 import {
   ACTION_CODES,
   BATTLE_ID_LENGTH,

@@ -33,13 +33,15 @@ model Clan {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   // Relationships
-  users                 User[]
-  rosterMembers         RosterMember[]
-  clanBattles           ClanBattle[]
-  monthlyClanStats      MonthlyClanPerformance[]
-  yearlyClanStats       YearlyClanPerformance[]
+  users                  User[]
+  rosterMembers          RosterMember[]
+  clanBattles            ClanBattle[]
+  monthlyClanStats       MonthlyClanPerformance[]
+  yearlyClanStats        YearlyClanPerformance[]
   monthlyIndividualStats MonthlyIndividualPerformance[]
-  yearlyIndividualStats YearlyIndividualPerformance[]
+  yearlyIndividualStats  YearlyIndividualPerformance[]
+  adminRequests          AdminRequest[] @relation("AdminRequestClan")
+  auditLogs              AuditLog[] @relation("AuditLogClan")
 
   @@map("clans")
   @@index([rovioId], name: "idx_clan_rovio_id")
@@ -65,11 +67,75 @@ model User {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   // Relationships
-  clan Clan? @relation(fields: [clanId], references: [clanId], onDelete: SetNull)
+  clan              Clan? @relation(fields: [clanId], references: [clanId], onDelete: SetNull)
+  adminRequests     AdminRequest[] @relation("AdminRequestUser")
+  auditLogsCreated  AuditLog[] @relation("AuditLogActor")
+  auditLogsAffected AuditLog[] @relation("AuditLogTarget")
 
   @@map("users")
   @@index([clanId], name: "idx_user_clan_id")
   @@index([email], name: "idx_user_email")
+}
+
+/// Represents a request for administrative access to a clan
+model AdminRequest {
+  // Primary Key
+  requestId Int @id @default(autoincrement()) @map("request_id")
+
+  // Core Fields
+  userId       String   @map("user_id") @db.VarChar(255)
+  clanId       Int      @map("clan_id")
+  message      String?  @db.VarChar(256) // Optional message from requestor
+  status       String   @db.VarChar(20) // PENDING, APPROVED, REJECTED
+  reviewedBy   String?  @map("reviewed_by") @db.VarChar(255) // userId of reviewer
+  reviewedAt   DateTime? @map("reviewed_at")
+  rejectionReason String? @map("rejection_reason") @db.Text
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  user User @relation("AdminRequestUser", fields: [userId], references: [userId], onDelete: Cascade)
+  clan Clan @relation("AdminRequestClan", fields: [clanId], references: [clanId], onDelete: Cascade)
+
+  @@map("admin_requests")
+  @@index([userId], name: "idx_admin_request_user")
+  @@index([clanId], name: "idx_admin_request_clan")
+  @@index([status], name: "idx_admin_request_status")
+  @@index([createdAt], name: "idx_admin_request_created")
+}
+
+/// Represents an audit log entry for administrative actions
+model AuditLog {
+  // Primary Key
+  logId Int @id @default(autoincrement()) @map("log_id")
+
+  // Core Fields
+  actorId     String   @map("actor_id") @db.VarChar(255) // userId of who performed action
+  actionType  String   @map("action_type") @db.VarChar(50) // e.g., 'USER_REGISTERED', 'CLAN_CREATED', 'USER_PROMOTED'
+  entityType  String   @map("entity_type") @db.VarChar(50) // e.g., 'USER', 'CLAN', 'ROSTER_MEMBER'
+  entityId    String   @map("entity_id") @db.VarChar(255) // ID of affected entity
+  clanId      Int?     @map("clan_id") // Nullable - some actions are not clan-specific
+  targetUserId String? @map("target_user_id") @db.VarChar(255) // Nullable - userId of affected user (if applicable)
+  details     String?  @db.Text // JSON or text description of action details
+  result      String   @db.VarChar(20) // SUCCESS, FAILURE, PARTIAL
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relationships
+  actor      User  @relation("AuditLogActor", fields: [actorId], references: [userId], onDelete: Cascade)
+  targetUser User? @relation("AuditLogTarget", fields: [targetUserId], references: [userId], onDelete: SetNull)
+  clan       Clan? @relation("AuditLogClan", fields: [clanId], references: [clanId], onDelete: SetNull)
+
+  @@map("audit_logs")
+  @@index([actorId], name: "idx_audit_log_actor")
+  @@index([actionType], name: "idx_audit_log_action")
+  @@index([entityType], name: "idx_audit_log_entity_type")
+  @@index([clanId], name: "idx_audit_log_clan")
+  @@index([targetUserId], name: "idx_audit_log_target")
+  @@index([createdAt], name: "idx_audit_log_created")
 }
 
 /// Represents a member of a clan's roster

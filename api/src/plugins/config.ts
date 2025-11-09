@@ -16,6 +16,8 @@ export interface Config {
   KEYCLOAK_URL: string;
   KEYCLOAK_REALM: string;
   KEYCLOAK_CLIENT_ID: string;
+  KEYCLOAK_ADMIN_CLIENT_ID: string;
+  KEYCLOAK_ADMIN_CLIENT_SECRET: string;
   CORS_ORIGIN: string;
   RATE_LIMIT_MAX: number;
   RATE_LIMIT_TIME_WINDOW: string;
@@ -44,6 +46,8 @@ function getConfig(): Config {
     KEYCLOAK_URL: process.env.KEYCLOAK_URL || 'http://localhost:8080',
     KEYCLOAK_REALM: process.env.KEYCLOAK_REALM || 'angrybirdman',
     KEYCLOAK_CLIENT_ID: process.env.KEYCLOAK_CLIENT_ID || 'angrybirdman-frontend',
+    KEYCLOAK_ADMIN_CLIENT_ID: process.env.KEYCLOAK_ADMIN_CLIENT_ID || 'angrybirdman-api',
+    KEYCLOAK_ADMIN_CLIENT_SECRET: process.env.KEYCLOAK_ADMIN_CLIENT_SECRET || '',
     CORS_ORIGIN: process.env.CORS_ORIGIN || 'http://localhost:5173',
     RATE_LIMIT_MAX: parseInt(process.env.RATE_LIMIT_MAX || '100', 10),
     RATE_LIMIT_TIME_WINDOW: process.env.RATE_LIMIT_TIME_WINDOW || '1 minute',
