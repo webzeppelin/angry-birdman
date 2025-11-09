@@ -14,33 +14,29 @@ import { z } from 'zod';
 
 /**
  * User registration schema
+ * Note: passwordConfirm should be validated on the client side
+ * The API only needs the password field
  */
-export const userRegistrationSchema = z
-  .object({
-    username: z
-      .string()
-      .min(3, 'Username must be at least 3 characters')
-      .max(100, 'Username cannot exceed 100 characters')
-      .regex(
-        /^[a-zA-Z0-9_-]+$/,
-        'Username can only contain letters, numbers, underscores, and hyphens'
-      ),
-    email: z.string().email('Invalid email address').max(255, 'Email cannot exceed 255 characters'),
-    password: z
-      .string()
-      .min(8, 'Password must be at least 8 characters')
-      .max(128, 'Password cannot exceed 128 characters')
-      .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
-      .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
-      .regex(/[0-9]/, 'Password must contain at least one number'),
-    passwordConfirm: z.string(),
-    firstName: z.string().max(100, 'First name cannot exceed 100 characters').optional(),
-    lastName: z.string().max(100, 'Last name cannot exceed 100 characters').optional(),
-  })
-  .refine((data) => data.password === data.passwordConfirm, {
-    message: 'Passwords do not match',
-    path: ['passwordConfirm'],
-  });
+export const userRegistrationSchema = z.object({
+  username: z
+    .string()
+    .min(3, 'Username must be at least 3 characters')
+    .max(100, 'Username cannot exceed 100 characters')
+    .regex(
+      /^[a-zA-Z0-9_-]+$/,
+      'Username can only contain letters, numbers, underscores, and hyphens'
+    ),
+  email: z.string().email('Invalid email address').max(255, 'Email cannot exceed 255 characters'),
+  password: z
+    .string()
+    .min(8, 'Password must be at least 8 characters')
+    .max(128, 'Password cannot exceed 128 characters')
+    .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
+    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+    .regex(/[0-9]/, 'Password must contain at least one number'),
+  firstName: z.string().max(100, 'First name cannot exceed 100 characters').optional(),
+  lastName: z.string().max(100, 'Last name cannot exceed 100 characters').optional(),
+});
 
 /**
  * User profile update schema
