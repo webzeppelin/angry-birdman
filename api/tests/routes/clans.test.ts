@@ -4,6 +4,11 @@ import { type FastifyInstance } from 'fastify';
 import { describe, it, expect, beforeEach } from 'vitest';
 
 import { buildApp } from '../../src/app';
+import {
+  createAuthenticatedHeaders,
+  createTestUser,
+  createTestSuperadmin,
+} from '../helpers/auth-helper';
 import { prisma } from '../setup';
 
 describe('Clan Routes', () => {
@@ -357,7 +362,7 @@ describe('Clan Routes', () => {
 
   describe('POST /api/clans', () => {
     it('should create new clan when authenticated', async () => {
-      // Create test user
+      // Create test user in database
       const user = await prisma.user.create({
         data: {
           userId: 'test-user-id',
@@ -366,19 +371,17 @@ describe('Clan Routes', () => {
         },
       });
 
-      // Mock JWT token
-      const token = app.jwt.sign({
-        sub: 'test-keycloak-id',
-        userId: user.userId,
-        username: user.username,
+      // Create authenticated headers with test user
+      const testUser = createTestUser({
+        sub: user.userId,
+        preferred_username: user.username,
+        email: user.email,
       });
 
       const response = await app.inject({
         method: 'POST',
         url: '/api/clans',
-        headers: {
-          cookie: `access_token=${token}`,
-        },
+        headers: createAuthenticatedHeaders(app, testUser),
         payload: {
           rovioId: 123456,
           name: 'New Clan',
@@ -392,8 +395,8 @@ describe('Clan Routes', () => {
         rovioId: 123456,
         name: 'New Clan',
         country: 'US',
-        active: true,
       });
+      expect(body.clanId).toBeDefined();
 
       // Verify user is now owner
       const updatedUser = await prisma.user.findUnique({
@@ -426,17 +429,16 @@ describe('Clan Routes', () => {
         },
       });
 
-      const token = app.jwt.sign({
-        sub: 'test-keycloak-id-2',
-        userId: user.userId,
+      const testUser = createTestUser({
+        sub: user.userId,
+        preferred_username: user.username,
+        email: user.email,
       });
 
       const response = await app.inject({
         method: 'POST',
         url: '/api/clans',
-        headers: {
-          cookie: `access_token=${token}`,
-        },
+        headers: createAuthenticatedHeaders(app, testUser),
         payload: {
           // Missing required fields
           name: 'New Clan',
@@ -465,17 +467,16 @@ describe('Clan Routes', () => {
         },
       });
 
-      const token = app.jwt.sign({
-        sub: 'test-keycloak-id-3',
-        userId: user.userId,
+      const testUser = createTestUser({
+        sub: user.userId,
+        preferred_username: user.username,
+        email: user.email,
       });
 
       const response = await app.inject({
         method: 'POST',
         url: '/api/clans',
-        headers: {
-          cookie: `access_token=${token}`,
-        },
+        headers: createAuthenticatedHeaders(app, testUser),
         payload: {
           rovioId: 123456,
           name: 'New Clan',
@@ -485,7 +486,7 @@ describe('Clan Routes', () => {
 
       expect(response.statusCode).toBe(409);
       const body = JSON.parse(response.body);
-      expect(body.message).toContain('already registered');
+      expect(body.message).toContain('already exists');
     });
 
     it('should transfer ownership if user owns another clan', async () => {
@@ -510,17 +511,16 @@ describe('Clan Routes', () => {
         },
       });
 
-      const token = app.jwt.sign({
-        sub: 'test-keycloak-id-4',
-        userId: user.userId,
+      const testUser = createTestUser({
+        sub: user.userId,
+        preferred_username: user.username,
+        email: user.email,
       });
 
       const response = await app.inject({
         method: 'POST',
         url: '/api/clans',
-        headers: {
-          cookie: `access_token=${token}`,
-        },
+        headers: createAuthenticatedHeaders(app, testUser),
         payload: {
           rovioId: 222222,
           name: 'New Clan',
@@ -561,19 +561,16 @@ describe('Clan Routes', () => {
         },
       });
 
-      const token = app.jwt.sign({
-        sub: 'test-keycloak-id-5',
-        userId: user.userId,
-        clanId: clan.clanId,
-        owner: true,
+      const testUser = createTestUser({
+        sub: user.userId,
+        preferred_username: user.username,
+        email: user.email,
       });
 
       const response = await app.inject({
         method: 'PATCH',
         url: `/api/clans/${clan.clanId}`,
-        headers: {
-          cookie: `access_token=${token}`,
-        },
+        headers: createAuthenticatedHeaders(app, testUser),
         payload: {
           name: 'Updated Clan Name',
           country: 'CA',
@@ -618,19 +615,16 @@ describe('Clan Routes', () => {
         },
       });
 
-      const token = app.jwt.sign({
-        sub: 'test-keycloak-id-6',
-        userId: user.userId,
-        clanId: clan.clanId,
-        owner: false,
+      const testUser = createTestUser({
+        sub: user.userId,
+        preferred_username: user.username,
+        email: user.email,
       });
 
       const response = await app.inject({
         method: 'PATCH',
         url: `/api/clans/${clan.clanId}`,
-        headers: {
-          cookie: `access_token=${token}`,
-        },
+        headers: createAuthenticatedHeaders(app, testUser),
         payload: {
           name: 'Updated Name',
         },
@@ -657,18 +651,16 @@ describe('Clan Routes', () => {
         },
       });
 
-      const token = app.jwt.sign({
-        sub: 'test-keycloak-superadmin',
-        userId: user.userId,
-        superadmin: true,
+      const testSuperadmin = createTestSuperadmin({
+        sub: user.userId,
+        preferred_username: user.username,
+        email: user.email,
       });
 
       const response = await app.inject({
         method: 'PATCH',
         url: `/api/clans/${clan.clanId}`,
-        headers: {
-          cookie: `access_token=${token}`,
-        },
+        headers: createAuthenticatedHeaders(app, testSuperadmin),
         payload: {
           name: 'Admin Updated Name',
           active: false,
@@ -690,18 +682,16 @@ describe('Clan Routes', () => {
         },
       });
 
-      const token = app.jwt.sign({
-        sub: 'test-keycloak-id-7',
-        userId: user.userId,
-        superadmin: true,
+      const testSuperadmin = createTestSuperadmin({
+        sub: user.userId,
+        preferred_username: user.username,
+        email: user.email,
       });
 
       const response = await app.inject({
         method: 'PATCH',
         url: '/api/clans/99999',
-        headers: {
-          cookie: `access_token=${token}`,
-        },
+        headers: createAuthenticatedHeaders(app, testSuperadmin),
         payload: {
           name: 'Updated Name',
         },

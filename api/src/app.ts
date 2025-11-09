@@ -51,7 +51,8 @@ export async function buildApp() {
   await fastify.register(jwt, {
     secret:
       fastify.config.JWT_SECRET || process.env.JWT_SECRET || 'default-secret-change-in-production',
-    // We're using Keycloak tokens, so we primarily use decode(), not sign()
+    // In test mode, we sign tokens with HS256 for testing authenticated endpoints
+    // In production, Keycloak signs with RS256 and we verify with JWKS
   });
 
   // Security plugins

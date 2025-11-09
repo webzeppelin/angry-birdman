@@ -60,8 +60,25 @@ function getKey(header: jwt.JwtHeader, callback: jwt.SigningKeyCallback) {
 
 /**
  * Verify JWT token and extract payload
+ *
+ * In test/development mode, uses a simple secret-based verification
+ * In production, uses JWKS with Keycloak's public keys
  */
 export async function verifyToken(token: string): Promise<JWTPayload> {
+  // Test mode: Use simple JWT verification with shared secret
+  if (process.env.NODE_ENV === 'test') {
+    const secret = process.env.JWT_SECRET || 'default-secret-change-in-production';
+    return new Promise((resolve, reject) => {
+      jwt.verify(token, secret, { algorithms: ['HS256'] }, (err, decoded) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve(decoded as JWTPayload);
+      });
+    });
+  }
+
+  // Production mode: Use JWKS verification with Keycloak
   return new Promise((resolve, reject) => {
     jwt.verify(
       token,
