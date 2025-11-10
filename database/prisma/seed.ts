@@ -45,6 +45,11 @@ async function main() {
   // ============================================================================
   console.log('🏛️ Seeding clans...');
 
+  // Reset clan sequence to start at 54 for consistency with test users
+  // This ensures test users created with clanId 54, 55, 56 will work correctly
+  await prisma.$executeRaw`ALTER SEQUENCE clans_clan_id_seq RESTART WITH 54`;
+  console.log('   Reset clan ID sequence to start at 54');
+
   const clan1 = await prisma.clan.upsert({
     where: { rovioId: 123456 },
     update: {},
