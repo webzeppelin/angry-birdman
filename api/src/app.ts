@@ -104,7 +104,7 @@ export async function buildApp() {
   await fastify.register(swaggerPlugin);
 
   // Register routes
-  await fastify.register(authRoutes, { prefix: '/api/auth' });
+  await fastify.register(authRoutes, { prefix: '/auth' });
   await fastify.register(clanRoutes, { prefix: '/api/clans' });
   await fastify.register(usersRoutes, { prefix: '/api/users' });
   await fastify.register(adminRequestsRoutes, { prefix: '/api/admin-requests' });
