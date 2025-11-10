@@ -46,6 +46,10 @@ export default defineConfig({
     restoreMocks: true,
     clearMocks: true,
 
+    // Run test files sequentially to avoid database conflicts
+    // since all tests share the same test database
+    fileParallelism: false,
+
     // Test timeout for database operations
     testTimeout: 10000,
     hookTimeout: 10000,

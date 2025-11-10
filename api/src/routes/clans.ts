@@ -429,6 +429,7 @@ export default function clanRoutes(fastify: FastifyInstance, _opts: unknown, don
           name: clan.name,
           country: clan.country,
           registrationDate: clan.registrationDate.toISOString().split('T')[0],
+          active: clan.active,
         });
       } catch (error) {
         fastify.log.error(error, 'Failed to create clan');

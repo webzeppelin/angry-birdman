@@ -5,7 +5,7 @@
  * Covers Stories 2.1-2.8 from Epic 2.
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 import { buildApp } from '../../src/app.js';
 import { createAuthenticatedHeaders } from '../helpers/auth-helper.js';
@@ -26,10 +26,6 @@ describe('User Routes', () => {
   beforeEach(async () => {
     app = await buildApp();
     resetKeycloakMock();
-  });
-
-  afterEach(async () => {
-    await app.close();
   });
 
   describe('POST /api/users/register', () => {
@@ -80,6 +76,11 @@ describe('User Routes', () => {
         },
       });
 
+      // Mock Keycloak to reject duplicate username
+      mockKeycloakService.registerUser.mockRejectedValueOnce(
+        new Error('Username or email already exists')
+      );
+
       const response = await app.inject({
         method: 'POST',
         url: '/api/users/register',
@@ -104,6 +105,11 @@ describe('User Routes', () => {
           email: 'existing@example.com',
         },
       });
+
+      // Mock Keycloak to reject duplicate email
+      mockKeycloakService.registerUser.mockRejectedValueOnce(
+        new Error('Username or email already exists')
+      );
 
       const response = await app.inject({
         method: 'POST',
@@ -634,7 +640,9 @@ describe('User Routes', () => {
           email: 'test@example.com',
         }),
         payload: {
+          currentPassword: 'OldSecurePass123!',
           newPassword: 'NewSecurePass123!',
+          newPasswordConfirm: 'NewSecurePass123!',
         },
       });
 
@@ -715,7 +723,9 @@ describe('User Routes', () => {
           email: 'test@example.com',
         }),
         payload: {
+          currentPassword: 'OldSecurePass123!',
           newPassword: 'NewSecurePass123!',
+          newPasswordConfirm: 'NewSecurePass123!',
         },
       });
 
