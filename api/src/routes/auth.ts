@@ -71,7 +71,7 @@ const userResponseSchema = z.object({
   preferred_username: z.string(),
   email: z.string().email().optional(),
   name: z.string().optional(),
-  clanId: z.number().optional(),
+  clanId: z.number().nullable().optional(),
   roles: z.array(z.string()),
 });
 
