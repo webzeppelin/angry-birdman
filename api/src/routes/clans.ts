@@ -41,6 +41,90 @@ const clanUpdateSchema = z.object({
   active: z.boolean().optional(),
 });
 
+const clanIdParamSchema = z.object({
+  clanId: z.string(),
+});
+
+const clanUserParamsSchema = z.object({
+  clanId: z.string(),
+  userId: z.string(),
+});
+
+// Response schemas
+const clanItemSchema = z.object({
+  clanId: z.number(),
+  rovioId: z.number(),
+  name: z.string(),
+  country: z.string(),
+  registrationDate: z.string(),
+  active: z.boolean(),
+  battleCount: z.number(),
+});
+
+const paginationSchema = z.object({
+  total: z.number(),
+  page: z.number(),
+  limit: z.number(),
+  totalPages: z.number(),
+});
+
+const clansListResponseSchema = z.object({
+  clans: z.array(clanItemSchema),
+  pagination: paginationSchema,
+});
+
+const clanDetailSchema = z.object({
+  clanId: z.number(),
+  rovioId: z.number(),
+  name: z.string(),
+  country: z.string(),
+  registrationDate: z.string(),
+  active: z.boolean(),
+  stats: z.object({
+    totalBattles: z.number(),
+    activePlayers: z.number(),
+    totalPlayers: z.number(),
+  }),
+});
+
+const errorResponseSchema = z.object({
+  error: z.string(),
+  message: z.string(),
+});
+
+const clanCreatedResponseSchema = z.object({
+  clanId: z.number(),
+  rovioId: z.number(),
+  name: z.string(),
+  country: z.string(),
+  registrationDate: z.string(),
+  active: z.boolean(),
+});
+
+const clanUpdatedResponseSchema = z.object({
+  clanId: z.number(),
+  rovioId: z.number(),
+  name: z.string(),
+  country: z.string(),
+  active: z.boolean(),
+});
+
+const adminUserSchema = z.object({
+  userId: z.string(),
+  username: z.string(),
+  email: z.string(),
+  owner: z.boolean(),
+  roles: z.array(z.string()),
+});
+
+const adminsListResponseSchema = z.object({
+  admins: z.array(adminUserSchema),
+});
+
+const successMessageSchema = z.object({
+  message: z.string(),
+});
+
 type ClanQueryParams = z.infer<typeof clanQuerySchema>;
 type ClanCreateBody = z.infer<typeof clanCreateSchema>;
 type ClanUpdateBody = z.infer<typeof clanUpdateSchema>;
@@ -51,57 +135,14 @@ export default function clanRoutes(fastify: FastifyInstance, _opts: unknown, don
    * Get list of all clans with filtering and pagination (public endpoint)
    */
   fastify.get<{ Querystring: ClanQueryParams }>(
-    '/api/clans',
+    '/',
     {
       schema: {
         description: 'Get list of clans with optional filtering and pagination',
         tags: ['Clans'],
-        querystring: {
-          type: 'object',
-          properties: {
-            search: { type: 'string', description: 'Search by clan name' },
-            country: { type: 'string', description: 'Filter by country' },
-            active: { type: 'string', enum: ['true', 'false', 'all'], default: 'true' },
-            page: { type: 'integer', minimum: 1, default: 1 },
-            limit: { type: 'integer', minimum: 1, maximum: 100, default: 20 },
-            sortBy: {
-              type: 'string',
-              enum: ['name', 'country', 'registrationDate'],
-              default: 'name',
-            },
-            sortOrder: { type: 'string', enum: ['asc', 'desc'], default: 'asc' },
-          },
-        },
+        querystring: clanQuerySchema,
         response: {
-          200: {
-            type: 'object',
-            properties: {
-              clans: {
-                type: 'array',
-                items: {
-                  type: 'object',
-                  properties: {
-                    clanId: { type: 'integer' },
-                    rovioId: { type: 'integer' },
-                    name: { type: 'string' },
-                    country: { type: 'string' },
-                    registrationDate: { type: 'string', format: 'date' },
-                    active: { type: 'boolean' },
-                    battleCount: { type: 'integer' },
-                  },
-                },
-              },
-              pagination: {
-                type: 'object',
-                properties: {
-                  total: { type: 'integer' },
-                  page: { type: 'integer' },
-                  limit: { type: 'integer' },
-                  totalPages: { type: 'integer' },
-                },
-              },
-            },
-          },
+          200: clansListResponseSchema,
         },
       },
     },
@@ -198,45 +239,15 @@ export default function clanRoutes(fastify: FastifyInstance, _opts: unknown, don
    * Get detailed information about a specific clan (public endpoint)
    */
   fastify.get<{ Params: { clanId: string } }>(
-    '/api/clans/:clanId',
+    '/:clanId',
     {
       schema: {
         description: 'Get detailed information about a specific clan',
         tags: ['Clans'],
-        params: {
-          type: 'object',
-          required: ['clanId'],
-          properties: {
-            clanId: { type: 'string' },
-          },
-        },
+        params: clanIdParamSchema,
         response: {
-          200: {
-            type: 'object',
-            properties: {
-              clanId: { type: 'integer' },
-              rovioId: { type: 'integer' },
-              name: { type: 'string' },
-              country: { type: 'string' },
-              registrationDate: { type: 'string', format: 'date' },
-              active: { type: 'boolean' },
-              stats: {
-                type: 'object',
-                properties: {
-                  totalBattles: { type: 'integer' },
-                  activePlayers: { type: 'integer' },
-                  totalPlayers: { type: 'integer' },
-                },
-              },
-            },
-          },
-          404: {
-            type: 'object',
-            properties: {
-              error: { type: 'string' },
-              message: { type: 'string' },
-            },
-          },
+          200: clanDetailSchema,
+          404: errorResponseSchema,
         },
       },
     },
@@ -306,53 +317,18 @@ export default function clanRoutes(fastify: FastifyInstance, _opts: unknown, don
    * Register a new clan (requires authentication)
    */
   fastify.post<{ Body: ClanCreateBody }>(
-    '/api/clans',
+    '/',
     {
       schema: {
         description: 'Register a new clan',
         tags: ['Clans'],
         security: [{ bearerAuth: [] }],
-        body: {
-          type: 'object',
-          required: ['rovioId', 'name', 'country'],
-          properties: {
-            rovioId: { type: 'integer', minimum: 1 },
-            name: { type: 'string', minLength: 1, maxLength: 100 },
-            country: { type: 'string', minLength: 1, maxLength: 100 },
-          },
-        },
+        body: clanCreateSchema,
         response: {
-          201: {
-            type: 'object',
-            properties: {
-              clanId: { type: 'integer' },
-              rovioId: { type: 'integer' },
-              name: { type: 'string' },
-              country: { type: 'string' },
-              registrationDate: { type: 'string', format: 'date' },
-            },
-          },
-          400: {
-            type: 'object',
-            properties: {
-              error: { type: 'string' },
-              message: { type: 'string' },
-            },
-          },
-          401: {
-            type: 'object',
-            properties: {
-              error: { type: 'string' },
-              message: { type: 'string' },
-            },
-          },
-          409: {
-            type: 'object',
-            properties: {
-              error: { type: 'string' },
-              message: { type: 'string' },
-            },
-          },
+          201: clanCreatedResponseSchema,
+          400: errorResponseSchema,
+          401: errorResponseSchema,
+          409: errorResponseSchema,
         },
       },
     },
@@ -469,66 +445,20 @@ export default function clanRoutes(fastify: FastifyInstance, _opts: unknown, don
    * Update clan information (requires owner or superadmin)
    */
   fastify.patch<{ Params: { clanId: string }; Body: ClanUpdateBody }>(
-    '/api/clans/:clanId',
+    '/:clanId',
     {
       schema: {
         description: 'Update clan information',
         tags: ['Clans'],
         security: [{ bearerAuth: [] }],
-        params: {
-          type: 'object',
-          required: ['clanId'],
-          properties: {
-            clanId: { type: 'string' },
-          },
-        },
-        body: {
-          type: 'object',
-          properties: {
-            name: { type: 'string', minLength: 1, maxLength: 100 },
-            country: { type: 'string', minLength: 1, maxLength: 100 },
-            active: { type: 'boolean' },
-          },
-        },
+        params: clanIdParamSchema,
+        body: clanUpdateSchema,
         response: {
-          200: {
-            type: 'object',
-            properties: {
-              clanId: { type: 'integer' },
-              rovioId: { type: 'integer' },
-              name: { type: 'string' },
-              country: { type: 'string' },
-              active: { type: 'boolean' },
-            },
-          },
-          400: {
-            type: 'object',
-            properties: {
-              error: { type: 'string' },
-              message: { type: 'string' },
-            },
-          },
-          401: {
-            type: 'object',
-            properties: {
-              error: { type: 'string' },
-              message: { type: 'string' },
-            },
-          },
-          403: {
-            type: 'object',
-            properties: {
-              error: { type: 'string' },
-              message: { type: 'string' },
-            },
-          },
-          404: {
-            type: 'object',
-            properties: {
-              error: { type: 'string' },
-              message: { type: 'string' },
-            },
-          },
+          200: clanUpdatedResponseSchema,
+          400: errorResponseSchema,
+          401: errorResponseSchema,
+          403: errorResponseSchema,
+          404: errorResponseSchema,
         },
       },
     },
@@ -648,38 +578,15 @@ export default function clanRoutes(fastify: FastifyInstance, _opts: unknown, don
    * Accessible by: clan admins, clan owner, superadmin
    */
   fastify.get<{ Params: { clanId: string } }>(
-    '/api/clans/:clanId/admins',
+    '/:clanId/admins',
     {
       schema: {
         description: 'List all admin users for a clan',
         tags: ['Clans'],
         security: [{ bearerAuth: [] }],
-        params: {
-          type: 'object',
-          required: ['clanId'],
-          properties: {
-            clanId: { type: 'string' },
-          },
-        },
+        params: clanIdParamSchema,
         response: {
-          200: {
-            type: 'object',
-            properties: {
-              admins: {
-                type: 'array',
-                items: {
-                  type: 'object',
-                  properties: {
-                    userId: { type: 'string' },
-                    username: { type: 'string' },
-                    email: { type: 'string' },
-                    owner: { type: 'boolean' },
-                    roles: { type: 'array', items: { type: 'string' } },
-                  },
-                },
-              },
-            },
-          },
+          200: adminsListResponseSchema,
         },
       },
     },
@@ -777,27 +684,15 @@ export default function clanRoutes(fastify: FastifyInstance, _opts: unknown, don
    * Only current owner or superadmin can promote
    */
   fastify.post<{ Params: { clanId: string; userId: string } }>(
-    '/api/clans/:clanId/admins/:userId/promote',
+    '/:clanId/admins/:userId/promote',
     {
       schema: {
         description: 'Promote an admin to owner',
         tags: ['Clans'],
         security: [{ bearerAuth: [] }],
-        params: {
-          type: 'object',
-          required: ['clanId', 'userId'],
-          properties: {
-            clanId: { type: 'string' },
-            userId: { type: 'string' },
-          },
-        },
+        params: clanUserParamsSchema,
         response: {
-          200: {
-            type: 'object',
-            properties: {
-              message: { type: 'string' },
-            },
-          },
+          200: successMessageSchema,
         },
       },
     },
@@ -926,27 +821,15 @@ export default function clanRoutes(fastify: FastifyInstance, _opts: unknown, don
    * Cannot remove the owner (must transfer ownership first)
    */
   fastify.delete<{ Params: { clanId: string; userId: string } }>(
-    '/api/clans/:clanId/admins/:userId',
+    '/:clanId/admins/:userId',
     {
       schema: {
         description: 'Remove an admin from clan',
         tags: ['Clans'],
         security: [{ bearerAuth: [] }],
-        params: {
-          type: 'object',
-          required: ['clanId', 'userId'],
-          properties: {
-            clanId: { type: 'string' },
-            userId: { type: 'string' },
-          },
-        },
+        params: clanUserParamsSchema,
         response: {
-          200: {
-            type: 'object',
-            properties: {
-              message: { type: 'string' },
-            },
-          },
+          200: successMessageSchema,
         },
       },
     },
@@ -1069,26 +952,15 @@ export default function clanRoutes(fastify: FastifyInstance, _opts: unknown, don
    * Only owner or superadmin can deactivate
    */
   fastify.post<{ Params: { clanId: string } }>(
-    '/api/clans/:clanId/deactivate',
+    '/:clanId/deactivate',
     {
       schema: {
         description: 'Deactivate a clan',
         tags: ['Clans'],
         security: [{ bearerAuth: [] }],
-        params: {
-          type: 'object',
-          required: ['clanId'],
-          properties: {
-            clanId: { type: 'string' },
-          },
-        },
+        params: clanIdParamSchema,
         response: {
-          200: {
-            type: 'object',
-            properties: {
-              message: { type: 'string' },
-            },
-          },
+          200: successMessageSchema,
         },
       },
     },
