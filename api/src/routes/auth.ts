@@ -14,6 +14,7 @@
  */
 
 import axios from 'axios';
+import { z } from 'zod';
 
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 
@@ -50,6 +51,34 @@ interface DecodedToken {
   iat: number;
 }
 
+// Zod validation schemas
+const tokenExchangeSchema = z.object({
+  code: z.string().min(1).describe('OAuth2 authorization code from Keycloak'),
+  codeVerifier: z.string().min(1).describe('PKCE code verifier'),
+  redirectUri: z.string().url().describe('Redirect URI used in authorization request'),
+});
+
+const tokenResponseSchema = z.object({
+  success: z.boolean(),
+});
+
+const errorResponseSchema = z.object({
+  error: z.string(),
+});
+
+const userResponseSchema = z.object({
+  sub: z.string(),
+  preferred_username: z.string(),
+  email: z.string().email().optional(),
+  name: z.string().optional(),
+  clanId: z.number().optional(),
+  roles: z.array(z.string()),
+});
+
+const authStatusResponseSchema = z.object({
+  authenticated: z.boolean(),
+});
+
 export default function authRoutes(fastify: FastifyInstance, _opts: unknown, done: () => void) {
   /**
    * POST /token
@@ -61,31 +90,10 @@ export default function authRoutes(fastify: FastifyInstance, _opts: unknown, don
       schema: {
         description: 'Exchange authorization code for tokens',
         tags: ['Authentication'],
-        body: {
-          type: 'object',
-          required: ['code', 'codeVerifier', 'redirectUri'],
-          properties: {
-            code: { type: 'string', description: 'OAuth2 authorization code from Keycloak' },
-            codeVerifier: { type: 'string', description: 'PKCE code verifier' },
-            redirectUri: {
-              type: 'string',
-              description: 'Redirect URI used in authorization request',
-            },
-          },
-        },
+        body: tokenExchangeSchema,
         response: {
-          200: {
-            type: 'object',
-            properties: {
-              success: { type: 'boolean' },
-            },
-          },
-          401: {
-            type: 'object',
-            properties: {
-              error: { type: 'string' },
-            },
-          },
+          200: tokenResponseSchema,
+          401: errorResponseSchema,
         },
       },
     },
@@ -166,18 +174,8 @@ export default function authRoutes(fastify: FastifyInstance, _opts: unknown, don
         description: 'Refresh access token using refresh token',
         tags: ['Authentication'],
         response: {
-          200: {
-            type: 'object',
-            properties: {
-              success: { type: 'boolean' },
-            },
-          },
-          401: {
-            type: 'object',
-            properties: {
-              error: { type: 'string' },
-            },
-          },
+          200: tokenResponseSchema,
+          401: errorResponseSchema,
         },
       },
     },
@@ -262,12 +260,7 @@ export default function authRoutes(fastify: FastifyInstance, _opts: unknown, don
         description: 'Logout and clear authentication cookies',
         tags: ['Authentication'],
         response: {
-          200: {
-            type: 'object',
-            properties: {
-              success: { type: 'boolean' },
-            },
-          },
+          200: tokenResponseSchema,
         },
       },
     },
@@ -315,23 +308,8 @@ export default function authRoutes(fastify: FastifyInstance, _opts: unknown, don
         description: 'Get current authenticated user information',
         tags: ['Authentication'],
         response: {
-          200: {
-            type: 'object',
-            properties: {
-              sub: { type: 'string' },
-              preferred_username: { type: 'string' },
-              email: { type: 'string' },
-              name: { type: 'string' },
-              clanId: { type: 'number', nullable: true },
-              roles: { type: 'array', items: { type: 'string' } },
-            },
-          },
-          401: {
-            type: 'object',
-            properties: {
-              error: { type: 'string' },
-            },
-          },
+          200: userResponseSchema,
+          401: errorResponseSchema,
         },
       },
     },
@@ -382,12 +360,7 @@ export default function authRoutes(fastify: FastifyInstance, _opts: unknown, don
         description: 'Check authentication status',
         tags: ['Authentication'],
         response: {
-          200: {
-            type: 'object',
-            properties: {
-              authenticated: { type: 'boolean' },
-            },
-          },
+          200: authStatusResponseSchema,
         },
       },
     },
