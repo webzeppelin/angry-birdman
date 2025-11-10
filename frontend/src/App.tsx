@@ -19,6 +19,9 @@ import {
   LoginPage,
   CallbackPage,
   SilentCallbackPage,
+  RegisterPage,
+  PostRegistrationTriagePage,
+  ClanRegistrationPage,
   NotFoundPage,
 } from '@/pages';
 
@@ -77,6 +80,30 @@ function App() {
               element={
                 <Layout>
                   <LoginPage />
+                </Layout>
+              }
+            />
+            <Route
+              path="/register"
+              element={
+                <Layout>
+                  <RegisterPage />
+                </Layout>
+              }
+            />
+            <Route
+              path="/register/triage"
+              element={
+                <Layout>
+                  <PostRegistrationTriagePage />
+                </Layout>
+              }
+            />
+            <Route
+              path="/register/clan"
+              element={
+                <Layout>
+                  <ClanRegistrationPage />
                 </Layout>
               }
             />

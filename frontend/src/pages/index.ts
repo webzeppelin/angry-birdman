@@ -6,4 +6,7 @@ export { DashboardPage } from './DashboardPage';
 export { LoginPage } from './LoginPage';
 export { CallbackPage } from './CallbackPage';
 export { SilentCallbackPage } from './SilentCallbackPage';
+export { default as RegisterPage } from './RegisterPage';
+export { default as PostRegistrationTriagePage } from './PostRegistrationTriagePage';
+export { default as ClanRegistrationPage } from './ClanRegistrationPage';
 export { NotFoundPage } from './NotFoundPage';
