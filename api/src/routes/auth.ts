@@ -52,11 +52,11 @@ interface DecodedToken {
 
 export default function authRoutes(fastify: FastifyInstance, _opts: unknown, done: () => void) {
   /**
-   * POST /auth/token
+   * POST /token
    * Exchange authorization code for tokens, store in httpOnly cookies
    */
   fastify.post<{ Body: TokenExchangeBody }>(
-    '/auth/token',
+    '/token',
     {
       schema: {
         description: 'Exchange authorization code for tokens',
@@ -156,11 +156,11 @@ export default function authRoutes(fastify: FastifyInstance, _opts: unknown, don
   );
 
   /**
-   * POST /auth/refresh
+   * POST /refresh
    * Refresh access token using refresh token from cookie
    */
   fastify.post(
-    '/auth/refresh',
+    '/refresh',
     {
       schema: {
         description: 'Refresh access token using refresh token',
@@ -252,11 +252,11 @@ export default function authRoutes(fastify: FastifyInstance, _opts: unknown, don
   );
 
   /**
-   * POST /auth/logout
+   * POST /logout
    * Clear authentication cookies and optionally revoke tokens with Keycloak
    */
   fastify.post(
-    '/auth/logout',
+    '/logout',
     {
       schema: {
         description: 'Logout and clear authentication cookies',
@@ -305,11 +305,11 @@ export default function authRoutes(fastify: FastifyInstance, _opts: unknown, don
   );
 
   /**
-   * GET /auth/user
+   * GET /user
    * Get current user information from token in cookie
    */
   fastify.get(
-    '/auth/user',
+    '/user',
     {
       schema: {
         description: 'Get current authenticated user information',
@@ -372,11 +372,11 @@ export default function authRoutes(fastify: FastifyInstance, _opts: unknown, don
   );
 
   /**
-   * GET /auth/status
+   * GET /status
    * Simple endpoint to check if user is authenticated (has valid cookie)
    */
   fastify.get(
-    '/auth/status',
+    '/status',
     {
       schema: {
         description: 'Check authentication status',
