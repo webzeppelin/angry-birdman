@@ -40,6 +40,8 @@ beforeEach(async () => {
   await prisma.clanBattle.deleteMany();
   await prisma.actionCode.deleteMany();
   await prisma.rosterMember.deleteMany();
+  await prisma.adminRequest.deleteMany();
+  await prisma.auditLog.deleteMany();
   await prisma.user.deleteMany();
   await prisma.clan.deleteMany();
 });

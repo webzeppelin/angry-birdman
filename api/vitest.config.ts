@@ -9,6 +9,12 @@ export default defineConfig({
     include: ['tests/**/*.test.ts'],
     exclude: ['**/node_modules/**', '**/dist/**', '**/.{idea,git,cache,output,temp}/**'],
 
+    // Set environment variables for tests
+    env: {
+      NODE_ENV: 'test',
+      JWT_SECRET: 'test-secret-for-authentication-min-32-chars-long',
+    },
+
     // Coverage configuration
     coverage: {
       provider: 'v8',

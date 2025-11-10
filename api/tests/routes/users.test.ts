@@ -5,7 +5,7 @@
  * Covers Stories 2.1-2.8 from Epic 2.
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
 import { buildApp } from '../../src/app.js';
 import { createAuthenticatedHeaders } from '../helpers/auth-helper.js';
@@ -26,6 +26,10 @@ describe('User Routes', () => {
   beforeEach(async () => {
     app = await buildApp();
     resetKeycloakMock();
+  });
+
+  afterEach(async () => {
+    await app.close();
   });
 
   describe('POST /api/users/register', () => {

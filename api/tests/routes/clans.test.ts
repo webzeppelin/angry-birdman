@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { type FastifyInstance } from 'fastify';
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 
 import { buildApp } from '../../src/app';
 import {
@@ -16,6 +16,10 @@ describe('Clan Routes', () => {
 
   beforeEach(async () => {
     app = await buildApp();
+  });
+
+  afterEach(async () => {
+    await app.close();
   });
 
   describe('GET /api/clans', () => {
