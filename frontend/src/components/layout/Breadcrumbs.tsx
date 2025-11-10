@@ -4,7 +4,7 @@
  * Provides hierarchical navigation showing the user's current location.
  */
 
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 interface BreadcrumbItem {
@@ -14,6 +14,47 @@ interface BreadcrumbItem {
 
 export function Breadcrumbs() {
   const location = useLocation();
+  const [clanNames, setClanNames] = useState<Map<number, string>>(new Map());
+
+  // Extract clan IDs from path
+  const clanIdsInPath = useMemo(() => {
+    const pathSegments = location.pathname.split('/').filter(Boolean);
+    const ids: number[] = [];
+
+    // Check if we're on a clan page: /clans/:clanId
+    if (pathSegments[0] === 'clans' && pathSegments.length > 1 && pathSegments[1]) {
+      const clanId = parseInt(pathSegments[1], 10);
+      if (!isNaN(clanId)) {
+        ids.push(clanId);
+      }
+    }
+
+    return ids;
+  }, [location.pathname]);
+
+  // Fetch clan names for IDs in path
+  useEffect(() => {
+    const fetchClanNames = async () => {
+      for (const clanId of clanIdsInPath) {
+        // Skip if already fetched
+        if (clanNames.has(clanId)) continue;
+
+        try {
+          const response = await fetch(
+            `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/clans/${clanId}`
+          );
+          if (response.ok) {
+            const data = (await response.json()) as { clanId: number; name: string };
+            setClanNames((prev) => new Map(prev).set(clanId, data.name));
+          }
+        } catch (err) {
+          console.error(`Error fetching clan ${clanId}:`, err);
+        }
+      }
+    };
+
+    void fetchClanNames();
+  }, [clanIdsInPath, clanNames]);
 
   const breadcrumbs = useMemo(() => {
     const pathSegments = location.pathname.split('/').filter(Boolean);
@@ -44,8 +85,19 @@ export function Breadcrumbs() {
       } else if (segment === 'stats') {
         label = 'Statistics';
       } else if (!isNaN(Number(segment))) {
-        // If it's a number (clan ID, battle ID, etc.), keep as is but mark for potential replacement
-        label = `ID ${segment}`;
+        // If it's a number, check if it's a clan ID with a cached name
+        const numericId = parseInt(segment, 10);
+        const clanName = clanNames.get(numericId);
+
+        if (clanName) {
+          label = clanName;
+        } else if (pathSegments[i - 1] === 'clans') {
+          // It's a clan ID but name not loaded yet
+          label = 'Loading...';
+        } else {
+          // Other numeric ID (battle, user, etc.)
+          label = `ID ${segment}`;
+        }
       } else {
         // Capitalize first letter
         label = segment.charAt(0).toUpperCase() + segment.slice(1);
@@ -58,7 +110,7 @@ export function Breadcrumbs() {
     }
 
     return items;
-  }, [location.pathname]);
+  }, [location.pathname, clanNames]);
 
   // Don't show breadcrumbs on home page
   if (location.pathname === '/') {

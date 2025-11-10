@@ -13,10 +13,19 @@ import { type User, getCurrentUser, logout as logoutUser, userManager } from '@/
 import type React from 'react';
 
 /**
+ * Clan information interface
+ */
+export interface ClanInfo {
+  clanId: number;
+  name: string;
+}
+
+/**
  * Authentication state interface
  */
 export interface AuthState {
   user: User | null;
+  clanInfo: ClanInfo | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
@@ -57,8 +66,29 @@ export function useAuth(): AuthContextValue {
  */
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [clanInfo, setClanInfo] = useState<ClanInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  /**
+   * Fetch clan information by ID
+   */
+  const fetchClanInfo = useCallback(async (clanId: number): Promise<ClanInfo | null> => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/clans/${clanId}`
+      );
+      if (!response.ok) {
+        console.error('Failed to fetch clan info:', response.status);
+        return null;
+      }
+      const data = (await response.json()) as { clanId: number; name: string };
+      return { clanId: data.clanId, name: data.name };
+    } catch (err) {
+      console.error('Error fetching clan info:', err);
+      return null;
+    }
+  }, []);
 
   /**
    * Load user from backend on mount
@@ -68,6 +98,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         const currentUser = await getCurrentUser();
         setUser(currentUser);
+
+        // Fetch clan info if user has a clan
+        if (currentUser?.clanId) {
+          const clan = await fetchClanInfo(currentUser.clanId);
+          setClanInfo(clan);
+        } else {
+          setClanInfo(null);
+        }
       } catch (err) {
         console.error('Error loading user:', err);
         setError('Failed to load authentication state');
@@ -77,7 +115,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     void loadUser();
-  }, []);
+  }, [fetchClanInfo]);
 
   /**
    * Set up automatic token refresh
@@ -152,6 +190,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setError(null);
       setUser(null);
+      setClanInfo(null);
       await logoutUser();
     } catch (err) {
       console.error('Logout error:', err);
@@ -167,10 +206,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const currentUser = await getCurrentUser();
       setUser(currentUser);
+
+      // Fetch clan info if user has a clan
+      if (currentUser?.clanId) {
+        const clan = await fetchClanInfo(currentUser.clanId);
+        setClanInfo(clan);
+      } else {
+        setClanInfo(null);
+      }
     } catch (err) {
       console.error('Error refreshing user:', err);
     }
-  }, []);
+  }, [fetchClanInfo]);
 
   /**
    * Check if user has specific role
@@ -192,6 +239,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const value: AuthContextValue = {
     user,
+    clanInfo,
     isAuthenticated: !!user,
     isLoading,
     error,

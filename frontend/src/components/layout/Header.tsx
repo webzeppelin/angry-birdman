@@ -11,7 +11,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 
 export function Header() {
-  const { isAuthenticated, user, login, logout } = useAuth();
+  const { isAuthenticated, user, clanInfo, login, logout } = useAuth();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -85,7 +85,7 @@ export function Header() {
               <>
                 <div className="text-right text-sm text-white/90">
                   <div className="font-medium">{user?.preferred_username}</div>
-                  {user?.clanId && <div className="text-xs">Clan: {user?.clanId}</div>}
+                  {clanInfo && <div className="text-xs">Clan: {clanInfo.name}</div>}
                 </div>
                 <button
                   onClick={handleLogout}
@@ -162,7 +162,7 @@ export function Header() {
                 <>
                   <div className="mb-3 px-4 text-sm text-white/90">
                     <div className="font-medium">{user?.preferred_username}</div>
-                    {user?.clanId && <div className="text-xs">Clan: {user?.clanId}</div>}
+                    {clanInfo && <div className="text-xs">Clan: {clanInfo.name}</div>}
                   </div>
                   <button
                     onClick={() => {
