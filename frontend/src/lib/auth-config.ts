@@ -9,7 +9,7 @@
  * 1. Frontend initiates OAuth2 authorization code flow with Keycloak
  * 2. User authenticates with Keycloak
  * 3. Keycloak redirects back with authorization code
- * 4. Frontend sends code to backend /auth/token endpoint
+ * 4. Frontend sends code to backend /api/auth/token endpoint
  * 5. Backend exchanges code for tokens and stores in httpOnly cookies
  * 6. All subsequent API requests automatically include cookies
  */
@@ -115,7 +115,7 @@ export async function exchangeCodeForToken(code: string, state: string): Promise
       return false;
     }
 
-    const response = await fetch(`${API_URL}/auth/token`, {
+    const response = await fetch(`${API_URL}/api/auth/token`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include', // Include cookies in request
@@ -154,7 +154,7 @@ export async function exchangeCodeForToken(code: string, state: string): Promise
  */
 export async function refreshToken(): Promise<boolean> {
   try {
-    const response = await fetch(`${API_URL}/auth/refresh`, {
+    const response = await fetch(`${API_URL}/api/auth/refresh`, {
       method: 'POST',
       credentials: 'include',
     });
@@ -173,7 +173,7 @@ export async function refreshToken(): Promise<boolean> {
 export async function logout(): Promise<void> {
   try {
     // Clear backend cookies
-    await fetch(`${API_URL}/auth/logout`, {
+    await fetch(`${API_URL}/api/auth/logout`, {
       method: 'POST',
       credentials: 'include',
     });
@@ -196,7 +196,7 @@ export async function logout(): Promise<void> {
  */
 export async function getCurrentUser(): Promise<User | null> {
   try {
-    const response = await fetch(`${API_URL}/auth/user`, {
+    const response = await fetch(`${API_URL}/api/auth/user`, {
       credentials: 'include',
     });
 
@@ -222,7 +222,7 @@ export async function getCurrentUser(): Promise<User | null> {
  */
 export async function checkAuthStatus(): Promise<boolean> {
   try {
-    const response = await fetch(`${API_URL}/auth/status`, {
+    const response = await fetch(`${API_URL}/api/auth/status`, {
       credentials: 'include',
     });
 
