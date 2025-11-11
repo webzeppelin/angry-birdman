@@ -52,7 +52,24 @@ export function CallbackPage() {
         if (success) {
           // Refresh user data from backend
           await refreshUser();
-          // Redirect to home or intended page
+
+          // Check if user has a clan - if not, send to triage page (Story 2.3)
+          const userResponse = await fetch(
+            `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/auth/user`,
+            { credentials: 'include' }
+          );
+
+          if (userResponse.ok) {
+            const userData = (await userResponse.json()) as { clanId?: number | null };
+
+            // If user doesn't have a clan, send to post-registration triage
+            if (!userData.clanId) {
+              navigate('/register/triage', { replace: true });
+              return;
+            }
+          }
+
+          // User has a clan or we couldn't verify - go to home
           navigate('/', { replace: true });
         } else {
           setError('Token exchange failed');
