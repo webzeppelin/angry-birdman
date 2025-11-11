@@ -290,10 +290,9 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
     async (request, reply) => {
       // Use composite userId from authenticated user (already in format: keycloak:{sub})
       const userId = request.authUser!.userId;
-      const keycloak = createKeycloakService(fastify);
 
       try {
-        // 1. Get user from database
+        // Get user from database (single source of truth)
         const user = await fastify.prisma.user.findUnique({
           where: { userId },
           include: {
@@ -309,20 +308,11 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
           return reply.code(404).send({ error: 'User not found' });
         }
 
-        // 2. Get additional details from Keycloak
-        // Extract Keycloak sub from composite ID (format: keycloak:{sub})
-        const keycloakSub = userId.split(':')[1];
-        if (!keycloakSub) {
-          throw new Error('Invalid composite user ID format');
-        }
-        const keycloakUser = await keycloak.getUser(keycloakSub);
-
         return reply.send({
           userId: user.userId,
           username: user.username,
           email: user.email,
-          firstName: keycloakUser?.firstName,
-          lastName: keycloakUser?.lastName,
+          // firstName/lastName removed - add to database schema if needed in future
           clanId: user.clanId,
           clanName: user.clan?.name,
           owner: user.owner,
@@ -363,24 +353,11 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
     async (request, reply) => {
       // Use composite userId from authenticated user (already in format: keycloak:{sub})
       const userId = request.authUser!.userId;
-      const keycloak = createKeycloakService(fastify);
       const audit = createAuditService(fastify.prisma);
 
       try {
-        // 1. Update in Keycloak
-        // Extract Keycloak sub from composite ID (format: keycloak:{sub})
-        const keycloakSub = userId.split(':')[1];
-        if (!keycloakSub) {
-          throw new Error('Invalid composite user ID format');
-        }
-        await keycloak.updateUser(keycloakSub, {
-          username: request.body.username,
-          email: request.body.email,
-          firstName: request.body.firstName,
-          lastName: request.body.lastName,
-        });
-
-        // 2. Update in local database (only username and email are stored locally)
+        // Update in local database only (database is single source of truth)
+        // Note: firstName and lastName can be added to database schema in future if needed
         const updateData: { username?: string; email?: string } = {};
         if (request.body.username) updateData.username = request.body.username;
         if (request.body.email) updateData.email = request.body.email;
@@ -392,7 +369,7 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
           });
         }
 
-        // 3. Log the profile update
+        // Log the profile update
         await audit.log({
           actorId: userId,
           actionType: AuditAction.USER_PROFILE_UPDATED,

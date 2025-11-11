@@ -21,7 +21,6 @@ import {
   EntityType,
   AuditResult,
 } from '../services/audit.service.js';
-import { createKeycloakService } from '../services/keycloak.service.js';
 
 import type { FastifyPluginAsync } from 'fastify';
 
@@ -463,7 +462,6 @@ const adminRequestsRoutes: FastifyPluginAsync = async (fastify) => {
       const reviewerId = request.authUser!.sub;
       const requestId = parseInt(request.params.requestId, 10);
       const { action, rejectionReason } = request.body;
-      const keycloak = createKeycloakService(fastify);
       const audit = createAuditService(fastify.prisma);
 
       try {
@@ -517,17 +515,6 @@ const adminRequestsRoutes: FastifyPluginAsync = async (fastify) => {
         if (action === 'approve') {
           // Remove user from old clan if they were associated with one
           if (adminRequest.user.clanId !== null) {
-            // Remove old clan-admin or clan-owner role
-            const oldRoles = await keycloak.getUserRoles(adminRequest.userId);
-            for (const role of oldRoles || []) {
-              if (role.name === 'clan-admin' || role.name === 'clan-owner') {
-                await keycloak.removeRole({
-                  userId: adminRequest.userId,
-                  role: role.name,
-                });
-              }
-            }
-
             // Log clan association change
             await audit.log({
               actorId: reviewerId,
@@ -544,19 +531,14 @@ const adminRequestsRoutes: FastifyPluginAsync = async (fastify) => {
             });
           }
 
-          // Associate user with new clan
+          // Associate user with new clan and assign clan-admin role in database
           await fastify.prisma.user.update({
             where: { userId: adminRequest.userId },
             data: {
               clanId: adminRequest.clanId,
               owner: false, // Regular admin, not owner
+              roles: { set: ['user', 'clan-admin'] }, // Set roles array (removes old clan roles)
             },
-          });
-
-          // Assign clan-admin role
-          await keycloak.assignRole({
-            userId: adminRequest.userId,
-            role: 'clan-admin',
           });
 
           // Update request status

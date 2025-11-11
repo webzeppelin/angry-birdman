@@ -199,7 +199,7 @@ const adminRoutes: FastifyPluginAsync = async (fastify) => {
       onRequest: [authenticate, authorize(['superadmin'])],
     },
     async (request, reply) => {
-      const { userId } = request.params;
+      const { userId } = request.params; // composite ID format
       const { temporary, password } = request.body;
       const actorId = request.authUser!.sub;
 
@@ -216,7 +216,16 @@ const adminRoutes: FastifyPluginAsync = async (fastify) => {
           return reply.status(404).send({ error: 'Not Found', message: 'User not found' });
         }
 
-        await keycloak.changePassword({ userId, newPassword: password, temporary });
+        // Extract Keycloak sub from composite ID (format: keycloak:{sub})
+        const keycloakSub = userId.split(':')[1];
+        if (!keycloakSub) {
+          return reply.status(400).send({
+            error: 'Bad Request',
+            message: 'Invalid user ID format',
+          });
+        }
+
+        await keycloak.changePassword({ userId: keycloakSub, newPassword: password, temporary });
 
         await audit.log({
           actorId,
@@ -370,25 +379,29 @@ const adminRoutes: FastifyPluginAsync = async (fastify) => {
               data: { owner: false },
             });
           }
+
+          // Determine new roles based on clan association
+          let newRoles: string[];
+          if (clanId === null) {
+            // Removed from clan - reset to base role
+            newRoles = ['user'];
+          } else if (makeOwner) {
+            // Made owner of clan
+            newRoles = ['user', 'clan-owner'];
+          } else {
+            // Added as admin to clan
+            newRoles = ['user', 'clan-admin'];
+          }
+
           await tx.user.update({
             where: { userId },
-            data: { clanId, owner: makeOwner },
+            data: {
+              clanId,
+              owner: makeOwner,
+              roles: { set: newRoles }, // Update database roles
+            },
           });
         });
-
-        // Update Keycloak roles
-        if (user.owner && !makeOwner) {
-          await keycloak.removeRole({ userId, role: 'clan-owner' });
-        } else if (!user.owner && makeOwner) {
-          await keycloak.assignRole({ userId, role: 'clan-owner' });
-        }
-
-        if (clanId === null) {
-          await keycloak.removeRole({ userId, role: 'clan-admin' });
-          await keycloak.removeRole({ userId, role: 'clan-owner' });
-        } else if (!makeOwner && user.clanId === null) {
-          await keycloak.assignRole({ userId, role: 'clan-admin' });
-        }
 
         await audit.log({
           actorId,
@@ -442,8 +455,14 @@ const adminRoutes: FastifyPluginAsync = async (fastify) => {
           result: AuditResult.SUCCESS,
         });
 
+        // Delete from database first
         await fastify.prisma.user.delete({ where: { userId } });
-        await keycloak.deleteUser(userId);
+
+        // Extract Keycloak sub from composite ID and delete from Keycloak
+        const keycloakSub = userId.split(':')[1];
+        if (keycloakSub) {
+          await keycloak.deleteUser(keycloakSub);
+        }
 
         return { message: 'User deleted successfully' };
       } catch (error) {
