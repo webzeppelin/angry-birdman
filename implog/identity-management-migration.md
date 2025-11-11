@@ -502,9 +502,60 @@ Keycloak account and database profile atomically
 - ✅ Default 'user' role assigned in database
 - ✅ Clan registration updates user roles correctly
 
+**Completion Summary**:
+
+Updated `api/src/routes/users.ts` with composite ID support across all
+endpoints:
+
+1. **POST /api/users/register**:
+   - Changed from using Keycloak sub directly to creating composite ID:
+     `keycloak:{keycloakSub}`
+   - Added `roles: ['user']` to database user creation (default role)
+   - Keycloak role assignment preserved for backward compatibility
+   - Audit logging uses composite userId
+   - Returns composite userId in response
+
+2. **POST /api/users/register-clan**:
+   - Changed from `request.authUser!.sub` to `request.authUser!.userId` (already
+     composite format)
+   - Updated upsert to use `roles: { push: 'clan-owner' }` for adding role to
+     database array
+   - Added composite ID extraction with validation (`userId.split(':')[1]`)
+   - Keycloak role assignment preserved for backward compatibility (uses
+     extracted sub)
+   - Create case initializes with `roles: ['user', 'clan-owner']`
+
+3. **GET /api/users/me**:
+   - Changed from `request.authUser!.sub` to `request.authUser!.userId`
+   - Added composite ID extraction for Keycloak API calls (firstName/lastName)
+   - Changed from Keycloak roles to database roles: `user.roles`
+
+4. **PUT /api/users/me** (Profile Update):
+   - Changed from `request.authUser!.sub` to `request.authUser!.userId`
+   - Added composite ID extraction for Keycloak API calls
+   - Database updates use composite userId
+
+5. **POST /api/users/me/password** (Password Change):
+   - Changed from `request.authUser!.sub` to `request.authUser!.userId`
+   - Added composite ID extraction for Keycloak API calls
+   - Audit logging uses composite userId
+
+All endpoints now:
+
+- Use composite user IDs consistently
+- Include safety checks for ID format validation
+- Extract Keycloak sub when needed for backward-compatible Keycloak Admin API
+  calls
+- Use database roles arrays for authorization data
+
+No TypeScript or linting errors. All references to `authUser!.sub` replaced with
+`authUser!.userId`.
+
+**Git Commit**: `75666bd` - Phase 4: User registration flow with composite IDs
+
 ---
 
-### Phase 5: Remove Keycloak Admin API Dependencies ✅ (45 minutes)
+### Phase 5: Remove Keycloak Admin API Dependencies (45 minutes)
 
 **Goal**: Stop using Keycloak Admin API for profile and role management
 
