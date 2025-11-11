@@ -1,4 +1,4 @@
-import { type FastifyRequest, type FastifyReply } from 'fastify';
+import { type FastifyRequest, type FastifyReply, type FastifyInstance } from 'fastify';
 import * as jwt from 'jsonwebtoken';
 import jwksClient from 'jwks-rsa';
 
@@ -9,23 +9,31 @@ import jwksClient from 'jwks-rsa';
  * Extracts user information and attaches it to the request object
  */
 
-// Define the structure of decoded JWT payload
+// Define the structure of decoded JWT payload from IdP token
 export interface JWTPayload {
-  sub: string; // User ID (Keycloak subject)
+  iss: string; // Issuer (e.g., 'http://localhost:8080/realms/angrybirdman')
+  sub: string; // Subject - IdP user ID (Keycloak UUID)
   email?: string; // User email
   preferred_username?: string; // Username
   realm_access?: {
-    roles: string[]; // Realm roles
+    roles: string[]; // Realm roles (kept for backward compatibility, but not used)
   };
-  clanId?: string; // Custom claim for multi-tenancy
   exp: number; // Expiration timestamp
   iat: number; // Issued at timestamp
+}
+
+// Extended auth user with database data
+export interface AuthUser extends JWTPayload {
+  userId: string; // Composite user ID: {iss}:{sub} (e.g., 'keycloak:abc-123')
+  username: string; // From database
+  roles: string[]; // From database (not token)
+  clanId: number | null; // From database (not token)
 }
 
 // Extend Fastify's request type to include authUser
 declare module 'fastify' {
   interface FastifyRequest {
-    authUser?: JWTPayload;
+    authUser?: AuthUser;
   }
 }
 
@@ -98,6 +106,36 @@ export async function verifyToken(token: string): Promise<JWTPayload> {
 }
 
 /**
+ * Normalize issuer URL to short provider name
+ *
+ * Converts full issuer URLs to short, consistent provider identifiers:
+ * - 'http://localhost:8080/realms/angrybirdman' → 'keycloak'
+ * - Future: 'https://accounts.google.com' → 'google'
+ * - Future: 'https://github.com' → 'github'
+ *
+ * @param iss - Full issuer URL from JWT token
+ * @returns Short provider name for composite user ID
+ */
+function normalizeIssuer(iss: string): string {
+  // Keycloak (local or production)
+  if (iss.includes('localhost:8080') || iss.includes('keycloak') || iss.includes('/realms/')) {
+    return 'keycloak';
+  }
+
+  // Future providers (not yet implemented)
+  if (iss.includes('accounts.google.com')) {
+    return 'google';
+  }
+
+  if (iss.includes('github.com')) {
+    return 'github';
+  }
+
+  // Default to keycloak for backward compatibility
+  return 'keycloak';
+}
+
+/**
  * Authentication middleware - validates JWT tokens
  *
  * This middleware:
@@ -149,8 +187,81 @@ export async function authenticate(request: FastifyRequest, reply: FastifyReply)
     // Verify and decode token
     const decoded = await verifyToken(token);
 
-    // Attach user info to request
-    request.authUser = decoded;
+    // Construct composite user ID from issuer and subject
+    const issuer = normalizeIssuer(decoded.iss);
+    const compositeUserId = `${issuer}:${decoded.sub}`;
+
+    // Look up user in database to get profile data and roles
+    // Access Prisma client through server instance
+    const server = request.server as FastifyInstance & {
+      prisma: {
+        user: {
+          findUnique: (args: {
+            where: { userId: string };
+            select: {
+              userId: boolean;
+              username: boolean;
+              email: boolean;
+              clanId: boolean;
+              owner: boolean;
+              roles: boolean;
+              enabled: boolean;
+            };
+          }) => Promise<{
+            userId: string;
+            username: string;
+            email: string;
+            clanId: number | null;
+            owner: boolean;
+            roles: string[];
+            enabled: boolean;
+          } | null>;
+        };
+      };
+    };
+
+    const user = await server.prisma.user.findUnique({
+      where: { userId: compositeUserId },
+      select: {
+        userId: true,
+        username: true,
+        email: true,
+        clanId: true,
+        owner: true,
+        roles: true,
+        enabled: true,
+      },
+    });
+
+    if (!user) {
+      // User authenticated with IdP but not in our database
+      // This shouldn't happen with proper registration flow
+      request.log.warn(
+        { compositeUserId, iss: decoded.iss, sub: decoded.sub },
+        'User authenticated but profile not found in database'
+      );
+      return reply.status(401).send({
+        error: 'Unauthorized',
+        message: 'User profile not found',
+      });
+    }
+
+    if (!user.enabled) {
+      request.log.warn({ userId: user.userId }, 'Disabled user attempted to authenticate');
+      return reply.status(401).send({
+        error: 'Unauthorized',
+        message: 'Account is disabled',
+      });
+    }
+
+    // Attach BOTH token payload AND database user to request
+    request.authUser = {
+      ...decoded,
+      userId: compositeUserId, // composite ID
+      username: user.username, // from database
+      roles: user.roles, // from database, not token
+      clanId: user.clanId, // from database, not token
+    };
   } catch (error) {
     request.log.warn({ error }, 'JWT verification failed');
 
@@ -185,6 +296,9 @@ export async function authenticate(request: FastifyRequest, reply: FastifyReply)
 /**
  * Authorization middleware - checks user roles
  *
+ * Roles are now fetched from the database (not token claims)
+ * This enables provider-agnostic identity management
+ *
  * @param allowedRoles - Array of roles that are allowed to access the route
  * @returns Middleware function that checks if user has required role
  */
@@ -199,15 +313,15 @@ export function authorize(allowedRoles: string[]) {
       });
     }
 
-    // Extract user roles
-    const userRoles = user.realm_access?.roles || [];
+    // Extract user roles from database (attached by authenticate middleware)
+    const userRoles = user.roles || [];
 
     // Check if user has any of the allowed roles
     const hasPermission = allowedRoles.some((role) => userRoles.includes(role));
 
     if (!hasPermission) {
       request.log.warn(
-        { userId: user.sub, requiredRoles: allowedRoles, userRoles },
+        { userId: user.userId, requiredRoles: allowedRoles, userRoles },
         'Insufficient permissions'
       );
 
@@ -221,6 +335,9 @@ export function authorize(allowedRoles: string[]) {
 
 /**
  * Clan authorization middleware - ensures user has access to specified clan
+ *
+ * ClanId is now fetched from the database (not token claims)
+ * This enables provider-agnostic identity management
  *
  * @param clanIdParam - Name of route parameter containing clan ID (default: 'clanId')
  * @returns Middleware function that checks clan access
@@ -238,26 +355,35 @@ export function authorizeClan(clanIdParam: string = 'clanId') {
 
     // Get clan ID from route parameters
     const params = request.params as Record<string, string>;
-    const requestedClanId = params[clanIdParam];
+    const requestedClanIdStr = params[clanIdParam];
 
-    if (!requestedClanId) {
+    if (!requestedClanIdStr) {
       return reply.status(400).send({
         error: 'Bad Request',
         message: `Missing clan ID parameter: ${clanIdParam}`,
       });
     }
 
-    // Superadmins can access all clans
-    const userRoles = user.realm_access?.roles || [];
+    // Convert to number for comparison
+    const requestedClanId = parseInt(requestedClanIdStr, 10);
+    if (isNaN(requestedClanId)) {
+      return reply.status(400).send({
+        error: 'Bad Request',
+        message: 'Invalid clan ID format',
+      });
+    }
+
+    // Superadmins can access all clans (roles from database)
+    const userRoles = user.roles || [];
     if (userRoles.includes('superadmin')) {
       return; // Allow access
     }
 
-    // Check if user's clan matches requested clan
+    // Check if user's clan matches requested clan (clanId from database)
     const userClanId = user.clanId;
 
     if (userClanId !== requestedClanId) {
-      request.log.warn({ userId: user.sub, userClanId, requestedClanId }, 'Clan access denied');
+      request.log.warn({ userId: user.userId, userClanId, requestedClanId }, 'Clan access denied');
 
       return reply.status(403).send({
         error: 'Forbidden',
