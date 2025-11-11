@@ -144,19 +144,24 @@ export async function authenticate(request: FastifyRequest, reply: FastifyReply)
   } catch (error) {
     request.log.warn({ error }, 'JWT verification failed');
 
-    // Determine specific error type
-    if (error instanceof jwt.TokenExpiredError) {
-      return reply.status(401).send({
-        error: 'Unauthorized',
-        message: 'Token has expired',
-      });
-    }
+    // Determine specific error type by checking error properties
+    // Note: jsonwebtoken errors may not be properly instanceof-able with namespace imports
+    if (error && typeof error === 'object' && 'name' in error) {
+      const errorName = (error as { name: string }).name;
 
-    if (error instanceof jwt.JsonWebTokenError) {
-      return reply.status(401).send({
-        error: 'Unauthorized',
-        message: 'Invalid token',
-      });
+      if (errorName === 'TokenExpiredError') {
+        return reply.status(401).send({
+          error: 'Unauthorized',
+          message: 'Token has expired',
+        });
+      }
+
+      if (errorName === 'JsonWebTokenError') {
+        return reply.status(401).send({
+          error: 'Unauthorized',
+          message: 'Invalid token',
+        });
+      }
     }
 
     // Generic error
