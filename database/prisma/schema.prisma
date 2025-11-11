@@ -53,7 +53,7 @@ model Clan {
 /// Note: User authentication is handled by Keycloak (external IdP)
 /// This table stores application-specific user metadata
 model User {
-  // Primary Key - matches Keycloak user ID
+  // Primary Key - composite format: {iss}:{sub} (e.g., 'keycloak:abc-123')
   userId String @id @map("user_id") @db.VarChar(255)
 
   // Core Fields
@@ -62,6 +62,7 @@ model User {
   clanId   Int?    @map("clan_id") // Nullable - superadmins may not be associated with a clan
   owner    Boolean @default(false) // True if user is a Clan Owner
   enabled  Boolean @default(true) // Account enabled status (synced from Keycloak)
+  roles    String[] @default([]) // Application-managed roles (e.g., ['superadmin'], ['clan-owner'], ['clan-admin'], ['user'])
 
   // Timestamps
   createdAt DateTime @default(now()) @map("created_at")

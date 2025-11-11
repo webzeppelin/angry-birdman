@@ -95,53 +95,57 @@ async function main() {
 
   // Clan Owner for Angry Avengers
   await prisma.user.upsert({
-    where: { userId: 'user-001' },
+    where: { userId: 'keycloak:user-001' },
     update: {},
     create: {
-      userId: 'user-001',
+      userId: 'keycloak:user-001',
       username: 'angryowner',
       email: 'owner@angryavengers.com',
       clanId: clan1.clanId,
       owner: true,
+      roles: ['clan-owner'],
     },
   });
 
   // Clan Admin for Angry Avengers
   await prisma.user.upsert({
-    where: { userId: 'user-002' },
+    where: { userId: 'keycloak:user-002' },
     update: {},
     create: {
-      userId: 'user-002',
+      userId: 'keycloak:user-002',
       username: 'angryadmin',
       email: 'admin@angryavengers.com',
       clanId: clan1.clanId,
       owner: false,
+      roles: ['clan-admin'],
     },
   });
 
   // Clan Owner for Feather Fury
   await prisma.user.upsert({
-    where: { userId: 'user-003' },
+    where: { userId: 'keycloak:user-003' },
     update: {},
     create: {
-      userId: 'user-003',
+      userId: 'keycloak:user-003',
       username: 'featherboss',
       email: 'boss@featherfury.ca',
       clanId: clan2.clanId,
       owner: true,
+      roles: ['clan-owner'],
     },
   });
 
   // Superadmin (not associated with any clan)
   await prisma.user.upsert({
-    where: { userId: 'superadmin-001' },
+    where: { userId: 'keycloak:superadmin-001' },
     update: {},
     create: {
-      userId: 'superadmin-001',
+      userId: 'keycloak:superadmin-001',
       username: 'superadmin',
       email: 'admin@angrybirdman.com',
       clanId: null,
       owner: false,
+      roles: ['superadmin'],
     },
   });
 
