@@ -67,7 +67,8 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
 
       try {
         // 1. Register user in Keycloak (includes password setup)
-        const userId = await keycloak.registerUser({
+        // Returns the Keycloak 'sub' (subject identifier)
+        const keycloakSub = await keycloak.registerUser({
           username: request.body.username,
           email: request.body.email,
           password: request.body.password,
@@ -75,18 +76,28 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
           lastName: request.body.lastName,
         });
 
-        // 2. Create User record in local database
+        // 2. Create composite user ID (provider-agnostic format)
+        const userId = `keycloak:${keycloakSub}`;
+
+        // 3. Create User record in local database with composite ID
         await fastify.prisma.user.create({
           data: {
-            userId,
+            userId, // composite format: keycloak:{sub}
             username: request.body.username,
             email: request.body.email,
             clanId: null, // No clan association initially
             owner: false, // Not an owner initially
+            roles: ['user'], // Default role in database
           },
         });
 
-        // 3. Log the registration action
+        // 4. Assign 'user' role in Keycloak (for backward compatibility)
+        await keycloak.assignRole({
+          userId: keycloakSub,
+          role: 'user',
+        });
+
+        // 5. Log the registration action with composite ID
         await audit.log({
           actorId: userId,
           actionType: AuditAction.USER_REGISTERED,
@@ -97,7 +108,7 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
         });
 
         return reply.code(201).send({
-          userId,
+          userId, // Return composite ID
           message: 'Registration successful',
         });
       } catch (error) {
@@ -142,7 +153,8 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
       },
     },
     async (request, reply) => {
-      const userId = request.authUser!.sub;
+      // Use composite userId from authenticated user (already in format: keycloak:{sub})
+      const userId = request.authUser!.userId;
       const keycloak = createKeycloakService(fastify);
       const audit = createAuditService(fastify.prisma);
 
@@ -175,19 +187,26 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
           update: {
             clanId: clan.clanId,
             owner: true,
+            roles: { push: 'clan-owner' }, // Add clan-owner to database roles array
           },
           create: {
             userId,
-            username: authUser.preferred_username || userId,
+            username: authUser.username || userId,
             email: authUser.email || '',
             clanId: clan.clanId,
             owner: true,
+            roles: ['user', 'clan-owner'], // Initialize with both roles
           },
         });
 
-        // 4. Assign clan-owner role in Keycloak
+        // 4. Assign clan-owner role in Keycloak (for backward compatibility)
+        // Extract Keycloak sub from composite ID (format: keycloak:{sub})
+        const keycloakSub = userId.split(':')[1];
+        if (!keycloakSub) {
+          throw new Error('Invalid composite user ID format');
+        }
         await keycloak.assignRole({
-          userId,
+          userId: keycloakSub,
           role: 'clan-owner',
         });
 
@@ -269,7 +288,8 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
       },
     },
     async (request, reply) => {
-      const userId = request.authUser!.sub;
+      // Use composite userId from authenticated user (already in format: keycloak:{sub})
+      const userId = request.authUser!.userId;
       const keycloak = createKeycloakService(fastify);
 
       try {
@@ -290,8 +310,12 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
         }
 
         // 2. Get additional details from Keycloak
-        const keycloakUser = await keycloak.getUser(userId);
-        const roles = await keycloak.getUserRoles(userId);
+        // Extract Keycloak sub from composite ID (format: keycloak:{sub})
+        const keycloakSub = userId.split(':')[1];
+        if (!keycloakSub) {
+          throw new Error('Invalid composite user ID format');
+        }
+        const keycloakUser = await keycloak.getUser(keycloakSub);
 
         return reply.send({
           userId: user.userId,
@@ -302,7 +326,7 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
           clanId: user.clanId,
           clanName: user.clan?.name,
           owner: user.owner,
-          roles: roles?.map((r) => r.name ?? '').filter(Boolean) ?? [],
+          roles: user.roles, // Return roles from database
         });
       } catch (error) {
         fastify.log.error(error, 'Failed to get user profile');
@@ -337,13 +361,19 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
       },
     },
     async (request, reply) => {
-      const userId = request.authUser!.sub;
+      // Use composite userId from authenticated user (already in format: keycloak:{sub})
+      const userId = request.authUser!.userId;
       const keycloak = createKeycloakService(fastify);
       const audit = createAuditService(fastify.prisma);
 
       try {
         // 1. Update in Keycloak
-        await keycloak.updateUser(userId, {
+        // Extract Keycloak sub from composite ID (format: keycloak:{sub})
+        const keycloakSub = userId.split(':')[1];
+        if (!keycloakSub) {
+          throw new Error('Invalid composite user ID format');
+        }
+        await keycloak.updateUser(keycloakSub, {
           username: request.body.username,
           email: request.body.email,
           firstName: request.body.firstName,
@@ -417,7 +447,8 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
       },
     },
     async (request, reply) => {
-      const userId = request.authUser!.sub;
+      // Use composite userId from authenticated user (already in format: keycloak:{sub})
+      const userId = request.authUser!.userId;
       const keycloak = createKeycloakService(fastify);
       const audit = createAuditService(fastify.prisma);
 
@@ -427,8 +458,13 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
         // For now, we trust that the user is authenticated via JWT
 
         // Change password in Keycloak
+        // Extract Keycloak sub from composite ID (format: keycloak:{sub})
+        const keycloakSub = userId.split(':')[1];
+        if (!keycloakSub) {
+          throw new Error('Invalid composite user ID format');
+        }
         await keycloak.changePassword({
-          userId,
+          userId: keycloakSub,
           newPassword: request.body.newPassword,
           temporary: false,
         });
