@@ -116,7 +116,7 @@ export async function verifyToken(token: string): Promise<JWTPayload> {
  * @param iss - Full issuer URL from JWT token
  * @returns Short provider name for composite user ID
  */
-function normalizeIssuer(iss: string): string {
+export function normalizeIssuer(iss: string): string {
   // Keycloak (local or production)
   if (iss.includes('localhost:8080') || iss.includes('keycloak') || iss.includes('/realms/')) {
     return 'keycloak';

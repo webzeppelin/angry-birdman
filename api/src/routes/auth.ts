@@ -16,6 +16,8 @@
 import axios from 'axios';
 import { z } from 'zod';
 
+import { normalizeIssuer } from '../middleware/auth.js';
+
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 
 const KEYCLOAK_URL = process.env.KEYCLOAK_URL || 'http://localhost:8080';
@@ -39,11 +41,14 @@ interface KeycloakTokenResponse {
 }
 
 interface DecodedToken {
+  iss: string;
   sub: string;
   preferred_username?: string;
   email?: string;
   name?: string;
-  clanId?: number;
+  given_name?: string;
+  family_name?: string;
+  clanId?: number; // Legacy - will be removed
   realm_access?: {
     roles: string[];
   };
@@ -72,6 +77,7 @@ const userResponseSchema = z.object({
   email: z.string().email().optional(),
   name: z.string().optional(),
   clanId: z.number().nullable().optional(),
+  clanName: z.string().nullable().optional(),
   roles: z.array(z.string()),
 });
 
@@ -299,7 +305,10 @@ export default function authRoutes(fastify: FastifyInstance, _opts: unknown, don
 
   /**
    * GET /user
-   * Get current user information from token in cookie
+   * Get current user information from database (using token for authentication)
+   *
+   * This endpoint now returns database profile data instead of token claims,
+   * enabling provider-agnostic identity management.
    */
   fastify.get(
     '/user',
@@ -324,7 +333,7 @@ export default function authRoutes(fastify: FastifyInstance, _opts: unknown, don
         // Decode JWT to get user info (tokens are already validated by Keycloak's signature)
         const decoded = fastify.jwt.decode(token) as DecodedToken;
 
-        if (!decoded || !decoded.sub) {
+        if (!decoded || !decoded.sub || !decoded.iss) {
           return reply.status(401).send({ error: 'Invalid token' });
         }
 
@@ -334,17 +343,56 @@ export default function authRoutes(fastify: FastifyInstance, _opts: unknown, don
           return reply.status(401).send({ error: 'Token expired' });
         }
 
+        // Construct composite user ID from issuer and subject
+        const issuer = normalizeIssuer(decoded.iss);
+        const compositeUserId = `${issuer}:${decoded.sub}`;
+
+        // Look up user in database to get profile data and roles
+        const user = await fastify.prisma.user.findUnique({
+          where: { userId: compositeUserId },
+          select: {
+            userId: true,
+            username: true,
+            email: true,
+            clanId: true,
+            roles: true,
+            clan: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        });
+
+        if (!user) {
+          fastify.log.warn(
+            { compositeUserId, iss: decoded.iss, sub: decoded.sub },
+            'User authenticated but profile not found in database'
+          );
+          return reply.status(401).send({
+            error: 'User profile not found',
+          });
+        }
+
+        // Construct name from token claims (not stored in database)
+        const name =
+          decoded.name ||
+          [decoded.given_name, decoded.family_name].filter(Boolean).join(' ').trim() ||
+          undefined;
+
+        // Return database profile data (not token claims)
         return {
-          sub: decoded.sub,
-          preferred_username: decoded.preferred_username || '',
-          email: decoded.email || '',
-          name: decoded.name || '',
-          clanId: decoded.clanId || null,
-          roles: decoded.realm_access?.roles || [],
+          sub: compositeUserId, // composite ID
+          preferred_username: user.username, // from database
+          email: user.email, // from database
+          name, // from token (first/last name not in database)
+          clanId: user.clanId, // from database
+          clanName: user.clan?.name || null, // from database
+          roles: user.roles, // from database, not token
         };
       } catch (error) {
-        fastify.log.error(error, 'Failed to decode token');
-        return reply.status(401).send({ error: 'Invalid token' });
+        fastify.log.error(error, 'Failed to get user info');
+        return reply.status(401).send({ error: 'Failed to get user information' });
       }
     }
   );
