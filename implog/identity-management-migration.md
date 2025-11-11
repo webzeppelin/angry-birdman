@@ -299,7 +299,9 @@ authentication middleware
 
 ---
 
-### Phase 3: Auth Routes Updates ✅ (30 minutes)
+### Phase 3: Auth Routes Updates ✅ COMPLETED (30 minutes)
+
+**Status**: ✅ COMPLETED - November 10, 2025
 
 **Goal**: Update `/auth/user` endpoint to return database profile data
 
@@ -351,6 +353,44 @@ authentication middleware
 - ✅ Composite user ID in response
 - ✅ Roles from database
 - ✅ Clan info from database
+
+**Completion Summary**:
+
+Updated `api/src/routes/auth.ts` and `api/src/middleware/auth.ts`:
+
+1. **Middleware Export**:
+   - Exported `normalizeIssuer()` function for use in routes
+
+2. **DecodedToken Interface Updates**:
+   - Added `iss: string` field for issuer
+   - Added `given_name` and `family_name` optional fields
+   - Marked `clanId` as legacy (will be removed)
+
+3. **Response Schema Updates**:
+   - Added `clanName: z.string().nullable().optional()`
+   - Already had nullable clanId
+
+4. **/auth/user Endpoint Rewrite**:
+   - Validates token has `iss` and `sub` claims
+   - Constructs composite user ID: `{issuer}:{sub}`
+   - Looks up user in database with clan relation
+   - Returns 401 if user not found in database
+   - Returns database profile data:
+     - `sub`: Composite user ID (e.g., 'keycloak:abc-123')
+     - `preferred_username`: From database
+     - `email`: From database
+     - `clanId`: From database
+     - `clanName`: From database (via clan relation)
+     - `roles`: From database (not token claims)
+   - Constructs `name` from token claims (first/last name not in DB)
+
+5. **/auth/status Endpoint**:
+   - No changes needed (only validates token, doesn't need database)
+
+All TypeScript errors resolved. Endpoint now fully database-driven.
+
+**Git Commit**: `424a8c5` - feat(api): implement Phase 3 - auth routes return
+database profile data
 
 ---
 
