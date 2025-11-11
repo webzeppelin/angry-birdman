@@ -165,7 +165,9 @@ and composite user IDs
 
 ---
 
-### Phase 2: Authentication Middleware Updates ✅ (45 minutes)
+### Phase 2: Authentication Middleware Updates ✅ COMPLETED (45 minutes)
+
+**Status**: ✅ COMPLETED - November 10, 2025
 
 **Goal**: Update authentication to extract `iss` from JWT and construct
 composite user ID
@@ -258,6 +260,42 @@ composite user ID
 - ✅ Roles come from database, not token
 - ✅ ClanId comes from database, not token
 - ✅ Tests pass with updated auth flow
+
+**Completion Summary**:
+
+Updated `api/src/middleware/auth.ts` with:
+
+1. **Interface Updates**:
+   - Added `iss: string` to JWTPayload
+   - Created AuthUser interface with database fields (userId, username, roles,
+     clanId)
+   - Removed clanId custom claim from token expectations
+
+2. **normalizeIssuer() Function**:
+   - Converts Keycloak URLs to 'keycloak'
+   - Ready for future providers: 'google', 'github'
+   - Default fallback to 'keycloak'
+
+3. **authenticate() Middleware**:
+   - Constructs composite user ID: `keycloak:{sub}`
+   - Looks up user in database by composite ID
+   - Returns 401 if user not found in database
+   - Returns 401 if user account disabled
+   - Attaches full AuthUser to request with database data
+
+4. **authorize() Middleware**:
+   - Uses `user.roles` from database (not `realm_access.roles` from token)
+   - Logs composite userId in warnings
+
+5. **authorizeClan() Middleware**:
+   - Uses `user.clanId` from database (not token custom claim)
+   - Uses `user.roles` for superadmin check
+   - Properly converts route parameter to number for comparison
+
+All TypeScript and linting errors resolved with properly typed Prisma access.
+
+**Git Commit**: `7642438` - feat(api): implement Phase 2 - provider-agnostic
+authentication middleware
 
 ---
 
