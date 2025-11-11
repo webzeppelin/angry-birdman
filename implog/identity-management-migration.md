@@ -634,9 +634,74 @@ No TypeScript or linting errors. All references to `authUser!.sub` replaced with
 - ✅ No synchronization logic needed
 - ✅ Keycloak used only for authentication
 
+**Completion Summary**:
+
+Removed Keycloak Admin API dependencies for profile and role management across
+all routes:
+
+1. **api/src/routes/users.ts**:
+   - **GET /api/users/me**: Removed `keycloak.getUser()` call for
+     firstName/lastName (not in database yet, can be added later)
+   - **PUT /api/users/me**: Removed `keycloak.updateUser()` call, profile
+     updates are database-only now
+   - **POST /api/users/me/password**: Kept `keycloak.changePassword()` (Keycloak
+     manages authentication credentials)
+   - **POST /api/users/register**: Kept `keycloak.assignRole()` for backward
+     compatibility
+   - **POST /api/users/register-clan**: Kept `keycloak.assignRole()` for
+     backward compatibility
+
+2. **api/src/routes/admin-requests.ts**:
+   - **POST /api/admin-requests/:requestId/review** (approve action):
+     - Removed `keycloak.getUserRoles()` and `keycloak.removeRole()` loops
+     - Removed `keycloak.assignRole()` for clan-admin
+     - Now uses `roles: { set: ['user', 'clan-admin'] }` to update database
+       roles
+     - Removed unused `createKeycloakService` import
+
+3. **api/src/routes/admin.ts**:
+   - **PUT /api/admin/users/:userId/clan**:
+     - Removed all `keycloak.assignRole()` and `keycloak.removeRole()` calls
+     - Now updates database roles based on clan association:
+       - No clan: `roles: ['user']`
+       - Made owner: `roles: ['user', 'clan-owner']`
+       - Added as admin: `roles: ['user', 'clan-admin']`
+     - Uses `roles: { set: newRoles }` for atomic role updates
+   - **POST /api/admin/users/:userId/password-reset**:
+     - Updated to extract Keycloak sub from composite ID before calling Keycloak
+       API
+     - Added validation for composite ID format
+   - **DELETE /api/admin/users/:userId**:
+     - Updated to extract Keycloak sub from composite ID before deleting from
+       Keycloak
+     - Deletes from database first, then Keycloak
+
+**Key Changes**:
+
+- Profile updates (username, email) are database-only
+- Role assignments use database `roles` array exclusively
+- Keycloak API calls limited to:
+  - User registration (creates accounts)
+  - Password management (Keycloak owns authentication)
+  - User deletion (must delete from both systems)
+  - Role assignment during registration (backward compatibility)
+
+**Remaining Keycloak API Usage**:
+
+- `registerUser()` - Creates Keycloak account during registration
+- `assignRole()` - Backward compatibility during user/clan registration
+- `changePassword()` - Password management (authentication layer)
+- `deleteUser()` - Cleanup when user deleted
+
+All other operations (profile updates, role changes) are database-only. No
+synchronization logic needed.
+
+**Git Commit**: `c63abab` - Phase 5: Remove Keycloak Admin API dependencies for
+profile/role management
+
 ---
 
-### Phase 6: Keycloak Configuration Changes ✅ (30 minutes)
+### Phase 6: Keycloak Configuration Changes (30 minutes)
 
 **Goal**: Configure Keycloak for minimal profile management and disable
 self-registration
