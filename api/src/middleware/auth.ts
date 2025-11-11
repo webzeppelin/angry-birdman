@@ -117,6 +117,7 @@ export async function authenticate(request: FastifyRequest, reply: FastifyReply)
     // Try to get token from cookie first (Token Proxy Pattern)
     if (request.cookies?.access_token) {
       token = request.cookies.access_token;
+      request.log.debug('Token found in cookie');
     }
     // Fallback to Authorization header for backwards compatibility
     else if (request.headers.authorization) {
@@ -125,11 +126,20 @@ export async function authenticate(request: FastifyRequest, reply: FastifyReply)
 
       if (scheme === 'Bearer' && bearerToken) {
         token = bearerToken;
+        request.log.debug('Token found in Authorization header');
       }
     }
 
     // No token found in either location
     if (!token) {
+      request.log.debug(
+        {
+          hasCookies: !!request.cookies,
+          cookieKeys: request.cookies ? Object.keys(request.cookies) : [],
+          hasAuthHeader: !!request.headers.authorization,
+        },
+        'No authentication token found'
+      );
       return reply.status(401).send({
         error: 'Unauthorized',
         message: 'No authentication token provided',

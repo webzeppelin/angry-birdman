@@ -167,10 +167,19 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
           },
         });
 
-        // 3. Associate user with clan as owner
-        await fastify.prisma.user.update({
+        // 3. Associate user with clan as owner (create user if doesn't exist)
+        // This handles users who registered via Keycloak directly without calling /api/users/register
+        const authUser = request.authUser!;
+        await fastify.prisma.user.upsert({
           where: { userId },
-          data: {
+          update: {
+            clanId: clan.clanId,
+            owner: true,
+          },
+          create: {
+            userId,
+            username: authUser.preferred_username || userId,
+            email: authUser.email || '',
             clanId: clan.clanId,
             owner: true,
           },
