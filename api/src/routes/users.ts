@@ -262,6 +262,9 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
             owner: z.boolean(),
             roles: z.array(z.string()),
           }),
+          404: z.object({
+            error: z.string(),
+          }),
         },
       },
     },
