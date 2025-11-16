@@ -26,6 +26,7 @@ export function Header() {
   const adminLinks = isAuthenticated
     ? [
         { path: '/dashboard', label: 'Dashboard' },
+        { path: '/profile', label: 'Profile' },
         { path: '/roster', label: 'Roster' },
         { path: '/battles', label: 'Battles' },
       ]

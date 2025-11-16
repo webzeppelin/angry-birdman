@@ -5,7 +5,7 @@
  */
 
 import { useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -43,12 +43,17 @@ export function LoginPage() {
           Sign In with Keycloak
         </button>
 
-        <p className="mt-6 text-center text-sm text-neutral-500">
-          Don&apos;t have an account?{' '}
-          <a href="#" className="text-primary hover:underline">
-            Contact a superadmin
-          </a>
-        </p>
+        <div className="mt-6 space-y-3 text-center text-sm">
+          <Link to="/forgot-password" className="text-primary block hover:underline">
+            Forgot your password?
+          </Link>
+          <p className="text-neutral-500">
+            Don&apos;t have an account?{' '}
+            <Link to="/register" className="text-primary hover:underline">
+              Register
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

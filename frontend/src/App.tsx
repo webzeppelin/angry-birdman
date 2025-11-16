@@ -22,6 +22,9 @@ import {
   RegisterPage,
   PostRegistrationTriagePage,
   ClanRegistrationPage,
+  ProfilePage,
+  PasswordChangePage,
+  ForgotPasswordPage,
   NotFoundPage,
 } from '@/pages';
 
@@ -84,6 +87,14 @@ function App() {
               }
             />
             <Route
+              path="/forgot-password"
+              element={
+                <Layout>
+                  <ForgotPasswordPage />
+                </Layout>
+              }
+            />
+            <Route
               path="/register"
               element={
                 <Layout>
@@ -115,6 +126,26 @@ function App() {
                 <Layout>
                   <ProtectedRoute>
                     <DashboardPage />
+                  </ProtectedRoute>
+                </Layout>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <Layout>
+                  <ProtectedRoute>
+                    <ProfilePage />
+                  </ProtectedRoute>
+                </Layout>
+              }
+            />
+            <Route
+              path="/profile/change-password"
+              element={
+                <Layout>
+                  <ProtectedRoute>
+                    <PasswordChangePage />
                   </ProtectedRoute>
                 </Layout>
               }

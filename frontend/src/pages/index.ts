@@ -9,4 +9,7 @@ export { SilentCallbackPage } from './SilentCallbackPage';
 export { default as RegisterPage } from './RegisterPage';
 export { default as PostRegistrationTriagePage } from './PostRegistrationTriagePage';
 export { default as ClanRegistrationPage } from './ClanRegistrationPage';
+export { default as ProfilePage } from './ProfilePage';
+export { default as PasswordChangePage } from './PasswordChangePage';
+export { default as ForgotPasswordPage } from './ForgotPasswordPage';
 export { NotFoundPage } from './NotFoundPage';
