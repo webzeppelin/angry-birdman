@@ -70,13 +70,22 @@ export class KeycloakService {
     if (this.initialized) return;
 
     try {
+      console.log('[KeycloakService] Attempting to authenticate with:', {
+        baseUrl: this.baseUrl,
+        realm: this.realm,
+        clientId: this.clientId,
+        hasSecret: !!this.clientSecret,
+      });
+
       await this.adminClient.auth({
         grantType: 'client_credentials',
         clientId: this.clientId,
         clientSecret: this.clientSecret,
       });
       this.initialized = true;
+      console.log('[KeycloakService] Successfully authenticated');
     } catch (error) {
+      console.error('[KeycloakService] Authentication failed:', error);
       const message = error instanceof Error ? error.message : String(error);
       throw new Error(`Failed to initialize Keycloak Admin Client: ${message}`);
     }
