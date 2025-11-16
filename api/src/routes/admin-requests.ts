@@ -180,6 +180,10 @@ const adminRequestsRoutes: FastifyPluginAsync = async (fastify) => {
             limit: z.number(),
             offset: z.number(),
           }),
+          403: z.object({
+            error: z.string(),
+            message: z.string(),
+          }),
         },
       },
     },

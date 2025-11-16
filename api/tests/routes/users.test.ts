@@ -299,7 +299,6 @@ describe('User Routes', () => {
           sub: testUser.userId,
           preferred_username: 'clanfounder',
           email: 'founder@example.com',
-          clanId: existingClan.clanId.toString(),
           realm_access: { roles: ['clan-owner'] },
         }),
         payload: {
@@ -433,7 +432,6 @@ describe('User Routes', () => {
           sub: testUser.userId,
           preferred_username: 'testuser',
           email: 'test@example.com',
-          clanId: clan.clanId.toString(),
         }),
       });
 
