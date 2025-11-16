@@ -96,12 +96,20 @@ export function Header() {
                 </button>
               </>
             ) : (
-              <button
-                onClick={handleLogin}
-                className="text-primary rounded bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-white/90"
-              >
-                Sign In
-              </button>
+              <>
+                <Link
+                  to="/register"
+                  className="rounded border border-white/50 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/20"
+                >
+                  Register
+                </Link>
+                <button
+                  onClick={handleLogin}
+                  className="text-primary rounded bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-white/90"
+                >
+                  Sign In
+                </button>
+              </>
             )}
           </div>
 
@@ -176,15 +184,24 @@ export function Header() {
                   </button>
                 </>
               ) : (
-                <button
-                  onClick={() => {
-                    handleLogin();
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className="text-primary mx-4 w-[calc(100%-2rem)] rounded bg-white px-4 py-2 text-sm font-medium hover:bg-white/90"
-                >
-                  Sign In
-                </button>
+                <div className="flex flex-col space-y-2 px-4">
+                  <Link
+                    to="/register"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="rounded border border-white/50 px-4 py-2 text-center text-sm font-medium text-white hover:bg-white/20"
+                  >
+                    Register
+                  </Link>
+                  <button
+                    onClick={() => {
+                      handleLogin();
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="text-primary rounded bg-white px-4 py-2 text-sm font-medium hover:bg-white/90"
+                  >
+                    Sign In
+                  </button>
+                </div>
               )}
             </div>
           </div>
