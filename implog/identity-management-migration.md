@@ -740,9 +740,50 @@ self-registration
 - ✅ Tokens include `iss` claim
 - ✅ `clanId` not in token
 
+**Completion Summary**:
+
+Manual configuration changes completed in Keycloak Admin Console:
+
+1. **User Registration Disabled**:
+   - Updated `registrationAllowed: false` in realm configuration
+   - Users can now only register through `/api/users/register` endpoint
+   - Ensures atomic creation in both Keycloak and database
+
+2. **clanId Custom Claim Removed**:
+   - Deleted `clan-id` protocol mapper from `clan-context` client scope
+   - Tokens no longer include `clanId` custom claim
+   - Application fetches `clanId` from database during authentication
+
+3. **Issuer Claim Verified**:
+   - Standard OIDC `iss` claim confirmed present in all tokens
+   - Used by middleware to construct composite user IDs
+
+4. **Realm Roles Kept**:
+   - Kept superadmin, clan-owner, clan-admin, user roles for backward
+     compatibility
+   - Assigned during registration but not used for authorization
+   - Can be removed in future cleanup phase
+
+5. **Realm Configuration Updated**:
+   - Exported updated realm configuration to
+     `keycloak/config/angrybirdman-realm.json`
+   - Configuration now reflects provider-agnostic architecture
+   - Declarative config in sync with runtime state
+
+6. **TypeScript/Linting Issues Fixed**:
+   - Removed `clanId` from test JWT payload mocks (no longer in token)
+   - Added 403 response schema to admin-requests list endpoint
+   - All TypeScript compilation checks pass
+   - All ESLint checks pass (only expected non-null assertion warnings)
+
+**Git Commits**:
+
+- `63ff64e` - Phase 6: Keycloak configuration changes
+- `9fbf93b` - fix: remove clanId from JWT mocks and add 403 response schema
+
 ---
 
-### Phase 7: Test User Recreation ✅ (30 minutes)
+### Phase 7: Test User Recreation (30 minutes)
 
 **Goal**: Recreate test users with composite IDs matching database
 
