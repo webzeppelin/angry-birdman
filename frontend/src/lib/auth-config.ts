@@ -36,7 +36,6 @@ export interface User {
   sub: string;
   preferred_username: string;
   email: string;
-  name: string;
   clanId?: number;
   roles: string[];
 }
@@ -142,7 +141,7 @@ export async function exchangeCodeForToken(code: string, state: string): Promise
 
     return true;
   } catch (error) {
-    console.error('Token exchange failed:', error);
+    console.error('Exception during token exchange:', error);
     return false;
   }
 }
@@ -201,14 +200,12 @@ export async function getCurrentUser(): Promise<User | null> {
     });
 
     if (!response.ok) {
-      // 401 is expected when not authenticated, don't log as error
-      if (response.status !== 401) {
-        console.error('Failed to get current user:', response.status, response.statusText);
-      }
+      // 401 is expected when not authenticated
       return null;
     }
 
-    return (await response.json()) as User;
+    const user = (await response.json()) as User;
+    return user;
   } catch (error) {
     console.error('Failed to get current user:', error);
     return null;

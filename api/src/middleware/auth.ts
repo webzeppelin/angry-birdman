@@ -1,5 +1,5 @@
 import { type FastifyRequest, type FastifyReply, type FastifyInstance } from 'fastify';
-import * as jwt from 'jsonwebtoken';
+import jwt, { type JwtHeader, type SigningKeyCallback } from 'jsonwebtoken';
 import jwksClient from 'jwks-rsa';
 
 /**
@@ -52,7 +52,7 @@ const client = jwksClient({
 /**
  * Get signing key from JWKS
  */
-function getKey(header: jwt.JwtHeader, callback: jwt.SigningKeyCallback) {
+function getKey(header: JwtHeader, callback: SigningKeyCallback) {
   if (!header.kid) {
     return callback(new Error('No kid found in token header'));
   }
@@ -87,13 +87,15 @@ export async function verifyToken(token: string): Promise<JWTPayload> {
   }
 
   // Production mode: Use JWKS verification with Keycloak
+  const expectedIssuer = `${keycloakUrl}/realms/${realmName}`;
+
   return new Promise((resolve, reject) => {
     jwt.verify(
       token,
       getKey,
       {
         algorithms: ['RS256'],
-        issuer: `${keycloakUrl}/realms/${realmName}`,
+        issuer: expectedIssuer,
       },
       (err, decoded) => {
         if (err) {
@@ -263,12 +265,22 @@ export async function authenticate(request: FastifyRequest, reply: FastifyReply)
       clanId: user.clanId, // from database, not token
     };
   } catch (error) {
+    console.error('[Authenticate] Verification error:', error);
+    console.error(
+      '[Authenticate] Error type:',
+      error instanceof Error ? error.constructor.name : typeof error
+    );
+    console.error(
+      '[Authenticate] Error message:',
+      error instanceof Error ? error.message : String(error)
+    );
     request.log.warn({ error }, 'JWT verification failed');
 
     // Determine specific error type by checking error properties
     // Note: jsonwebtoken errors may not be properly instanceof-able with namespace imports
     if (error && typeof error === 'object' && 'name' in error) {
       const errorName = (error as { name: string }).name;
+      console.error('[Authenticate] Error name:', errorName);
 
       if (errorName === 'TokenExpiredError') {
         return reply.status(401).send({

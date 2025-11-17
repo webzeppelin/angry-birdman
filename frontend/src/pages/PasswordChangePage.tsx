@@ -129,6 +129,7 @@ export default function PasswordChangePage() {
       .mutateAsync({
         currentPassword: formData.currentPassword,
         newPassword: formData.newPassword,
+        newPasswordConfirm: formData.confirmPassword,
       })
       .catch((error) => {
         console.error('Password change failed:', error);

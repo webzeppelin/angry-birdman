@@ -34,8 +34,6 @@ export const userRegistrationSchema = z.object({
     .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
     .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
     .regex(/[0-9]/, 'Password must contain at least one number'),
-  firstName: z.string().max(100, 'First name cannot exceed 100 characters').optional(),
-  lastName: z.string().max(100, 'Last name cannot exceed 100 characters').optional(),
 });
 
 /**

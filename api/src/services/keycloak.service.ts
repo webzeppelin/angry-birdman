@@ -118,8 +118,7 @@ export class KeycloakService {
         email: credentials.email,
         emailVerified: false, // Set to true if email verification is disabled
         enabled: true,
-        firstName: credentials.firstName,
-        lastName: credentials.lastName,
+        // firstName and lastName intentionally omitted - we don't collect this data
         credentials: [
           {
             type: 'password',

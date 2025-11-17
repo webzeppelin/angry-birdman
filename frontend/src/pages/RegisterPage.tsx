@@ -37,8 +37,6 @@ const registerSchema = z
       .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
       .regex(/[0-9]/, 'Password must contain at least one number'),
     passwordConfirm: z.string(),
-    firstName: z.string().max(100, 'First name cannot exceed 100 characters').optional(),
-    lastName: z.string().max(100, 'Last name cannot exceed 100 characters').optional(),
   })
   .refine((data) => data.password === data.passwordConfirm, {
     message: 'Passwords do not match',
@@ -67,8 +65,6 @@ export default function RegisterPage() {
     email: '',
     password: '',
     passwordConfirm: '',
-    firstName: '',
-    lastName: '',
   });
 
   // UI state
@@ -219,46 +215,6 @@ export default function RegisterPage() {
                 placeholder="you@example.com"
               />
               {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
-            </div>
-
-            {/* First Name (Optional) */}
-            <div>
-              <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
-                First Name <span className="text-gray-400">(optional)</span>
-              </label>
-              <input
-                id="firstName"
-                name="firstName"
-                type="text"
-                autoComplete="given-name"
-                value={formData.firstName}
-                onChange={handleChange}
-                className={`relative mt-1 block w-full appearance-none border px-3 py-2 ${
-                  errors.firstName ? 'border-red-300' : 'border-gray-300'
-                } focus:ring-primary focus:border-primary rounded-md text-gray-900 placeholder-gray-500 focus:z-10 focus:outline-none sm:text-sm`}
-                placeholder="First name"
-              />
-              {errors.firstName && <p className="mt-1 text-sm text-red-600">{errors.firstName}</p>}
-            </div>
-
-            {/* Last Name (Optional) */}
-            <div>
-              <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
-                Last Name <span className="text-gray-400">(optional)</span>
-              </label>
-              <input
-                id="lastName"
-                name="lastName"
-                type="text"
-                autoComplete="family-name"
-                value={formData.lastName}
-                onChange={handleChange}
-                className={`relative mt-1 block w-full appearance-none border px-3 py-2 ${
-                  errors.lastName ? 'border-red-300' : 'border-gray-300'
-                } focus:ring-primary focus:border-primary rounded-md text-gray-900 placeholder-gray-500 focus:z-10 focus:outline-none sm:text-sm`}
-                placeholder="Last name"
-              />
-              {errors.lastName && <p className="mt-1 text-sm text-red-600">{errors.lastName}</p>}
             </div>
 
             {/* Password */}

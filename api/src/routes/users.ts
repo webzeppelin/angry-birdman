@@ -72,8 +72,6 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
           username: request.body.username,
           email: request.body.email,
           password: request.body.password,
-          firstName: request.body.firstName,
-          lastName: request.body.lastName,
         });
 
         // 2. Create composite user ID (provider-agnostic format)
