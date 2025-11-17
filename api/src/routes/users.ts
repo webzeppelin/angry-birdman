@@ -340,7 +340,15 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
         body: userProfileUpdateSchema,
         response: {
           200: z.object({
-            message: z.string(),
+            userId: z.string(),
+            username: z.string(),
+            email: z.string(),
+            firstName: z.string().optional(),
+            lastName: z.string().optional(),
+            clanId: z.number().nullable(),
+            clanName: z.string().optional().nullable(),
+            owner: z.boolean(),
+            roles: z.array(z.string()),
           }),
           409: z.object({
             error: z.string(),
@@ -378,8 +386,30 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
           result: AuditResult.SUCCESS,
         });
 
+        // Fetch and return updated user profile
+        const user = await fastify.prisma.user.findUnique({
+          where: { userId },
+          include: {
+            clan: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        });
+
+        if (!user) {
+          return reply.code(404).send({ error: 'User not found' });
+        }
+
         return reply.send({
-          message: 'Profile updated successfully',
+          userId: user.userId,
+          username: user.username,
+          email: user.email,
+          clanId: user.clanId,
+          clanName: user.clan?.name,
+          owner: user.owner,
+          roles: user.roles,
         });
       } catch (error) {
         fastify.log.error(error, 'Profile update failed');

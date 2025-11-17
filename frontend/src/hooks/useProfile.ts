@@ -16,13 +16,9 @@ export interface UserProfile {
   username: string;
   email: string;
   clanId: number | null;
+  clanName?: string | null;
   owner: boolean;
   roles: string[];
-  createdAt: string;
-  updatedAt: string;
-  // From Keycloak (optional)
-  firstName?: string | null;
-  lastName?: string | null;
 }
 
 /**
