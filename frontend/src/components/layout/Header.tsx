@@ -8,6 +8,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
+import { AdminRequestNotification } from '@/components/AdminRequestNotification';
 import { useAuth } from '@/contexts/AuthContext';
 
 export function Header() {
@@ -84,6 +85,7 @@ export function Header() {
           <div className="hidden items-center space-x-4 md:flex">
             {isAuthenticated ? (
               <>
+                <AdminRequestNotification />
                 <div className="text-right text-sm text-white/90">
                   <div className="font-medium">{user?.preferred_username}</div>
                   {clanInfo && <div className="text-xs">Clan: {clanInfo.name}</div>}
@@ -169,6 +171,9 @@ export function Header() {
             <div className="mt-4 border-t border-white/20 pt-4">
               {isAuthenticated ? (
                 <>
+                  <div className="mb-3 px-4">
+                    <AdminRequestNotification />
+                  </div>
                   <div className="mb-3 px-4 text-sm text-white/90">
                     <div className="font-medium">{user?.preferred_username}</div>
                     {clanInfo && <div className="text-xs">Clan: {clanInfo.name}</div>}

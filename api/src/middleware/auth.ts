@@ -28,6 +28,7 @@ export interface AuthUser extends JWTPayload {
   username: string; // From database
   roles: string[]; // From database (not token)
   clanId: number | null; // From database (not token)
+  owner: boolean; // From database - is user the owner of their clan
 }
 
 // Extend Fastify's request type to include authUser
@@ -263,6 +264,7 @@ export async function authenticate(request: FastifyRequest, reply: FastifyReply)
       username: user.username, // from database
       roles: user.roles, // from database, not token
       clanId: user.clanId, // from database, not token
+      owner: user.owner, // from database
     };
   } catch (error) {
     console.error('[Authenticate] Verification error:', error);

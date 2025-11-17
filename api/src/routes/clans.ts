@@ -9,6 +9,8 @@
 
 import { z } from 'zod';
 
+import { authenticate } from '../middleware/auth.js';
+
 import type { PrismaClient } from '@prisma/client';
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 
@@ -581,6 +583,7 @@ export default function clanRoutes(fastify: FastifyInstance, _opts: unknown, don
   fastify.get<{ Params: { clanId: string } }>(
     '/:clanId/admins',
     {
+      onRequest: [authenticate],
       schema: {
         description: 'List all admin users for a clan',
         tags: ['Clans'],
@@ -592,15 +595,15 @@ export default function clanRoutes(fastify: FastifyInstance, _opts: unknown, don
       },
     },
     async (request: FastifyRequest<{ Params: { clanId: string } }>, reply: FastifyReply) => {
-      const token = request.cookies.access_token;
-      if (!token) {
-        return reply.status(401).send({
-          error: 'Unauthorized',
-          message: 'Authentication required',
-        });
+      const authUser = request.authUser;
+      if (!authUser) {
+        return reply
+          .status(401)
+          .send({ error: 'Unauthorized', message: 'Authentication required' });
       }
 
       const clanId = parseInt(request.params.clanId, 10);
+
       if (isNaN(clanId)) {
         return reply.status(400).send({
           error: 'Validation Error',
@@ -609,28 +612,10 @@ export default function clanRoutes(fastify: FastifyInstance, _opts: unknown, don
       }
 
       try {
-        const decoded = fastify.jwt.decode(token) as {
-          sub: string;
-          realm_access?: { roles: string[] };
-        };
-        const userId = decoded.sub;
-        const userRoles = decoded.realm_access?.roles || [];
-        const isSuperadmin = userRoles.includes('superadmin');
+        // Check authorization - use database roles from authUser
+        const isSuperadmin = authUser.roles.includes('superadmin');
+        const isClanMember = authUser.clanId === clanId;
 
-        // Get requesting user
-        const user = await fastify.prisma.user.findUnique({
-          where: { userId },
-        });
-
-        if (!user) {
-          return reply.status(401).send({
-            error: 'Unauthorized',
-            message: 'User not found',
-          });
-        }
-
-        // Check authorization
-        const isClanMember = user.clanId === clanId;
         if (!isSuperadmin && !isClanMember) {
           return reply.status(403).send({
             error: 'Forbidden',

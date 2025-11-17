@@ -11,6 +11,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link, useParams } from 'react-router-dom';
 
+import { AdminRequestButton } from '@/components/AdminRequestButton';
 import { apiClient } from '@/lib/api-client';
 
 interface ClanDetails {
@@ -114,18 +115,21 @@ export function ClanPage() {
 
           {/* Clan Header */}
           <div className="shadow-card mb-8 rounded-lg bg-white p-8">
-            <div className="mb-6 flex items-start justify-between">
-              <div>
+            <div className="mb-6 flex items-start justify-between gap-4">
+              <div className="flex-1">
                 <h1 className="font-display mb-2 text-4xl text-neutral-800">{clan.name}</h1>
                 <p className="text-lg text-neutral-600">
                   {clan.country} • Rovio ID: {clan.rovioId}
                 </p>
               </div>
-              {!clan.active && (
-                <span className="rounded-lg bg-neutral-200 px-4 py-2 text-sm font-medium text-neutral-700">
-                  Inactive
-                </span>
-              )}
+              <div className="flex flex-col items-end gap-3">
+                {!clan.active && (
+                  <span className="rounded-lg bg-neutral-200 px-4 py-2 text-sm font-medium text-neutral-700">
+                    Inactive
+                  </span>
+                )}
+                <AdminRequestButton clanId={clan.clanId.toString()} />
+              </div>
             </div>
 
             {/* Stats Cards */}

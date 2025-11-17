@@ -77,6 +77,7 @@ const userResponseSchema = z.object({
   email: z.string().email().optional(),
   clanId: z.number().nullable().optional(),
   clanName: z.string().nullable().optional(),
+  owner: z.boolean().optional(),
   roles: z.array(z.string()),
 });
 
@@ -326,7 +327,10 @@ export default function authRoutes(fastify: FastifyInstance, _opts: unknown, don
     },
     async (request: FastifyRequest, reply: FastifyReply) => {
       // User is already authenticated by middleware, data is in request.authUser
-      const authUser = request.authUser!;
+      const authUser = request.authUser;
+      if (!authUser) {
+        return reply.status(401).send({ error: 'Unauthorized' });
+      }
 
       try {
         // Fetch clan name if user has a clan
@@ -347,6 +351,7 @@ export default function authRoutes(fastify: FastifyInstance, _opts: unknown, don
           email: authUser.email || '', // from database
           clanId: authUser.clanId, // from database
           clanName, // from database
+          owner: authUser.owner, // from database
           roles: authUser.roles, // from database, not token
         };
       } catch (error) {

@@ -15,6 +15,11 @@ import {
   AboutPage,
   ClansPage,
   ClanPage,
+  ClanProfilePage,
+  EditClanProfilePage,
+  ClanAdminsPage,
+  ClanSettingsPage,
+  AdminRequestsPage,
   DashboardPage,
   LoginPage,
   CallbackPage,
@@ -75,6 +80,54 @@ function App() {
               element={
                 <Layout>
                   <ClanPage />
+                </Layout>
+              }
+            />
+            <Route
+              path="/clans/:clanId/profile"
+              element={
+                <Layout>
+                  <ClanProfilePage />
+                </Layout>
+              }
+            />
+            <Route
+              path="/clans/:clanId/profile/edit"
+              element={
+                <Layout>
+                  <ProtectedRoute>
+                    <EditClanProfilePage />
+                  </ProtectedRoute>
+                </Layout>
+              }
+            />
+            <Route
+              path="/clans/:clanId/admins"
+              element={
+                <Layout>
+                  <ProtectedRoute>
+                    <ClanAdminsPage />
+                  </ProtectedRoute>
+                </Layout>
+              }
+            />
+            <Route
+              path="/clans/:clanId/settings"
+              element={
+                <Layout>
+                  <ProtectedRoute>
+                    <ClanSettingsPage />
+                  </ProtectedRoute>
+                </Layout>
+              }
+            />
+            <Route
+              path="/admin-requests"
+              element={
+                <Layout>
+                  <ProtectedRoute>
+                    <AdminRequestsPage />
+                  </ProtectedRoute>
                 </Layout>
               }
             />
