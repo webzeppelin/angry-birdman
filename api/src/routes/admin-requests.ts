@@ -607,13 +607,7 @@ const adminRequestsRoutes: FastifyPluginAsync = async (fastify) => {
             message: 'Admin request approved successfully',
           });
         } else {
-          // Reject action
-          if (!rejectionReason) {
-            return reply.code(400).send({
-              error: 'Rejection reason is required when rejecting a request',
-            });
-          }
-
+          // Reject action (rejectionReason is optional)
           // Update request status
           await fastify.prisma.adminRequest.update({
             where: { requestId },
@@ -621,7 +615,7 @@ const adminRequestsRoutes: FastifyPluginAsync = async (fastify) => {
               status: 'REJECTED',
               reviewedBy: reviewerId,
               reviewedAt: new Date(),
-              rejectionReason,
+              rejectionReason: rejectionReason || null,
             },
           });
 
