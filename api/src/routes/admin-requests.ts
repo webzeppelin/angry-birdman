@@ -59,7 +59,12 @@ const adminRequestsRoutes: FastifyPluginAsync = async (fastify) => {
       },
     },
     async (request, reply) => {
-      const userId = request.authUser!.sub;
+      const authUser = request.authUser;
+      if (!authUser) {
+        return reply.code(401).send({ error: 'Unauthorized' });
+      }
+
+      const userId = authUser.userId; // Use composite userId, not sub
       const audit = createAuditService(fastify.prisma);
 
       try {
@@ -188,7 +193,12 @@ const adminRequestsRoutes: FastifyPluginAsync = async (fastify) => {
       },
     },
     async (request, reply) => {
-      const userId = request.authUser!.sub;
+      const authUser = request.authUser;
+      if (!authUser) {
+        return reply.code(403).send({ error: 'Unauthorized' });
+      }
+
+      const userId = authUser.userId; // Use composite userId
       const {
         clanId,
         status,
@@ -207,8 +217,7 @@ const adminRequestsRoutes: FastifyPluginAsync = async (fastify) => {
           where: { userId },
         });
 
-        const userRoles = request.authUser!.realm_access?.roles || [];
-        const isSuperadmin = userRoles.includes('superadmin');
+        const isSuperadmin = authUser.roles.includes('superadmin'); // Use database roles
         const isAdminOfClan = user?.clanId !== null;
 
         // Build where clause based on permissions
@@ -342,7 +351,12 @@ const adminRequestsRoutes: FastifyPluginAsync = async (fastify) => {
       },
     },
     async (request, reply) => {
-      const userId = request.authUser!.sub;
+      const authUser = request.authUser;
+      if (!authUser) {
+        return reply.code(404).send({ error: 'Unauthorized' });
+      }
+
+      const userId = authUser.userId; // Use composite userId
       const requestId = parseInt(request.params.requestId, 10);
 
       try {
@@ -463,7 +477,12 @@ const adminRequestsRoutes: FastifyPluginAsync = async (fastify) => {
       },
     },
     async (request, reply) => {
-      const reviewerId = request.authUser!.sub;
+      const authUser = request.authUser;
+      if (!authUser) {
+        return reply.code(403).send({ error: 'Unauthorized' });
+      }
+
+      const reviewerId = authUser.userId; // Use composite userId
       const requestId = parseInt(request.params.requestId, 10);
       const { action, rejectionReason } = request.body;
       const audit = createAuditService(fastify.prisma);
@@ -665,7 +684,12 @@ const adminRequestsRoutes: FastifyPluginAsync = async (fastify) => {
       },
     },
     async (request, reply) => {
-      const userId = request.authUser!.sub;
+      const authUser = request.authUser;
+      if (!authUser) {
+        return reply.code(403).send({ error: 'Unauthorized' });
+      }
+
+      const userId = authUser.userId; // Use composite userId
       const requestId = parseInt(request.params.requestId, 10);
 
       try {
