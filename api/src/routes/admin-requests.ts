@@ -236,20 +236,23 @@ const adminRequestsRoutes: FastifyPluginAsync = async (fastify) => {
         }
 
         // Apply permission filters
-        if (!isSuperadmin) {
-          if (isAdminOfClan && clanId && user!.clanId === clanId) {
-            // Clan admin viewing requests for their clan
-            where.clanId = clanId;
-          } else if (!clanId) {
-            // Regular user viewing only their own requests
-            where.userId = userId;
-          } else {
-            // User trying to view requests for a clan they don't admin
+        if (isSuperadmin) {
+          // Superadmins can see all requests (optionally filtered by clanId/status)
+          // where clause already has clanId and status if provided
+        } else if (isAdminOfClan && user!.clanId !== null) {
+          // Clan admin/owner: show requests for their clan
+          if (clanId && user!.clanId !== clanId) {
+            // User trying to view requests for a different clan
             return reply.code(403).send({
               error: 'Forbidden',
               message: 'You do not have permission to view these requests',
             });
           }
+          // Set clanId filter to user's clan
+          where.clanId = user!.clanId;
+        } else {
+          // Regular user: show only their own requests
+          where.userId = userId;
         }
 
         // Fetch requests with user and clan details
