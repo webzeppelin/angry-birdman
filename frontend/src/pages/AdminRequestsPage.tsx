@@ -12,7 +12,7 @@ interface AdminRequest {
   userId: string;
   username: string;
   email: string;
-  status: 'pending' | 'approved' | 'rejected';
+  status: 'PENDING' | 'APPROVED' | 'REJECTED';
   requestedAt: string;
   reviewedAt?: string;
   reviewedBy?: string;
@@ -42,7 +42,7 @@ export function AdminRequestsPage() {
         limit: '50',
       };
       if (selectedStatus === 'pending') {
-        params.status = 'pending';
+        params.status = 'PENDING';
       }
       const response = await apiClient.get('/api/admin-requests', { params });
       return response.data as AdminRequestsResponse;
@@ -231,14 +231,14 @@ export function AdminRequestsPage() {
                     <h3 className="text-lg font-semibold text-gray-900">{request.username}</h3>
                     <span
                       className={`rounded-full px-2 py-1 text-xs font-medium ${
-                        request.status === 'pending'
+                        request.status === 'PENDING'
                           ? 'bg-yellow-100 text-yellow-800'
-                          : request.status === 'approved'
+                          : request.status === 'APPROVED'
                             ? 'bg-green-100 text-green-800'
                             : 'bg-red-100 text-red-800'
                       }`}
                     >
-                      {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
+                      {request.status.charAt(0) + request.status.slice(1).toLowerCase()}
                     </span>
                   </div>
                   <p className="mb-1 text-gray-600">{request.email}</p>
@@ -262,7 +262,7 @@ export function AdminRequestsPage() {
                   )}
                 </div>
 
-                {request.status === 'pending' && (
+                {request.status === 'PENDING' && (
                   <div className="ml-4 flex gap-2">
                     <button
                       onClick={() => handleReviewClick(request.requestId, 'approve')}

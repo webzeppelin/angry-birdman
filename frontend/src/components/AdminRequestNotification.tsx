@@ -10,7 +10,7 @@ interface AdminRequest {
   userId: string;
   username: string;
   email: string;
-  status: 'pending' | 'approved' | 'rejected';
+  status: 'PENDING' | 'APPROVED' | 'REJECTED';
   requestedAt: string;
 }
 
@@ -29,11 +29,11 @@ export function AdminRequestNotification() {
 
   // Only fetch for clan owners
   const { data } = useQuery<AdminRequestsResponse>({
-    queryKey: ['adminRequests', 'pending'],
+    queryKey: ['adminRequests', 'PENDING'],
     queryFn: async () => {
       const response = await apiClient.get('/api/admin-requests', {
         params: {
-          status: 'pending',
+          status: 'PENDING',
           limit: '100', // Get all pending requests
         },
       });
