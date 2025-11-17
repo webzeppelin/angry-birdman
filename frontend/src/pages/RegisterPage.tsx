@@ -12,6 +12,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 
+import { useAuth } from '@/contexts/AuthContext';
 import { apiClient, getApiErrorMessage } from '@/lib/api-client';
 
 /**
@@ -58,6 +59,7 @@ interface RegisterResponse {
  */
 export default function RegisterPage() {
   const navigate = useNavigate();
+  const { refreshUser } = useAuth();
 
   // Form state
   const [formData, setFormData] = useState<RegisterFormData>({
@@ -141,6 +143,9 @@ export default function RegisterPage() {
             username: formData.username,
             password: formData.password,
           });
+
+          // Refresh the auth context to update user state
+          await refreshUser();
 
           // Navigate to post-registration triage (now authenticated)
           navigate('/register/triage', {
