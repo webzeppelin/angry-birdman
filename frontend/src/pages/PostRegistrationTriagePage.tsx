@@ -8,16 +8,37 @@
  * - Find and request access to an existing clan
  *
  * This page helps users understand what to do after account creation.
+ * Requires authentication - users must be logged in to access this page.
  */
 
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, Navigate } from 'react-router-dom';
+
+import { useAuth } from '@/contexts/AuthContext';
 
 /**
  * PostRegistrationTriagePage Component
  */
 export default function PostRegistrationTriagePage() {
+  const { user, isLoading } = useAuth();
   const location = useLocation();
   const state = location.state as { userId?: string; username?: string } | null;
+
+  // Show loading state while checking authentication
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="border-primary mb-4 h-12 w-12 animate-spin rounded-full border-4 border-t-transparent"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Redirect to login if not authenticated
+  if (!user) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">

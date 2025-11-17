@@ -85,7 +85,93 @@ const authStatusResponseSchema = z.object({
   authenticated: z.boolean(),
 });
 
+const passwordLoginSchema = z.object({
+  username: z.string().min(1).describe('Username'),
+  password: z.string().min(1).describe('Password'),
+});
+
 export default function authRoutes(fastify: FastifyInstance, _opts: unknown, done: () => void) {
+  /**
+   * POST /login-with-password
+   * Direct password login (Resource Owner Password Credentials Grant)
+   * Used for auto-login after registration
+   */
+  fastify.post<{ Body: { username: string; password: string } }>(
+    '/login-with-password',
+    {
+      schema: {
+        description: 'Login with username and password',
+        tags: ['Authentication'],
+        body: passwordLoginSchema,
+        response: {
+          200: tokenResponseSchema,
+          401: errorResponseSchema,
+        },
+      },
+    },
+    async (
+      request: FastifyRequest<{ Body: { username: string; password: string } }>,
+      reply: FastifyReply
+    ) => {
+      const { username, password } = request.body;
+
+      try {
+        // Use Direct Access Grants (Resource Owner Password Credentials)
+        const tokenParams = {
+          grant_type: 'password',
+          client_id: KEYCLOAK_CLIENT_ID,
+          username,
+          password,
+          scope: 'openid profile email clan-context',
+        };
+
+        const response = await axios.post<KeycloakTokenResponse>(
+          TOKEN_ENDPOINT,
+          new URLSearchParams(tokenParams),
+          {
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          }
+        );
+
+        const { access_token, refresh_token, expires_in, refresh_expires_in } = response.data;
+
+        // Set httpOnly cookies (JavaScript cannot access)
+        void reply.setCookie('access_token', access_token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production', // HTTPS only in production
+          sameSite: 'lax',
+          path: '/',
+          maxAge: expires_in, // Token expiration in seconds
+        });
+
+        void reply.setCookie('refresh_token', refresh_token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+          path: '/',
+          maxAge: refresh_expires_in, // Typically 30 days
+        });
+
+        fastify.log.info('Successfully logged in user with password');
+        return { success: true };
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          fastify.log.error(
+            {
+              status: error.response?.status,
+              data: error.response?.data,
+            },
+            'Failed to login with password'
+          );
+          return reply.code(401).send({ error: 'Invalid username or password' });
+        }
+
+        fastify.log.error(error, 'Unexpected error during password login');
+        return reply.code(500).send({ error: 'Internal server error' });
+      }
+    }
+  );
+
   /**
    * POST /token
    * Exchange authorization code for tokens, store in httpOnly cookies

@@ -135,10 +135,24 @@ export default function RegisterPage() {
         // Call registration API
         const response = await apiClient.post<RegisterResponse>('/api/users/register', apiPayload);
 
-        // Navigate to post-registration triage
-        navigate('/register/triage', {
-          state: { userId: response.data.userId, username: formData.username },
-        });
+        // Auto-login the user after successful registration
+        try {
+          await apiClient.post('/auth/login-with-password', {
+            username: formData.username,
+            password: formData.password,
+          });
+
+          // Navigate to post-registration triage (now authenticated)
+          navigate('/register/triage', {
+            state: { userId: response.data.userId, username: formData.username },
+          });
+        } catch (loginError) {
+          // If auto-login fails, still navigate but user will need to login manually
+          console.error('Auto-login failed after registration:', loginError);
+          navigate('/register/triage', {
+            state: { userId: response.data.userId, username: formData.username },
+          });
+        }
       } catch (error) {
         const errorMessage = getApiErrorMessage(error);
         setApiError(errorMessage);
