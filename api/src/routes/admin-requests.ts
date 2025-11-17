@@ -518,13 +518,12 @@ const adminRequestsRoutes: FastifyPluginAsync = async (fastify) => {
           where: { userId: reviewerId },
         });
 
-        const userRoles = request.authUser!.realm_access?.roles || [];
-        const isSuperadmin = userRoles.includes('superadmin');
-        const isClanAdminOrOwner =
-          reviewer?.clanId === adminRequest.clanId &&
-          (userRoles.includes('clan-admin') || userRoles.includes('clan-owner'));
+        const isSuperadmin = authUser.roles.includes('superadmin');
+        const isClanOwner = reviewer?.clanId === adminRequest.clanId && authUser.owner;
+        const isClanAdmin =
+          reviewer?.clanId === adminRequest.clanId && authUser.roles.includes('clan-admin');
 
-        if (!isSuperadmin && !isClanAdminOrOwner) {
+        if (!isSuperadmin && !isClanOwner && !isClanAdmin) {
           return reply.code(403).send({
             error: 'You do not have permission to review this request',
           });
