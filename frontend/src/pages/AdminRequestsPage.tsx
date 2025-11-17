@@ -44,7 +44,7 @@ export function AdminRequestsPage() {
       if (selectedStatus === 'pending') {
         params.status = 'pending';
       }
-      const response = await apiClient.get('admin-requests', { params });
+      const response = await apiClient.get('/api/admin-requests', { params });
       return response.data as AdminRequestsResponse;
     },
     enabled: !!user?.owner,
@@ -58,7 +58,7 @@ export function AdminRequestsPage() {
       requestId: number;
       action: 'approve' | 'reject';
     }) => {
-      const response = await apiClient.post(`admin-requests/${requestId}/review`, { action });
+      const response = await apiClient.post(`/api/admin-requests/${requestId}/review`, { action });
       return response.data as { success: boolean };
     },
     onSuccess: () => {

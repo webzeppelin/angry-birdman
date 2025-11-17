@@ -31,7 +31,7 @@ export function AdminRequestNotification() {
   const { data } = useQuery<AdminRequestsResponse>({
     queryKey: ['adminRequests', 'pending'],
     queryFn: async () => {
-      const response = await apiClient.get('admin-requests', {
+      const response = await apiClient.get('/api/admin-requests', {
         params: {
           status: 'pending',
           limit: '100', // Get all pending requests

@@ -17,7 +17,7 @@ export function AdminRequestButton({ clanId }: AdminRequestButtonProps) {
 
   const requestMutation = useMutation({
     mutationFn: async () => {
-      const response = await apiClient.post('/admin-requests', { clanId });
+      const response = await apiClient.post('/api/admin-requests', { clanId });
       return response.data as { success: boolean };
     },
     onSuccess: () => {
