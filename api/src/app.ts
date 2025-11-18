@@ -20,6 +20,7 @@ import auditLogRoutes from './routes/audit-logs.js';
 import authRoutes from './routes/auth.js';
 import clanRoutes from './routes/clans.js';
 import healthRoutes from './routes/health.js';
+import rosterRoutes from './routes/roster.js';
 import usersRoutes from './routes/users.js';
 
 /**
@@ -106,6 +107,7 @@ export async function buildApp() {
   // Register routes
   await fastify.register(authRoutes, { prefix: '/auth' });
   await fastify.register(clanRoutes, { prefix: '/api/clans' });
+  await fastify.register(rosterRoutes, { prefix: '/api/clans' }); // Roster routes nested under /api/clans
   await fastify.register(usersRoutes, { prefix: '/api/users' });
   await fastify.register(adminRequestsRoutes, { prefix: '/api/admin-requests' });
   await fastify.register(auditLogRoutes, { prefix: '/api/audit-logs' });

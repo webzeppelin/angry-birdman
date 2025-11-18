@@ -7,6 +7,8 @@ export { EditClanProfilePage } from './EditClanProfilePage';
 export { ClanAdminsPage } from './ClanAdminsPage';
 export { ClanSettingsPage } from './ClanSettingsPage';
 export { AdminRequestsPage } from './AdminRequestsPage';
+export { RosterPage } from './RosterPage';
+export { PublicRosterPage } from './PublicRosterPage';
 export { DashboardPage } from './DashboardPage';
 export { LoginPage } from './LoginPage';
 export { CallbackPage } from './CallbackPage';

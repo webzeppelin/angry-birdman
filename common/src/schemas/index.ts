@@ -8,6 +8,9 @@ import { z } from 'zod';
 // Re-export user management schemas
 export * from './user-management.js';
 
+// Re-export roster management schemas
+export * from './roster.js';
+
 import {
   ACTION_CODES,
   BATTLE_ID_LENGTH,

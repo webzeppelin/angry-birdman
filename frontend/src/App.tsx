@@ -20,6 +20,8 @@ import {
   ClanAdminsPage,
   ClanSettingsPage,
   AdminRequestsPage,
+  RosterPage,
+  PublicRosterPage,
   DashboardPage,
   LoginPage,
   CallbackPage,
@@ -121,6 +123,24 @@ function App() {
                   <ProtectedRoute>
                     <ClanSettingsPage />
                   </ProtectedRoute>
+                </Layout>
+              }
+            />
+            <Route
+              path="/clans/:clanId/roster"
+              element={
+                <Layout>
+                  <ProtectedRoute>
+                    <RosterPage />
+                  </ProtectedRoute>
+                </Layout>
+              }
+            />
+            <Route
+              path="/clans/:clanId/roster/public"
+              element={
+                <Layout>
+                  <PublicRosterPage />
                 </Layout>
               }
             />
