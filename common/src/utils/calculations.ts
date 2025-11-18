@@ -165,6 +165,89 @@ export function calculateRatioRanks(playerRatios: number[]): number[] {
   return ranks;
 }
 
+/**
+ * Interface for player stats with calculated fields
+ */
+export interface PlayerStatsWithRatio {
+  playerId: number;
+  score: number;
+  fp: number;
+  ratio: number;
+  rank: number;
+}
+
+/**
+ * Calculate ratio ranks for a collection of player stats
+ * @param playerStats - Array of player stats objects
+ * @returns Array of player stats with ratioRank added
+ */
+export function calculatePlayerRatioRanks(
+  playerStats: PlayerStatsWithRatio[]
+): (PlayerStatsWithRatio & { ratioRank: number })[] {
+  // Calculate ratios
+  const ratios = playerStats.map((player) => player.ratio);
+
+  // Get ratio ranks
+  const ratioRanks = calculateRatioRanks(ratios);
+
+  // Return player stats with ratio rank added
+  return playerStats.map((player, index) => ({
+    ...player,
+    ratioRank: ratioRanks[index]!,
+  }));
+}
+
+/**
+ * Calculate total FP for battle (players + nonplayers excluding reserves)
+ * @param playerStats - Array of player stats
+ * @param nonplayerStats - Array of nonplayer stats
+ * @returns Total FP excluding reserves
+ */
+export function calculateTotalFp(
+  playerStats: { fp: number }[],
+  nonplayerStats: { fp: number; reserve: boolean }[]
+): number {
+  const playerFp = calculateSum(playerStats.map((p) => p.fp));
+  const nonplayerFp = calculateSum(nonplayerStats.filter((np) => !np.reserve).map((np) => np.fp));
+  return playerFp + nonplayerFp;
+}
+
+/**
+ * Calculate nonplaying count (excluding reserves)
+ * @param nonplayerStats - Array of nonplayer stats
+ * @returns Count of non-reserve nonplayers
+ */
+export function calculateNonplayingCount(nonplayerStats: { reserve: boolean }[]): number {
+  return nonplayerStats.filter((np) => !np.reserve).length;
+}
+
+/**
+ * Calculate reserve count
+ * @param nonplayerStats - Array of nonplayer stats
+ * @returns Count of reserve players
+ */
+export function calculateReserveCount(nonplayerStats: { reserve: boolean }[]): number {
+  return nonplayerStats.filter((np) => np.reserve).length;
+}
+
+/**
+ * Calculate nonplaying FP (excluding reserves)
+ * @param nonplayerStats - Array of nonplayer stats
+ * @returns Sum of FP for non-reserve nonplayers
+ */
+export function calculateNonplayingFp(nonplayerStats: { fp: number; reserve: boolean }[]): number {
+  return calculateSum(nonplayerStats.filter((np) => !np.reserve).map((np) => np.fp));
+}
+
+/**
+ * Calculate reserve FP
+ * @param nonplayerStats - Array of nonplayer stats
+ * @returns Sum of FP for reserve players
+ */
+export function calculateReserveFp(nonplayerStats: { fp: number; reserve: boolean }[]): number {
+  return calculateSum(nonplayerStats.filter((np) => np.reserve).map((np) => np.fp));
+}
+
 // ============================================================================
 // Aggregated Statistics Calculations
 // ============================================================================

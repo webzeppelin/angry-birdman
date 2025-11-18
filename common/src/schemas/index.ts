@@ -11,6 +11,9 @@ export * from './user-management.js';
 // Re-export roster management schemas
 export * from './roster.js';
 
+// Re-export battle management schemas
+export * from './battle.js';
+
 import {
   ACTION_CODES,
   BATTLE_ID_LENGTH,
