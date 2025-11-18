@@ -84,9 +84,12 @@ export const userManager = new UserManager(userManagerConfig);
  *
  * @param code - Authorization code from Keycloak
  * @param state - State parameter from callback URL
- * @returns True if token exchange successful
+ * @returns Object with success status and optional error details
  */
-export async function exchangeCodeForToken(code: string, state: string): Promise<boolean> {
+export async function exchangeCodeForToken(
+  code: string,
+  state: string
+): Promise<{ success: boolean; error?: string; message?: string; logoutUrl?: string }> {
   try {
     // Retrieve PKCE code_verifier from session storage (stored by oidc-client-ts)
     let codeVerifier: string | undefined;
@@ -112,7 +115,7 @@ export async function exchangeCodeForToken(code: string, state: string): Promise
 
     if (!codeVerifier) {
       console.error('PKCE code_verifier not found in storage');
-      return false;
+      return { success: false, error: 'PKCE verification failed' };
     }
 
     const response = await fetch(`${API_URL}/auth/token`, {
@@ -127,9 +130,24 @@ export async function exchangeCodeForToken(code: string, state: string): Promise
     });
 
     if (!response.ok) {
-      const error = (await response.json()) as { error?: string };
+      const error = (await response.json()) as {
+        error?: string;
+        message?: string;
+        logoutUrl?: string;
+      };
       console.error('Token exchange failed:', response.status, error);
-      return false;
+
+      // Return detailed error for disabled accounts
+      if (response.status === 403 && error.error === 'Account disabled') {
+        return {
+          success: false,
+          error: error.error,
+          message: error.message,
+          logoutUrl: error.logoutUrl,
+        };
+      }
+
+      return { success: false, error: error.error || 'Authentication failed' };
     }
 
     // Clean up PKCE state after successful exchange
@@ -140,10 +158,10 @@ export async function exchangeCodeForToken(code: string, state: string): Promise
       }
     }
 
-    return true;
+    return { success: true };
   } catch (error) {
     console.error('Exception during token exchange:', error);
-    return false;
+    return { success: false, error: 'Authentication failed' };
   }
 }
 

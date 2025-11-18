@@ -10,7 +10,7 @@ import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 
 export function LoginPage() {
-  const { isAuthenticated, login } = useAuth();
+  const { isAuthenticated, login, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -19,9 +19,15 @@ export function LoginPage() {
     if (isAuthenticated) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
       const from: string = location.state?.from?.pathname || '/dashboard';
-      navigate(from, { replace: true });
+
+      // Superadmins should go to admin dashboard by default
+      if (user?.roles?.includes('superadmin') && from === '/dashboard') {
+        navigate('/admin', { replace: true });
+      } else {
+        navigate(from, { replace: true });
+      }
     }
-  }, [isAuthenticated, navigate, location]);
+  }, [isAuthenticated, navigate, location, user]);
 
   const handleLogin = () => {
     void login().catch(console.error);

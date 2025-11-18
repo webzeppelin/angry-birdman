@@ -135,6 +135,33 @@ export default function authRoutes(fastify: FastifyInstance, _opts: unknown, don
 
         const { access_token, refresh_token, expires_in, refresh_expires_in } = response.data;
 
+        // Decode token to get user ID and check if account is disabled
+        const decoded = fastify.jwt.decode(access_token) as DecodedToken;
+        const issuer = decoded.iss.includes('keycloak') ? 'keycloak' : 'keycloak';
+        const compositeUserId = `${issuer}:${decoded.sub}`;
+
+        // Check if user is disabled in our database
+        const user = await fastify.prisma.user.findUnique({
+          where: { userId: compositeUserId },
+          select: { enabled: true, username: true },
+        });
+
+        if (user && !user.enabled) {
+          fastify.log.warn(
+            { userId: compositeUserId, username: user.username },
+            'Disabled user attempted to login'
+          );
+
+          // Generate Keycloak logout URL to clear their session
+          const logoutUrl = `${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/logout`;
+
+          return reply.status(403).send({
+            error: 'Account disabled',
+            message: 'Your account has been disabled. Please contact your administrator.',
+            logoutUrl, // Frontend will use this to logout from Keycloak
+          });
+        }
+
         // Set httpOnly cookies (JavaScript cannot access)
         void reply.setCookie('access_token', access_token, {
           httpOnly: true,
@@ -211,6 +238,33 @@ export default function authRoutes(fastify: FastifyInstance, _opts: unknown, don
         );
 
         const { access_token, refresh_token, expires_in, refresh_expires_in } = response.data;
+
+        // Decode token to get user ID and check if account is disabled
+        const decoded = fastify.jwt.decode(access_token) as DecodedToken;
+        const issuer = decoded.iss.includes('keycloak') ? 'keycloak' : 'keycloak';
+        const compositeUserId = `${issuer}:${decoded.sub}`;
+
+        // Check if user is disabled in our database
+        const user = await fastify.prisma.user.findUnique({
+          where: { userId: compositeUserId },
+          select: { enabled: true, username: true },
+        });
+
+        if (user && !user.enabled) {
+          fastify.log.warn(
+            { userId: compositeUserId, username: user.username },
+            'Disabled user attempted to login via OAuth'
+          );
+
+          // Generate Keycloak logout URL to clear their session
+          const logoutUrl = `${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/logout`;
+
+          return reply.status(403).send({
+            error: 'Account disabled',
+            message: 'Your account has been disabled. Please contact your administrator.',
+            logoutUrl, // Frontend will use this to logout from Keycloak
+          });
+        }
 
         // Set httpOnly cookies (JavaScript cannot access)
         void reply.setCookie('access_token', access_token, {

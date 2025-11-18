@@ -20,6 +20,7 @@ export function Header() {
 
   // Determine if user has a clan association (clanId is number | null)
   const hasClan = isAuthenticated && user?.clanId !== null;
+  const isSuperadmin = isAuthenticated && user?.roles?.includes('superadmin');
 
   // Base navigation links (always shown)
   const baseNavLinks = [
@@ -28,17 +29,25 @@ export function Header() {
   ];
 
   // Build navigation links based on authentication and clan association
-  const navLinks =
-    isAuthenticated && hasClan
-      ? [
-          { path: '/', label: 'Home' },
-          { path: `/clans/${user?.clanId}`, label: 'My Clan' },
-          { path: '/clans', label: 'Browse Clans' },
-          { path: '/dashboard', label: 'Dashboard' },
-          { path: '/roster', label: 'Roster' },
-          { path: '/battles', label: 'Battles' },
-        ]
-      : [...baseNavLinks, { path: '/about', label: 'About' }];
+  let navLinks = [...baseNavLinks];
+
+  if (isAuthenticated && hasClan) {
+    navLinks = [
+      { path: '/', label: 'Home' },
+      { path: `/clans/${user?.clanId}`, label: 'My Clan' },
+      { path: '/clans', label: 'Browse Clans' },
+      { path: '/dashboard', label: 'Dashboard' },
+      { path: '/roster', label: 'Roster' },
+      { path: '/battles', label: 'Battles' },
+    ];
+  } else if (!isAuthenticated) {
+    navLinks.push({ path: '/about', label: 'About' });
+  }
+
+  // Add Admin link for superadmins
+  if (isSuperadmin) {
+    navLinks.push({ path: '/admin', label: 'Admin' });
+  }
 
   const handleLogin = () => {
     login().catch(console.error);

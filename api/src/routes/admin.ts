@@ -201,7 +201,7 @@ const adminRoutes: FastifyPluginAsync = async (fastify) => {
     async (request, reply) => {
       const { userId } = request.params; // composite ID format
       const { temporary, password } = request.body;
-      const actorId = request.authUser!.sub;
+      const actorId = request.authUser!.userId; // Use composite ID for audit logs
 
       if (!password || password.length < 8) {
         return reply.status(400).send({
@@ -264,7 +264,7 @@ const adminRoutes: FastifyPluginAsync = async (fastify) => {
     },
     async (request, reply) => {
       const { userId } = request.params;
-      const actorId = request.authUser!.sub;
+      const actorId = request.authUser!.userId; // Use composite ID for audit logs
 
       try {
         const user = await fastify.prisma.user.findUnique({ where: { userId } });
@@ -310,7 +310,7 @@ const adminRoutes: FastifyPluginAsync = async (fastify) => {
     },
     async (request, reply) => {
       const { userId } = request.params;
-      const actorId = request.authUser!.sub;
+      const actorId = request.authUser!.userId; // Use composite ID for audit logs
 
       try {
         const user = await fastify.prisma.user.findUnique({ where: { userId } });
@@ -356,8 +356,8 @@ const adminRoutes: FastifyPluginAsync = async (fastify) => {
     },
     async (request, reply) => {
       const { userId } = request.params;
-      const { clanId, makeOwner = false } = request.body;
-      const actorId = request.authUser!.sub;
+      const { clanId, makeOwner } = request.body;
+      const actorId = request.authUser!.userId; // Use composite ID for audit logs
 
       try {
         const user = await fastify.prisma.user.findUnique({ where: { userId } });
@@ -436,7 +436,7 @@ const adminRoutes: FastifyPluginAsync = async (fastify) => {
     },
     async (request, reply) => {
       const { userId } = request.params;
-      const actorId = request.authUser!.sub;
+      const actorId = request.authUser!.userId; // Use composite ID for audit logs
 
       try {
         const user = await fastify.prisma.user.findUnique({ where: { userId } });

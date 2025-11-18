@@ -30,6 +30,9 @@ import {
   ProfilePage,
   PasswordChangePage,
   ForgotPasswordPage,
+  SuperadminDashboardPage,
+  GlobalUserManagementPage,
+  SystemAuditLogPage,
   NotFoundPage,
 } from '@/pages';
 
@@ -199,6 +202,38 @@ function App() {
                 <Layout>
                   <ProtectedRoute>
                     <PasswordChangePage />
+                  </ProtectedRoute>
+                </Layout>
+              }
+            />
+
+            {/* Superadmin routes */}
+            <Route
+              path="/admin"
+              element={
+                <Layout>
+                  <ProtectedRoute requiredRoles={['superadmin']}>
+                    <SuperadminDashboardPage />
+                  </ProtectedRoute>
+                </Layout>
+              }
+            />
+            <Route
+              path="/admin/users"
+              element={
+                <Layout>
+                  <ProtectedRoute requiredRoles={['superadmin']}>
+                    <GlobalUserManagementPage />
+                  </ProtectedRoute>
+                </Layout>
+              }
+            />
+            <Route
+              path="/admin/audit-logs"
+              element={
+                <Layout>
+                  <ProtectedRoute requiredRoles={['superadmin']}>
+                    <SystemAuditLogPage />
                   </ProtectedRoute>
                 </Layout>
               }

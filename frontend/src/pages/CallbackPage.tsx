@@ -32,7 +32,8 @@ export function CallbackPage() {
 
         if (errorParam) {
           console.error('Authentication error:', errorParam);
-          setError(`Authentication failed: ${errorParam}`);
+          const errorDescription = params.get('error_description') || errorParam;
+          setError(`Authentication failed: ${errorDescription}`);
           return;
         }
 
@@ -47,22 +48,31 @@ export function CallbackPage() {
         }
 
         // Exchange code for tokens (stored in httpOnly cookies)
-        const success = await exchangeCodeForToken(code, state);
+        const result = await exchangeCodeForToken(code, state);
 
-        if (success) {
+        if (result.success) {
           // Refresh user data from backend
           await refreshUser();
 
-          // Check if user has a clan - if not, send to triage page (Story 2.3)
+          // Check user role and clan affiliation to determine redirect
           const userResponse = await fetch(
             `${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/auth/user`,
             { credentials: 'include' }
           );
 
           if (userResponse.ok) {
-            const userData = (await userResponse.json()) as { clanId?: number | null };
+            const userData = (await userResponse.json()) as {
+              clanId?: number | null;
+              roles?: string[];
+            };
 
-            // If user doesn't have a clan, send to post-registration triage
+            // Superadmins go to admin dashboard regardless of clan affiliation
+            if (userData.roles?.includes('superadmin')) {
+              navigate('/admin', { replace: true });
+              return;
+            }
+
+            // Regular users without a clan go to post-registration triage (Story 2.3)
             if (!userData.clanId) {
               navigate('/register/triage', { replace: true });
               return;
@@ -71,8 +81,19 @@ export function CallbackPage() {
 
           // User has a clan or we couldn't verify - go to home
           navigate('/', { replace: true });
+        } else if (result.error === 'Account disabled') {
+          // Handle disabled account - logout from Keycloak and show error
+          setError(result.message || 'Your account has been disabled');
+
+          // Logout from Keycloak to clear their session
+          if (result.logoutUrl) {
+            // Small delay to show the error message, then redirect to logout
+            setTimeout(() => {
+              window.location.href = `${result.logoutUrl}?redirect_uri=${encodeURIComponent(window.location.origin)}`;
+            }, 2000);
+          }
         } else {
-          setError('Token exchange failed');
+          setError(result.error || 'Token exchange failed');
         }
       } catch (err) {
         console.error('Callback error:', err);
@@ -84,12 +105,22 @@ export function CallbackPage() {
   }, [navigate, refreshUser]);
 
   if (error) {
+    const isDisabledAccount = error.includes('disabled');
+
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <div className="shadow-card rounded-lg bg-white p-8 text-center">
-          <div className="mb-4 text-6xl">❌</div>
-          <h1 className="mb-2 text-2xl font-bold text-neutral-800">Authentication Error</h1>
+        <div className="shadow-card max-w-md rounded-lg bg-white p-8 text-center">
+          <div className="mb-4 text-6xl">{isDisabledAccount ? '🚫' : '❌'}</div>
+          <h1 className="mb-2 text-2xl font-bold text-neutral-800">
+            {isDisabledAccount ? 'Account Disabled' : 'Authentication Error'}
+          </h1>
           <p className="mb-4 text-neutral-600">{error}</p>
+          {isDisabledAccount && (
+            <p className="mb-4 text-sm text-neutral-500">
+              You are being logged out... If you believe this is an error, please contact your clan
+              administrator.
+            </p>
+          )}
           <a
             href="/"
             className="bg-primary hover:bg-primary-600 inline-block rounded px-6 py-2 text-white"

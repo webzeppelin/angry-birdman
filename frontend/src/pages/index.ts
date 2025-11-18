@@ -17,4 +17,7 @@ export { default as ClanRegistrationPage } from './ClanRegistrationPage';
 export { default as ProfilePage } from './ProfilePage';
 export { default as PasswordChangePage } from './PasswordChangePage';
 export { default as ForgotPasswordPage } from './ForgotPasswordPage';
+export { default as SuperadminDashboardPage } from './SuperadminDashboardPage';
+export { default as GlobalUserManagementPage } from './GlobalUserManagementPage';
+export { default as SystemAuditLogPage } from './SystemAuditLogPage';
 export { NotFoundPage } from './NotFoundPage';
