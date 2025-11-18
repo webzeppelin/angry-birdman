@@ -18,20 +18,27 @@ export function Header() {
 
   const isActive = (path: string) => location.pathname === path;
 
-  const navLinks = [
+  // Determine if user has a clan association (clanId is number | null)
+  const hasClan = isAuthenticated && user?.clanId !== null;
+
+  // Base navigation links (always shown)
+  const baseNavLinks = [
     { path: '/', label: 'Home' },
     { path: '/clans', label: 'Browse Clans' },
-    { path: '/about', label: 'About' },
   ];
 
-  const adminLinks = isAuthenticated
-    ? [
-        { path: '/dashboard', label: 'Dashboard' },
-        { path: '/profile', label: 'Profile' },
-        { path: '/roster', label: 'Roster' },
-        { path: '/battles', label: 'Battles' },
-      ]
-    : [];
+  // Build navigation links based on authentication and clan association
+  const navLinks =
+    isAuthenticated && hasClan
+      ? [
+          { path: '/', label: 'Home' },
+          { path: `/clans/${user?.clanId}`, label: 'My Clan' },
+          { path: '/clans', label: 'Browse Clans' },
+          { path: '/dashboard', label: 'Dashboard' },
+          { path: '/roster', label: 'Roster' },
+          { path: '/battles', label: 'Battles' },
+        ]
+      : [...baseNavLinks, { path: '/about', label: 'About' }];
 
   const handleLogin = () => {
     login().catch(console.error);
@@ -66,19 +73,6 @@ export function Header() {
                 {link.label}
               </Link>
             ))}
-            {adminLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className={`text-sm font-medium transition-colors ${
-                  isActive(link.path)
-                    ? 'text-white underline decoration-2 underline-offset-4'
-                    : 'text-white/90 hover:text-white'
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
           </nav>
 
           {/* Auth Section */}
@@ -86,9 +80,14 @@ export function Header() {
             {isAuthenticated ? (
               <>
                 <AdminRequestNotification />
-                <div className="text-right text-sm text-white/90">
-                  <div className="font-medium">{user?.preferred_username}</div>
-                  {clanInfo && <div className="text-xs">Clan: {clanInfo.name}</div>}
+                <div className="text-right text-sm">
+                  <Link
+                    to="/profile"
+                    className="font-medium text-white underline-offset-2 transition-colors hover:text-white hover:underline"
+                  >
+                    {user?.preferred_username}
+                  </Link>
+                  {clanInfo && <div className="text-xs text-white/90">Clan: {clanInfo.name}</div>}
                 </div>
                 <button
                   onClick={handleLogout}
@@ -153,7 +152,7 @@ export function Header() {
         {isMobileMenuOpen && (
           <div className="border-t border-white/20 py-4 md:hidden">
             <nav className="flex flex-col space-y-3">
-              {[...navLinks, ...adminLinks].map((link) => (
+              {navLinks.map((link) => (
                 <Link
                   key={link.path}
                   to={link.path}
@@ -174,9 +173,15 @@ export function Header() {
                   <div className="mb-3 px-4">
                     <AdminRequestNotification />
                   </div>
-                  <div className="mb-3 px-4 text-sm text-white/90">
-                    <div className="font-medium">{user?.preferred_username}</div>
-                    {clanInfo && <div className="text-xs">Clan: {clanInfo.name}</div>}
+                  <div className="mb-3 px-4 text-sm">
+                    <Link
+                      to="/profile"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="font-medium text-white underline-offset-2 transition-colors hover:text-white hover:underline"
+                    >
+                      {user?.preferred_username}
+                    </Link>
+                    {clanInfo && <div className="text-xs text-white/90">Clan: {clanInfo.name}</div>}
                   </div>
                   <button
                     onClick={() => {

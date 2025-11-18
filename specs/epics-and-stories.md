@@ -31,7 +31,7 @@ user types, with appropriate visibility based on authentication status and role.
 - Page is responsive and works on mobile, tablet, and desktop
 - Page has a lighthearted, game-appropriate visual design
 
-### Story 1.2: Use Global Navigation Menu
+### Story 1.2: Use Global Navigation Menu (Anonymous Users)
 
 **As an** anonymous user, **I want to** use a global navigation menu, **so
 that** I can easily access different areas of the application.
@@ -100,22 +100,43 @@ can access management features for my clan.
 - Session expires after period of inactivity
 - Authentication uses Keycloak for identity management
 
-### Story 1.7: View Admin Navigation Menu
+### Story 1.7: View Authenticated User Navigation Menu (Without Clan)
 
-**As a** Clan Admin, **I want to** see an admin-specific navigation menu when
-authenticated, **so that** I can access management tools for my clan.
+**As an** authenticated user without a clan association, **I want to** see the
+same navigation menu as anonymous users, **so that** I can browse clans and
+request access.
 
 **Acceptance Criteria**:
 
-- Admin menu appears in addition to standard navigation when authenticated and
-  associated with a clan
-- Menu includes links to: Manage Roster, Record Battle, My Profile, Sign Out
-- Admin menu is visually distinguished from public navigation
-- Menu is only visible to authenticated admin users associated with the clan in
-  context
-- Keyboard shortcut opens admin menu
+- Navigation menu matches anonymous user menu when authenticated user has no
+  clan association
+- Menu includes links to: Home, Browse Clans, About
+- Menu shows user's username (clickable link to Profile), Sign Out button
+- Menu does not show clan-specific options (Dashboard, Roster, Battles) until
+  user is associated with a clan
+- Menu is accessible via keyboard navigation
+- Menu is responsive and collapses to a hamburger menu on mobile devices
 
-### Story 1.8: Select Clan (Anonymous)
+### Story 1.8: View Authenticated User Navigation Menu (With Clan)
+
+**As a** Clan Admin or Owner with clan association, **I want to** see an
+expanded navigation menu, **so that** I can access management tools for my clan.
+
+**Acceptance Criteria**:
+
+- Navigation menu shows expanded options when authenticated user is associated
+  with a clan
+- Menu includes links to: Home, My Clan, Browse Clans, Dashboard, Roster,
+  Battles
+- "My Clan" link navigates directly to user's clan detail page
+- About link is removed from main navigation (still available in footer)
+- User's username is displayed as a clickable link to their Profile page
+- Username link is styled to indicate interactivity
+- Sign Out button is visible in the navigation area
+- Menu is accessible via keyboard navigation
+- Menu is responsive and collapses to a hamburger menu on mobile devices
+
+### Story 1.9: Select Clan (Anonymous)
 
 **As an** anonymous user, **I want to** use a clan selector, **so that** I can
 quickly switch between viewing different clans' statistics.
@@ -128,7 +149,7 @@ quickly switch between viewing different clans' statistics.
 - Recently viewed clans appear at the top of the selector
 - Selector works on mobile and desktop devices
 
-### Story 1.9: Select Clan (Clan Admin)
+### Story 1.10: Select Clan (Clan Admin)
 
 **As a** Clan Admin that has not yet been associated with a clan or is moving
 between clans, **I want to** navigate to a specific clan's landing page, **so
@@ -142,7 +163,7 @@ that** I can request administrative access.
 - After requesting access, a status popup tells them that their request was
   submitted and is now pending review and acceptance
 
-### Story 1.10: Select Clan (Superadmin)
+### Story 1.11: Select Clan (Superadmin)
 
 **As a** Superadmin, **I want to** use a clan selector to choose which clan I'm
 currently managing, **so that** I can administer multiple clans efficiently.
@@ -155,7 +176,7 @@ currently managing, **so that** I can administer multiple clans efficiently.
 - Selector includes all registered clans
 - Search/filter functionality helps find clans quickly
 
-### Story 1.11: Sign Out
+### Story 1.12: Sign Out
 
 **As a** Clan Admin, **I want to** sign out of the application, **so that** I
 can secure my session when done.
@@ -168,7 +189,7 @@ can secure my session when done.
 - Confirmation message indicates successful sign out
 - Attempting to access admin pages after sign out redirects to sign-in page
 
-### Story 1.12: Use Keyboard Shortcuts for Navigation
+### Story 1.13: Use Keyboard Shortcuts for Navigation
 
 **As a** Clan Admin, **I want to** use keyboard shortcuts for common navigation
 tasks, **so that** I can work more efficiently without using a mouse.
@@ -181,6 +202,20 @@ tasks, **so that** I can work more efficiently without using a mouse.
 - Tab navigation follows logical flow through page elements
 - Shortcuts work consistently across all pages
 - Shortcuts are documented in help/about section
+
+### Story 1.14: Access Profile via Username Link
+
+**As an** authenticated user, **I want to** click on my username in the header
+to access my profile, **so that** I can easily view and edit my account
+information.
+
+**Acceptance Criteria**:
+
+- Username displayed in header is styled as an interactive link
+- Clicking username navigates to user's profile page
+- Hover state clearly indicates the username is clickable
+- Link works consistently across desktop and mobile views
+- Profile page shows user information and settings
 
 ---
 

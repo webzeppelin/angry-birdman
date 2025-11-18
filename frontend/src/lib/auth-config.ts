@@ -36,7 +36,7 @@ export interface User {
   sub: string;
   preferred_username: string;
   email: string;
-  clanId?: number;
+  clanId: number | null; // null when user has no clan association
   owner?: boolean;
   roles: string[];
 }

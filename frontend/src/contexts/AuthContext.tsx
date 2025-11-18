@@ -39,7 +39,7 @@ export interface AuthContextValue extends AuthState {
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
   hasRole: (role: string) => boolean;
-  getClanId: () => number | undefined;
+  getClanId: () => number | null | undefined;
 }
 
 /**
@@ -233,8 +233,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   /**
    * Get user's clan ID
    */
-  const getClanId = useCallback((): number | undefined => {
-    return user?.clanId;
+  const getClanId = useCallback((): number | null | undefined => {
+    return user?.clanId ?? null;
   }, [user]);
 
   const value: AuthContextValue = {
