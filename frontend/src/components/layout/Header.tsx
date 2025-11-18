@@ -37,7 +37,7 @@ export function Header() {
       { path: `/clans/${user?.clanId}`, label: 'My Clan' },
       { path: '/clans', label: 'Browse Clans' },
       { path: '/dashboard', label: 'Dashboard' },
-      { path: '/roster', label: 'Roster' },
+      { path: `/clans/${user?.clanId}/roster`, label: 'Roster' },
       { path: '/battles', label: 'Battles' },
     ];
   } else if (!isAuthenticated) {
