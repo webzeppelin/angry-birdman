@@ -119,18 +119,19 @@ export default function PlayerPerformanceTable({
       if (!proceed) return;
     }
 
-    // Assign ranks by score (descending)
-    const sorted = [...playedPlayers].sort((a, b) => b.score - a.score);
-    sorted.forEach((player, index) => {
-      player.rank = index + 1;
-    });
+    // Validate all players have rank, score, and FP
+    const invalidPlayers = playedPlayers.filter((p) => p.rank <= 0 || p.score < 0 || p.fp <= 0);
+    if (invalidPlayers.length > 0) {
+      alert('All players must have a valid rank (1-100), score (≥0), and FP (>0)');
+      return;
+    }
 
     onUpdate({
-      playerStats: sorted.map((p) => ({
+      playerStats: playedPlayers.map((p) => ({
         playerId: p.playerId,
+        rank: p.rank,
         score: p.score,
         fp: p.fp,
-        rank: p.rank,
         actionCode: 'HOLD', // Placeholder - will be set in step 5
       })),
     });
@@ -174,9 +175,10 @@ export default function PlayerPerformanceTable({
           <thead className="bg-gray-100">
             <tr>
               <th className="border px-4 py-2">Played</th>
+              <th className="border px-4 py-2">Rank</th>
               <th className="border px-4 py-2">Player</th>
-              <th className="border px-4 py-2">FP</th>
               <th className="border px-4 py-2">Score</th>
+              <th className="border px-4 py-2">FP</th>
             </tr>
           </thead>
           <tbody>
@@ -190,17 +192,18 @@ export default function PlayerPerformanceTable({
                     className="h-5 w-5"
                   />
                 </td>
-                <td className="border px-4 py-2">{player.playerName}</td>
                 <td className="border px-4 py-2">
                   <input
                     type="number"
-                    value={player.fp}
-                    onChange={(e) => updatePlayer(index, 'fp', parseInt(e.target.value, 10) || 0)}
+                    value={player.rank}
+                    onChange={(e) => updatePlayer(index, 'rank', parseInt(e.target.value, 10) || 0)}
                     min="1"
-                    className="w-24 rounded border border-gray-300 px-2 py-1"
+                    max="100"
+                    className="w-20 rounded border border-gray-300 px-2 py-1"
                     disabled={!player.played}
                   />
                 </td>
+                <td className="border px-4 py-2">{player.playerName}</td>
                 <td className="border px-4 py-2">
                   <input
                     type="number"
@@ -210,6 +213,16 @@ export default function PlayerPerformanceTable({
                     }
                     min="0"
                     className="w-32 rounded border border-gray-300 px-2 py-1"
+                    disabled={!player.played}
+                  />
+                </td>
+                <td className="border px-4 py-2">
+                  <input
+                    type="number"
+                    value={player.fp}
+                    onChange={(e) => updatePlayer(index, 'fp', parseInt(e.target.value, 10) || 0)}
+                    min="1"
+                    className="w-24 rounded border border-gray-300 px-2 py-1"
                     disabled={!player.played}
                   />
                 </td>
