@@ -5,12 +5,12 @@
  * Stories covered: 4.1-4.11 (Epic 4: Battle Data Recording)
  */
 
+import { battleQuerySchema } from '@angrybirdman/common';
 import { z } from 'zod';
 
 import { authenticate } from '../middleware/auth.js';
 import { BattleService } from '../services/battle.service.js';
 
-import { battleQuerySchema } from '@angrybirdman/common';
 import type { BattleEntry, BattleUpdate, BattleQuery } from '@angrybirdman/common';
 import type { FastifyPluginAsync, FastifyRequest, FastifyReply } from 'fastify';
 
@@ -120,7 +120,7 @@ const battlesRoutes: FastifyPluginAsync = async (fastify) => {
         tags: ['Battles'],
         params: battleIdParamSchema,
         response: {
-          200: { type: 'object' },
+          200: z.any(),
           404: errorResponseSchema,
         },
       },
@@ -171,7 +171,7 @@ const battlesRoutes: FastifyPluginAsync = async (fastify) => {
         security: [{ bearerAuth: [] }],
         params: clanIdParamSchema,
         response: {
-          201: { type: 'object' },
+          201: z.any(),
           400: errorResponseSchema,
           409: errorResponseSchema,
         },
@@ -242,7 +242,7 @@ const battlesRoutes: FastifyPluginAsync = async (fastify) => {
         security: [{ bearerAuth: [] }],
         params: battleIdParamSchema,
         response: {
-          200: { type: 'object' },
+          200: z.any(),
           400: errorResponseSchema,
           404: errorResponseSchema,
         },
