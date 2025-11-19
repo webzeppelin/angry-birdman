@@ -85,12 +85,6 @@ export default function NonplayerManagement({
     }
   }, [data.nonplayerStats, nonplayers.length, rosterData]);
 
-  const addNonplayer = () => {
-    // Use negative ID as temporary placeholder for manually added non-players
-    const tempId = -(nonplayers.length + 1);
-    setNonplayers([...nonplayers, { playerId: tempId, name: '', fp: 0, reserve: false }]);
-  };
-
   const removeNonplayer = (index: number) => {
     const updated = nonplayers.filter((_, i) => i !== index);
     setNonplayers(updated);
@@ -165,13 +159,7 @@ export default function NonplayerManagement({
               {nonplayers.map((np, index) => (
                 <tr key={index} className={np.reserve ? 'bg-orange-50' : 'bg-white'}>
                   <td className="border px-4 py-2">
-                    <input
-                      type="text"
-                      value={np.name}
-                      onChange={(e) => updateNonplayer(index, 'name', e.target.value)}
-                      className="w-full rounded border border-gray-300 px-2 py-1"
-                      placeholder="Player name"
-                    />
+                    <span className="font-medium">{np.name}</span>
                   </td>
                   <td className="border px-4 py-2">
                     <input
@@ -208,20 +196,12 @@ export default function NonplayerManagement({
         </div>
       ) : (
         <div className="rounded-md border border-gray-200 bg-gray-50 py-8 text-center">
-          <p className="text-gray-600">No non-players added yet</p>
+          <p className="text-gray-600">All active roster members participated in this battle</p>
           <p className="mt-2 text-sm text-gray-500">
-            Non-players are automatically populated from roster members who did not play
+            Non-players are automatically identified from roster members who did not play
           </p>
         </div>
       )}
-
-      <button
-        type="button"
-        onClick={addNonplayer}
-        className="bg-secondary hover:bg-secondary-dark rounded-md px-4 py-2 text-white transition-colors"
-      >
-        + Add Non-Player
-      </button>
 
       {/* Form Actions */}
       <div className="flex justify-between pt-4">
