@@ -1,6 +1,6 @@
 /**
  * Battle-related TypeScript interfaces for the frontend
- * 
+ *
  * These interfaces provide proper typing for API responses and component props
  * to avoid 'any' types and ensure type safety throughout the application.
  */
@@ -28,7 +28,7 @@ export interface BattleResponse {
   opponentScore: number;
   opponentFp: number;
   result: number; // 1 = win, -1 = loss, 0 = tie
-  clanRatio: number;
+  ratio: number; // Official clan ratio: (score / baselineFp) * 10
   averageRatio: number;
   marginRatio: number;
   fpMargin: number;
