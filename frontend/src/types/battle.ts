@@ -9,7 +9,7 @@
 export interface RosterMember {
   playerId: number;
   playerName: string;
-  fp: number;
+  fp?: number; // Optional - not returned by roster endpoint
   active: boolean;
   joinedDate: string;
 }
@@ -78,8 +78,11 @@ export interface BattleListResponse {
 
 // Roster API response
 export interface RosterResponse {
-  members: RosterMember[];
-  total: number;
-  page: number;
-  totalPages: number;
+  players: RosterMember[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
 }

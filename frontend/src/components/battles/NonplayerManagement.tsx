@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import type { BattleEntry } from '@angrybirdman/common';
+import { useState, useEffect } from 'react';
+
 import type { RosterMember, RosterResponse } from '../../types/battle';
+import type { BattleEntry } from '@angrybirdman/common';
 
 interface NonplayerManagementProps {
   clanId: number;
@@ -33,10 +34,9 @@ export default function NonplayerManagement({
   const { data: rosterData } = useQuery<RosterResponse>({
     queryKey: ['roster', clanId, { active: true }],
     queryFn: async () => {
-      const response = await fetch(
-        `/api/clans/${clanId}/roster?active=true`,
-        { credentials: 'include' }
-      );
+      const response = await fetch(`/api/clans/${clanId}/roster?active=true`, {
+        credentials: 'include',
+      });
       if (!response.ok) throw new Error('Failed to fetch roster');
       return response.json();
     },
@@ -46,7 +46,7 @@ export default function NonplayerManagement({
   useEffect(() => {
     if (rosterData && data.playerStats && nonplayers.length === 0) {
       const playedPlayerIds = new Set(data.playerStats.map((p) => p.playerId));
-      const nonPlayingMembers = rosterData.members.filter(
+      const nonPlayingMembers = rosterData.players.filter(
         (m: RosterMember) => !playedPlayerIds.has(m.playerId)
       );
 
@@ -54,7 +54,7 @@ export default function NonplayerManagement({
         const autoNonplayers: NonplayerRow[] = nonPlayingMembers.map((m: RosterMember) => ({
           playerId: m.playerId,
           name: m.playerName,
-          fp: m.fp,
+          fp: m.fp || 0, // Default to 0 if not provided
           reserve: false,
         }));
         setNonplayers(autoNonplayers);
@@ -64,9 +64,16 @@ export default function NonplayerManagement({
 
   // Load existing data if available
   useEffect(() => {
-    if (data.nonplayerStats && data.nonplayerStats.length > 0 && nonplayers.length === 0 && rosterData) {
+    if (
+      data.nonplayerStats &&
+      data.nonplayerStats.length > 0 &&
+      nonplayers.length === 0 &&
+      rosterData
+    ) {
       const loadedNonplayers: NonplayerRow[] = data.nonplayerStats.map((np) => {
-        const rosterMember = rosterData.members.find((m: RosterMember) => m.playerId === np.playerId);
+        const rosterMember = rosterData.players.find(
+          (m: RosterMember) => m.playerId === np.playerId
+        );
         return {
           playerId: np.playerId,
           name: rosterMember?.playerName || `Player ${np.playerId}`,
@@ -89,7 +96,11 @@ export default function NonplayerManagement({
     setNonplayers(updated);
   };
 
-  const updateNonplayer = (index: number, field: keyof NonplayerRow, value: string | number | boolean) => {
+  const updateNonplayer = (
+    index: number,
+    field: keyof NonplayerRow,
+    value: string | number | boolean
+  ) => {
     const updated = [...nonplayers];
     updated[index] = { ...updated[index], [field]: value } as NonplayerRow;
     setNonplayers(updated);
@@ -121,7 +132,7 @@ export default function NonplayerManagement({
   return (
     <div className="space-y-6">
       {/* Summary */}
-      <div className="bg-blue-50 border border-blue-200 p-4 rounded-md">
+      <div className="rounded-md border border-blue-200 bg-blue-50 p-4">
         <div className="grid grid-cols-3 gap-4">
           <div>
             <p className="text-sm font-medium text-gray-700">Non-Players</p>
@@ -144,46 +155,48 @@ export default function NonplayerManagement({
           <table className="min-w-full border border-gray-300">
             <thead className="bg-gray-100">
               <tr>
-                <th className="px-4 py-2 border">Name</th>
-                <th className="px-4 py-2 border">FP</th>
-                <th className="px-4 py-2 border">Reserve</th>
-                <th className="px-4 py-2 border">Actions</th>
+                <th className="border px-4 py-2">Name</th>
+                <th className="border px-4 py-2">FP</th>
+                <th className="border px-4 py-2">Reserve</th>
+                <th className="border px-4 py-2">Actions</th>
               </tr>
             </thead>
             <tbody>
               {nonplayers.map((np, index) => (
                 <tr key={index} className={np.reserve ? 'bg-orange-50' : 'bg-white'}>
-                  <td className="px-4 py-2 border">
+                  <td className="border px-4 py-2">
                     <input
                       type="text"
                       value={np.name}
                       onChange={(e) => updateNonplayer(index, 'name', e.target.value)}
-                      className="w-full px-2 py-1 border border-gray-300 rounded"
+                      className="w-full rounded border border-gray-300 px-2 py-1"
                       placeholder="Player name"
                     />
                   </td>
-                  <td className="px-4 py-2 border">
+                  <td className="border px-4 py-2">
                     <input
                       type="number"
                       value={np.fp}
-                      onChange={(e) => updateNonplayer(index, 'fp', parseInt(e.target.value, 10) || 0)}
+                      onChange={(e) =>
+                        updateNonplayer(index, 'fp', parseInt(e.target.value, 10) || 0)
+                      }
                       min="1"
-                      className="w-24 px-2 py-1 border border-gray-300 rounded"
+                      className="w-24 rounded border border-gray-300 px-2 py-1"
                     />
                   </td>
-                  <td className="px-4 py-2 border text-center">
+                  <td className="border px-4 py-2 text-center">
                     <input
                       type="checkbox"
                       checked={np.reserve}
                       onChange={(e) => updateNonplayer(index, 'reserve', e.target.checked)}
-                      className="w-5 h-5"
+                      className="h-5 w-5"
                     />
                   </td>
-                  <td className="px-4 py-2 border text-center">
+                  <td className="border px-4 py-2 text-center">
                     <button
                       type="button"
                       onClick={() => removeNonplayer(index)}
-                      className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                      className="rounded bg-red-500 px-3 py-1 text-white hover:bg-red-600"
                     >
                       Remove
                     </button>
@@ -194,9 +207,9 @@ export default function NonplayerManagement({
           </table>
         </div>
       ) : (
-        <div className="text-center py-8 bg-gray-50 rounded-md border border-gray-200">
+        <div className="rounded-md border border-gray-200 bg-gray-50 py-8 text-center">
           <p className="text-gray-600">No non-players added yet</p>
-          <p className="text-sm text-gray-500 mt-2">
+          <p className="mt-2 text-sm text-gray-500">
             Non-players are automatically populated from roster members who did not play
           </p>
         </div>
@@ -205,7 +218,7 @@ export default function NonplayerManagement({
       <button
         type="button"
         onClick={addNonplayer}
-        className="px-4 py-2 bg-secondary text-white rounded-md hover:bg-secondary-dark transition-colors"
+        className="bg-secondary hover:bg-secondary-dark rounded-md px-4 py-2 text-white transition-colors"
       >
         + Add Non-Player
       </button>
@@ -216,14 +229,14 @@ export default function NonplayerManagement({
           <button
             type="button"
             onClick={onCancel}
-            className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+            className="rounded-md border border-gray-300 px-6 py-2 text-gray-700 transition-colors hover:bg-gray-50"
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={onBack}
-            className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+            className="rounded-md border border-gray-300 px-6 py-2 text-gray-700 transition-colors hover:bg-gray-50"
           >
             ← Back
           </button>
@@ -231,7 +244,7 @@ export default function NonplayerManagement({
         <button
           type="button"
           onClick={handleNext}
-          className="px-6 py-2 bg-primary text-white rounded-md hover:bg-primary-dark transition-colors"
+          className="bg-primary hover:bg-primary-dark rounded-md px-6 py-2 text-white transition-colors"
         >
           Next →
         </button>

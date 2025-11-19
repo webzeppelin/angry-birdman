@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import type { BattleEntry } from '@angrybirdman/common';
+import { useState, useEffect } from 'react';
+
 import type { RosterMember, RosterResponse } from '../../types/battle';
+import type { BattleEntry } from '@angrybirdman/common';
 
 interface PlayerPerformanceTableProps {
   clanId: number;
@@ -36,10 +37,9 @@ export default function PlayerPerformanceTable({
   const { data: rosterData } = useQuery<RosterResponse>({
     queryKey: ['roster', clanId, { active: true }],
     queryFn: async () => {
-      const response = await fetch(
-        `/api/clans/${clanId}/roster?active=true`,
-        { credentials: 'include' }
-      );
+      const response = await fetch(`/api/clans/${clanId}/roster?active=true`, {
+        credentials: 'include',
+      });
       if (!response.ok) throw new Error('Failed to fetch roster');
       return response.json();
     },
@@ -48,14 +48,16 @@ export default function PlayerPerformanceTable({
   // Initialize player rows from roster
   useEffect(() => {
     if (rosterData && players.length === 0) {
-      const initialPlayers: PlayerRow[] = rosterData.members.map((member: RosterMember, index: number) => ({
-        rank: index + 1,
-        playerId: member.playerId,
-        playerName: member.playerName,
-        score: 0,
-        fp: member.fp,
-        played: false,
-      }));
+      const initialPlayers: PlayerRow[] = rosterData.players.map(
+        (member: RosterMember, index: number) => ({
+          rank: index + 1,
+          playerId: member.playerId,
+          playerName: member.playerName,
+          score: 0,
+          fp: member.fp || 0, // Default to 0 if not provided
+          played: false,
+        })
+      );
       setPlayers(initialPlayers);
     }
   }, [rosterData, players.length]);
@@ -65,7 +67,9 @@ export default function PlayerPerformanceTable({
     if (data.playerStats && data.playerStats.length > 0 && players.length === 0 && rosterData) {
       // Match playerStats with roster to get player names
       const loadedPlayers: PlayerRow[] = data.playerStats.map((stat) => {
-        const rosterMember = rosterData.members.find((m: RosterMember) => m.playerId === stat.playerId);
+        const rosterMember = rosterData.players.find(
+          (m: RosterMember) => m.playerId === stat.playerId
+        );
         return {
           rank: stat.rank || 0,
           playerId: stat.playerId,
@@ -87,7 +91,11 @@ export default function PlayerPerformanceTable({
     setChecksum({ totalScore, totalFp });
   }, [players]);
 
-  const updatePlayer = (index: number, field: keyof PlayerRow, value: string | number | boolean) => {
+  const updatePlayer = (
+    index: number,
+    field: keyof PlayerRow,
+    value: string | number | boolean
+  ) => {
     const updated = [...players];
     updated[index] = { ...updated[index], [field]: value } as PlayerRow;
     setPlayers(updated);
@@ -134,11 +142,15 @@ export default function PlayerPerformanceTable({
   return (
     <div className="space-y-6">
       {/* Checksum Display */}
-      <div className={`p-4 rounded-md ${isChecksumValid ? 'bg-green-50 border border-green-200' : 'bg-yellow-50 border border-yellow-200'}`}>
-        <div className="flex justify-between items-center">
+      <div
+        className={`rounded-md p-4 ${isChecksumValid ? 'border border-green-200 bg-green-50' : 'border border-yellow-200 bg-yellow-50'}`}
+      >
+        <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-medium text-gray-700">Total Score</p>
-            <p className={`text-2xl font-bold ${isChecksumValid ? 'text-green-700' : 'text-yellow-700'}`}>
+            <p
+              className={`text-2xl font-bold ${isChecksumValid ? 'text-green-700' : 'text-yellow-700'}`}
+            >
               {checksum.totalScore} / {data.score || 0}
             </p>
           </div>
@@ -148,9 +160,9 @@ export default function PlayerPerformanceTable({
           </div>
           <div>
             {isChecksumValid ? (
-              <span className="text-green-600 text-2xl">✅</span>
+              <span className="text-2xl text-green-600">✅</span>
             ) : (
-              <span className="text-yellow-600 text-2xl">⚠️</span>
+              <span className="text-2xl text-yellow-600">⚠️</span>
             )}
           </div>
         </div>
@@ -161,41 +173,43 @@ export default function PlayerPerformanceTable({
         <table className="min-w-full border border-gray-300">
           <thead className="bg-gray-100">
             <tr>
-              <th className="px-4 py-2 border">Played</th>
-              <th className="px-4 py-2 border">Player</th>
-              <th className="px-4 py-2 border">FP</th>
-              <th className="px-4 py-2 border">Score</th>
+              <th className="border px-4 py-2">Played</th>
+              <th className="border px-4 py-2">Player</th>
+              <th className="border px-4 py-2">FP</th>
+              <th className="border px-4 py-2">Score</th>
             </tr>
           </thead>
           <tbody>
             {players.map((player, index) => (
               <tr key={player.playerId} className={player.played ? 'bg-white' : 'bg-gray-50'}>
-                <td className="px-4 py-2 border text-center">
+                <td className="border px-4 py-2 text-center">
                   <input
                     type="checkbox"
                     checked={player.played}
                     onChange={(e) => updatePlayer(index, 'played', e.target.checked)}
-                    className="w-5 h-5"
+                    className="h-5 w-5"
                   />
                 </td>
-                <td className="px-4 py-2 border">{player.playerName}</td>
-                <td className="px-4 py-2 border">
+                <td className="border px-4 py-2">{player.playerName}</td>
+                <td className="border px-4 py-2">
                   <input
                     type="number"
                     value={player.fp}
                     onChange={(e) => updatePlayer(index, 'fp', parseInt(e.target.value, 10) || 0)}
                     min="1"
-                    className="w-24 px-2 py-1 border border-gray-300 rounded"
+                    className="w-24 rounded border border-gray-300 px-2 py-1"
                     disabled={!player.played}
                   />
                 </td>
-                <td className="px-4 py-2 border">
+                <td className="border px-4 py-2">
                   <input
                     type="number"
                     value={player.score}
-                    onChange={(e) => updatePlayer(index, 'score', parseInt(e.target.value, 10) || 0)}
+                    onChange={(e) =>
+                      updatePlayer(index, 'score', parseInt(e.target.value, 10) || 0)
+                    }
                     min="0"
-                    className="w-32 px-2 py-1 border border-gray-300 rounded"
+                    className="w-32 rounded border border-gray-300 px-2 py-1"
                     disabled={!player.played}
                   />
                 </td>
@@ -211,14 +225,14 @@ export default function PlayerPerformanceTable({
           <button
             type="button"
             onClick={onCancel}
-            className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+            className="rounded-md border border-gray-300 px-6 py-2 text-gray-700 transition-colors hover:bg-gray-50"
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={onBack}
-            className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+            className="rounded-md border border-gray-300 px-6 py-2 text-gray-700 transition-colors hover:bg-gray-50"
           >
             ← Back
           </button>
@@ -226,7 +240,7 @@ export default function PlayerPerformanceTable({
         <button
           type="button"
           onClick={handleNext}
-          className="px-6 py-2 bg-primary text-white rounded-md hover:bg-primary-dark transition-colors"
+          className="bg-primary hover:bg-primary-dark rounded-md px-6 py-2 text-white transition-colors"
         >
           Next →
         </button>
