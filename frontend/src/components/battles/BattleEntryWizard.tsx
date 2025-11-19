@@ -1,0 +1,274 @@
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import type { BattleEntry } from '@angrybirdman/common';
+import BattleMetadataForm from './BattleMetadataForm';
+import PerformanceDataForm from './PerformanceDataForm';
+import PlayerPerformanceTable from './PlayerPerformanceTable';
+import NonplayerManagement from './NonplayerManagement';
+import ActionCodeAssignment from './ActionCodeAssignment';
+import BattleReview from './BattleReview';
+
+interface BattleEntryWizardProps {
+  clanId: number;
+  onSubmit: (data: BattleEntry) => Promise<void>;
+  initialData?: Partial<BattleEntry>;
+  mode?: 'create' | 'edit';
+}
+
+interface DraftData {
+  savedAt: string;
+  currentStep: number;
+  data: Partial<BattleEntry>;
+}
+
+const STEPS = [
+  { id: 1, name: 'Battle Info', component: 'metadata' },
+  { id: 2, name: 'Performance', component: 'performance' },
+  { id: 3, name: 'Player Stats', component: 'players' },
+  { id: 4, name: 'Non-Players', component: 'nonplayers' },
+  { id: 5, name: 'Action Codes', component: 'actions' },
+  { id: 6, name: 'Review', component: 'review' },
+];
+
+export default function BattleEntryWizard({
+  clanId,
+  onSubmit,
+  initialData,
+  mode = 'create',
+}: BattleEntryWizardProps) {
+  const navigate = useNavigate();
+  const [currentStep, setCurrentStep] = useState(1);
+  const [battleData, setBattleData] = useState<Partial<BattleEntry>>(
+    initialData || {}
+  );
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Auto-save draft to sessionStorage
+  useEffect(() => {
+    if (mode === 'create') {
+      const draftKey = `battle-draft-${clanId}`;
+      const draftData: DraftData = {
+        savedAt: new Date().toISOString(),
+        currentStep,
+        data: battleData,
+      };
+      sessionStorage.setItem(draftKey, JSON.stringify(draftData));
+    }
+  }, [battleData, currentStep, clanId, mode]);
+
+  // Restore draft on mount
+  useEffect(() => {
+    if (mode === 'create' && !initialData) {
+      const draftKey = `battle-draft-${clanId}`;
+      const savedDraft = sessionStorage.getItem(draftKey);
+      if (savedDraft) {
+        try {
+          const draft = JSON.parse(savedDraft) as DraftData;
+          const savedAt = new Date(draft.savedAt);
+          const now = new Date();
+          const daysSince = (now.getTime() - savedAt.getTime()) / (1000 * 60 * 60 * 24);
+          
+          // Only restore if draft is less than 7 days old
+          if (daysSince < 7 && draft.data && Object.keys(draft.data).length > 0) {
+            const shouldRestore = window.confirm(
+              `A draft from ${savedAt.toLocaleDateString()} was found. Would you like to resume?`
+            );
+            if (shouldRestore) {
+              setBattleData(draft.data);
+              setCurrentStep(draft.currentStep || 1);
+            } else {
+              sessionStorage.removeItem(draftKey);
+            }
+          } else if (daysSince >= 7) {
+            // Remove expired draft
+            sessionStorage.removeItem(draftKey);
+          }
+        } catch (error) {
+          console.error('Error restoring draft:', error);
+          sessionStorage.removeItem(draftKey);
+        }
+      }
+    }
+  }, [clanId, mode, initialData]);
+
+  const updateBattleData = (updates: Partial<BattleEntry>) => {
+    setBattleData((prev) => ({ ...prev, ...updates }));
+  };
+
+  const handleNext = () => {
+    if (currentStep < STEPS.length) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const handleBack = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const handleJumpToStep = (step: number) => {
+    setCurrentStep(step);
+  };
+
+  const handleSubmitBattle = async () => {
+    setIsSubmitting(true);
+    try {
+      await onSubmit(battleData as BattleEntry);
+      // Clear draft on successful submit
+      if (mode === 'create') {
+        const draftKey = `battle-draft-${clanId}`;
+        sessionStorage.removeItem(draftKey);
+      }
+      // Navigate to battle list
+      navigate(`/clans/${clanId}/battles`);
+    } catch (error) {
+      console.error('Error submitting battle:', error);
+      alert('Failed to submit battle. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleCancel = () => {
+    const shouldCancel = window.confirm(
+      'Are you sure you want to cancel? Your progress will be saved as a draft.'
+    );
+    if (shouldCancel) {
+      navigate(`/clans/${clanId}/battles`);
+    }
+  };
+
+  const renderStep = () => {
+    const step = STEPS[currentStep - 1];
+    if (!step) return null;
+
+    switch (step.component) {
+      case 'metadata':
+        return (
+          <BattleMetadataForm
+            clanId={clanId}
+            data={battleData}
+            onUpdate={updateBattleData}
+            onNext={handleNext}
+            onCancel={handleCancel}
+          />
+        );
+      case 'performance':
+        return (
+          <PerformanceDataForm
+            data={battleData}
+            onUpdate={updateBattleData}
+            onNext={handleNext}
+            onBack={handleBack}
+            onCancel={handleCancel}
+          />
+        );
+      case 'players':
+        return (
+          <PlayerPerformanceTable
+            clanId={clanId}
+            data={battleData}
+            onUpdate={updateBattleData}
+            onNext={handleNext}
+            onBack={handleBack}
+            onCancel={handleCancel}
+          />
+        );
+      case 'nonplayers':
+        return (
+          <NonplayerManagement
+            clanId={clanId}
+            data={battleData}
+            onUpdate={updateBattleData}
+            onNext={handleNext}
+            onBack={handleBack}
+            onCancel={handleCancel}
+          />
+        );
+      case 'actions':
+        return (
+          <ActionCodeAssignment
+            data={battleData}
+            onUpdate={updateBattleData}
+            onNext={handleNext}
+            onBack={handleBack}
+            onCancel={handleCancel}
+          />
+        );
+      case 'review':
+        return (
+          <BattleReview
+            data={battleData}
+            onJumpToStep={handleJumpToStep}
+            onSubmit={handleSubmitBattle}
+            onBack={handleBack}
+            onCancel={handleCancel}
+            isSubmitting={isSubmitting}
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="max-w-6xl mx-auto p-6">
+      {/* Progress Indicator */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-2">
+          {STEPS.map((step, index) => (
+            <div key={step.id} className="flex items-center">
+              <button
+                type="button"
+                onClick={() => void handleJumpToStep(step.id)}
+                className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-colors ${
+                  currentStep === step.id
+                    ? 'bg-primary text-white'
+                    : currentStep > step.id
+                    ? 'bg-secondary text-white hover:bg-secondary-dark cursor-pointer'
+                    : 'bg-gray-300 text-gray-600 cursor-not-allowed'
+                }`}
+                disabled={currentStep < step.id}
+              >
+                {step.id}
+              </button>
+              {index < STEPS.length - 1 && (
+                <div
+                  className={`w-16 h-1 mx-2 ${
+                    currentStep > step.id ? 'bg-secondary' : 'bg-gray-300'
+                  }`}
+                />
+              )}
+            </div>
+          ))}
+        </div>
+        <div className="flex justify-between text-sm">
+          {STEPS.map((step) => (
+            <div
+              key={step.id}
+              className={`text-center ${
+                currentStep === step.id
+                  ? 'text-primary font-semibold'
+                  : currentStep > step.id
+                  ? 'text-secondary'
+                  : 'text-gray-500'
+              }`}
+              style={{ width: '120px' }}
+            >
+              {step.name}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Current Step Content */}
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          {STEPS[currentStep - 1]?.name || 'Battle Entry'}
+        </h2>
+        {renderStep()}
+      </div>
+    </div>
+  );
+}

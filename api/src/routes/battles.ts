@@ -10,6 +10,7 @@ import { z } from 'zod';
 import { authenticate } from '../middleware/auth.js';
 import { BattleService } from '../services/battle.service.js';
 
+import { battleQuerySchema } from '@angrybirdman/common';
 import type { BattleEntry, BattleUpdate, BattleQuery } from '@angrybirdman/common';
 import type { FastifyPluginAsync, FastifyRequest, FastifyReply } from 'fastify';
 
@@ -81,16 +82,14 @@ const battlesRoutes: FastifyPluginAsync = async (fastify) => {
         description: 'List battles for a clan with optional filtering and pagination',
         tags: ['Battles'],
         params: clanIdParamSchema,
+        querystring: battleQuerySchema,
         response: {
-          200: {
-            type: 'object',
-            properties: {
-              battles: { type: 'array' },
-              total: { type: 'number' },
-              page: { type: 'number' },
-              limit: { type: 'number' },
-            },
-          },
+          200: z.object({
+            battles: z.array(z.any()),
+            total: z.number(),
+            page: z.number(),
+            limit: z.number(),
+          }),
         },
       },
     },
@@ -101,6 +100,7 @@ const battlesRoutes: FastifyPluginAsync = async (fastify) => {
         throw new Error('Invalid clan ID');
       }
 
+      // Query params are automatically validated and coerced by battleQuerySchema
       return battleService.getBattles(clanId, request.query);
     }
   );

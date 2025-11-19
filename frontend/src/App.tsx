@@ -22,6 +22,9 @@ import {
   AdminRequestsPage,
   RosterPage,
   PublicRosterPage,
+  BattleListPage,
+  NewBattlePage,
+  BattleDetailPage,
   DashboardPage,
   LoginPage,
   CallbackPage,
@@ -141,6 +144,32 @@ function App() {
               element={
                 <Layout>
                   <PublicRosterPage />
+                </Layout>
+              }
+            />
+            <Route
+              path="/clans/:clanId/battles"
+              element={
+                <Layout>
+                  <BattleListPage />
+                </Layout>
+              }
+            />
+            <Route
+              path="/clans/:clanId/battles/new"
+              element={
+                <Layout>
+                  <ProtectedRoute>
+                    <NewBattlePage />
+                  </ProtectedRoute>
+                </Layout>
+              }
+            />
+            <Route
+              path="/clans/:clanId/battles/:battleId"
+              element={
+                <Layout>
+                  <BattleDetailPage />
                 </Layout>
               }
             />

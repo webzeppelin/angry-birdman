@@ -38,7 +38,7 @@ export function Header() {
       { path: '/clans', label: 'Browse Clans' },
       { path: '/dashboard', label: 'Dashboard' },
       { path: `/clans/${user?.clanId}/roster`, label: 'Roster' },
-      { path: '/battles', label: 'Battles' },
+      { path: `/clans/${user?.clanId}/battles`, label: 'Battles' },
     ];
   } else if (!isAuthenticated) {
     navLinks.push({ path: '/about', label: 'About' });
