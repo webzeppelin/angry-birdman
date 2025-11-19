@@ -149,7 +149,7 @@ export default function BattleDetailPage() {
                   Rank
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase text-gray-700">
-                  Player ID
+                  Player
                 </th>
                 <th className="px-6 py-3 text-center text-xs font-medium uppercase text-gray-700">
                   Score
@@ -172,7 +172,9 @@ export default function BattleDetailPage() {
               {battle.playerStats?.map((player) => (
                 <tr key={player.playerId}>
                   <td className="whitespace-nowrap px-6 py-4 text-sm font-medium">{player.rank}</td>
-                  <td className="whitespace-nowrap px-6 py-4 text-sm">{player.playerId}</td>
+                  <td className="whitespace-nowrap px-6 py-4 text-sm font-medium">
+                    {player.playerName}
+                  </td>
                   <td className="whitespace-nowrap px-6 py-4 text-center text-sm">
                     {player.score}
                   </td>
@@ -211,7 +213,7 @@ export default function BattleDetailPage() {
               <thead className="bg-gray-100">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium uppercase text-gray-700">
-                    Player ID
+                    Player
                   </th>
                   <th className="px-6 py-3 text-center text-xs font-medium uppercase text-gray-700">
                     FP
@@ -227,7 +229,9 @@ export default function BattleDetailPage() {
               <tbody className="divide-y divide-gray-200 bg-white">
                 {battle.nonplayerStats.map((nonplayer, index) => (
                   <tr key={index} className={nonplayer.reserve ? 'bg-orange-50' : ''}>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm">{nonplayer.playerId}</td>
+                    <td className="whitespace-nowrap px-6 py-4 text-sm font-medium">
+                      {nonplayer.playerName}
+                    </td>
                     <td className="whitespace-nowrap px-6 py-4 text-center text-sm">
                       {nonplayer.fp}
                     </td>
