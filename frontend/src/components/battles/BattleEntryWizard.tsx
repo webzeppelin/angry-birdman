@@ -221,7 +221,9 @@ export default function BattleEntryWizard({
             <div key={step.id} className="flex items-center">
               <button
                 type="button"
-                onClick={() => void handleJumpToStep(step.id)}
+                onClick={() => {
+                  handleJumpToStep(step.id);
+                }}
                 className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-colors ${
                   currentStep === step.id
                     ? 'bg-primary text-white'
