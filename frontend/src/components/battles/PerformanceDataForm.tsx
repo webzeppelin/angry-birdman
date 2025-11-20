@@ -1,4 +1,5 @@
 import { useState } from 'react';
+
 import type { BattleEntry } from '@angrybirdman/common';
 
 interface PerformanceDataFormProps {
@@ -61,15 +62,15 @@ export default function PerformanceDataForm({
 
   return (
     <form onSubmit={handleNext} className="space-y-6">
-      <div className="bg-blue-50 border border-blue-200 p-4 rounded-md">
-        <h3 className="font-semibold text-blue-900 mb-2">Battle Result</h3>
+      <div className="rounded-md border border-blue-200 bg-blue-50 p-4">
+        <h3 className="mb-2 font-semibold text-blue-900">Battle Result</h3>
         <p className="text-2xl font-bold text-blue-700">{resultText}</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* Our Score */}
         <div>
-          <label htmlFor="score" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="score" className="mb-2 block text-sm font-medium text-gray-700">
             Our Score <span className="text-red-500">*</span>
           </label>
           <input
@@ -78,35 +79,14 @@ export default function PerformanceDataForm({
             value={score}
             onChange={(e) => setScore(e.target.value)}
             min="0"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+            className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2"
             required
           />
         </div>
 
-        {/* Baseline FP */}
-        <div>
-          <label htmlFor="baselineFp" className="block text-sm font-medium text-gray-700 mb-2">
-            Baseline FP <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="number"
-            id="baselineFp"
-            value={baselineFp}
-            onChange={(e) => setBaselineFp(e.target.value)}
-            min="1"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-            required
-          />
-          <p className="text-sm text-gray-500 mt-1">
-            Total FP of all clan members at battle start
-          </p>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Opponent Score */}
         <div>
-          <label htmlFor="opponentScore" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="opponentScore" className="mb-2 block text-sm font-medium text-gray-700">
             Opponent Score <span className="text-red-500">*</span>
           </label>
           <input
@@ -115,14 +95,33 @@ export default function PerformanceDataForm({
             value={opponentScore}
             onChange={(e) => setOpponentScore(e.target.value)}
             min="0"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+            className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2"
             required
           />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        {/* Baseline FP */}
+        <div>
+          <label htmlFor="baselineFp" className="mb-2 block text-sm font-medium text-gray-700">
+            Baseline FP <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="number"
+            id="baselineFp"
+            value={baselineFp}
+            onChange={(e) => setBaselineFp(e.target.value)}
+            min="1"
+            className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2"
+            required
+          />
+          <p className="mt-1 text-sm text-gray-500">Total FP of all clan members at battle start</p>
         </div>
 
         {/* Opponent FP */}
         <div>
-          <label htmlFor="opponentFp" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="opponentFp" className="mb-2 block text-sm font-medium text-gray-700">
             Opponent FP <span className="text-red-500">*</span>
           </label>
           <input
@@ -131,7 +130,7 @@ export default function PerformanceDataForm({
             value={opponentFp}
             onChange={(e) => setOpponentFp(e.target.value)}
             min="1"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+            className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2"
             required
           />
         </div>
@@ -143,21 +142,21 @@ export default function PerformanceDataForm({
           <button
             type="button"
             onClick={onCancel}
-            className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+            className="rounded-md border border-gray-300 px-6 py-2 text-gray-700 transition-colors hover:bg-gray-50"
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={onBack}
-            className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+            className="rounded-md border border-gray-300 px-6 py-2 text-gray-700 transition-colors hover:bg-gray-50"
           >
             ← Back
           </button>
         </div>
         <button
           type="submit"
-          className="px-6 py-2 bg-primary text-white rounded-md hover:bg-primary-dark transition-colors"
+          className="bg-primary hover:bg-primary-dark rounded-md px-6 py-2 text-white transition-colors"
         >
           Next →
         </button>
