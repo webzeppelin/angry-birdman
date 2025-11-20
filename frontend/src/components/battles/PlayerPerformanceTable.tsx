@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 import type { RosterMember, RosterResponse } from '../../types/battle';
 import type { BattleEntry } from '@angrybirdman/common';
@@ -32,6 +32,7 @@ export default function PlayerPerformanceTable({
 }: PlayerPerformanceTableProps) {
   const [players, setPlayers] = useState<PlayerRow[]>([]);
   const [checksum, setChecksum] = useState({ totalScore: 0, totalFp: 0 });
+  const rankInputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   // Fetch active roster
   const { data: rosterData } = useQuery<RosterResponse>({
@@ -48,16 +49,14 @@ export default function PlayerPerformanceTable({
   // Initialize player rows from roster
   useEffect(() => {
     if (rosterData && players.length === 0) {
-      const initialPlayers: PlayerRow[] = rosterData.players.map(
-        (member: RosterMember, index: number) => ({
-          rank: index + 1,
-          playerId: member.playerId,
-          playerName: member.playerName,
-          score: 0,
-          fp: member.fp || 0, // Default to 0 if not provided
-          played: false,
-        })
-      );
+      const initialPlayers: PlayerRow[] = rosterData.players.map((member: RosterMember) => ({
+        rank: 0,
+        playerId: member.playerId,
+        playerName: member.playerName,
+        score: 0,
+        fp: 0,
+        played: false,
+      }));
       setPlayers(initialPlayers);
     }
   }, [rosterData, players.length]);
@@ -99,6 +98,13 @@ export default function PlayerPerformanceTable({
     const updated = [...players];
     updated[index] = { ...updated[index], [field]: value } as PlayerRow;
     setPlayers(updated);
+
+    // Auto-focus rank field when player is checked
+    if (field === 'played' && value === true) {
+      setTimeout(() => {
+        rankInputRefs.current[index]?.focus();
+      }, 0);
+    }
   };
 
   const handleNext = () => {
@@ -194,11 +200,12 @@ export default function PlayerPerformanceTable({
                 </td>
                 <td className="border px-4 py-2">
                   <input
-                    type="number"
-                    value={player.rank}
+                    ref={(el) => (rankInputRefs.current[index] = el)}
+                    type="text"
+                    inputMode="numeric"
+                    value={player.rank > 0 ? player.rank : ''}
                     onChange={(e) => updatePlayer(index, 'rank', parseInt(e.target.value, 10) || 0)}
-                    min="1"
-                    max="100"
+                    placeholder="1-100"
                     className="w-20 rounded border border-gray-300 px-2 py-1"
                     disabled={!player.played}
                   />
@@ -206,22 +213,24 @@ export default function PlayerPerformanceTable({
                 <td className="border px-4 py-2">{player.playerName}</td>
                 <td className="border px-4 py-2">
                   <input
-                    type="number"
-                    value={player.score}
+                    type="text"
+                    inputMode="numeric"
+                    value={player.score > 0 ? player.score : ''}
                     onChange={(e) =>
                       updatePlayer(index, 'score', parseInt(e.target.value, 10) || 0)
                     }
-                    min="0"
+                    placeholder="Score"
                     className="w-32 rounded border border-gray-300 px-2 py-1"
                     disabled={!player.played}
                   />
                 </td>
                 <td className="border px-4 py-2">
                   <input
-                    type="number"
-                    value={player.fp}
+                    type="text"
+                    inputMode="numeric"
+                    value={player.fp > 0 ? player.fp : ''}
                     onChange={(e) => updatePlayer(index, 'fp', parseInt(e.target.value, 10) || 0)}
-                    min="1"
+                    placeholder="FP"
                     className="w-24 rounded border border-gray-300 px-2 py-1"
                     disabled={!player.played}
                   />
