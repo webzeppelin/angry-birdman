@@ -58,6 +58,8 @@ export function AddPlayerForm({ clanId, isOpen, onClose, onSuccess }: AddPlayerF
       return response.data as unknown;
     },
     onSuccess: () => {
+      // Invalidate all roster queries for this clan (handles both number and string clanId)
+      void queryClient.invalidateQueries({ queryKey: ['roster', clanId] });
       void queryClient.invalidateQueries({ queryKey: ['roster', String(clanId)] });
       onSuccess?.();
       onClose();

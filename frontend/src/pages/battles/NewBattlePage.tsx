@@ -56,7 +56,8 @@ export default function NewBattlePage() {
   }
 
   const handleSubmit = async (battleData: BattleEntry) => {
-    await createBattleMutation.mutateAsync(battleData);
+    const result = (await createBattleMutation.mutateAsync(battleData)) as { battleId: string };
+    return result;
   };
 
   return (

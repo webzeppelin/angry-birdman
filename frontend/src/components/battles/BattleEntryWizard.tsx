@@ -1,16 +1,18 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { BattleEntry } from '@angrybirdman/common';
+
+import ActionCodeAssignment from './ActionCodeAssignment';
 import BattleMetadataForm from './BattleMetadataForm';
+import BattleReview from './BattleReview';
+import NonplayerManagement from './NonplayerManagement';
 import PerformanceDataForm from './PerformanceDataForm';
 import PlayerPerformanceTable from './PlayerPerformanceTable';
-import NonplayerManagement from './NonplayerManagement';
-import ActionCodeAssignment from './ActionCodeAssignment';
-import BattleReview from './BattleReview';
+
+import type { BattleEntry } from '@angrybirdman/common';
 
 interface BattleEntryWizardProps {
   clanId: number;
-  onSubmit: (data: BattleEntry) => Promise<void>;
+  onSubmit: (data: BattleEntry) => Promise<{ battleId: string } | void>;
   initialData?: Partial<BattleEntry>;
   mode?: 'create' | 'edit';
 }
@@ -38,9 +40,7 @@ export default function BattleEntryWizard({
 }: BattleEntryWizardProps) {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
-  const [battleData, setBattleData] = useState<Partial<BattleEntry>>(
-    initialData || {}
-  );
+  const [battleData, setBattleData] = useState<Partial<BattleEntry>>(initialData || {});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Auto-save draft to sessionStorage
@@ -67,7 +67,7 @@ export default function BattleEntryWizard({
           const savedAt = new Date(draft.savedAt);
           const now = new Date();
           const daysSince = (now.getTime() - savedAt.getTime()) / (1000 * 60 * 60 * 24);
-          
+
           // Only restore if draft is less than 7 days old
           if (daysSince < 7 && draft.data && Object.keys(draft.data).length > 0) {
             const shouldRestore = window.confirm(
@@ -114,14 +114,18 @@ export default function BattleEntryWizard({
   const handleSubmitBattle = async () => {
     setIsSubmitting(true);
     try {
-      await onSubmit(battleData as BattleEntry);
+      const result = await onSubmit(battleData as BattleEntry);
       // Clear draft on successful submit
       if (mode === 'create') {
         const draftKey = `battle-draft-${clanId}`;
         sessionStorage.removeItem(draftKey);
       }
-      // Navigate to battle list
-      navigate(`/clans/${clanId}/battles`);
+      // Navigate to battle details if we got a battleId, otherwise to battle list
+      if (result && result.battleId) {
+        navigate(`/clans/${clanId}/battles/${result.battleId}`);
+      } else {
+        navigate(`/clans/${clanId}/battles`);
+      }
     } catch (error) {
       console.error('Error submitting battle:', error);
       alert('Failed to submit battle. Please try again.');
@@ -189,6 +193,7 @@ export default function BattleEntryWizard({
       case 'actions':
         return (
           <ActionCodeAssignment
+            clanId={clanId}
             data={battleData}
             onUpdate={updateBattleData}
             onNext={handleNext}
@@ -201,7 +206,7 @@ export default function BattleEntryWizard({
           <BattleReview
             data={battleData}
             onJumpToStep={handleJumpToStep}
-            onSubmit={handleSubmitBattle}
+            onSubmit={() => void handleSubmitBattle()}
             onBack={handleBack}
             onCancel={handleCancel}
             isSubmitting={isSubmitting}
@@ -213,10 +218,10 @@ export default function BattleEntryWizard({
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
+    <div className="mx-auto max-w-6xl p-6">
       {/* Progress Indicator */}
       <div className="mb-8">
-        <div className="flex items-center justify-between mb-2">
+        <div className="mb-2 flex items-center justify-between">
           {STEPS.map((step, index) => (
             <div key={step.id} className="flex items-center">
               <button
@@ -224,12 +229,12 @@ export default function BattleEntryWizard({
                 onClick={() => {
                   handleJumpToStep(step.id);
                 }}
-                className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-colors ${
+                className={`flex h-10 w-10 items-center justify-center rounded-full font-semibold transition-colors ${
                   currentStep === step.id
                     ? 'bg-primary text-white'
                     : currentStep > step.id
-                    ? 'bg-secondary text-white hover:bg-secondary-dark cursor-pointer'
-                    : 'bg-gray-300 text-gray-600 cursor-not-allowed'
+                      ? 'bg-secondary hover:bg-secondary-dark cursor-pointer text-white'
+                      : 'cursor-not-allowed bg-gray-300 text-gray-600'
                 }`}
                 disabled={currentStep < step.id}
               >
@@ -237,7 +242,7 @@ export default function BattleEntryWizard({
               </button>
               {index < STEPS.length - 1 && (
                 <div
-                  className={`w-16 h-1 mx-2 ${
+                  className={`mx-2 h-1 w-16 ${
                     currentStep > step.id ? 'bg-secondary' : 'bg-gray-300'
                   }`}
                 />
@@ -253,8 +258,8 @@ export default function BattleEntryWizard({
                 currentStep === step.id
                   ? 'text-primary font-semibold'
                   : currentStep > step.id
-                  ? 'text-secondary'
-                  : 'text-gray-500'
+                    ? 'text-secondary'
+                    : 'text-gray-500'
               }`}
               style={{ width: '120px' }}
             >
@@ -265,8 +270,8 @@ export default function BattleEntryWizard({
       </div>
 
       {/* Current Step Content */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">
+      <div className="rounded-lg bg-white p-6 shadow-md">
+        <h2 className="mb-6 text-2xl font-bold text-gray-900">
           {STEPS[currentStep - 1]?.name || 'Battle Entry'}
         </h2>
         {renderStep()}

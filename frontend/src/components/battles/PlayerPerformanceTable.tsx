@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { useState, useEffect, useRef } from 'react';
 
+import { AddPlayerForm } from '../roster/AddPlayerForm';
+
 import type { RosterMember, RosterResponse } from '../../types/battle';
 import type { BattleEntry } from '@angrybirdman/common';
 
@@ -33,6 +35,7 @@ export default function PlayerPerformanceTable({
   const [players, setPlayers] = useState<PlayerRow[]>([]);
   const [checksum, setChecksum] = useState({ totalScore: 0, totalFp: 0 });
   const rankInputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const [isAddPlayerOpen, setIsAddPlayerOpen] = useState(false);
 
   // Fetch active roster
   const { data: rosterData } = useQuery<RosterResponse>({
@@ -48,18 +51,28 @@ export default function PlayerPerformanceTable({
 
   // Initialize player rows from roster
   useEffect(() => {
-    if (rosterData && players.length === 0) {
-      const initialPlayers: PlayerRow[] = rosterData.players.map((member: RosterMember) => ({
-        rank: 0,
-        playerId: member.playerId,
-        playerName: member.playerName,
-        score: 0,
-        fp: 0,
-        played: false,
-      }));
-      setPlayers(initialPlayers);
+    if (rosterData) {
+      // Merge existing player data with roster to preserve entered data
+      const existingPlayerData = new Map(players.map((p) => [p.playerId, p]));
+
+      const updatedPlayers: PlayerRow[] = rosterData.players.map((member: RosterMember) => {
+        const existing = existingPlayerData.get(member.playerId);
+        return (
+          existing || {
+            rank: 0,
+            playerId: member.playerId,
+            playerName: member.playerName,
+            score: 0,
+            fp: 0,
+            played: false,
+          }
+        );
+      });
+
+      setPlayers(updatedPlayers);
     }
-  }, [rosterData, players.length]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rosterData]);
 
   // Load existing data if available
   useEffect(() => {
@@ -241,6 +254,17 @@ export default function PlayerPerformanceTable({
         </table>
       </div>
 
+      {/* Add New Player Button */}
+      <div className="my-4 text-center">
+        <button
+          type="button"
+          onClick={() => setIsAddPlayerOpen(true)}
+          className="rounded-md bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
+        >
+          + Add New Player to Roster
+        </button>
+      </div>
+
       {/* Form Actions */}
       <div className="flex justify-between pt-4">
         <div className="space-x-2">
@@ -267,6 +291,13 @@ export default function PlayerPerformanceTable({
           Next →
         </button>
       </div>
+
+      {/* Add Player Modal */}
+      <AddPlayerForm
+        clanId={clanId}
+        isOpen={isAddPlayerOpen}
+        onClose={() => setIsAddPlayerOpen(false)}
+      />
     </div>
   );
 }

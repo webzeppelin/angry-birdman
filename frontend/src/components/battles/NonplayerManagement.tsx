@@ -1,5 +1,9 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
+
+import { apiClient } from '@/lib/api-client';
+
+import { AddPlayerForm } from '../roster/AddPlayerForm';
 
 import type { RosterMember, RosterResponse } from '../../types/battle';
 import type { BattleEntry } from '@angrybirdman/common';
@@ -29,6 +33,21 @@ export default function NonplayerManagement({
   onCancel,
 }: NonplayerManagementProps) {
   const [nonplayers, setNonplayers] = useState<NonplayerRow[]>([]);
+  const [isAddPlayerOpen, setIsAddPlayerOpen] = useState(false);
+  const queryClient = useQueryClient();
+
+  // Mark player as left mutation
+  const markAsLeftMutation = useMutation({
+    mutationFn: async (playerId: number) => {
+      const response = await apiClient.post(`/api/clans/${clanId}/roster/${playerId}/left`, {
+        leftDate: new Date().toISOString().split('T')[0],
+      });
+      return response.data as unknown;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['roster', clanId, { active: true }] });
+    },
+  });
 
   // Fetch active roster
   const { data: rosterData } = useQuery<RosterResponse>({
@@ -44,23 +63,31 @@ export default function NonplayerManagement({
 
   // Auto-populate non-players from roster
   useEffect(() => {
-    if (rosterData && data.playerStats && nonplayers.length === 0) {
+    if (rosterData && data.playerStats) {
+      // Merge existing non-player data with roster to preserve entered data
+      const existingNonplayerData = new Map(nonplayers.map((np) => [np.playerId, np]));
+
       const playedPlayerIds = new Set(data.playerStats.map((p) => p.playerId));
       const nonPlayingMembers = rosterData.players.filter(
         (m: RosterMember) => !playedPlayerIds.has(m.playerId)
       );
 
-      if (nonPlayingMembers.length > 0) {
-        const autoNonplayers: NonplayerRow[] = nonPlayingMembers.map((m: RosterMember) => ({
-          playerId: m.playerId,
-          name: m.playerName,
-          fp: m.fp || 0, // Default to 0 if not provided
-          reserve: false,
-        }));
-        setNonplayers(autoNonplayers);
-      }
+      const updatedNonplayers: NonplayerRow[] = nonPlayingMembers.map((m: RosterMember) => {
+        const existing = existingNonplayerData.get(m.playerId);
+        return (
+          existing || {
+            playerId: m.playerId,
+            name: m.playerName,
+            fp: m.fp || 0,
+            reserve: false,
+          }
+        );
+      });
+
+      setNonplayers(updatedNonplayers);
     }
-  }, [rosterData, data.playerStats, nonplayers.length]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rosterData, data.playerStats]);
 
   // Load existing data if available
   useEffect(() => {
@@ -85,9 +112,20 @@ export default function NonplayerManagement({
     }
   }, [data.nonplayerStats, nonplayers.length, rosterData]);
 
-  const removeNonplayer = (index: number) => {
-    const updated = nonplayers.filter((_, i) => i !== index);
-    setNonplayers(updated);
+  const handleMarkAsLeft = async (playerId: number, playerName: string) => {
+    const confirmed = window.confirm(
+      `Mark ${playerName} as left?\n\nThis will remove them from the active roster and they will no longer appear in this form.`
+    );
+
+    if (confirmed) {
+      try {
+        await markAsLeftMutation.mutateAsync(playerId);
+        // Remove from local state immediately
+        setNonplayers((prev) => prev.filter((np) => np.playerId !== playerId));
+      } catch (error) {
+        alert('Failed to mark player as left. Please try again.');
+      }
+    }
   };
 
   const updateNonplayer = (
@@ -163,12 +201,17 @@ export default function NonplayerManagement({
                   </td>
                   <td className="border px-4 py-2">
                     <input
-                      type="number"
-                      value={np.fp}
-                      onChange={(e) =>
-                        updateNonplayer(index, 'fp', parseInt(e.target.value, 10) || 0)
-                      }
-                      min="1"
+                      type="text"
+                      inputMode="numeric"
+                      value={np.fp === 0 ? '' : np.fp}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        const parsed = value === '' ? 0 : parseInt(value, 10);
+                        if (!isNaN(parsed) && parsed >= 0) {
+                          updateNonplayer(index, 'fp', parsed);
+                        }
+                      }}
+                      placeholder="FP"
                       className="w-24 rounded border border-gray-300 px-2 py-1"
                     />
                   </td>
@@ -183,10 +226,12 @@ export default function NonplayerManagement({
                   <td className="border px-4 py-2 text-center">
                     <button
                       type="button"
-                      onClick={() => removeNonplayer(index)}
+                      onClick={() => {
+                        void handleMarkAsLeft(np.playerId, np.name);
+                      }}
                       className="rounded bg-red-500 px-3 py-1 text-white hover:bg-red-600"
                     >
-                      Remove
+                      Mark as Left
                     </button>
                   </td>
                 </tr>
@@ -202,6 +247,19 @@ export default function NonplayerManagement({
           </p>
         </div>
       )}
+
+      {/* Add New Player Button */}
+      <div className="my-4 text-center">
+        <button
+          type="button"
+          onClick={() => {
+            setIsAddPlayerOpen(true);
+          }}
+          className="rounded-md bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
+        >
+          + Add New Player to Roster
+        </button>
+      </div>
 
       {/* Form Actions */}
       <div className="flex justify-between pt-4">
@@ -229,6 +287,13 @@ export default function NonplayerManagement({
           Next →
         </button>
       </div>
+
+      {/* Add Player Modal */}
+      <AddPlayerForm
+        clanId={clanId}
+        isOpen={isAddPlayerOpen}
+        onClose={() => setIsAddPlayerOpen(false)}
+      />
     </div>
   );
 }
