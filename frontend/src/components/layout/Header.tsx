@@ -63,7 +63,7 @@ export function Header() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo/Brand */}
           <Link to="/" className="flex items-center space-x-2">
-            <span className="text-2xl">🐦</span>
+            <img src="/images/angry_birdman_logo_32.png" alt="Angry Birdman" className="h-8 w-8" />
             <span className="font-display text-2xl text-white">Angry Birdman</span>
           </Link>
 

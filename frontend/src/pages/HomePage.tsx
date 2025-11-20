@@ -21,7 +21,11 @@ export function HomePage() {
       {/* Hero Section */}
       <section className="from-primary to-primary-700 bg-gradient-to-br py-20 text-white">
         <div className="container mx-auto px-4 text-center">
-          <div className="mb-4 text-6xl">🐦</div>
+          <img
+            src="/images/angry_birdman_logo_512.png"
+            alt="Angry Birdman"
+            className="mx-auto mb-4 h-32 w-32"
+          />
           <h1 className="font-display mb-4 text-4xl md:text-5xl">Angry Birdman</h1>
           <p className="mb-8 text-xl md:text-2xl">Clan Management for Angry Birds 2</p>
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
