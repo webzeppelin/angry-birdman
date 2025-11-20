@@ -24,7 +24,7 @@ export function HomePage() {
           <img
             src="/images/angry_birdman_logo_512.png"
             alt="Angry Birdman"
-            className="mx-auto mb-4 h-32 w-32"
+            className="mx-auto mb-4 h-64 w-64 md:h-96 md:w-96 lg:h-[512px] lg:w-[512px]"
           />
           <h1 className="font-display mb-4 text-4xl md:text-5xl">Angry Birdman</h1>
           <p className="mb-8 text-xl md:text-2xl">Clan Management for Angry Birds 2</p>
