@@ -36,7 +36,7 @@ export default function RosterImportPage() {
   const { data: template } = useQuery<{ csv: string; filename: string }>({
     queryKey: ['rosterTemplate', clanId],
     queryFn: async (): Promise<{ csv: string; filename: string }> => {
-      const response = await apiClient.get(`/clans/${clanId}/roster/template`);
+      const response = await apiClient.get(`/api/clans/${clanId}/roster/template`);
       return response.data as { csv: string; filename: string };
     },
     enabled: !!clanId,
