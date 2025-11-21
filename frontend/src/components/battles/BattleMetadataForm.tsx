@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import type { BattleEntry } from '@angrybirdman/common';
+import { useState, useEffect } from 'react';
+
 import type { BattleListResponse } from '../../types/battle';
+import type { BattleEntry } from '@angrybirdman/common';
 
 interface BattleMetadataFormProps {
   clanId: number;
@@ -19,18 +20,16 @@ export default function BattleMetadataForm({
   onCancel,
 }: BattleMetadataFormProps) {
   // Convert dates to string format for form inputs
-  const initialStartDate = data.startDate instanceof Date 
-    ? data.startDate.toISOString().split('T')[0] 
-    : data.startDate || '';
-  const initialEndDate = data.endDate instanceof Date 
-    ? data.endDate.toISOString().split('T')[0] 
-    : data.endDate || '';
+  const initialStartDate =
+    data.startDate instanceof Date
+      ? data.startDate.toISOString().split('T')[0]
+      : data.startDate || '';
+  const initialEndDate =
+    data.endDate instanceof Date ? data.endDate.toISOString().split('T')[0] : data.endDate || '';
 
   const [startDate, setStartDate] = useState(initialStartDate);
   const [endDate, setEndDate] = useState(initialEndDate);
-  const [opponentRovioId, setOpponentRovioId] = useState(
-    data.opponentRovioId?.toString() || ''
-  );
+  const [opponentRovioId, setOpponentRovioId] = useState(data.opponentRovioId?.toString() || '');
   const [opponentName, setOpponentName] = useState(data.opponentName || '');
   const [opponentCountry, setOpponentCountry] = useState(data.opponentCountry || '');
   const [duplicateWarning, setDuplicateWarning] = useState<string | null>(null);
@@ -52,10 +51,9 @@ export default function BattleMetadataForm({
   const { data: existingBattles } = useQuery<BattleListResponse>({
     queryKey: ['battles', clanId, { startDate }],
     queryFn: async () => {
-      const response = await fetch(
-        `/api/clans/${clanId}/battles?startDate=${startDate}`,
-        { credentials: 'include' }
-      );
+      const response = await fetch(`/api/clans/${clanId}/battles?startDate=${startDate}`, {
+        credentials: 'include',
+      });
       if (!response.ok) throw new Error('Failed to fetch battles');
       return response.json();
     },
@@ -92,10 +90,10 @@ export default function BattleMetadataForm({
 
   return (
     <form onSubmit={handleNext} className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* Start Date */}
         <div>
-          <label htmlFor="startDate" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="startDate" className="mb-2 block text-sm font-medium text-gray-700">
             Start Date <span className="text-red-500">*</span>
           </label>
           <input
@@ -103,14 +101,14 @@ export default function BattleMetadataForm({
             id="startDate"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+            className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2"
             required
           />
         </div>
 
         {/* End Date */}
         <div>
-          <label htmlFor="endDate" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="endDate" className="mb-2 block text-sm font-medium text-gray-700">
             End Date <span className="text-red-500">*</span>
           </label>
           <input
@@ -118,22 +116,22 @@ export default function BattleMetadataForm({
             id="endDate"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+            className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2"
             required
           />
         </div>
       </div>
 
       {duplicateWarning && (
-        <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-md">
+        <div className="rounded-md border border-yellow-200 bg-yellow-50 px-4 py-3 text-yellow-800">
           <p className="font-semibold">⚠️ {duplicateWarning}</p>
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* Opponent Rovio ID */}
         <div>
-          <label htmlFor="opponentRovioId" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="opponentRovioId" className="mb-2 block text-sm font-medium text-gray-700">
             Opponent Rovio ID
           </label>
           <input
@@ -141,14 +139,14 @@ export default function BattleMetadataForm({
             id="opponentRovioId"
             value={opponentRovioId}
             onChange={(e) => setOpponentRovioId(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+            className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2"
             placeholder="e.g., CLAN123"
           />
         </div>
 
         {/* Opponent Name */}
         <div>
-          <label htmlFor="opponentName" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="opponentName" className="mb-2 block text-sm font-medium text-gray-700">
             Opponent Name <span className="text-red-500">*</span>
           </label>
           <input
@@ -156,7 +154,7 @@ export default function BattleMetadataForm({
             id="opponentName"
             value={opponentName}
             onChange={(e) => setOpponentName(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+            className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2"
             placeholder="Opponent clan name"
             required
           />
@@ -165,7 +163,7 @@ export default function BattleMetadataForm({
 
       {/* Opponent Country */}
       <div>
-        <label htmlFor="opponentCountry" className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="opponentCountry" className="mb-2 block text-sm font-medium text-gray-700">
           Opponent Country
         </label>
         <input
@@ -173,7 +171,7 @@ export default function BattleMetadataForm({
           id="opponentCountry"
           value={opponentCountry}
           onChange={(e) => setOpponentCountry(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2"
           placeholder="e.g., US, UK, CA"
         />
       </div>
@@ -183,13 +181,13 @@ export default function BattleMetadataForm({
         <button
           type="button"
           onClick={onCancel}
-          className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+          className="rounded-md border border-gray-300 px-6 py-2 text-gray-700 transition-colors hover:bg-gray-50"
         >
           Cancel
         </button>
         <button
           type="submit"
-          className="px-6 py-2 bg-primary text-white rounded-md hover:bg-primary-dark transition-colors"
+          className="bg-primary hover:bg-primary-dark rounded-md px-6 py-2 text-white transition-colors"
         >
           Next →
         </button>

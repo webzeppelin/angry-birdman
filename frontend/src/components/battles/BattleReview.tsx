@@ -1,5 +1,6 @@
-import type { BattleEntry } from '@angrybirdman/common';
 import { formatDateISO } from '@angrybirdman/common';
+
+import type { BattleEntry } from '@angrybirdman/common';
 
 interface BattleReviewProps {
   data: Partial<BattleEntry>;
@@ -23,8 +24,8 @@ export default function BattleReview({
       ? data.score > data.opponentScore
         ? 'Win ✅'
         : data.score < data.opponentScore
-        ? 'Loss ❌'
-        : 'Tie 🤝'
+          ? 'Loss ❌'
+          : 'Tie 🤝'
       : 'Unknown';
 
   const totalPlayerFp = data.playerStats?.reduce((sum, p) => sum + p.fp, 0) || 0;
@@ -34,13 +35,13 @@ export default function BattleReview({
   return (
     <div className="space-y-6">
       {/* Battle Metadata */}
-      <div className="bg-white border border-gray-300 rounded-md p-4">
-        <div className="flex justify-between items-center mb-2">
+      <div className="rounded-md border border-gray-300 bg-white p-4">
+        <div className="mb-2 flex items-center justify-between">
           <h3 className="text-lg font-semibold">Battle Information</h3>
           <button
             type="button"
             onClick={() => onJumpToStep(1)}
-            className="text-sm text-primary hover:underline"
+            className="text-primary text-sm hover:underline"
           >
             Edit
           </button>
@@ -76,23 +77,23 @@ export default function BattleReview({
       </div>
 
       {/* Performance Data */}
-      <div className="bg-white border border-gray-300 rounded-md p-4">
-        <div className="flex justify-between items-center mb-2">
+      <div className="rounded-md border border-gray-300 bg-white p-4">
+        <div className="mb-2 flex items-center justify-between">
           <h3 className="text-lg font-semibold">Performance</h3>
           <button
             type="button"
             onClick={() => onJumpToStep(2)}
-            className="text-sm text-primary hover:underline"
+            className="text-primary text-sm hover:underline"
           >
             Edit
           </button>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-blue-50 p-3 rounded">
+          <div className="rounded bg-blue-50 p-3">
             <p className="text-sm text-gray-600">Result</p>
             <p className="text-2xl font-bold">{result}</p>
           </div>
-          <div className="bg-gray-50 p-3 rounded">
+          <div className="rounded bg-gray-50 p-3">
             <p className="text-sm text-gray-600">Total FP</p>
             <p className="text-2xl font-bold">{totalFp}</p>
           </div>
@@ -116,15 +117,13 @@ export default function BattleReview({
       </div>
 
       {/* Player Stats */}
-      <div className="bg-white border border-gray-300 rounded-md p-4">
-        <div className="flex justify-between items-center mb-2">
-          <h3 className="text-lg font-semibold">
-            Players ({data.playerStats?.length || 0})
-          </h3>
+      <div className="rounded-md border border-gray-300 bg-white p-4">
+        <div className="mb-2 flex items-center justify-between">
+          <h3 className="text-lg font-semibold">Players ({data.playerStats?.length || 0})</h3>
           <button
             type="button"
             onClick={() => onJumpToStep(3)}
-            className="text-sm text-primary hover:underline"
+            className="text-primary text-sm hover:underline"
           >
             Edit
           </button>
@@ -149,15 +148,13 @@ export default function BattleReview({
 
       {/* Non-Player Stats */}
       {data.nonplayerStats && data.nonplayerStats.length > 0 && (
-        <div className="bg-white border border-gray-300 rounded-md p-4">
-          <div className="flex justify-between items-center mb-2">
-            <h3 className="text-lg font-semibold">
-              Non-Players ({data.nonplayerStats.length})
-            </h3>
+        <div className="rounded-md border border-gray-300 bg-white p-4">
+          <div className="mb-2 flex items-center justify-between">
+            <h3 className="text-lg font-semibold">Non-Players ({data.nonplayerStats.length})</h3>
             <button
               type="button"
               onClick={() => onJumpToStep(4)}
-              className="text-sm text-primary hover:underline"
+              className="text-primary text-sm hover:underline"
             >
               Edit
             </button>
@@ -182,26 +179,25 @@ export default function BattleReview({
       )}
 
       {/* Action Codes Summary */}
-      <div className="bg-white border border-gray-300 rounded-md p-4">
-        <div className="flex justify-between items-center mb-2">
+      <div className="rounded-md border border-gray-300 bg-white p-4">
+        <div className="mb-2 flex items-center justify-between">
           <h3 className="text-lg font-semibold">Action Codes</h3>
           <button
             type="button"
             onClick={() => onJumpToStep(5)}
-            className="text-sm text-primary hover:underline"
+            className="text-primary text-sm hover:underline"
           >
             Edit
           </button>
         </div>
         <div className="grid grid-cols-5 gap-4 text-center">
           {['HOLD', 'WARN', 'KICK', 'RESERVE', 'PASS'].map((code) => {
-            const playerCount =
-              data.playerStats?.filter((p) => p.actionCode === code).length || 0;
+            const playerCount = data.playerStats?.filter((p) => p.actionCode === code).length || 0;
             const nonplayerCount =
               data.nonplayerStats?.filter((np) => np.actionCode === code).length || 0;
             const total = playerCount + nonplayerCount;
             return (
-              <div key={code} className="bg-gray-50 p-3 rounded">
+              <div key={code} className="rounded bg-gray-50 p-3">
                 <p className="text-sm text-gray-600">{code}</p>
                 <p className="text-xl font-bold">{total}</p>
               </div>
@@ -211,10 +207,14 @@ export default function BattleReview({
       </div>
 
       {/* Validation Warnings */}
-      {(!data.startDate || !data.endDate || !data.opponentName || !data.score || !data.baselineFp) && (
-        <div className="bg-red-50 border border-red-200 p-4 rounded-md">
-          <p className="text-red-800 font-semibold">⚠️ Missing required fields</p>
-          <p className="text-red-700 text-sm">
+      {(!data.startDate ||
+        !data.endDate ||
+        !data.opponentName ||
+        !data.score ||
+        !data.baselineFp) && (
+        <div className="rounded-md border border-red-200 bg-red-50 p-4">
+          <p className="font-semibold text-red-800">⚠️ Missing required fields</p>
+          <p className="text-sm text-red-700">
             Please complete all required fields before submitting.
           </p>
         </div>
@@ -226,7 +226,7 @@ export default function BattleReview({
           <button
             type="button"
             onClick={onCancel}
-            className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+            className="rounded-md border border-gray-300 px-6 py-2 text-gray-700 transition-colors hover:bg-gray-50"
             disabled={isSubmitting}
           >
             Cancel
@@ -234,7 +234,7 @@ export default function BattleReview({
           <button
             type="button"
             onClick={onBack}
-            className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+            className="rounded-md border border-gray-300 px-6 py-2 text-gray-700 transition-colors hover:bg-gray-50"
             disabled={isSubmitting}
           >
             ← Back
@@ -244,7 +244,7 @@ export default function BattleReview({
           type="button"
           onClick={onSubmit}
           disabled={isSubmitting || !data.startDate || !data.opponentName || !data.score}
-          className="px-8 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed font-semibold"
+          className="rounded-md bg-green-600 px-8 py-2 font-semibold text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-400"
         >
           {isSubmitting ? 'Submitting...' : 'Submit Battle ✓'}
         </button>
