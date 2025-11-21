@@ -42,54 +42,82 @@ export default function BattleEntryWizard({
   const [currentStep, setCurrentStep] = useState(1);
   const [battleData, setBattleData] = useState<Partial<BattleEntry>>(initialData || {});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [draftRestoreAttempted, setDraftRestoreAttempted] = useState(false);
 
-  // Auto-save draft to sessionStorage
+  // Auto-save draft to localStorage
   useEffect(() => {
-    if (mode === 'create') {
+    if (mode === 'create' && draftRestoreAttempted) {
       const draftKey = `battle-draft-${clanId}`;
       const draftData: DraftData = {
         savedAt: new Date().toISOString(),
         currentStep,
         data: battleData,
       };
-      sessionStorage.setItem(draftKey, JSON.stringify(draftData));
+      localStorage.setItem(draftKey, JSON.stringify(draftData));
     }
-  }, [battleData, currentStep, clanId, mode]);
+  }, [battleData, currentStep, clanId, mode, draftRestoreAttempted]);
 
-  // Restore draft on mount
+  // Restore draft on mount (only once)
   useEffect(() => {
-    if (mode === 'create' && !initialData) {
-      const draftKey = `battle-draft-${clanId}`;
-      const savedDraft = sessionStorage.getItem(draftKey);
-      if (savedDraft) {
-        try {
-          const draft = JSON.parse(savedDraft) as DraftData;
-          const savedAt = new Date(draft.savedAt);
-          const now = new Date();
-          const daysSince = (now.getTime() - savedAt.getTime()) / (1000 * 60 * 60 * 24);
+    if (mode === 'create' && !initialData && !draftRestoreAttempted) {
+      setDraftRestoreAttempted(true);
 
-          // Only restore if draft is less than 7 days old
-          if (daysSince < 7 && draft.data && Object.keys(draft.data).length > 0) {
-            const shouldRestore = window.confirm(
-              `A draft from ${savedAt.toLocaleDateString()} was found. Would you like to resume?`
-            );
-            if (shouldRestore) {
-              setBattleData(draft.data);
-              setCurrentStep(draft.currentStep || 1);
-            } else {
-              sessionStorage.removeItem(draftKey);
-            }
-          } else if (daysSince >= 7) {
-            // Remove expired draft
-            sessionStorage.removeItem(draftKey);
-          }
-        } catch (error) {
-          console.error('Error restoring draft:', error);
-          sessionStorage.removeItem(draftKey);
+      const draftKey = `battle-draft-${clanId}`;
+      const savedDraft = localStorage.getItem(draftKey);
+
+      if (!savedDraft) {
+        return;
+      }
+
+      try {
+        const draft = JSON.parse(savedDraft) as DraftData;
+        const savedAt = new Date(draft.savedAt);
+        const now = new Date();
+        const daysSince = (now.getTime() - savedAt.getTime()) / (1000 * 60 * 60 * 24);
+
+        // Remove expired drafts (older than 7 days)
+        if (daysSince >= 7) {
+          localStorage.removeItem(draftKey);
+          return;
         }
+
+        // Check if draft has meaningful data
+        const hasData =
+          draft.data &&
+          (draft.data.startDate ||
+            draft.data.score !== undefined ||
+            draft.data.playerStats?.length ||
+            draft.data.nonplayerStats?.length);
+
+        if (!hasData) {
+          return;
+        }
+
+        // Prompt user to restore
+        const hoursSince = (now.getTime() - savedAt.getTime()) / (1000 * 60 * 60);
+        const timeStr =
+          hoursSince < 24
+            ? `${Math.round(hoursSince)} hour(s) ago`
+            : `${savedAt.toLocaleDateString()} at ${savedAt.toLocaleTimeString()}`;
+
+        const shouldRestore = window.confirm(
+          `A draft battle entry from ${timeStr} was found.\n\nWould you like to resume where you left off?`
+        );
+
+        if (shouldRestore) {
+          setBattleData(draft.data);
+          setCurrentStep(draft.currentStep || 1);
+        } else {
+          localStorage.removeItem(draftKey);
+        }
+      } catch (error) {
+        console.error('Error restoring draft:', error);
+        localStorage.removeItem(draftKey);
       }
     }
-  }, [clanId, mode, initialData]);
+    // Only run once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const updateBattleData = (updates: Partial<BattleEntry>) => {
     setBattleData((prev) => ({ ...prev, ...updates }));
@@ -118,7 +146,7 @@ export default function BattleEntryWizard({
       // Clear draft on successful submit
       if (mode === 'create') {
         const draftKey = `battle-draft-${clanId}`;
-        sessionStorage.removeItem(draftKey);
+        localStorage.removeItem(draftKey);
       }
       // Navigate to battle details if we got a battleId, otherwise to battle list
       if (result && result.battleId) {
