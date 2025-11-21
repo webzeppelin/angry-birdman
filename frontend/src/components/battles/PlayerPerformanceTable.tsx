@@ -52,48 +52,67 @@ export default function PlayerPerformanceTable({
   // Initialize player rows from roster
   useEffect(() => {
     if (rosterData) {
-      // Merge existing player data with roster to preserve entered data
+      // Create a map of existing player data to preserve entered values
       const existingPlayerData = new Map(players.map((p) => [p.playerId, p]));
 
+      // Also check playerStats and nonplayerStats to restore data when navigating back
+      const playerStatsMap = new Map(
+        (data.playerStats || []).map((p) => [
+          p.playerId,
+          { rank: p.rank, score: p.score, fp: p.fp, played: true },
+        ])
+      );
+
+      const nonplayerStatsMap = new Map(
+        (data.nonplayerStats || []).map((np) => [np.playerId, { played: false }])
+      );
+
       const updatedPlayers: PlayerRow[] = rosterData.players.map((member: RosterMember) => {
+        // Priority: existing state > playerStats > nonplayerStats > default
         const existing = existingPlayerData.get(member.playerId);
-        return (
-          existing || {
+        if (existing) {
+          return existing;
+        }
+
+        const playerStat = playerStatsMap.get(member.playerId);
+        if (playerStat) {
+          return {
+            rank: playerStat.rank || 0,
+            playerId: member.playerId,
+            playerName: member.playerName,
+            score: playerStat.score,
+            fp: playerStat.fp,
+            played: true,
+          };
+        }
+
+        const nonplayerStat = nonplayerStatsMap.get(member.playerId);
+        if (nonplayerStat) {
+          return {
             rank: 0,
             playerId: member.playerId,
             playerName: member.playerName,
             score: 0,
             fp: 0,
             played: false,
-          }
-        );
+          };
+        }
+
+        // Default for new roster members
+        return {
+          rank: 0,
+          playerId: member.playerId,
+          playerName: member.playerName,
+          score: 0,
+          fp: 0,
+          played: false,
+        };
       });
 
       setPlayers(updatedPlayers);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rosterData]);
-
-  // Load existing data if available
-  useEffect(() => {
-    if (data.playerStats && data.playerStats.length > 0 && players.length === 0 && rosterData) {
-      // Match playerStats with roster to get player names
-      const loadedPlayers: PlayerRow[] = data.playerStats.map((stat) => {
-        const rosterMember = rosterData.players.find(
-          (m: RosterMember) => m.playerId === stat.playerId
-        );
-        return {
-          rank: stat.rank || 0,
-          playerId: stat.playerId,
-          playerName: rosterMember?.playerName || `Player ${stat.playerId}`,
-          score: stat.score,
-          fp: stat.fp,
-          played: stat.score > 0,
-        };
-      });
-      setPlayers(loadedPlayers);
-    }
-  }, [data.playerStats, players.length, rosterData]);
+  }, [rosterData, data.playerStats, data.nonplayerStats]);
 
   // Calculate checksum
   useEffect(() => {
