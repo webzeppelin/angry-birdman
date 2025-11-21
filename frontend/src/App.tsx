@@ -21,6 +21,8 @@ import {
   ClanSettingsPage,
   AdminRequestsPage,
   RosterPage,
+  RosterImportPage,
+  PlayerHistoryPage,
   PublicRosterPage,
   BattleListPage,
   NewBattlePage,
@@ -136,6 +138,24 @@ function App() {
                   <ProtectedRoute>
                     <RosterPage />
                   </ProtectedRoute>
+                </Layout>
+              }
+            />
+            <Route
+              path="/clans/:clanId/roster/import"
+              element={
+                <Layout>
+                  <ProtectedRoute>
+                    <RosterImportPage />
+                  </ProtectedRoute>
+                </Layout>
+              }
+            />
+            <Route
+              path="/clans/:clanId/roster/:playerId/history"
+              element={
+                <Layout>
+                  <PlayerHistoryPage />
                 </Layout>
               }
             />

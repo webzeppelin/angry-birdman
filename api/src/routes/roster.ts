@@ -99,6 +99,250 @@ type PlayerReactivateBody = z.infer<typeof playerReactivateSchema>;
 
 const rosterRoutes: FastifyPluginAsync = async (fastify) => {
   /**
+   * GET /api/clans/:clanId/roster/:playerId/history
+   * Story 3.8: View Player History
+   * Get comprehensive player history including battle participation and action codes
+   */
+  fastify.get<{ Params: { clanId: string; playerId: string } }>(
+    '/:clanId/roster/:playerId/history',
+    {
+      schema: {
+        description:
+          'Get comprehensive player history including battle participation and statistics',
+        tags: ['Roster'],
+        params: playerIdParamSchema,
+        response: {
+          200: z.object({
+            player: rosterMemberResponseSchema,
+            summary: z.object({
+              totalBattles: z.number(),
+              totalParticipated: z.number(),
+              totalNonparticipated: z.number(),
+              averageScore: z.number(),
+              averageFp: z.number(),
+              averageRatio: z.number(),
+              averageRank: z.number(),
+              averageRatioRank: z.number(),
+              participationRate: z.number(),
+            }),
+            recentBattles: z.array(
+              z.object({
+                battleId: z.string(),
+                startDate: z.string(),
+                endDate: z.string(),
+                participated: z.boolean(),
+                rank: z.number().nullable(),
+                score: z.number().nullable(),
+                fp: z.number().nullable(),
+                ratio: z.number().nullable(),
+                ratioRank: z.number().nullable(),
+                actionCode: z.string(),
+                actionReason: z.string().nullable(),
+              })
+            ),
+            actionCodeHistory: z.array(
+              z.object({
+                actionCode: z.string(),
+                count: z.number(),
+                percentage: z.number(),
+              })
+            ),
+          }),
+          404: errorResponseSchema,
+        },
+      },
+    },
+    async (
+      request: FastifyRequest<{ Params: { clanId: string; playerId: string } }>,
+      reply: FastifyReply
+    ) => {
+      const clanId = parseInt(request.params.clanId, 10);
+      const playerId = parseInt(request.params.playerId, 10);
+
+      if (isNaN(clanId) || isNaN(playerId)) {
+        return reply.status(400).send({
+          error: 'Validation Error',
+          message: 'Invalid clan ID or player ID',
+        });
+      }
+
+      try {
+        // Get the player
+        const player = await fastify.prisma.rosterMember.findFirst({
+          where: {
+            playerId,
+            clanId,
+          },
+        });
+
+        if (!player) {
+          return reply.status(404).send({
+            error: 'Not Found',
+            message: 'Player not found in this clan',
+          });
+        }
+
+        // Get player participation stats
+        const participatedStats = await fastify.prisma.clanBattlePlayerStats.findMany({
+          where: {
+            playerId,
+            clanId,
+          },
+          include: {
+            battle: {
+              select: {
+                battleId: true,
+                startDate: true,
+                endDate: true,
+              },
+            },
+          },
+          orderBy: {
+            battle: {
+              startDate: 'desc',
+            },
+          },
+        });
+
+        // Get non-participated stats
+        const nonparticipatedStats = await fastify.prisma.clanBattleNonplayerStats.findMany({
+          where: {
+            playerId,
+            clanId,
+          },
+          include: {
+            battle: {
+              select: {
+                battleId: true,
+                startDate: true,
+                endDate: true,
+              },
+            },
+          },
+          orderBy: {
+            battle: {
+              startDate: 'desc',
+            },
+          },
+        });
+
+        // Calculate summary statistics
+        const totalParticipated = participatedStats.length;
+        const totalNonparticipated = nonparticipatedStats.length;
+        const totalBattles = totalParticipated + totalNonparticipated;
+
+        const averageScore =
+          totalParticipated > 0
+            ? participatedStats.reduce((sum, s) => sum + s.score, 0) / totalParticipated
+            : 0;
+
+        const averageFp =
+          totalParticipated > 0
+            ? participatedStats.reduce((sum, s) => sum + s.fp, 0) / totalParticipated
+            : 0;
+
+        const averageRatio =
+          totalParticipated > 0
+            ? participatedStats.reduce((sum, s) => sum + s.ratio, 0) / totalParticipated
+            : 0;
+
+        const averageRank =
+          totalParticipated > 0
+            ? participatedStats.reduce((sum, s) => sum + s.rank, 0) / totalParticipated
+            : 0;
+
+        const averageRatioRank =
+          totalParticipated > 0
+            ? participatedStats.reduce((sum, s) => sum + s.ratioRank, 0) / totalParticipated
+            : 0;
+
+        const participationRate = totalBattles > 0 ? (totalParticipated / totalBattles) * 100 : 0;
+
+        // Combine and format recent battles (limit to 20)
+        const recentBattles = [
+          ...participatedStats.slice(0, 20).map((s) => ({
+            battleId: s.battleId,
+            startDate: s.battle.startDate.toISOString(),
+            endDate: s.battle.endDate.toISOString(),
+            participated: true,
+            rank: s.rank,
+            score: s.score,
+            fp: s.fp,
+            ratio: s.ratio,
+            ratioRank: s.ratioRank,
+            actionCode: s.actionCode,
+            actionReason: s.actionReason,
+          })),
+          ...nonparticipatedStats.slice(0, 20).map((s) => ({
+            battleId: s.battleId,
+            startDate: s.battle.startDate.toISOString(),
+            endDate: s.battle.endDate.toISOString(),
+            participated: false,
+            rank: null,
+            score: null,
+            fp: s.fp,
+            ratio: null,
+            ratioRank: null,
+            actionCode: s.actionCode,
+            actionReason: s.actionReason,
+          })),
+        ]
+          .sort((a, b) => b.startDate.localeCompare(a.startDate))
+          .slice(0, 20);
+
+        // Calculate action code frequency
+        const allActionCodes = [
+          ...participatedStats.map((s) => s.actionCode),
+          ...nonparticipatedStats.map((s) => s.actionCode),
+        ];
+
+        const actionCodeCounts: Record<string, number> = {};
+        allActionCodes.forEach((code) => {
+          actionCodeCounts[code] = (actionCodeCounts[code] || 0) + 1;
+        });
+
+        const actionCodeHistory = Object.entries(actionCodeCounts)
+          .map(([actionCode, count]) => ({
+            actionCode,
+            count,
+            percentage: totalBattles > 0 ? (count / totalBattles) * 100 : 0,
+          }))
+          .sort((a, b) => b.count - a.count);
+
+        return reply.status(200).send({
+          player: {
+            ...player,
+            joinedDate: player.joinedDate.toISOString(),
+            leftDate: player.leftDate ? player.leftDate.toISOString() : null,
+            kickedDate: player.kickedDate ? player.kickedDate.toISOString() : null,
+            createdAt: player.createdAt.toISOString(),
+            updatedAt: player.updatedAt.toISOString(),
+          },
+          summary: {
+            totalBattles,
+            totalParticipated,
+            totalNonparticipated,
+            averageScore,
+            averageFp,
+            averageRatio,
+            averageRank,
+            averageRatioRank,
+            participationRate,
+          },
+          recentBattles,
+          actionCodeHistory,
+        });
+      } catch (error) {
+        console.error('Error fetching player history:', error);
+        return reply.status(500).send({
+          error: 'Internal Server Error',
+          message: 'Failed to fetch player history',
+        });
+      }
+    }
+  );
+
+  /**
    * GET /api/clans/:clanId/roster
    * Story 3.1: View Clan Roster (Authenticated Admin)
    * Story 3.2: View Roster (Anonymous)
@@ -799,6 +1043,300 @@ const rosterRoutes: FastifyPluginAsync = async (fastify) => {
           message: 'Failed to reactivate player',
         });
       }
+    }
+  );
+
+  /**
+   * POST /api/clans/:clanId/roster/import
+   * Story 3.9: Bulk Import Roster
+   * Import multiple roster members from CSV data
+   */
+  fastify.post<{
+    Params: { clanId: string };
+    Body: { players: Array<{ playerName: string; joinedDate?: string }> };
+  }>(
+    '/:clanId/roster/import',
+    {
+      onRequest: [authenticate],
+      schema: {
+        description: 'Import multiple roster members from CSV data',
+        tags: ['Roster'],
+        security: [{ bearerAuth: [] }],
+        params: clanIdParamSchema,
+        body: z.object({
+          players: z.array(
+            z.object({
+              playerName: z.string().min(1).max(100),
+              joinedDate: z.string().optional(),
+            })
+          ),
+        }),
+        response: {
+          200: z.object({
+            imported: z.number(),
+            failed: z.number(),
+            errors: z.array(
+              z.object({
+                playerName: z.string(),
+                error: z.string(),
+              })
+            ),
+          }),
+        },
+      },
+    },
+    async (
+      request: FastifyRequest<{
+        Params: { clanId: string };
+        Body: { players: Array<{ playerName: string; joinedDate?: string }> };
+      }>,
+      reply: FastifyReply
+    ) => {
+      const authUser = request.authUser;
+      if (!authUser) {
+        return reply
+          .status(401)
+          .send({ error: 'Unauthorized', message: 'Authentication required' });
+      }
+
+      const clanId = parseInt(request.params.clanId, 10);
+
+      if (isNaN(clanId)) {
+        return reply.status(400).send({
+          error: 'Validation Error',
+          message: 'Invalid clan ID',
+        });
+      }
+
+      // Check authorization
+      const isSuperadmin = authUser.roles.includes('superadmin');
+      const isClanMember = authUser.clanId === clanId;
+
+      if (!isSuperadmin && !isClanMember) {
+        return reply.status(403).send({
+          error: 'Forbidden',
+          message: 'You do not have access to this clan',
+        });
+      }
+
+      const { players } = request.body;
+      const audit = createAuditService(fastify.prisma);
+
+      let imported = 0;
+      const errors: Array<{ playerName: string; error: string }> = [];
+
+      // Get existing players to check for duplicates
+      const existingPlayers = await fastify.prisma.rosterMember.findMany({
+        where: { clanId },
+        select: { playerName: true },
+      });
+
+      const existingNames = new Set(existingPlayers.map((p) => p.playerName.toLowerCase()));
+
+      for (const player of players) {
+        try {
+          // Check for duplicate
+          if (existingNames.has(player.playerName.toLowerCase())) {
+            errors.push({
+              playerName: player.playerName,
+              error: 'Player already exists in roster',
+            });
+            continue;
+          }
+
+          // Check for duplicate within import batch
+          if (existingNames.has(player.playerName.toLowerCase())) {
+            errors.push({
+              playerName: player.playerName,
+              error: 'Duplicate player name in import batch',
+            });
+            continue;
+          }
+
+          // Create the roster member
+          await fastify.prisma.rosterMember.create({
+            data: {
+              clanId,
+              playerName: player.playerName,
+              joinedDate: player.joinedDate ? new Date(player.joinedDate) : new Date(),
+              active: true,
+            },
+          });
+
+          existingNames.add(player.playerName.toLowerCase());
+          imported++;
+        } catch (error) {
+          console.error(`Error importing player ${player.playerName}:`, error);
+          errors.push({
+            playerName: player.playerName,
+            error: error instanceof Error ? error.message : 'Unknown error',
+          });
+        }
+      }
+
+      // Log the bulk import action
+      await audit.log({
+        actorId: authUser.userId,
+        actionType: AuditAction.ROSTER_MEMBER_ADDED,
+        entityType: EntityType.ROSTER_MEMBER,
+        entityId: 'bulk-import',
+        clanId,
+        details: JSON.stringify({ imported, failed: errors.length }),
+        result: imported > 0 ? AuditResult.SUCCESS : AuditResult.FAILURE,
+      });
+
+      return reply.status(200).send({
+        imported,
+        failed: errors.length,
+        errors,
+      });
+    }
+  );
+
+  /**
+   * GET /api/clans/:clanId/roster/export
+   * Story 3.9: Export Roster
+   * Export roster members as CSV data
+   */
+  fastify.get<{ Params: { clanId: string }; Querystring: { active?: string } }>(
+    '/:clanId/roster/export',
+    {
+      onRequest: [authenticate],
+      schema: {
+        description: 'Export roster members as CSV data',
+        tags: ['Roster'],
+        security: [{ bearerAuth: [] }],
+        params: clanIdParamSchema,
+        querystring: z.object({
+          active: z.enum(['true', 'false', 'all']).optional().default('all'),
+        }),
+        response: {
+          200: z.object({
+            csv: z.string(),
+            filename: z.string(),
+          }),
+        },
+      },
+    },
+    async (
+      request: FastifyRequest<{ Params: { clanId: string }; Querystring: { active?: string } }>,
+      reply: FastifyReply
+    ) => {
+      const authUser = request.authUser;
+      if (!authUser) {
+        return reply
+          .status(401)
+          .send({ error: 'Unauthorized', message: 'Authentication required' });
+      }
+
+      const clanId = parseInt(request.params.clanId, 10);
+
+      if (isNaN(clanId)) {
+        return reply.status(400).send({
+          error: 'Validation Error',
+          message: 'Invalid clan ID',
+        });
+      }
+
+      // Check authorization
+      const isSuperadmin = authUser.roles.includes('superadmin');
+      const isClanMember = authUser.clanId === clanId;
+
+      if (!isSuperadmin && !isClanMember) {
+        return reply.status(403).send({
+          error: 'Forbidden',
+          message: 'You do not have access to this clan',
+        });
+      }
+
+      const { active } = request.query;
+
+      // Build where clause
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const where: any = { clanId };
+
+      if (active === 'true') {
+        where.active = true;
+      } else if (active === 'false') {
+        where.active = false;
+      }
+
+      try {
+        const players = await fastify.prisma.rosterMember.findMany({
+          where,
+          orderBy: { playerName: 'asc' },
+        });
+
+        // Generate CSV
+        const header = 'Player Name,Joined Date,Active,Left Date,Kicked Date\n';
+        const rows = players
+          .map((p) => {
+            const joinedDate = p.joinedDate.toISOString().split('T')[0];
+            const leftDate = p.leftDate ? p.leftDate.toISOString().split('T')[0] : '';
+            const kickedDate = p.kickedDate ? p.kickedDate.toISOString().split('T')[0] : '';
+            return `"${p.playerName}",${joinedDate},${p.active},${leftDate},${kickedDate}`;
+          })
+          .join('\n');
+
+        const csv = header + rows;
+        const filename = `roster-export-${clanId}-${new Date().toISOString().split('T')[0]}.csv`;
+
+        return reply.status(200).send({
+          csv,
+          filename,
+        });
+      } catch (error) {
+        console.error('Error exporting roster:', error);
+        return reply.status(500).send({
+          error: 'Internal Server Error',
+          message: 'Failed to export roster',
+        });
+      }
+    }
+  );
+
+  /**
+   * GET /api/clans/:clanId/roster/template
+   * Story 3.9: Download Roster Import Template
+   * Get CSV template for roster import
+   */
+  fastify.get<{ Params: { clanId: string } }>(
+    '/:clanId/roster/template',
+    {
+      schema: {
+        description: 'Get CSV template for roster import',
+        tags: ['Roster'],
+        params: clanIdParamSchema,
+        response: {
+          200: z.object({
+            csv: z.string(),
+            filename: z.string(),
+          }),
+        },
+      },
+    },
+    async (request: FastifyRequest<{ Params: { clanId: string } }>, reply: FastifyReply) => {
+      const clanId = parseInt(request.params.clanId, 10);
+
+      if (isNaN(clanId)) {
+        return reply.status(400).send({
+          error: 'Validation Error',
+          message: 'Invalid clan ID',
+        });
+      }
+
+      // Generate CSV template with example data
+      const csv = `Player Name,Joined Date
+Example Player 1,2025-01-01
+Example Player 2,2025-01-15
+Example Player 3,2025-02-01`;
+
+      const filename = `roster-import-template-${clanId}.csv`;
+
+      return reply.status(200).send({
+        csv,
+        filename,
+      });
     }
   );
 };

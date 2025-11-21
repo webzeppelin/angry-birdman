@@ -8,6 +8,8 @@ export { ClanAdminsPage } from './ClanAdminsPage';
 export { ClanSettingsPage } from './ClanSettingsPage';
 export { AdminRequestsPage } from './AdminRequestsPage';
 export { RosterPage } from './RosterPage';
+export { default as RosterImportPage } from './RosterImportPage';
+export { default as PlayerHistoryPage } from './PlayerHistoryPage';
 export { PublicRosterPage } from './PublicRosterPage';
 export { default as BattleListPage } from './battles/BattleListPage';
 export { default as NewBattlePage } from './battles/NewBattlePage';

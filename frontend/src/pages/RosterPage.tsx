@@ -56,7 +56,7 @@ export function RosterPage() {
   const queryClient = useQueryClient();
 
   // State for filters and search
-  const [activeFilter, setActiveFilter] = useState<ActiveFilter>('all');
+  const [activeFilter, setActiveFilter] = useState<ActiveFilter>('active');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<SortField>('playerName');
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
@@ -76,7 +76,10 @@ export function RosterPage() {
   // Build query parameters (memoized to prevent re-creating on every render)
   const queryParams = useMemo(() => {
     const params = new URLSearchParams();
-    if (activeFilter !== 'all') {
+    // Always include active parameter to prevent API default behavior
+    if (activeFilter === 'all') {
+      params.append('active', 'all');
+    } else {
       params.append('active', String(activeFilter === 'active'));
     }
     if (searchQuery) {
@@ -141,6 +144,30 @@ export function RosterPage() {
     setSearchQuery(e.target.value);
     setPage(1);
   }, []);
+
+  // Export handler
+  const handleExport = async () => {
+    try {
+      const response = await apiClient.get(
+        `/api/clans/${clanId}/roster/export?active=${activeFilter === 'all' ? 'all' : activeFilter === 'active' ? 'true' : 'false'}`
+      );
+      const { csv, filename } = response.data as { csv: string; filename: string };
+
+      // Create blob and download
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error exporting roster:', error);
+      alert('Failed to export roster. Please try again.');
+    }
+  };
 
   // Redirect if not authorized
   if (!isAuthorized) {
@@ -349,8 +376,13 @@ export function RosterPage() {
                     <tbody className="divide-y divide-neutral-100">
                       {players.map((player) => (
                         <tr key={player.playerId} className="hover:bg-neutral-50">
-                          <td className="px-6 py-4 text-sm font-medium text-neutral-900">
-                            {player.playerName}
+                          <td className="px-6 py-4 text-sm">
+                            <Link
+                              to={`/clans/${clanId}/roster/${player.playerId}/history`}
+                              className="text-primary-600 hover:text-primary-800 font-medium hover:underline"
+                            >
+                              {player.playerName}
+                            </Link>
                           </td>
                           <td className="px-6 py-4 text-sm">
                             {player.active ? (
@@ -439,6 +471,22 @@ export function RosterPage() {
                 )}
               </>
             )}
+          </div>
+
+          {/* Import/Export Actions */}
+          <div className="mt-6 flex justify-center gap-4">
+            <Link
+              to={`/clans/${clanId}/roster/import`}
+              className="flex items-center gap-2 rounded bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700"
+            >
+              Import CSV
+            </Link>
+            <button
+              onClick={() => void handleExport()}
+              className="flex items-center gap-2 rounded bg-green-600 px-4 py-2 text-sm text-white hover:bg-green-700"
+            >
+              Export CSV
+            </button>
           </div>
         </div>
       </div>
