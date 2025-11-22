@@ -178,7 +178,7 @@ export function ClanPage() {
             </Link>
 
             <Link
-              to={`/clans/${clan.clanId}/roster`}
+              to={`/clans/${clan.clanId}/roster/public`}
               className="shadow-card hover:shadow-card-hover group rounded-lg bg-white p-6 transition-all hover:scale-105"
             >
               <div className="mb-3 text-3xl">👥</div>
