@@ -27,6 +27,8 @@ import {
   BattleListPage,
   NewBattlePage,
   BattleDetailPage,
+  MonthlyStatsPage,
+  YearlyStatsPage,
   DashboardPage,
   LoginPage,
   CallbackPage,
@@ -190,6 +192,22 @@ function App() {
               element={
                 <Layout>
                   <BattleDetailPage />
+                </Layout>
+              }
+            />
+            <Route
+              path="/clans/:clanId/stats/months/:monthId"
+              element={
+                <Layout>
+                  <MonthlyStatsPage />
+                </Layout>
+              }
+            />
+            <Route
+              path="/clans/:clanId/stats/years/:yearId"
+              element={
+                <Layout>
+                  <YearlyStatsPage />
                 </Layout>
               }
             />

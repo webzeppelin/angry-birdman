@@ -103,6 +103,20 @@ export default function BattleListPage() {
               'Loading battles...'
             )}
           </p>
+          <div className="mt-2 flex gap-3">
+            <Link
+              to={`/clans/${clanIdNum}/stats/months/${new Date().toISOString().slice(0, 7).replace('-', '')}`}
+              className="text-sm text-blue-600 hover:text-blue-800"
+            >
+              📊 View Monthly Stats
+            </Link>
+            <Link
+              to={`/clans/${clanIdNum}/stats/years/${new Date().getFullYear()}`}
+              className="text-sm text-blue-600 hover:text-blue-800"
+            >
+              📈 View Yearly Stats
+            </Link>
+          </div>
         </div>
         {canCreateBattle && (
           <Link

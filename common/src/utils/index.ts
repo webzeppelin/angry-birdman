@@ -8,3 +8,6 @@ export * from './calculations.js';
 
 // Date formatting utilities
 export * from './date-formatting.js';
+
+// Period calculation utilities
+export * from './period-calculations.js';

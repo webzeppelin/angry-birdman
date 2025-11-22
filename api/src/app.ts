@@ -21,8 +21,10 @@ import authRoutes from './routes/auth.js';
 import battlesRoutes from './routes/battles.js';
 import clanRoutes from './routes/clans.js';
 import healthRoutes from './routes/health.js';
+import monthlyStatsRoutes from './routes/monthly-stats.js';
 import rosterRoutes from './routes/roster.js';
 import usersRoutes from './routes/users.js';
+import yearlyStatsRoutes from './routes/yearly-stats.js';
 
 /**
  * Build Fastify application with all plugins and routes
@@ -110,6 +112,8 @@ export async function buildApp() {
   await fastify.register(clanRoutes, { prefix: '/api/clans' });
   await fastify.register(rosterRoutes, { prefix: '/api/clans' }); // Roster routes nested under /api/clans
   await fastify.register(battlesRoutes, { prefix: '/api/clans' }); // Battle routes nested under /api/clans
+  await fastify.register(monthlyStatsRoutes, { prefix: '/api' }); // Monthly stats routes
+  await fastify.register(yearlyStatsRoutes, { prefix: '/api' }); // Yearly stats routes
   await fastify.register(usersRoutes, { prefix: '/api/users' });
   await fastify.register(adminRequestsRoutes, { prefix: '/api/admin-requests' });
   await fastify.register(auditLogRoutes, { prefix: '/api/audit-logs' });
