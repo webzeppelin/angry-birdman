@@ -47,13 +47,16 @@ export default function BattleMetadataForm({
     }
   }, [startDate, endDate]);
 
-  // Check for duplicate battles
+  // Check for duplicate battles (exact date match)
   const { data: existingBattles } = useQuery<BattleListResponse>({
     queryKey: ['battles', clanId, { startDate }],
     queryFn: async () => {
-      const response = await fetch(`/api/clans/${clanId}/battles?startDate=${startDate}`, {
-        credentials: 'include',
-      });
+      const response = await fetch(
+        `/api/clans/${clanId}/battles?startDate=${startDate}&endDate=${startDate}`,
+        {
+          credentials: 'include',
+        }
+      );
       if (!response.ok) throw new Error('Failed to fetch battles');
       return response.json();
     },
