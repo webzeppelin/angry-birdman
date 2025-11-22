@@ -12,6 +12,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Link, useParams } from 'react-router-dom';
 
 import { AdminRequestButton } from '@/components/AdminRequestButton';
+import { useAuth } from '@/contexts/AuthContext';
 import { apiClient } from '@/lib/api-client';
 
 interface ClanDetails {
@@ -30,6 +31,7 @@ interface ClanDetails {
 
 export function ClanPage() {
   const { clanId } = useParams<{ clanId: string }>();
+  const { user } = useAuth();
 
   // Fetch clan details
   const {
@@ -44,6 +46,20 @@ export function ClanPage() {
     },
     enabled: !!clanId,
   });
+
+  // Check if the current user is an admin/owner of this clan
+  const isUserClanAdmin =
+    user &&
+    clan &&
+    user.clanId === clan.clanId &&
+    (user.roles.includes('clan-admin') ||
+      user.roles.includes('clan-owner') ||
+      user.roles.includes('superadmin'));
+
+  // Determine roster link based on whether user is admin of this clan
+  const rosterLink = isUserClanAdmin
+    ? `/clans/${clan?.clanId}/roster`
+    : `/clans/${clan?.clanId}/roster/public`;
 
   if (isLoading) {
     return (
@@ -178,14 +194,18 @@ export function ClanPage() {
             </Link>
 
             <Link
-              to={`/clans/${clan.clanId}/roster/public`}
+              to={rosterLink}
               className="shadow-card hover:shadow-card-hover group rounded-lg bg-white p-6 transition-all hover:scale-105"
             >
               <div className="mb-3 text-3xl">👥</div>
               <h3 className="group-hover:text-primary mb-2 text-lg font-semibold text-neutral-800">
                 Clan Roster
               </h3>
-              <p className="text-sm text-neutral-600">View current and historical clan members</p>
+              <p className="text-sm text-neutral-600">
+                {isUserClanAdmin
+                  ? 'Manage clan roster and player information'
+                  : 'View current and historical clan members'}
+              </p>
             </Link>
 
             <Link
