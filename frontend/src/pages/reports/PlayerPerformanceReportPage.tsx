@@ -74,10 +74,10 @@ export function PlayerPerformanceReportPage() {
     data: roster,
     isLoading: isLoadingRoster,
     error: rosterError,
-  } = useQuery<{ members: RosterMember[] }>({
+  } = useQuery<{ players: RosterMember[] }>({
     queryKey: ['roster', clanId],
     queryFn: async () => {
-      const response = await apiClient.get<{ members: RosterMember[] }>(
+      const response = await apiClient.get<{ players: RosterMember[] }>(
         `/api/clans/${clanId}/roster`
       );
       return response.data;
@@ -87,8 +87,8 @@ export function PlayerPerformanceReportPage() {
 
   // Auto-select first player when roster loads
   useEffect(() => {
-    if (roster?.members && roster.members.length > 0 && !selectedPlayerId) {
-      setSelectedPlayerId(roster.members[0].playerId);
+    if (roster?.players && roster.players.length > 0 && !selectedPlayerId) {
+      setSelectedPlayerId(roster.players[0].playerId);
     }
   }, [roster, selectedPlayerId]);
 
@@ -159,10 +159,10 @@ export function PlayerPerformanceReportPage() {
           id="player-select"
           value={selectedPlayerId || ''}
           onChange={(e) => setSelectedPlayerId(parseInt(e.target.value))}
-          className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          className="max-w-md rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           disabled={isLoadingRoster}
         >
-          {(roster?.members || []).map((member) => (
+          {(roster?.players || []).map((member) => (
             <option key={member.playerId} value={member.playerId}>
               {member.playerName} {member.active ? '' : '(Inactive)'}
             </option>
