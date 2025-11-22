@@ -29,6 +29,11 @@ import {
   BattleDetailPage,
   MonthlyStatsPage,
   YearlyStatsPage,
+  ReportsPage,
+  FlockPowerReportPage,
+  RatioReportPage,
+  ParticipationReportPage,
+  MarginReportPage,
   DashboardPage,
   LoginPage,
   CallbackPage,
@@ -208,6 +213,46 @@ function App() {
               element={
                 <Layout>
                   <YearlyStatsPage />
+                </Layout>
+              }
+            />
+            <Route
+              path="/clans/:clanId/reports"
+              element={
+                <Layout>
+                  <ReportsPage />
+                </Layout>
+              }
+            />
+            <Route
+              path="/clans/:clanId/reports/flock-power"
+              element={
+                <Layout>
+                  <FlockPowerReportPage />
+                </Layout>
+              }
+            />
+            <Route
+              path="/clans/:clanId/reports/ratio"
+              element={
+                <Layout>
+                  <RatioReportPage />
+                </Layout>
+              }
+            />
+            <Route
+              path="/clans/:clanId/reports/participation"
+              element={
+                <Layout>
+                  <ParticipationReportPage />
+                </Layout>
+              }
+            />
+            <Route
+              path="/clans/:clanId/reports/margin"
+              element={
+                <Layout>
+                  <MarginReportPage />
                 </Layout>
               }
             />

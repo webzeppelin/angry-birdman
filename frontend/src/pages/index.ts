@@ -16,6 +16,7 @@ export { default as NewBattlePage } from './battles/NewBattlePage';
 export { default as BattleDetailPage } from './battles/BattleDetailPage';
 export { default as MonthlyStatsPage } from './stats/MonthlyStatsPage';
 export { default as YearlyStatsPage } from './stats/YearlyStatsPage';
+export * from './reports';
 export { DashboardPage } from './DashboardPage';
 export { LoginPage } from './LoginPage';
 export { CallbackPage } from './CallbackPage';

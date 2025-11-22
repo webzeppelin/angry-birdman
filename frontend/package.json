@@ -17,12 +17,14 @@
   },
   "dependencies": {
     "@angrybirdman/common": "*",
+    "@heroicons/react": "^2.2.0",
     "@tanstack/react-query": "^5.17.0",
     "axios": "^1.13.2",
     "oidc-client-ts": "^3.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.0",
+    "recharts": "^2.15.4",
     "zod": "^3.22.4"
   },
   "devDependencies": {
