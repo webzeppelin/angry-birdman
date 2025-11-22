@@ -34,6 +34,8 @@ import {
   RatioReportPage,
   ParticipationReportPage,
   MarginReportPage,
+  PlayerPerformanceReportPage,
+  MatchupAnalysisPage,
   DashboardPage,
   LoginPage,
   CallbackPage,
@@ -253,6 +255,22 @@ function App() {
               element={
                 <Layout>
                   <MarginReportPage />
+                </Layout>
+              }
+            />
+            <Route
+              path="/clans/:clanId/reports/player"
+              element={
+                <Layout>
+                  <PlayerPerformanceReportPage />
+                </Layout>
+              }
+            />
+            <Route
+              path="/clans/:clanId/reports/matchups"
+              element={
+                <Layout>
+                  <MatchupAnalysisPage />
                 </Layout>
               }
             />

@@ -8,3 +8,5 @@ export { FlockPowerReportPage } from './FlockPowerReportPage';
 export { RatioReportPage } from './RatioReportPage';
 export { ParticipationReportPage } from './ParticipationReportPage';
 export { MarginReportPage } from './MarginReportPage';
+export { PlayerPerformanceReportPage } from './PlayerPerformanceReportPage';
+export { MatchupAnalysisPage } from './MatchupAnalysisPage';

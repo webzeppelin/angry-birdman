@@ -51,6 +51,20 @@ const reports: ReportCard[] = [
     path: 'margin',
     color: 'bg-orange-500',
   },
+  {
+    title: 'Player Performance',
+    description: 'Track individual player development over time',
+    icon: UsersIcon,
+    path: 'player',
+    color: 'bg-indigo-500',
+  },
+  {
+    title: 'Matchup Analysis',
+    description: 'Analyze opponents and competitive environment',
+    icon: ChartBarIcon,
+    path: 'matchups',
+    color: 'bg-red-500',
+  },
 ];
 
 export function ReportsPage() {
@@ -75,7 +89,7 @@ export function ReportsPage() {
       </div>
 
       {/* Report Cards Grid */}
-      <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2">
+      <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {reports.map((report) => {
           const Icon = report.icon;
           return (

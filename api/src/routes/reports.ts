@@ -506,6 +506,440 @@ const reportsRoutes: FastifyPluginAsync = async (fastify) => {
       }
     }
   );
+
+  /**
+   * GET /api/clans/:clanId/reports/player/:playerId
+   * Story 7.6: View Player Performance Over Time
+   * Get individual player performance trends with comparison to clan average
+   */
+  fastify.get(
+    '/:clanId/reports/player/:playerId',
+    {
+      schema: {
+        params: z.object({
+          clanId: z.string().regex(/^\d+$/),
+          playerId: z.string().regex(/^\d+$/),
+        }),
+        querystring: z.object({
+          startDate: z
+            .string()
+            .regex(/^\d{8}$/)
+            .optional(),
+          endDate: z
+            .string()
+            .regex(/^\d{8}$/)
+            .optional(),
+        }),
+        response: {
+          404: errorResponseSchema,
+          500: errorResponseSchema,
+        },
+      },
+    },
+    async (
+      request: FastifyRequest<{
+        Params: { clanId: string; playerId: string };
+        Querystring: { startDate?: string; endDate?: string };
+      }>,
+      reply: FastifyReply
+    ) => {
+      try {
+        const clanId = parseInt(request.params.clanId);
+        const playerId = parseInt(request.params.playerId);
+        const { startDate, endDate } = request.query;
+
+        // Verify clan exists
+        const clan = await fastify.prisma.clan.findUnique({
+          where: { clanId },
+        });
+        if (!clan) {
+          return reply.status(404).send({
+            error: 'Not Found',
+            message: 'Clan not found',
+          });
+        }
+
+        // Verify player exists and belongs to clan
+        const player = await fastify.prisma.rosterMember.findUnique({
+          where: { playerId },
+        });
+        if (!player || player.clanId !== clanId) {
+          return reply.status(404).send({
+            error: 'Not Found',
+            message: 'Player not found or does not belong to this clan',
+          });
+        }
+
+        // Build date filter
+        const dateFilter: { gte?: Date; lte?: Date } = {};
+        if (startDate) {
+          const year = parseInt(startDate.substring(0, 4));
+          const month = parseInt(startDate.substring(4, 6)) - 1;
+          const day = parseInt(startDate.substring(6, 8));
+          dateFilter.gte = new Date(year, month, day);
+        }
+        if (endDate) {
+          const year = parseInt(endDate.substring(0, 4));
+          const month = parseInt(endDate.substring(4, 6)) - 1;
+          const day = parseInt(endDate.substring(6, 8));
+          dateFilter.lte = new Date(year, month, day, 23, 59, 59);
+        }
+
+        // Fetch player's battle stats
+        const playerStats = await fastify.prisma.clanBattlePlayerStats.findMany({
+          where: {
+            playerId,
+            clanId,
+            ...(startDate || endDate
+              ? {
+                  battle: {
+                    startDate: dateFilter,
+                  },
+                }
+              : {}),
+          },
+          include: {
+            battle: {
+              select: {
+                battleId: true,
+                startDate: true,
+                opponentName: true,
+                result: true,
+                ratio: true,
+                averageRatio: true,
+              },
+            },
+          },
+          orderBy: {
+            battleId: 'asc',
+          },
+        });
+
+        // Fetch clan averages for same time period
+        const battles = await fastify.prisma.clanBattle.findMany({
+          where: {
+            clanId,
+            ...(startDate || endDate ? { startDate: dateFilter } : {}),
+          },
+          select: {
+            battleId: true,
+            startDate: true,
+            ratio: true,
+            averageRatio: true,
+          },
+          orderBy: {
+            startDate: 'asc',
+          },
+        });
+
+        // Build response data
+        const performanceData = playerStats.map((stat) => ({
+          date: stat.battle.startDate.toISOString().split('T')[0] || '',
+          battleId: stat.battle.battleId,
+          opponentName: stat.battle.opponentName,
+          playerRatio: stat.ratio,
+          clanRatio: stat.battle.ratio,
+          clanAverageRatio: stat.battle.averageRatio,
+          rank: stat.rank,
+          ratioRank: stat.ratioRank,
+          score: stat.score,
+          fp: stat.fp,
+          played: true,
+        }));
+
+        // Calculate summary statistics
+        const totalBattles = battles.length;
+        const battlesPlayed = playerStats.length;
+        const participationRate = totalBattles > 0 ? (battlesPlayed / totalBattles) * 100 : 0;
+
+        const ratios = playerStats.map((s) => s.ratio);
+        const avgRatio =
+          ratios.length > 0 ? ratios.reduce((sum, r) => sum + r, 0) / ratios.length : 0;
+        const minRatio = ratios.length > 0 ? Math.min(...ratios) : 0;
+        const maxRatio = ratios.length > 0 ? Math.max(...ratios) : 0;
+
+        const clanAvgRatio =
+          battles.length > 0 ? battles.reduce((sum, b) => sum + b.ratio, 0) / battles.length : 0;
+
+        // Calculate trend (improvement/decline)
+        let trend = 'stable';
+        if (ratios.length >= 3) {
+          const firstThird = ratios.slice(0, Math.floor(ratios.length / 3));
+          const lastThird = ratios.slice(-Math.floor(ratios.length / 3));
+          const firstAvg = firstThird.reduce((sum, r) => sum + r, 0) / firstThird.length;
+          const lastAvg = lastThird.reduce((sum, r) => sum + r, 0) / lastThird.length;
+          const change = ((lastAvg - firstAvg) / firstAvg) * 100;
+
+          if (change > 5) trend = 'improving';
+          else if (change < -5) trend = 'declining';
+        }
+
+        const response = {
+          player: {
+            playerId: player.playerId,
+            name: player.playerName,
+            active: player.active,
+          },
+          performance: performanceData,
+          summary: {
+            totalBattles,
+            battlesPlayed,
+            participationRate: parseFloat(participationRate.toFixed(2)),
+            avgRatio: parseFloat(avgRatio.toFixed(2)),
+            minRatio: parseFloat(minRatio.toFixed(2)),
+            maxRatio: parseFloat(maxRatio.toFixed(2)),
+            clanAvgRatio: parseFloat(clanAvgRatio.toFixed(2)),
+            comparisonToClan: parseFloat(((avgRatio / clanAvgRatio - 1) * 100).toFixed(2)),
+            trend,
+          },
+        };
+
+        return response;
+      } catch (error) {
+        fastify.log.error(error);
+        return reply.status(500).send({
+          error: 'Internal Server Error',
+          message: 'Failed to fetch player performance data',
+        });
+      }
+    }
+  );
+
+  /**
+   * GET /api/clans/:clanId/reports/matchups
+   * Story 7.7: View Matchup Analysis
+   * Get aggregated opponent statistics and matchup history
+   */
+  fastify.get(
+    '/:clanId/reports/matchups',
+    {
+      schema: {
+        params: clanIdParamSchema,
+        querystring: z.object({
+          startDate: z
+            .string()
+            .regex(/^\d{8}$/)
+            .optional(),
+          endDate: z
+            .string()
+            .regex(/^\d{8}$/)
+            .optional(),
+        }),
+        response: {
+          404: errorResponseSchema,
+          500: errorResponseSchema,
+        },
+      },
+    },
+    async (
+      request: FastifyRequest<{
+        Params: { clanId: string };
+        Querystring: { startDate?: string; endDate?: string };
+      }>,
+      reply: FastifyReply
+    ) => {
+      try {
+        const clanId = parseInt(request.params.clanId);
+        const { startDate, endDate } = request.query;
+
+        // Verify clan exists
+        const clan = await fastify.prisma.clan.findUnique({
+          where: { clanId },
+        });
+        if (!clan) {
+          return reply.status(404).send({
+            error: 'Not Found',
+            message: 'Clan not found',
+          });
+        }
+
+        // Build date filter
+        const dateFilter: { gte?: Date; lte?: Date } = {};
+        if (startDate) {
+          const year = parseInt(startDate.substring(0, 4));
+          const month = parseInt(startDate.substring(4, 6)) - 1;
+          const day = parseInt(startDate.substring(6, 8));
+          dateFilter.gte = new Date(year, month, day);
+        }
+        if (endDate) {
+          const year = parseInt(endDate.substring(0, 4));
+          const month = parseInt(endDate.substring(4, 6)) - 1;
+          const day = parseInt(endDate.substring(6, 8));
+          dateFilter.lte = new Date(year, month, day, 23, 59, 59);
+        }
+
+        // Fetch all battles with opponents
+        const battles = await fastify.prisma.clanBattle.findMany({
+          where: {
+            clanId,
+            ...(startDate || endDate ? { startDate: dateFilter } : {}),
+          },
+          select: {
+            battleId: true,
+            startDate: true,
+            opponentName: true,
+            opponentRovioId: true,
+            opponentCountry: true,
+            score: true,
+            opponentScore: true,
+            baselineFp: true,
+            opponentFp: true,
+            result: true,
+          },
+          orderBy: {
+            startDate: 'desc',
+          },
+        });
+
+        // Aggregate by opponent
+        const opponentMap = new Map<
+          string,
+          {
+            name: string;
+            rovioId: string;
+            country: string;
+            battles: number;
+            wins: number;
+            losses: number;
+            ties: number;
+            totalFpDiff: number;
+            recentBattles: Array<{
+              battleId: string;
+              date: string;
+              result: number;
+              score: number;
+              opponentScore: number;
+              fpDiff: number;
+            }>;
+          }
+        >();
+
+        for (const battle of battles) {
+          const key = battle.opponentName;
+          const existing = opponentMap.get(key);
+          const fpDiff = battle.baselineFp - battle.opponentFp;
+
+          if (existing) {
+            existing.battles += 1;
+            if (battle.result === 1) existing.wins += 1;
+            else if (battle.result === -1) existing.losses += 1;
+            else existing.ties += 1;
+            existing.totalFpDiff += fpDiff;
+            existing.recentBattles.push({
+              battleId: battle.battleId,
+              date: battle.startDate.toISOString().split('T')[0] || '',
+              result: battle.result,
+              score: battle.score,
+              opponentScore: battle.opponentScore,
+              fpDiff,
+            });
+          } else {
+            opponentMap.set(key, {
+              name: battle.opponentName,
+              rovioId: battle.opponentRovioId.toString(),
+              country: battle.opponentCountry,
+              battles: 1,
+              wins: battle.result === 1 ? 1 : 0,
+              losses: battle.result === -1 ? 1 : 0,
+              ties: battle.result === 0 ? 1 : 0,
+              totalFpDiff: fpDiff,
+              recentBattles: [
+                {
+                  battleId: battle.battleId,
+                  date: battle.startDate.toISOString().split('T')[0] || '',
+                  result: battle.result,
+                  score: battle.score,
+                  opponentScore: battle.opponentScore,
+                  fpDiff,
+                },
+              ],
+            });
+          }
+        }
+
+        // Convert to array and calculate averages
+        const opponents = Array.from(opponentMap.values()).map((opp) => ({
+          name: opp.name,
+          rovioId: opp.rovioId,
+          country: opp.country,
+          battles: opp.battles,
+          wins: opp.wins,
+          losses: opp.losses,
+          ties: opp.ties,
+          winRate: parseFloat(((opp.wins / opp.battles) * 100).toFixed(2)),
+          avgFpDiff: parseFloat((opp.totalFpDiff / opp.battles).toFixed(0)),
+          isRival: opp.battles >= 3, // Consider opponents faced 3+ times as rivals
+          recentBattles: opp.recentBattles.slice(0, 5), // Last 5 battles only
+        }));
+
+        // Sort by number of battles (rivals first)
+        opponents.sort((a, b) => b.battles - a.battles);
+
+        // Aggregate by country
+        const countryMap = new Map<
+          string,
+          {
+            country: string;
+            battles: number;
+            wins: number;
+            losses: number;
+            ties: number;
+          }
+        >();
+
+        for (const battle of battles) {
+          const country = battle.opponentCountry;
+          const existing = countryMap.get(country);
+
+          if (existing) {
+            existing.battles += 1;
+            if (battle.result === 1) existing.wins += 1;
+            else if (battle.result === -1) existing.losses += 1;
+            else existing.ties += 1;
+          } else {
+            countryMap.set(country, {
+              country,
+              battles: 1,
+              wins: battle.result === 1 ? 1 : 0,
+              losses: battle.result === -1 ? 1 : 0,
+              ties: battle.result === 0 ? 1 : 0,
+            });
+          }
+        }
+
+        const countries = Array.from(countryMap.values())
+          .map((c) => ({
+            country: c.country,
+            battles: c.battles,
+            wins: c.wins,
+            losses: c.losses,
+            ties: c.ties,
+            winRate: parseFloat(((c.wins / c.battles) * 100).toFixed(2)),
+            percentage: parseFloat(((c.battles / battles.length) * 100).toFixed(2)),
+          }))
+          .sort((a, b) => b.battles - a.battles);
+
+        const response = {
+          opponents,
+          countries,
+          summary: {
+            totalBattles: battles.length,
+            uniqueOpponents: opponents.length,
+            uniqueCountries: countries.length,
+            rivals: opponents.filter((o) => o.isRival).length,
+          },
+        };
+
+        return response;
+      } catch (error) {
+        fastify.log.error(error);
+        return reply.status(500).send({
+          error: 'Internal Server Error',
+          message: 'Failed to fetch matchup data',
+        });
+      }
+    }
+  );
 };
 
 export default reportsRoutes;
