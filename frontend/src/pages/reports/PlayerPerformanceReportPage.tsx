@@ -162,7 +162,7 @@ export function PlayerPerformanceReportPage() {
           className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           disabled={isLoadingRoster}
         >
-          {roster?.members?.map((member) => (
+          {(roster?.members || []).map((member) => (
             <option key={member.playerId} value={member.playerId}>
               {member.playerName} {member.active ? '' : '(Inactive)'}
             </option>
