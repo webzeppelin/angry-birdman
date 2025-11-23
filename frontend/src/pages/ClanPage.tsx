@@ -209,15 +209,39 @@ export function ClanPage() {
             </Link>
 
             <Link
-              to={`/clans/${clan.clanId}/stats`}
+              to={`/clans/${clan.clanId}/reports`}
               className="shadow-card hover:shadow-card-hover group rounded-lg bg-white p-6 transition-all hover:scale-105"
             >
               <div className="mb-3 text-3xl">📊</div>
               <h3 className="group-hover:text-primary mb-2 text-lg font-semibold text-neutral-800">
                 Statistics & Reports
               </h3>
+              <p className="text-sm text-neutral-600">Performance trends and analytical reports</p>
+            </Link>
+
+            <Link
+              to={`/clans/${clan.clanId}/stats/months/${new Date().toISOString().slice(0, 7)}`}
+              className="shadow-card hover:shadow-card-hover group rounded-lg bg-white p-6 transition-all hover:scale-105"
+            >
+              <div className="mb-3 text-3xl">📅</div>
+              <h3 className="group-hover:text-primary mb-2 text-lg font-semibold text-neutral-800">
+                Monthly Stats
+              </h3>
               <p className="text-sm text-neutral-600">
-                Monthly summaries, trends, and analytical reports
+                View monthly performance summaries and player statistics
+              </p>
+            </Link>
+
+            <Link
+              to={`/clans/${clan.clanId}/stats/years/${new Date().getFullYear()}`}
+              className="shadow-card hover:shadow-card-hover group rounded-lg bg-white p-6 transition-all hover:scale-105"
+            >
+              <div className="mb-3 text-3xl">🗓️</div>
+              <h3 className="group-hover:text-primary mb-2 text-lg font-semibold text-neutral-800">
+                Yearly Stats
+              </h3>
+              <p className="text-sm text-neutral-600">
+                Review annual performance and year-over-year trends
               </p>
             </Link>
           </div>
