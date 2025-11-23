@@ -88,7 +88,10 @@ export function PlayerPerformanceReportPage() {
   // Auto-select first player when roster loads
   useEffect(() => {
     if (roster?.players && roster.players.length > 0 && !selectedPlayerId) {
-      setSelectedPlayerId(roster.players[0].playerId);
+      const firstPlayer = roster.players[0];
+      if (firstPlayer) {
+        setSelectedPlayerId(firstPlayer.playerId);
+      }
     }
   }, [roster, selectedPlayerId]);
 

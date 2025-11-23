@@ -10,3 +10,4 @@ export { ParticipationReportPage } from './ParticipationReportPage';
 export { MarginReportPage } from './MarginReportPage';
 export { PlayerPerformanceReportPage } from './PlayerPerformanceReportPage';
 export { MatchupAnalysisPage } from './MatchupAnalysisPage';
+export { RosterChurnReportPage } from './RosterChurnReportPage';

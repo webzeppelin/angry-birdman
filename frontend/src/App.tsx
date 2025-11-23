@@ -36,6 +36,7 @@ import {
   MarginReportPage,
   PlayerPerformanceReportPage,
   MatchupAnalysisPage,
+  RosterChurnReportPage,
   DashboardPage,
   LoginPage,
   CallbackPage,
@@ -271,6 +272,14 @@ function App() {
               element={
                 <Layout>
                   <MatchupAnalysisPage />
+                </Layout>
+              }
+            />
+            <Route
+              path="/clans/:clanId/reports/roster-churn"
+              element={
+                <Layout>
+                  <RosterChurnReportPage />
                 </Layout>
               }
             />

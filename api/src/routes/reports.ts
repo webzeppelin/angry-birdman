@@ -940,6 +940,548 @@ const reportsRoutes: FastifyPluginAsync = async (fastify) => {
       }
     }
   );
+
+  /**
+   * GET /api/clans/:clanId/reports/roster-churn
+   * Get roster churn analysis (joins, departures, kicks by month)
+   * Story: 7.8 (View Roster Churn Report)
+   */
+  fastify.get<{
+    Params: z.infer<typeof clanIdParamSchema>;
+    Querystring: z.infer<typeof trendQuerySchema>;
+  }>(
+    '/:clanId/reports/roster-churn',
+    {
+      schema: {
+        description: 'Get roster churn analysis with retention metrics',
+        tags: ['Reports', 'Roster'],
+        params: clanIdParamSchema,
+        querystring: trendQuerySchema,
+        response: {
+          404: errorResponseSchema,
+          500: errorResponseSchema,
+        },
+      },
+    },
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      try {
+        const { clanId } = clanIdParamSchema.parse(request.params);
+        const { startDate, endDate } = trendQuerySchema.parse(request.query);
+        const clanIdNum = parseInt(clanId, 10);
+
+        // Verify clan exists
+        const clan = await fastify.prisma.clan.findUnique({
+          where: { clanId: clanIdNum },
+        });
+
+        if (!clan) {
+          return reply.status(404).send({
+            error: 'Not Found',
+            message: 'Clan not found',
+          });
+        }
+
+        // Build date filter for roster members
+        let dateFilter = {};
+        if (startDate || endDate) {
+          const startDateStr = startDate
+            ? startDate.slice(0, 4) + '-' + startDate.slice(4, 6) + '-' + startDate.slice(6, 8)
+            : null;
+          const endDateStr = endDate
+            ? endDate.slice(0, 4) + '-' + endDate.slice(4, 6) + '-' + endDate.slice(6, 8)
+            : null;
+
+          dateFilter = {
+            OR: [
+              // Joined during period
+              startDateStr && endDateStr
+                ? {
+                    joinedDate: {
+                      gte: new Date(startDateStr),
+                      lte: new Date(endDateStr),
+                    },
+                  }
+                : startDateStr
+                  ? {
+                      joinedDate: {
+                        gte: new Date(startDateStr),
+                      },
+                    }
+                  : endDateStr
+                    ? {
+                        joinedDate: {
+                          lte: new Date(endDateStr),
+                        },
+                      }
+                    : {},
+              // Left during period
+              startDateStr && endDateStr
+                ? {
+                    leftDate: {
+                      gte: new Date(startDateStr),
+                      lte: new Date(endDateStr),
+                    },
+                  }
+                : startDateStr
+                  ? {
+                      leftDate: {
+                        gte: new Date(startDateStr),
+                      },
+                    }
+                  : endDateStr
+                    ? {
+                        leftDate: {
+                          lte: new Date(endDateStr),
+                        },
+                      }
+                    : {},
+              // Kicked during period
+              startDateStr && endDateStr
+                ? {
+                    kickedDate: {
+                      gte: new Date(startDateStr),
+                      lte: new Date(endDateStr),
+                    },
+                  }
+                : startDateStr
+                  ? {
+                      kickedDate: {
+                        gte: new Date(startDateStr),
+                      },
+                    }
+                  : endDateStr
+                    ? {
+                        kickedDate: {
+                          lte: new Date(endDateStr),
+                        },
+                      }
+                    : {},
+            ].filter((f) => Object.keys(f).length > 0), // Remove empty filters
+          };
+        }
+
+        // Fetch all roster members
+        const rosterMembers = await fastify.prisma.rosterMember.findMany({
+          where: {
+            clanId: clanIdNum,
+            ...dateFilter,
+          },
+          select: {
+            playerId: true,
+            playerName: true,
+            joinedDate: true,
+            leftDate: true,
+            kickedDate: true,
+            active: true,
+          },
+          orderBy: {
+            joinedDate: 'asc',
+          },
+        });
+
+        // Fetch battles for action code analysis
+        const battles = await fastify.prisma.clanBattle.findMany({
+          where: {
+            clanId: clanIdNum,
+            ...(startDate || endDate
+              ? {
+                  battleId: {
+                    ...(startDate ? { gte: startDate } : {}),
+                    ...(endDate ? { lte: endDate } : {}),
+                  },
+                }
+              : {}),
+          },
+          include: {
+            playerStats: {
+              select: {
+                actionCode: true,
+              },
+            },
+            nonplayerStats: {
+              select: {
+                actionCode: true,
+              },
+            },
+          },
+          orderBy: {
+            battleId: 'asc',
+          },
+        });
+
+        // Calculate monthly aggregates
+        const monthlyData = new Map<
+          string,
+          { joined: number; left: number; kicked: number; month: string }
+        >();
+
+        // Process joined dates
+        for (const member of rosterMembers) {
+          const monthId = member.joinedDate.toISOString().slice(0, 7).replace('-', '');
+          if (!monthlyData.has(monthId)) {
+            monthlyData.set(monthId, { joined: 0, left: 0, kicked: 0, month: monthId });
+          }
+          monthlyData.get(monthId)!.joined++;
+        }
+
+        // Process left dates
+        for (const member of rosterMembers) {
+          if (member.leftDate) {
+            const monthId = member.leftDate.toISOString().slice(0, 7).replace('-', '');
+            if (!monthlyData.has(monthId)) {
+              monthlyData.set(monthId, { joined: 0, left: 0, kicked: 0, month: monthId });
+            }
+            monthlyData.get(monthId)!.left++;
+          }
+        }
+
+        // Process kicked dates
+        for (const member of rosterMembers) {
+          if (member.kickedDate) {
+            const monthId = member.kickedDate.toISOString().slice(0, 7).replace('-', '');
+            if (!monthlyData.has(monthId)) {
+              monthlyData.set(monthId, { joined: 0, left: 0, kicked: 0, month: monthId });
+            }
+            monthlyData.get(monthId)!.kicked++;
+          }
+        }
+
+        const churnByMonth = Array.from(monthlyData.values()).sort((a, b) =>
+          a.month.localeCompare(b.month)
+        );
+
+        // Calculate action code frequency
+        const actionCodeMap = new Map<string, number>();
+        for (const battle of battles) {
+          for (const stat of battle.playerStats) {
+            if (stat.actionCode) {
+              actionCodeMap.set(stat.actionCode, (actionCodeMap.get(stat.actionCode) || 0) + 1);
+            }
+          }
+          for (const stat of battle.nonplayerStats) {
+            if (stat.actionCode) {
+              actionCodeMap.set(stat.actionCode, (actionCodeMap.get(stat.actionCode) || 0) + 1);
+            }
+          }
+        }
+
+        const actionCodeFrequency = Array.from(actionCodeMap.entries())
+          .map(([code, count]) => ({
+            actionCode: code,
+            count,
+            percentage: parseFloat(
+              (
+                (count / Array.from(actionCodeMap.values()).reduce((sum, val) => sum + val, 0)) *
+                100
+              ).toFixed(2)
+            ),
+          }))
+          .sort((a, b) => b.count - a.count);
+
+        // Calculate retention metrics
+        const activeMembers = rosterMembers.filter((m) => m.active);
+        const inactiveMembers = rosterMembers.filter((m) => !m.active);
+        const totalJoined = rosterMembers.length;
+        const totalLeft = rosterMembers.filter((m) => m.leftDate).length;
+        const totalKicked = rosterMembers.filter((m) => m.kickedDate).length;
+        const retentionRate =
+          totalJoined > 0 ? parseFloat(((activeMembers.length / totalJoined) * 100).toFixed(2)) : 0;
+
+        // Calculate average tenure (active members only)
+        const now = new Date();
+        const tenureDays = activeMembers.map(
+          (m) => (now.getTime() - m.joinedDate.getTime()) / (1000 * 60 * 60 * 24)
+        );
+        const avgTenureDays =
+          tenureDays.length > 0
+            ? Math.round(tenureDays.reduce((sum, days) => sum + days, 0) / tenureDays.length)
+            : 0;
+
+        // Get longest-tenured active members (top 10)
+        const longestTenured = activeMembers
+          .map((m) => ({
+            playerId: m.playerId,
+            playerName: m.playerName,
+            joinedDate: m.joinedDate.toISOString().split('T')[0],
+            tenureDays: Math.round(
+              (now.getTime() - m.joinedDate.getTime()) / (1000 * 60 * 60 * 24)
+            ),
+          }))
+          .sort((a, b) => b.tenureDays - a.tenureDays)
+          .slice(0, 10);
+
+        const response = {
+          churnByMonth,
+          actionCodeFrequency,
+          summary: {
+            activeMembers: activeMembers.length,
+            inactiveMembers: inactiveMembers.length,
+            totalJoined,
+            totalLeft,
+            totalKicked,
+            retentionRate,
+            avgTenureDays,
+          },
+          longestTenured,
+        };
+
+        return response;
+      } catch (error) {
+        fastify.log.error(error);
+        return reply.status(500).send({
+          error: 'Internal Server Error',
+          message: 'Failed to fetch roster churn data',
+        });
+      }
+    }
+  );
+
+  /**
+   * GET /api/clans/:clanId/dashboard
+   * Get dashboard data for clan admins (KPIs, recent battles, alerts)
+   * Story: 7.9 (Dashboard Summary View)
+   */
+  fastify.get<{
+    Params: z.infer<typeof clanIdParamSchema>;
+  }>(
+    '/:clanId/dashboard',
+    {
+      schema: {
+        description: 'Get dashboard data with key metrics and alerts',
+        tags: ['Reports', 'Dashboard'],
+        params: clanIdParamSchema,
+        response: {
+          404: errorResponseSchema,
+          500: errorResponseSchema,
+        },
+      },
+    },
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      try {
+        const { clanId } = clanIdParamSchema.parse(request.params);
+        const clanIdNum = parseInt(clanId, 10);
+
+        // Verify clan exists
+        const clan = await fastify.prisma.clan.findUnique({
+          where: { clanId: clanIdNum },
+          select: {
+            clanId: true,
+            name: true,
+            country: true,
+            rovioId: true,
+          },
+        });
+
+        if (!clan) {
+          return reply.status(404).send({
+            error: 'Not Found',
+            message: 'Clan not found',
+          });
+        }
+
+        // Get recent battles (last 5)
+        const recentBattles = await fastify.prisma.clanBattle.findMany({
+          where: { clanId: clanIdNum },
+          select: {
+            battleId: true,
+            startDate: true,
+            endDate: true,
+            score: true,
+            opponentScore: true,
+            opponentName: true,
+            result: true,
+            ratio: true,
+            nonplayingCount: true,
+            playerStats: {
+              select: {
+                playerId: true,
+              },
+            },
+          },
+          orderBy: { battleId: 'desc' },
+          take: 5,
+        });
+
+        // Calculate next battle date (last battle end + 1 day)
+        let nextBattleDate: string | null = null;
+        if (recentBattles.length > 0 && recentBattles[0]) {
+          const lastBattle = recentBattles[0];
+          const nextDate = new Date(lastBattle.endDate);
+          nextDate.setDate(nextDate.getDate() + 1);
+          const dateStr = nextDate.toISOString().split('T')[0];
+          nextBattleDate = dateStr || null;
+        }
+
+        // Get current month stats
+        const now = new Date();
+        const currentMonthId =
+          now.getFullYear().toString() + (now.getMonth() + 1).toString().padStart(2, '0');
+
+        const monthBattles = await fastify.prisma.clanBattle.findMany({
+          where: {
+            clanId: clanIdNum,
+            battleId: {
+              gte: currentMonthId + '01',
+              lte: currentMonthId + '31',
+            },
+          },
+          select: {
+            result: true,
+            ratio: true,
+            nonplayingCount: true,
+            playerStats: {
+              select: {
+                playerId: true,
+              },
+            },
+          },
+        });
+
+        const monthWins = monthBattles.filter((b) => b.result === 1).length;
+        const monthLosses = monthBattles.filter((b) => b.result === -1).length;
+        const monthTies = monthBattles.filter((b) => b.result === 0).length;
+        const monthWinRate =
+          monthBattles.length > 0
+            ? parseFloat(((monthWins / monthBattles.length) * 100).toFixed(2))
+            : 0;
+        const monthAvgRatio =
+          monthBattles.length > 0
+            ? parseFloat(
+                (monthBattles.reduce((sum, b) => sum + b.ratio, 0) / monthBattles.length).toFixed(2)
+              )
+            : 0;
+        // Calculate participation rate: (playerCount / (playerCount + nonplayingCount)) * 100
+        const monthAvgParticipation =
+          monthBattles.length > 0
+            ? parseFloat(
+                (
+                  monthBattles.reduce((sum, b) => {
+                    const playerCount = b.playerStats.length;
+                    const totalMembers = playerCount + b.nonplayingCount;
+                    return sum + (totalMembers > 0 ? (playerCount / totalMembers) * 100 : 0);
+                  }, 0) / monthBattles.length
+                ).toFixed(2)
+              )
+            : 0;
+
+        // Get current year stats
+        const currentYearId = now.getFullYear().toString();
+
+        const yearBattles = await fastify.prisma.clanBattle.findMany({
+          where: {
+            clanId: clanIdNum,
+            battleId: {
+              gte: currentYearId + '0101',
+              lte: currentYearId + '1231',
+            },
+          },
+          select: {
+            result: true,
+            ratio: true,
+            nonplayingCount: true,
+            playerStats: {
+              select: {
+                playerId: true,
+              },
+            },
+          },
+        });
+
+        const yearWins = yearBattles.filter((b) => b.result === 1).length;
+        const yearLosses = yearBattles.filter((b) => b.result === -1).length;
+        const yearTies = yearBattles.filter((b) => b.result === 0).length;
+        const yearWinRate =
+          yearBattles.length > 0
+            ? parseFloat(((yearWins / yearBattles.length) * 100).toFixed(2))
+            : 0;
+        const yearAvgRatio =
+          yearBattles.length > 0
+            ? parseFloat(
+                (yearBattles.reduce((sum, b) => sum + b.ratio, 0) / yearBattles.length).toFixed(2)
+              )
+            : 0;
+        // Calculate participation rate: (playerCount / (playerCount + nonplayingCount)) * 100
+        const yearAvgParticipation =
+          yearBattles.length > 0
+            ? parseFloat(
+                (
+                  yearBattles.reduce((sum, b) => {
+                    const playerCount = b.playerStats.length;
+                    const totalMembers = playerCount + b.nonplayingCount;
+                    return sum + (totalMembers > 0 ? (playerCount / totalMembers) * 100 : 0);
+                  }, 0) / yearBattles.length
+                ).toFixed(2)
+              )
+            : 0;
+
+        // Check for pending admin requests (requires authentication context)
+        // For now, we'll return 0 since we don't have user context in this endpoint
+        // This should be enhanced in the future to check actual admin requests
+        const pendingAdminRequests = 0;
+
+        // TODO: Check for incomplete battle drafts (stored in localStorage, not database)
+        // This is a client-side concern, not backend
+
+        const response = {
+          clan: {
+            clanId: clan.clanId,
+            name: clan.name,
+            country: clan.country,
+            rovioId: clan.rovioId,
+          },
+          recentBattles: recentBattles.map((b) => {
+            const playerCount = b.playerStats.length;
+            const totalMembers = playerCount + b.nonplayingCount;
+            const participationRate =
+              totalMembers > 0 ? parseFloat(((playerCount / totalMembers) * 100).toFixed(2)) : 0;
+            return {
+              battleId: b.battleId,
+              date: b.startDate.toISOString().split('T')[0],
+              opponent: b.opponentName,
+              result: b.result === 1 ? 'Won' : b.result === -1 ? 'Lost' : 'Tied',
+              score: b.score,
+              opponentScore: b.opponentScore,
+              ratio: b.ratio,
+              participationRate,
+            };
+          }),
+          nextBattleDate,
+          currentMonth: {
+            monthId: currentMonthId,
+            battles: monthBattles.length,
+            wins: monthWins,
+            losses: monthLosses,
+            ties: monthTies,
+            winRate: monthWinRate,
+            avgRatio: monthAvgRatio,
+            avgParticipation: monthAvgParticipation,
+          },
+          currentYear: {
+            yearId: currentYearId,
+            battles: yearBattles.length,
+            wins: yearWins,
+            losses: yearLosses,
+            ties: yearTies,
+            winRate: yearWinRate,
+            avgRatio: yearAvgRatio,
+            avgParticipation: yearAvgParticipation,
+          },
+          alerts: {
+            pendingAdminRequests,
+            incompleteBattleDrafts: 0, // Client-side concern
+          },
+        };
+
+        return response;
+      } catch (error) {
+        fastify.log.error(error);
+        return reply.status(500).send({
+          error: 'Internal Server Error',
+          message: 'Failed to fetch dashboard data',
+        });
+      }
+    }
+  );
 };
 
 export default reportsRoutes;

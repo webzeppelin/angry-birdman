@@ -65,6 +65,13 @@ const reports: ReportCard[] = [
     path: 'matchups',
     color: 'bg-red-500',
   },
+  {
+    title: 'Roster Churn',
+    description: 'Track member turnover and retention patterns',
+    icon: UsersIcon,
+    path: 'roster-churn',
+    color: 'bg-teal-500',
+  },
 ];
 
 export function ReportsPage() {
