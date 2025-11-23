@@ -191,10 +191,16 @@ export function calculatePlayerRatioRanks(
   const ratioRanks = calculateRatioRanks(ratios);
 
   // Return player stats with ratio rank added
-  return playerStats.map((player, index) => ({
-    ...player,
-    ratioRank: ratioRanks[index]!,
-  }));
+  return playerStats.map((player, index) => {
+    const ratioRank = ratioRanks[index];
+    if (ratioRank === undefined) {
+      throw new Error('Ratio rank calculation failed');
+    }
+    return {
+      ...player,
+      ratioRank,
+    };
+  });
 }
 
 /**
