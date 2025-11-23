@@ -409,19 +409,19 @@ export function RosterPage() {
                                 <>
                                   <button
                                     onClick={() => handleEdit(player)}
-                                    className="text-primary-600 hover:text-primary-700"
+                                    className="rounded bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700"
                                   >
                                     Edit
                                   </button>
                                   <button
                                     onClick={() => handleMarkAsLeft(player)}
-                                    className="text-yellow-600 hover:text-yellow-700"
+                                    className="rounded bg-yellow-600 px-3 py-1 text-xs font-medium text-white hover:bg-yellow-700"
                                   >
                                     Mark Left
                                   </button>
                                   <button
                                     onClick={() => handleMarkAsKicked(player)}
-                                    className="text-red-600 hover:text-red-700"
+                                    className="rounded bg-red-600 px-3 py-1 text-xs font-medium text-white hover:bg-red-700"
                                   >
                                     Kick
                                   </button>
@@ -429,7 +429,7 @@ export function RosterPage() {
                               ) : (
                                 <button
                                   onClick={() => handleReactivate(player)}
-                                  className="text-green-600 hover:text-green-700"
+                                  className="rounded bg-green-600 px-3 py-1 text-xs font-medium text-white hover:bg-green-700"
                                 >
                                   Reactivate
                                 </button>
