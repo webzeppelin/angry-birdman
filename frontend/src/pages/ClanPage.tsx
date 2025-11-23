@@ -214,7 +214,7 @@ export function ClanPage() {
             >
               <div className="mb-3 text-3xl">📊</div>
               <h3 className="group-hover:text-primary mb-2 text-lg font-semibold text-neutral-800">
-                Statistics & Reports
+                Performance Reports
               </h3>
               <p className="text-sm text-neutral-600">Performance trends and analytical reports</p>
             </Link>
