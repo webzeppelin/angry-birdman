@@ -220,7 +220,7 @@ export function ClanPage() {
             </Link>
 
             <Link
-              to={`/clans/${clan.clanId}/stats/months/${new Date().toISOString().slice(0, 7)}`}
+              to={`/clans/${clan.clanId}/stats/months/${new Date().toISOString().slice(0, 7).replace('-', '')}`}
               className="shadow-card hover:shadow-card-hover group rounded-lg bg-white p-6 transition-all hover:scale-105"
             >
               <div className="mb-3 text-3xl">📅</div>
