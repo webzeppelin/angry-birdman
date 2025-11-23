@@ -35,7 +35,6 @@ export function Header() {
     navLinks = [
       { path: '/', label: 'Home' },
       { path: `/clans/${user?.clanId}`, label: 'My Clan' },
-      { path: '/clans', label: 'Browse Clans' },
       { path: '/dashboard', label: 'Dashboard' },
       { path: `/clans/${user?.clanId}/roster`, label: 'Roster' },
       { path: `/clans/${user?.clanId}/battles`, label: 'Battles' },
@@ -63,7 +62,11 @@ export function Header() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo/Brand */}
           <Link to="/" className="flex items-center space-x-2">
-            <img src="/images/angry_birdman_logo_32.png" alt="Angry Birdman" className="h-8 w-8" />
+            <img
+              src="/images/angry_birdman_logo_64.png"
+              alt="Angry Birdman"
+              className="h-14 w-14"
+            />
             <span className="font-display text-2xl text-white">Angry Birdman</span>
           </Link>
 
