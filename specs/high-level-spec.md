@@ -62,7 +62,7 @@ while another player that has played for a decade could have a FP of 4,000.
 ### Ratio Score
 
 A player's **Ratio Score** is the player's score divided by their current
-**FP**, with that ratio multiplied by 10 to put the ratio value on an
+**FP**, with that ratio multiplied by 1000 to put the ratio value on an
 approximate 100 point scale. This is used to rate the true performance of a
 player in a battle since flock power varies greatly amongst players.
 
@@ -496,8 +496,8 @@ the **Clan Battle** data entity.
 | :-------------------- | :--------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **result**            |     Integer      | If **score** > **opponentScore** then return 1. If **score** < **opponentScore** then return -1. If **score** = **opponentScore** then return 0                                |
 | **fp**                | Positive Integer | Sum the individual FP of each player and non-player, excluding non-players in reserve                                                                                          |
-| **ratio**             |  Positive Float  | Divide **score** by **baselineFp** and multiply by 10                                                                                                                          |
-| **averageRatio**      |  Positive Float  | Divide **score** by **fp** and multiply by 10                                                                                                                                  |
+| **ratio**             |  Positive Float  | Divide **score** by **baselineFp** and multiply by 1000                                                                                                                        |
+| **averageRatio**      |  Positive Float  | Divide **score** by **fp** and multiply by 1000                                                                                                                                |
 | **projectedScore**    |  Positive Float  | Calculate using the equation: (1 + **nonplayingFpRatio**/100) \* **score**                                                                                                     |
 | **marginRatio**       |      Float       | Calculated as (( **score** - **opponentScore** ) / **score** ) \* 100                                                                                                          |
 | **fpMargin**          |      Float       | Calculated as (( **baselineFp** - **opponentFp** ) / **baselineFp** ) \* 100                                                                                                   |
@@ -513,7 +513,7 @@ the **Clan Battle Player Stats** data entity.
 
 | Field Name    |    Field Type    | Calculation Process                                                                               |
 | :------------ | :--------------: | :------------------------------------------------------------------------------------------------ |
-| **ratio**     |  Positive Float  | Calculated as ( **score** / **fp** ) \* 10                                                        |
+| **ratio**     |  Positive Float  | Calculated as ( **score** / **fp** ) \* 1000                                                      |
 | **ratioRank** | Positive Integer | Sort all playing members in the battle by **ratio** to rank player performance from best to worst |
 
 ### Monthly Clan Performance Data Calculations

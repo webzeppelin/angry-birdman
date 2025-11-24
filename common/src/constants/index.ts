@@ -86,7 +86,7 @@ export const YEAR_ID_LENGTH = 4;
  * Ratio calculation multiplier
  * Ratio scores are multiplied by this value to put them on an approximate 100 point scale
  */
-export const RATIO_MULTIPLIER = 10;
+export const RATIO_MULTIPLIER = 1000;
 
 /**
  * Percentage calculation multiplier
