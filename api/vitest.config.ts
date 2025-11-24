@@ -13,6 +13,10 @@ export default defineConfig({
     env: {
       NODE_ENV: 'test',
       JWT_SECRET: 'test-secret-for-authentication-min-32-chars-long',
+      // Use separate test database to avoid wiping development data
+      DATABASE_URL_TEST:
+        process.env.DATABASE_URL_TEST ||
+        'postgresql://angrybirdman:angrybirdman_dev_password@localhost:5432/angrybirdman_test?schema=public',
     },
 
     // Coverage configuration

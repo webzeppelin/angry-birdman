@@ -93,63 +93,80 @@ async function main() {
   // ============================================================================
   console.log('👥 Seeding users...');
 
-  // Clan Owner for Angry Avengers
-  await prisma.user.upsert({
-    where: { userId: 'keycloak:user-001' },
-    update: {},
-    create: {
-      userId: 'keycloak:user-001',
-      username: 'angryowner',
-      email: 'owner@angryavengers.com',
-      clanId: clan1.clanId,
-      owner: true,
-      roles: ['clan-owner'],
-    },
-  });
+  // NOTE: These user IDs match the Keycloak test users created in the Keycloak realm
+  // See database/sync-test-users.sql for the matching Keycloak user IDs
 
-  // Clan Admin for Angry Avengers
+  // testsuperadmin (superadmin, no clan)
   await prisma.user.upsert({
-    where: { userId: 'keycloak:user-002' },
+    where: { userId: 'keycloak:146aa082-29f1-47dc-8b36-a7655e92c8e3' },
     update: {},
     create: {
-      userId: 'keycloak:user-002',
-      username: 'angryadmin',
-      email: 'admin@angryavengers.com',
-      clanId: clan1.clanId,
-      owner: false,
-      roles: ['clan-admin'],
-    },
-  });
-
-  // Clan Owner for Feather Fury
-  await prisma.user.upsert({
-    where: { userId: 'keycloak:user-003' },
-    update: {},
-    create: {
-      userId: 'keycloak:user-003',
-      username: 'featherboss',
-      email: 'boss@featherfury.ca',
-      clanId: clan2.clanId,
-      owner: true,
-      roles: ['clan-owner'],
-    },
-  });
-
-  // Superadmin (not associated with any clan)
-  await prisma.user.upsert({
-    where: { userId: 'keycloak:superadmin-001' },
-    update: {},
-    create: {
-      userId: 'keycloak:superadmin-001',
-      username: 'superadmin',
-      email: 'admin@angrybirdman.com',
+      userId: 'keycloak:146aa082-29f1-47dc-8b36-a7655e92c8e3',
+      username: 'testsuperadmin',
+      email: 'superadmin@angrybirdman.test',
       clanId: null,
       owner: false,
       roles: ['superadmin'],
     },
   });
 
-  console.log(`✅ Created 4 users\n`);
+  // testowner (clan-owner, clan 54 - Angry Avengers)
+  await prisma.user.upsert({
+    where: { userId: 'keycloak:78db651c-cf9f-4248-abbc-2d35c24d926e' },
+    update: {},
+    create: {
+      userId: 'keycloak:78db651c-cf9f-4248-abbc-2d35c24d926e',
+      username: 'testowner',
+      email: 'owner@angrybirdman.test',
+      clanId: clan1.clanId,
+      owner: true,
+      roles: ['user', 'clan-owner'],
+    },
+  });
+
+  // testadmin (clan-admin, clan 54 - Angry Avengers)
+  await prisma.user.upsert({
+    where: { userId: 'keycloak:f2b53678-b070-4917-b95c-d3995f7243f1' },
+    update: {},
+    create: {
+      userId: 'keycloak:f2b53678-b070-4917-b95c-d3995f7243f1',
+      username: 'testadmin',
+      email: 'admin@angrybirdman.test',
+      clanId: clan1.clanId,
+      owner: false,
+      roles: ['user', 'clan-admin'],
+    },
+  });
+
+  // testuser (basic user, clan 54 - Angry Avengers)
+  await prisma.user.upsert({
+    where: { userId: 'keycloak:e71f1974-16b8-4e7e-bdf9-438837c3c279' },
+    update: {},
+    create: {
+      userId: 'keycloak:e71f1974-16b8-4e7e-bdf9-438837c3c279',
+      username: 'testuser',
+      email: 'user@angrybirdman.test',
+      clanId: clan1.clanId,
+      owner: false,
+      roles: ['user'],
+    },
+  });
+
+  // testowner2 (clan-owner, clan 55 - Feather Fury)
+  await prisma.user.upsert({
+    where: { userId: 'keycloak:bd372b93-a9e4-4eaa-90e9-afa1d733fdfa' },
+    update: {},
+    create: {
+      userId: 'keycloak:bd372b93-a9e4-4eaa-90e9-afa1d733fdfa',
+      username: 'testowner2',
+      email: 'owner2@angrybirdman.test',
+      clanId: clan2.clanId,
+      owner: true,
+      roles: ['user', 'clan-owner'],
+    },
+  });
+
+  console.log(`✅ Created 5 users\n`);
 
   // ============================================================================
   // 4. Seed Roster Members for Angry Avengers
@@ -383,7 +400,7 @@ async function main() {
   console.log('Summary:');
   console.log(`  - ${actionCodes.length} action codes`);
   console.log(`  - 3 clans (2 active, 1 inactive)`);
-  console.log(`  - 4 users (2 owners, 1 admin, 1 superadmin)`);
+  console.log(`  - 5 users (2 owners, 1 admin, 1 basic user, 1 superadmin)`);
   console.log(`  - ${rosterMembers.length + clan2Members.length} roster members`);
   console.log(`  - 1 battle with complete stats`);
   console.log(`  - 1 monthly performance summary\n`);

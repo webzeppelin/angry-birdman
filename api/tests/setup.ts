@@ -28,6 +28,9 @@ export { prisma };
 /**
  * Clean up database before each test
  * This ensures each test starts with a clean slate
+ *
+ * IMPORTANT: This will DELETE ALL DATA from the test database before each test!
+ * Make sure DATABASE_URL_TEST is set to a separate test database, NOT your dev database.
  */
 beforeEach(async () => {
   // Clear data in reverse order of dependencies to avoid FK constraint violations
