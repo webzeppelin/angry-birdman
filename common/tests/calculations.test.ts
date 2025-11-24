@@ -49,23 +49,23 @@ describe('Battle Result Calculations', () => {
 
 describe('Ratio Calculations', () => {
   it('should calculate clan ratio correctly', () => {
-    // Example from spec: score / baselineFp * 10
-    expect(calculateClanRatio(100000, 10000)).toBe(100);
-    expect(calculateClanRatio(50000, 5000)).toBe(100);
-    expect(calculateClanRatio(75000, 10000)).toBe(75);
+    // Example from spec: score / baselineFp * 1000
+    expect(calculateClanRatio(100000, 10000)).toBe(10000);
+    expect(calculateClanRatio(50000, 5000)).toBe(10000);
+    expect(calculateClanRatio(75000, 10000)).toBe(7500);
   });
 
   it('should calculate average ratio correctly', () => {
-    // Example: score / fp * 10
-    expect(calculateAverageRatio(100000, 10000)).toBe(100);
-    expect(calculateAverageRatio(50000, 5000)).toBe(100);
+    // Example: score / fp * 1000
+    expect(calculateAverageRatio(100000, 10000)).toBe(10000);
+    expect(calculateAverageRatio(50000, 5000)).toBe(10000);
   });
 
   it('should calculate player ratio correctly', () => {
-    // Player ratio: score / fp * 10
-    expect(calculatePlayerRatio(1000, 100)).toBe(100);
-    expect(calculatePlayerRatio(500, 50)).toBe(100);
-    expect(calculatePlayerRatio(750, 100)).toBe(75);
+    // Player ratio: score / fp * 1000
+    expect(calculatePlayerRatio(1000, 100)).toBe(10000);
+    expect(calculatePlayerRatio(500, 50)).toBe(10000);
+    expect(calculatePlayerRatio(750, 100)).toBe(7500);
   });
 
   it('should throw error when dividing by zero', () => {
@@ -75,9 +75,9 @@ describe('Ratio Calculations', () => {
   });
 
   it('should handle decimal results', () => {
-    // 100000 / 9999 * 10 = 100.01...
+    // 100000 / 9999 * 1000 = 10001.00...
     const result = calculateClanRatio(100000, 9999);
-    expect(result).toBeCloseTo(100.01, 2);
+    expect(result).toBeCloseTo(10001, 2);
   });
 });
 
@@ -366,26 +366,26 @@ describe('Player Performance Helper Functions', () => {
 describe('Player Ratio Ranking with Objects', () => {
   it('should calculate ratio ranks for player stats objects', () => {
     const playerStats = [
-      { playerId: 1, score: 5000, fp: 500, ratio: 100, rank: 1 },
-      { playerId: 2, score: 4500, fp: 500, ratio: 90, rank: 2 },
-      { playerId: 3, score: 5500, fp: 500, ratio: 110, rank: 3 },
-      { playerId: 4, score: 4800, fp: 500, ratio: 96, rank: 4 },
+      { playerId: 1, score: 5000, fp: 500, ratio: 10000, rank: 1 },
+      { playerId: 2, score: 4500, fp: 500, ratio: 9000, rank: 2 },
+      { playerId: 3, score: 5500, fp: 500, ratio: 11000, rank: 3 },
+      { playerId: 4, score: 4800, fp: 500, ratio: 9600, rank: 4 },
     ];
 
     const withRatioRanks = calculatePlayerRatioRanks(playerStats);
 
-    // Sorted by ratio: [110, 100, 96, 90]
+    // Sorted by ratio: [11000, 10000, 9600, 9000]
     // Ratio ranks: [3, 1, 4, 2] -> [playerId 3, 1, 4, 2]
-    expect(withRatioRanks[0]!.ratioRank).toBe(2); // Player 1: ratio 100
-    expect(withRatioRanks[1]!.ratioRank).toBe(4); // Player 2: ratio 90
-    expect(withRatioRanks[2]!.ratioRank).toBe(1); // Player 3: ratio 110
-    expect(withRatioRanks[3]!.ratioRank).toBe(3); // Player 4: ratio 96
+    expect(withRatioRanks[0]!.ratioRank).toBe(2); // Player 1: ratio 10000
+    expect(withRatioRanks[1]!.ratioRank).toBe(4); // Player 2: ratio 9000
+    expect(withRatioRanks[2]!.ratioRank).toBe(1); // Player 3: ratio 11000
+    expect(withRatioRanks[3]!.ratioRank).toBe(3); // Player 4: ratio 9600
   });
 
   it('should preserve original player stats fields', () => {
     const playerStats = [
-      { playerId: 1, score: 5000, fp: 500, ratio: 100, rank: 1 },
-      { playerId: 2, score: 4500, fp: 500, ratio: 90, rank: 2 },
+      { playerId: 1, score: 5000, fp: 500, ratio: 10000, rank: 1 },
+      { playerId: 2, score: 4500, fp: 500, ratio: 9000, rank: 2 },
     ];
 
     const withRatioRanks = calculatePlayerRatioRanks(playerStats);
@@ -394,7 +394,7 @@ describe('Player Ratio Ranking with Objects', () => {
       playerId: 1,
       score: 5000,
       fp: 500,
-      ratio: 100,
+      ratio: 10000,
       rank: 1,
     });
 
@@ -402,13 +402,13 @@ describe('Player Ratio Ranking with Objects', () => {
       playerId: 2,
       score: 4500,
       fp: 500,
-      ratio: 90,
+      ratio: 9000,
       rank: 2,
     });
   });
 
   it('should handle single player in ratio rank calculation', () => {
-    const playerStats = [{ playerId: 1, score: 5000, fp: 500, ratio: 100, rank: 1 }];
+    const playerStats = [{ playerId: 1, score: 5000, fp: 500, ratio: 10000, rank: 1 }];
 
     const withRatioRanks = calculatePlayerRatioRanks(playerStats);
 
@@ -446,8 +446,8 @@ describe('Integration Tests - Full Battle Calculation', () => {
 
     // Verify results
     expect(result).toBe(BATTLE_RESULTS.WIN);
-    expect(clanRatio).toBe(100);
-    expect(averageRatio).toBe(100);
+    expect(clanRatio).toBe(10000);
+    expect(averageRatio).toBe(10000);
     expect(marginRatio).toBe(10); // Won by 10%
     expect(fpMargin).toBe(5); // FP advantage of 5% (10000 - 9500 = 500, 500/10000 = 0.05 = 5%)
     expect(nonplayingFpRatio).toBe(20); // 20% didn't play
@@ -463,9 +463,9 @@ describe('Integration Tests - Full Battle Calculation', () => {
 
     // Player stats
     const playerStats = [
-      { playerId: 1, score: 6000, fp: 600, ratio: 100, rank: 1 },
-      { playerId: 2, score: 5500, fp: 550, ratio: 100, rank: 2 },
-      { playerId: 3, score: 5000, fp: 500, ratio: 100, rank: 3 },
+      { playerId: 1, score: 6000, fp: 600, ratio: 10000, rank: 1 },
+      { playerId: 2, score: 5500, fp: 550, ratio: 10000, rank: 2 },
+      { playerId: 3, score: 5000, fp: 500, ratio: 10000, rank: 3 },
     ];
 
     // Nonplayer stats
@@ -491,8 +491,8 @@ describe('Integration Tests - Full Battle Calculation', () => {
     expect(totalFp).toBe(2000); // 600 + 550 + 500 + 200 + 150
     expect(nonplayingFp).toBe(350); // 200 + 150
     expect(reserveFp).toBe(100);
-    expect(clanRatio).toBe(100); // 100000 / 10000 * 10
-    expect(averageRatio).toBe(500); // 100000 / 2000 * 10
+    expect(clanRatio).toBe(10000); // 100000 / 10000 * 1000
+    expect(averageRatio).toBe(50000); // 100000 / 2000 * 1000
     expect(nonplayingFpRatio).toBe(17.5); // 350 / 2000 * 100
     expect(reserveFpRatio).toBeCloseTo(4.76, 2); // 100 / 2100 * 100
     expect(playersWithRatioRank.length).toBe(3);

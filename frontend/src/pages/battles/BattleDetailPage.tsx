@@ -104,12 +104,12 @@ export default function BattleDetailPage() {
         <div className="rounded-lg bg-white p-6 shadow">
           <h3 className="mb-2 text-sm font-medium text-gray-600">Clan Ratio</h3>
           <p className="text-primary text-3xl font-bold">{battle.ratio.toFixed(2)}</p>
-          <p className="mt-1 text-xs text-gray-500">Score ÷ Baseline FP × 10</p>
+          <p className="mt-1 text-xs text-gray-500">Score ÷ Baseline FP × 1,000</p>
         </div>
         <div className="rounded-lg bg-white p-6 shadow">
           <h3 className="mb-2 text-sm font-medium text-gray-600">Average Ratio</h3>
           <p className="text-secondary text-3xl font-bold">{battle.averageRatio.toFixed(2)}</p>
-          <p className="mt-1 text-xs text-gray-500">Score ÷ Actual FP × 10</p>
+          <p className="mt-1 text-xs text-gray-500">Score ÷ Actual FP × 1,000</p>
         </div>
         <div className="rounded-lg bg-white p-6 shadow">
           <h3 className="mb-2 text-sm font-medium text-gray-600">Margin</h3>
@@ -240,7 +240,7 @@ export default function BattleDetailPage() {
             <div className="flex justify-between border-b pb-2">
               <dt className="text-gray-600">Opponent Ratio:</dt>
               <dd className="font-bold text-gray-900">
-                {((battle.opponentScore / battle.opponentFp) * 10).toFixed(2)}
+                {((battle.opponentScore / battle.opponentFp) * 1000).toFixed(2)}
               </dd>
             </div>
             <div className="flex justify-between">

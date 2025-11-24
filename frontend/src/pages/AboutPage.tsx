@@ -100,9 +100,10 @@ export function AboutPage() {
             <div>
               <h3 className="mb-1 font-semibold text-neutral-800">Ratio Score</h3>
               <p className="text-sm text-neutral-700">
-                The key performance metric: <code className="text-primary">(score / fp) × 10</code>.
-                Normalizes performance across different FP levels, allowing fair comparison between
-                players of different strengths.
+                The key performance metric:{' '}
+                <code className="text-primary">(score / fp) × 1,000</code>. Normalizes performance
+                across different FP levels, allowing fair comparison between players of different
+                strengths.
               </p>
             </div>
 

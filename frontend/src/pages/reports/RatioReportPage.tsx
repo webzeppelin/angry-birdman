@@ -192,8 +192,8 @@ export function RatioReportPage() {
             <h3 className="mb-2 text-sm font-semibold text-blue-900">About This Report</h3>
             <p className="text-sm text-blue-800">
               Ratio performance measures skill independent of Flock Power.{' '}
-              <strong>Clan Ratio</strong> (green line) is calculated as (score / baseline FP) × 10.{' '}
-              <strong>Average Ratio</strong> (blue line) uses total FP instead. Higher ratios
+              <strong>Clan Ratio</strong> (green line) is calculated as (score / baseline FP) ×
+              1,000. <strong>Average Ratio</strong> (blue line) uses total FP instead. Higher ratios
               indicate better performance relative to power level.
             </p>
           </div>
