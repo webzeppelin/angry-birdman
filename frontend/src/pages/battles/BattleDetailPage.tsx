@@ -137,10 +137,7 @@ export default function BattleDetailPage() {
       <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Clan Performance */}
         <div className="rounded-lg bg-white p-6 shadow">
-          <h2 className="mb-4 text-xl font-bold text-gray-900">
-            Clan Performance
-            <span className="ml-2 text-sm font-normal text-gray-500">(Story 5.3)</span>
-          </h2>
+          <h2 className="mb-4 text-xl font-bold text-gray-900">Clan Performance</h2>
           <dl className="space-y-3">
             <div className="flex justify-between border-b pb-2">
               <dt className="text-gray-600">Score:</dt>
@@ -206,10 +203,7 @@ export default function BattleDetailPage() {
 
         {/* Opponent Performance */}
         <div className="rounded-lg bg-white p-6 shadow">
-          <h2 className="mb-4 text-xl font-bold text-gray-900">
-            Opponent Performance
-            <span className="ml-2 text-sm font-normal text-gray-500">(Story 5.4)</span>
-          </h2>
+          <h2 className="mb-4 text-xl font-bold text-gray-900">Opponent Performance</h2>
           <dl className="space-y-3">
             <div className="flex justify-between border-b pb-2">
               <dt className="text-gray-600">Opponent:</dt>
@@ -278,10 +272,7 @@ export default function BattleDetailPage() {
       {/* Player Performance Rankings */}
       <div className="mb-6 overflow-hidden rounded-lg bg-white shadow">
         <div className="border-b border-gray-200 bg-gray-50 px-6 py-4">
-          <h2 className="text-xl font-bold text-gray-900">
-            Player Performance Rankings
-            <span className="ml-2 text-sm font-normal text-gray-500">(Stories 5.5-5.6)</span>
-          </h2>
+          <h2 className="text-xl font-bold text-gray-900">Player Performance Rankings</h2>
           <p className="mt-1 text-sm text-gray-600">
             {battle.playerStats?.length || 0} players participated
           </p>
@@ -423,10 +414,7 @@ export default function BattleDetailPage() {
           {/* Non-Player Details */}
           <div className="overflow-hidden rounded-lg bg-white shadow">
             <div className="border-b border-gray-200 bg-gray-50 px-6 py-4">
-              <h2 className="text-xl font-bold text-gray-900">
-                Non-Players & Reserves
-                <span className="ml-2 text-sm font-normal text-gray-500">(Stories 5.7-5.9)</span>
-              </h2>
+              <h2 className="text-xl font-bold text-gray-900">Non-Players & Reserves</h2>
               <p className="mt-1 text-sm text-gray-600">
                 {battle.nonplayerStats.length} roster members did not participate
               </p>
