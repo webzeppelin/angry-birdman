@@ -78,12 +78,14 @@ export function MarginReportPage() {
     );
   }
 
-  // Color bars based on result
-  const getBarColor = (entry: TrendResponse['margin'][0]) => {
-    if (entry.isWin) return '#10b981'; // green
-    if (entry.isLoss) return '#ef4444'; // red
-    return '#6b7280'; // gray for ties
-  };
+  // Transform data to separate win/loss/tie margins
+  const chartData = data?.margin.map((item) => ({
+    date: item.date,
+    battleId: item.battleId,
+    winMargin: item.isWin ? item.marginRatio : null,
+    lossMargin: item.isLoss ? item.marginRatio : null,
+    tieMargin: item.isTie ? item.marginRatio : null,
+  }));
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -183,7 +185,7 @@ export function MarginReportPage() {
               </div>
             ) : (
               <ResponsiveContainer width="100%" height={400}>
-                <BarChart data={data.margin}>
+                <BarChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis
                     dataKey="date"
@@ -196,29 +198,9 @@ export function MarginReportPage() {
                   <Tooltip />
                   <Legend wrapperStyle={{ paddingTop: '20px' }} />
                   <ReferenceLine y={0} stroke="#000" />
-                  <Bar
-                    dataKey="marginRatio"
-                    fill="#10b981"
-                    name="Margin Ratio"
-                    shape={(props: object) => {
-                      const typedProps = props as {
-                        payload: TrendResponse['margin'][0];
-                        x: number;
-                        y: number;
-                        width: number;
-                        height: number;
-                      };
-                      return (
-                        <rect
-                          x={typedProps.x}
-                          y={typedProps.y}
-                          width={typedProps.width}
-                          height={typedProps.height}
-                          fill={getBarColor(typedProps.payload)}
-                        />
-                      );
-                    }}
-                  />
+                  <Bar dataKey="winMargin" fill="#10b981" name="Winning Margin" />
+                  <Bar dataKey="lossMargin" fill="#ef4444" name="Losing Margin" />
+                  <Bar dataKey="tieMargin" fill="#6b7280" name="Tie Margin" />
                 </BarChart>
               </ResponsiveContainer>
             )}
