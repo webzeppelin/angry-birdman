@@ -5,7 +5,7 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link, useSearchParams } from 'react-router-dom';
 
 import { apiClient } from '../lib/api-client';
 
@@ -52,6 +52,47 @@ interface PlayerHistory {
 export default function PlayerHistoryPage() {
   const { clanId, playerId } = useParams<{ clanId: string; playerId: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  // Determine the context from which the user navigated to this page
+  const from = searchParams.get('from'); // 'monthly' | 'yearly' | null (default to roster)
+  const monthId = searchParams.get('monthId');
+  const yearId = searchParams.get('yearId');
+
+  // Helper to format month display (YYYYMM -> "January 2025")
+  const formatMonthDisplay = (monthId: string): string => {
+    if (!monthId || monthId.length !== 6) return '';
+    const year = parseInt(monthId.substring(0, 4), 10);
+    const month = parseInt(monthId.substring(4, 6), 10);
+    const date = new Date(year, month - 1);
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+  };
+
+  // Generate breadcrumb text and back button info based on context
+  const getNavigationInfo = () => {
+    if (from === 'monthly' && monthId) {
+      return {
+        breadcrumb: `Home / Clans / Clan ${clanId} / Monthly Stats / ${formatMonthDisplay(monthId)} / Player History`,
+        backPath: `/clans/${clanId}/stats/months/${monthId}`,
+        backLabel: 'Back to Monthly Stats',
+      };
+    } else if (from === 'yearly' && yearId) {
+      return {
+        breadcrumb: `Home / Clans / Clan ${clanId} / Yearly Stats / ${yearId} / Player History`,
+        backPath: `/clans/${clanId}/stats/years/${yearId}`,
+        backLabel: 'Back to Yearly Stats',
+      };
+    } else {
+      // Default to roster context
+      return {
+        breadcrumb: `Home / Clans / Clan ${clanId} / Roster / Player ${playerId} / History`,
+        backPath: `/clans/${clanId}/roster`,
+        backLabel: 'Back to Roster',
+      };
+    }
+  };
+
+  const navInfo = getNavigationInfo();
 
   const {
     data: history,
@@ -91,10 +132,10 @@ export default function PlayerHistoryPage() {
             {error instanceof Error ? error.message : 'Failed to load player history'}
           </p>
           <button
-            onClick={() => navigate(`/clans/${clanId}/roster`)}
+            onClick={() => navigate(navInfo.backPath)}
             className="mt-4 rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700"
           >
-            Back to Roster
+            {navInfo.backLabel}
           </button>
         </div>
       </div>
@@ -105,6 +146,9 @@ export default function PlayerHistoryPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Breadcrumb */}
+      <div className="mb-4 text-sm text-gray-600">{navInfo.breadcrumb}</div>
+
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between">
@@ -126,10 +170,10 @@ export default function PlayerHistoryPage() {
             </div>
           </div>
           <Link
-            to={`/clans/${clanId}/roster`}
+            to={navInfo.backPath}
             className="rounded bg-gray-600 px-4 py-2 text-white hover:bg-gray-700"
           >
-            Back to Roster
+            {navInfo.backLabel}
           </Link>
         </div>
       </div>

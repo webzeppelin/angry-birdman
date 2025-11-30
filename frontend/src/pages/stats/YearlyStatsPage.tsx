@@ -456,7 +456,7 @@ export default function YearlyStatsPage() {
                         <tr key={`${player.playerId}-${index}`} className="hover:bg-gray-50">
                           <td className="whitespace-nowrap px-6 py-4">
                             <Link
-                              to={`/clans/${clanId}/roster/${player.playerId}/history`}
+                              to={`/clans/${clanId}/roster/${player.playerId}/history?from=yearly&yearId=${yearId}`}
                               className="font-medium text-blue-600 hover:text-blue-800"
                             >
                               {player.playerName}
