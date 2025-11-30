@@ -14,6 +14,7 @@ export { PublicRosterPage } from './PublicRosterPage';
 export { default as BattleListPage } from './battles/BattleListPage';
 export { default as NewBattlePage } from './battles/NewBattlePage';
 export { default as BattleDetailPage } from './battles/BattleDetailPage';
+export { default as StatsIndexPage } from './stats/StatsIndexPage';
 export { default as MonthlyStatsPage } from './stats/MonthlyStatsPage';
 export { default as YearlyStatsPage } from './stats/YearlyStatsPage';
 export * from './reports';

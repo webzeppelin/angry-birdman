@@ -27,6 +27,7 @@ import {
   BattleListPage,
   NewBattlePage,
   BattleDetailPage,
+  StatsIndexPage,
   MonthlyStatsPage,
   YearlyStatsPage,
   ReportsPage,
@@ -200,6 +201,14 @@ function App() {
               element={
                 <Layout>
                   <BattleDetailPage />
+                </Layout>
+              }
+            />
+            <Route
+              path="/clans/:clanId/stats"
+              element={
+                <Layout>
+                  <StatsIndexPage />
                 </Layout>
               }
             />
