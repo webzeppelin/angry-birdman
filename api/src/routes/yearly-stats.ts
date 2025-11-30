@@ -305,9 +305,10 @@ const yearlyStatsRoutes: FastifyPluginAsync = async (fastify) => {
           200: z.array(
             z.object({
               clanId: z.number(),
-              yearId: z.string(),
+              year: z.number(),
               playerId: z.number(),
-              battlesPlayed: z.number(),
+              playerName: z.string(),
+              battleCount: z.number(),
               averageScore: z.number(),
               averageFp: z.number(),
               averageRatio: z.number(),
@@ -351,6 +352,13 @@ const yearlyStatsRoutes: FastifyPluginAsync = async (fastify) => {
           where: {
             clanId,
             yearId,
+          },
+          include: {
+            player: {
+              select: {
+                playerName: true,
+              },
+            },
           },
           orderBy: {
             averageRatio: 'desc',
@@ -425,6 +433,13 @@ const yearlyStatsRoutes: FastifyPluginAsync = async (fastify) => {
                 clanId,
                 yearId,
               },
+              include: {
+                player: {
+                  select: {
+                    playerName: true,
+                  },
+                },
+              },
               orderBy: {
                 averageRatio: 'desc',
               },
@@ -432,9 +447,19 @@ const yearlyStatsRoutes: FastifyPluginAsync = async (fastify) => {
           }
         }
 
+        const yearDate = parseYearId(yearId);
         return reply.status(200).send(
           summaries.map((s) => ({
-            ...s,
+            clanId: s.clanId,
+            year: yearDate.getFullYear(),
+            playerId: s.playerId,
+            playerName: s.player.playerName,
+            battleCount: s.battlesPlayed,
+            averageScore: s.averageScore,
+            averageFp: s.averageFp,
+            averageRatio: s.averageRatio,
+            averageRank: s.averageRank,
+            averageRatioRank: s.averageRatioRank,
             createdAt: s.createdAt.toISOString(),
             updatedAt: s.updatedAt.toISOString(),
           }))

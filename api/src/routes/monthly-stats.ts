@@ -305,9 +305,11 @@ const monthlyStatsRoutes: FastifyPluginAsync = async (fastify) => {
           200: z.array(
             z.object({
               clanId: z.number(),
-              monthId: z.string(),
+              year: z.number(),
+              month: z.number(),
               playerId: z.number(),
-              battlesPlayed: z.number(),
+              playerName: z.string(),
+              battleCount: z.number(),
               averageScore: z.number(),
               averageFp: z.number(),
               averageRatio: z.number(),
@@ -351,6 +353,13 @@ const monthlyStatsRoutes: FastifyPluginAsync = async (fastify) => {
           where: {
             clanId,
             monthId,
+          },
+          include: {
+            player: {
+              select: {
+                playerName: true,
+              },
+            },
           },
           orderBy: {
             averageRatio: 'desc',
@@ -426,6 +435,13 @@ const monthlyStatsRoutes: FastifyPluginAsync = async (fastify) => {
                 clanId,
                 monthId,
               },
+              include: {
+                player: {
+                  select: {
+                    playerName: true,
+                  },
+                },
+              },
               orderBy: {
                 averageRatio: 'desc',
               },
@@ -433,9 +449,20 @@ const monthlyStatsRoutes: FastifyPluginAsync = async (fastify) => {
           }
         }
 
+        const monthDate = parseMonthId(monthId);
         return reply.status(200).send(
           summaries.map((s) => ({
-            ...s,
+            clanId: s.clanId,
+            year: monthDate.getFullYear(),
+            month: monthDate.getMonth() + 1,
+            playerId: s.playerId,
+            playerName: s.player.playerName,
+            battleCount: s.battlesPlayed,
+            averageScore: s.averageScore,
+            averageFp: s.averageFp,
+            averageRatio: s.averageRatio,
+            averageRank: s.averageRank,
+            averageRatioRank: s.averageRatioRank,
             createdAt: s.createdAt.toISOString(),
             updatedAt: s.updatedAt.toISOString(),
           }))
