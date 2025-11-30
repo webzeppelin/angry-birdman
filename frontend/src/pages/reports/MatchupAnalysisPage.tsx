@@ -150,6 +150,7 @@ export function MatchupAnalysisPage() {
           setStartDate(start || '');
           setEndDate(end || '');
         }}
+        className="mb-8"
       />
 
       {/* Loading State */}
