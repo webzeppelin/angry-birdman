@@ -146,9 +146,6 @@ export default function PlayerHistoryPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Breadcrumb */}
-      <div className="mb-4 text-sm text-gray-600">{navInfo.breadcrumb}</div>
-
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between">
