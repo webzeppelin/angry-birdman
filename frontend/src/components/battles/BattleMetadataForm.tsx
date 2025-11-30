@@ -36,7 +36,7 @@ export default function BattleMetadataForm({
 
   // Auto-calculate end date (1 day after start)
   useEffect(() => {
-    if (startDate && !endDate) {
+    if (startDate) {
       const start = new Date(startDate);
       const end = new Date(start);
       end.setDate(end.getDate() + 1);
@@ -45,7 +45,7 @@ export default function BattleMetadataForm({
         setEndDate(endDateStr);
       }
     }
-  }, [startDate, endDate]);
+  }, [startDate]);
 
   // Check for duplicate battles (exact date match)
   const { data: existingBattles } = useQuery<BattleListResponse>({
@@ -118,8 +118,8 @@ export default function BattleMetadataForm({
             type="date"
             id="endDate"
             value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2"
+            readOnly
+            className="w-full cursor-not-allowed rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-gray-600"
             required
           />
         </div>
