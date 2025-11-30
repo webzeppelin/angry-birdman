@@ -10,6 +10,7 @@ import { useParams } from 'react-router-dom';
 import {
   BarChart,
   Bar,
+  Cell,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -78,14 +79,12 @@ export function MarginReportPage() {
     );
   }
 
-  // Transform data to separate win/loss/tie margins
-  const chartData = data?.margin.map((item) => ({
-    date: item.date,
-    battleId: item.battleId,
-    winMargin: item.isWin ? item.marginRatio : null,
-    lossMargin: item.isLoss ? item.marginRatio : null,
-    tieMargin: item.isTie ? item.marginRatio : null,
-  }));
+  // Determine bar color based on battle outcome
+  const getBarColor = (item: TrendResponse['margin'][0]) => {
+    if (item.isWin) return '#10b981'; // green
+    if (item.isLoss) return '#ef4444'; // red
+    return '#6b7280'; // gray for ties
+  };
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -185,7 +184,7 @@ export function MarginReportPage() {
               </div>
             ) : (
               <ResponsiveContainer width="100%" height={400}>
-                <BarChart data={chartData}>
+                <BarChart data={data.margin}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis
                     dataKey="date"
@@ -198,9 +197,11 @@ export function MarginReportPage() {
                   <Tooltip />
                   <Legend wrapperStyle={{ paddingTop: '20px' }} />
                   <ReferenceLine y={0} stroke="#000" />
-                  <Bar dataKey="winMargin" fill="#10b981" name="Winning Margin" />
-                  <Bar dataKey="lossMargin" fill="#ef4444" name="Losing Margin" />
-                  <Bar dataKey="tieMargin" fill="#6b7280" name="Tie Margin" />
+                  <Bar dataKey="marginRatio" name="Margin Ratio">
+                    {data.margin.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={getBarColor(entry)} />
+                    ))}
+                  </Bar>
                 </BarChart>
               </ResponsiveContainer>
             )}
