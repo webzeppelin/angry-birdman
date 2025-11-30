@@ -181,15 +181,18 @@ export function FlockPowerReportPage() {
               </div>
             ) : (
               <ResponsiveContainer width="100%" height={400}>
-                <LineChart data={data.flockPower}>
+                <LineChart data={data.flockPower} margin={{ left: 20, bottom: 20 }}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis
                     dataKey="date"
                     label={{ value: 'Date', position: 'insideBottom', offset: -5 }}
                   />
-                  <YAxis label={{ value: 'Flock Power', angle: -90, position: 'insideLeft' }} />
+                  <YAxis
+                    label={{ value: 'Flock Power', angle: -90, position: 'insideLeft' }}
+                    width={80}
+                  />
                   <Tooltip />
-                  <Legend />
+                  <Legend wrapperStyle={{ paddingTop: '20px' }} />
                   <Line
                     type="monotone"
                     dataKey="totalFp"
