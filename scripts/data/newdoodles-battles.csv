@@ -1,536 +1,494 @@
-Outcome:,Opponent Name:,Country:,Our Score:,Their Score:,WL Factor,Our FP:,Their FP:,FP Difference:
-WON,Capob,Russia,3368,2572,23.63%,43654,40795,6.55%
-,,,,,,,,
-Position,Player Name,Score,FP,Ratio,Ratio Pos,,,
-14,Pomelo,134,1250,107.2,1,,,
-58,Zoom Flocker,34,332,102.4096386,2,,,
-3,Ave Falcon,259,2670,97.00374532,3,,,
-7,Flappy Wingspan,179,1964,91.14052953,4,,,
-1,Sparky,370,4173,88.66522885,5,,,
-6,Eggy Strike,187,2156,86.73469388,6,,,
-9,Jim Me,170,1992,85.34136546,7,,,
-5,Bossy,193,2324,83.0464716,8,,,
-8,Falafel,178,2171,81.98986642,9,,,
-13,Fury Silver,134,1827,73.34428024,10,,,
-41,Mi Hung Lo,59,805,73.29192547,11,,,
-64,MeltedPeep,8,111,72.07207207,12,,,
-11,Cubsontap,158,2255,70.06651885,13,,,
-16,Wobbly Wings1,116,1676,69.2124105,14,,,
-12,Mindy,141,2047,68.88128969,15,,,
-61,Dash Feathers,24,351,68.37606838,16,,,
-21,Xax,98,1476,66.39566396,17,,,
-18,Lola awesome,110,1662,66.18531889,18,,,
-20,Jake,105,1600,65.625,19,,,
-59,Chenna,33,525,62.85714286,20,,,
-15,Kris,121,1934,62.56463289,21,,,
-33,roohby,68,1094,62.15722121,22,,,
-34,Babe,64,1032,62.01550388,23,,,
-43,Notorious wingz,52,883,58.89014723,24,,,
-25,Flip,85,1468,57.90190736,25,,,
-63,Sebastin,11,196,56.12244898,26,,,
-26,CJwoy,84,1505,55.81395349,27,,,
-42,Lily,59,1065,55.39906103,28,,,
-65,Birdman,8,147,54.42176871,29,,,
-54,The Real Meme,43,807,53.28376704,30,,,
-49,Bic,47,957,49.11180773,31,,,
-57,KELSO,36,747,48.19277108,32,,,
-,,,,,,,,
-,Played Totals,3368,45202,70.49106941,,,,
-,,,,,,,,
-,Nette,,1694,Kick,,,,
-,Flight Feathers,,1924,,,,,
-,Shaggy Topple,,1308,,,,,
-,,,,,,,,
-,Not Played Totals,3,4926,9.83%,3698.968082,<- Projected Score,,
-,,,,Not Played FP Ratio,,,,
-,,,,,,,,
-,Blinky Barrelro,,40,Hold,,,,
-,Bobuguine,,38,Hold,,,,
-,Buzz Topple,,25,Hold,,,,
-,Cross BaconBust,,27,Hold,,,,
-,Dodgy Turkey,,36,Hold,,,,
-,Floppy Turkey,,28,Hold,,,,
-,Jinx Rooster,,34,Hold,,,,
-,Liam,,31,Hold,,,,
-,Monty Schnitzel,,28,Hold,,,,
-,Nawi,,25,Hold,,,,
-,Snouty Wingman,,45,Hold,,,,
-,Tweet McOwl,,37,Hold,,,,
-,Yup,,34,Hold,,,,
-,,,,,,,,
-,Holding Pen Totals,13,428,0.85%,,,,
-,,,,,,,,
-,Not Played + Holding Pen,,5354,#REF!,#REF!,<- Projected Score,,
+Battle Id,Opponent Name,Country,Our Score,Their Score,WL Factor,Our FP,Their FP,FP Difference
+20251023,Capob,Russia,3368,2572,23.63%,43654,40795,6.55%
+
+Position,Player Name,Score,FP,Ratio,Ratio Pos
+14,Pomelo,134,1250,107.2,1
+58,Zoom Flocker,34,332,102.4096386,2
+3,Ave Falcon,259,2670,97.00374532,3
+7,Flappy Wingspan,179,1964,91.14052953,4
+1,Sparky,370,4173,88.66522885,5
+6,Eggy Strike,187,2156,86.73469388,6
+9,Jim Me,170,1992,85.34136546,7
+5,Bossy,193,2324,83.0464716,8
+8,Falafel,178,2171,81.98986642,9
+13,Fury Silver,134,1827,73.34428024,10
+41,Mi Hung Lo,59,805,73.29192547,11
+64,MeltedPeep,8,111,72.07207207,12
+11,Cubsontap,158,2255,70.06651885,13
+16,Wobbly Wings1,116,1676,69.2124105,14
+12,Mindy,141,2047,68.88128969,15
+61,Dash Feathers,24,351,68.37606838,16
+21,Xax,98,1476,66.39566396,17
+18,Lola awesome,110,1662,66.18531889,18
+20,Jake,105,1600,65.625,19
+59,Chenna,33,525,62.85714286,20
+15,Kris,121,1934,62.56463289,21
+33,roohby,68,1094,62.15722121,22
+34,Babe,64,1032,62.01550388,23
+43,Notorious wingz,52,883,58.89014723,24
+25,Flip,85,1468,57.90190736,25
+63,Sebastin,11,196,56.12244898,26
+26,CJwoy,84,1505,55.81395349,27
+42,Lily,59,1065,55.39906103,28
+65,Birdman,8,147,54.42176871,29
+54,The Real Meme,43,807,53.28376704,30
+49,Bic,47,957,49.11180773,31
+57,KELSO,36,747,48.19277108,32
+
+Nonplayers:
+
+Nette,1694,Kick
+Flight Feathers,1924,
+Shaggy Topple,1308,
+
+Reserve:
+
+Blinky Barrelro,40,Hold
+Bobuguine,38,Hold
+Buzz Topple,25,Hold
+Cross BaconBust,27,Hold
+Dodgy Turkey,36,Hold
+Floppy Turkey,28,Hold
+Jinx Rooster,34,Hold
+Liam,31,Hold
+Monty Schnitzel,28,Hold
+Nawi,25,Hold
+Snouty Wingman,45,Hold
+Tweet McOwl,37,Hold
+Yup,34,Hold
 
 ---
 
-Outcome:,Opponent Name:,Country:,Our Score:,Their Score:,WL Factor,Our FP:,Their FP:,FP Difference:
-LOST,(Symbols),Taiwan,3250,4255,-30.92%,42852,40112,6.39%
-,,,,,,,,
-Position,Player Name,Score,FP,Ratio,Ratio Pos,,,
-31,Pomelo,103,1250,82.4,1,,,
-14,Bossy,198,2465,80.32454361,2,,,
-6,Sparky,306,4001,76.48087978,3,,,
-34,Lily,84,1113,75.47169811,4,,,
-21,Jim Me,147,2017,72.88051562,5,,,
-25,Fury Silver,132,1827,72.24958949,6,,,
-13,Ave Falcon,209,2944,70.99184783,7,,,
-16,Eggy Strike,159,2248,70.72953737,8,,,
-43,Chenna,44,627,70.1754386,9,,,
-20,Mindy,148,2109,70.1754386,10,,,
-26,Flight Feathers,126,1850,68.10810811,11,,,
-24,Kris,135,2122,63.61922714,12,,,
-28,Wobbly Wings1,108,1737,62.1761658,13,,,
-41,Notorious wingz,48,792,60.60606061,14,,,
-19,Cubsontap,148,2451,60.38351693,15,,,
-44,KELSO,42,696,60.34482759,16,,,
-29,Jake,107,1791,59.74316025,17,,,
-30,Lola awesome,104,1753,59.32686823,18,,,
-22,Falafel,146,2485,58.75251509,19,,,
-38,Mi Hung Lo,58,1002,57.88423154,20,,,
-37,Bic,61,1058,57.65595463,21,,,
-42,The Real Meme,46,807,57.00123916,22,,,
-32,Flip,91,1652,55.08474576,23,,,
-50,MeltedPeep,6,109,55.04587156,24,,,
-39,roohby,57,1075,53.02325581,25,,,
-33,Xax,84,1606,52.30386052,26,,,
-27,Flappy Wingspan,117,2267,51.61005734,27,,,
-35,CJwoy,76,1530,49.67320261,28,,,
-36,Babe,68,1433,47.45289602,29,,,
-40,Aliss,53,1133,46.77846425,30,,,
-45,Zoom Flocker,15,329,45.59270517,31,,,
-49,Birdman,8,177,45.19774011,32,,,
-47,Sebastin,8,218,36.69724771,33,,,
-48,Dash Feathers,8,365,21.91780822,34,,,
-,,,,,,,,
-,Played Totals,3250,51039,59.64291821,,,,
-,,,,,,,,
-,Turkey of Prey,,214,Kick (First),,,,
-,Shaggy Topple,,1308,Kick,,,,
-,,,,,,,,
-,Not Played Totals,2,1522,2.90%,3344.109701,<- Projected Score,,
-,,,,Not Played FP Ratio,,,,
-,,,,,,,,
-,Blinky Barrelro,,40,Hold,,,,
-,Bobuguine,,38,Hold,,,,
-,Buzz Topple,,25,Hold,,,,
-,Cross BaconBust,,27,Hold,,,,
-,Dodgy Turkey,,36,Hold,,,,
-,Floppy Turkey,,28,Hold,,,,
-,Jinx Rooster,,34,Hold,,,,
-,Liam,,31,Hold,,,,
-,Monty Schnitzel,,28,Hold,,,,
-,Nawi,,25,Hold,,,,
-,Snouty Wingman,,45,Hold,,,,
-,Tweet McOwl,,37,Hold,,,,
-,Yup,,34,Hold,,,,
-,,,,,,,,
-,Holding Pen Totals,13,428,0.81%,,,,
-,,,,,,,,
-,Not Played + Holding Pen,,1950,#REF!,#REF!,<- Projected Score,,
+Battle Id,Opponent Name,Country,Our Score,Their Score,WL Factor,Our FP,Their FP,FP Difference
+20251026,(Symbols),Taiwan,3250,4255,-30.92%,42852,40112,6.39%
+
+Position,Player Name,Score,FP,Ratio,Ratio Pos
+31,Pomelo,103,1250,82.4,1
+14,Bossy,198,2465,80.32454361,2
+6,Sparky,306,4001,76.48087978,3
+34,Lily,84,1113,75.47169811,4
+21,Jim Me,147,2017,72.88051562,5
+25,Fury Silver,132,1827,72.24958949,6
+13,Ave Falcon,209,2944,70.99184783,7
+16,Eggy Strike,159,2248,70.72953737,8
+43,Chenna,44,627,70.1754386,9
+20,Mindy,148,2109,70.1754386,10
+26,Flight Feathers,126,1850,68.10810811,11
+24,Kris,135,2122,63.61922714,12
+28,Wobbly Wings1,108,1737,62.1761658,13
+41,Notorious wingz,48,792,60.60606061,14
+19,Cubsontap,148,2451,60.38351693,15
+44,KELSO,42,696,60.34482759,16
+29,Jake,107,1791,59.74316025,17
+30,Lola awesome,104,1753,59.32686823,18
+22,Falafel,146,2485,58.75251509,19
+38,Mi Hung Lo,58,1002,57.88423154,20
+37,Bic,61,1058,57.65595463,21
+42,The Real Meme,46,807,57.00123916,22
+32,Flip,91,1652,55.08474576,23
+50,MeltedPeep,6,109,55.04587156,24
+39,roohby,57,1075,53.02325581,25
+33,Xax,84,1606,52.30386052,26
+27,Flappy Wingspan,117,2267,51.61005734,27
+35,CJwoy,76,1530,49.67320261,28
+36,Babe,68,1433,47.45289602,29
+40,Aliss,53,1133,46.77846425,30
+45,Zoom Flocker,15,329,45.59270517,31
+49,Birdman,8,177,45.19774011,32
+47,Sebastin,8,218,36.69724771,33
+48,Dash Feathers,8,365,21.91780822,34
+
+Nonplayers:
+
+Turkey of Prey,214,Kick
+Shaggy Topple,1308,Kick
+
+Reserve:
+
+Blinky Barrelro,40,Hold
+Bobuguine,38,Hold
+Buzz Topple,25,Hold
+Cross BaconBust,27,Hold
+Dodgy Turkey,36,Hold
+Floppy Turkey,28,Hold
+Jinx Rooster,34,Hold
+Liam,31,Hold
+Monty Schnitzel,28,Hold
+Nawi,25,Hold
+Snouty Wingman,45,Hold
+Tweet McOwl,37,Hold
+Yup,34,Hold
 
 ---
 
-Outcome:,Opponent Name:,Country:,Our Score:,Their Score:,WL Factor,Our FP:,Their FP:,FP Difference:
-WON,Albatross,U.S.,2677,2408,10.05%,42708,42761,-0.12%
-,,,,,,,,
-Position,Player Name,Score,FP,Ratio,Ratio Pos,,,
-8,Jim Me,155,2017,76.84680218,1,,,
-19,Pomelo,91,1250,72.8,2,,,
-4,Ave Falcon,202,2944,68.61413043,3,,,
-9,Eggy Strike,153,2248,68.06049822,4,,,
-7,Bossy,157,2465,63.69168357,5,,,
-16,Flip,103,1652,62.34866828,6,,,
-14,Jake,104,1791,58.06811837,7,,,
-3,Sparky,232,4001,57.98550362,8,,,
-68,Birdman,10,177,56.49717514,9,,,
-11,Mindy,119,2109,56.4248459,10,,,
-35,Lily,61,1113,54.80682839,11,,,
-49,Chenna,34,627,54.22647528,12,,,
-42,Mi Hung Lo,54,1002,53.89221557,13,,,
-36,Aliss,59,1133,52.07413945,14,,,
-18,Flight Feathers,96,1850,51.89189189,15,,,
-10,Falafel,127,2485,51.10663984,16,,,
-13,Kris,107,2122,50.42412818,17,,,
-60,Dash Feathers,18,365,49.31506849,18,,,
-12,Flappy Wingspan,109,2267,48.08116453,19,,,
-43,roohby,51,1075,47.44186047,20,,,
-46,The Real Meme,38,807,47.08798017,21,,,
-28,Xax,73,1606,45.45454545,22,,,
-24,Fury Silver,83,1827,45.42966612,23,,,
-32,CJwoy,68,1530,44.44444444,24,,,
-33,Wobbly Wings1,67,1737,38.57225101,25,,,
-52,Notorious wingz,30,792,37.87878788,26,,,
-65,Rush Schnitzel,12,317,37.85488959,27,,,
-71,MeltedPeep,4,109,36.69724771,28,,,
-67,Zoom Flocker,11,329,33.43465046,29,,,
-25,Cubsontap,81,2451,33.04773562,30,,,
-39,Lola awesome,57,1753,32.51568739,31,,,
-70,Sebastin,6,218,27.52293578,32,,,
-59,KELSO,19,696,27.29885057,33,,,
-54,Bic,28,1058,26.46502836,34,,,
-57,Snappy,23,899,25.5839822,35,,,
-48,Babe,35,1433,24.42428472,36,,,
-,,,,,,,,
-,Played Totals,2677,52255,47.7308557,,,,
-,,,,,,,,
-,,,,,,,,
-,,,,,,,,
-,Not Played Totals,0,0,0.00%,2677,<- Projected Score,,
-,,,,Not Played FP Ratio,,,,
-,,,,,,,,
-,Blinky Barrelro,,40,Hold,,,,
-,Bobuguine,,38,Hold,,,,
-,Buzz Topple,,25,Hold,,,,
-,Cross BaconBust,,27,Hold,,,,
-,Dodgy Turkey,,36,Hold,,,,
-,Floppy Turkey,,28,Hold,,,,
-,Jinx Rooster,,34,Hold,,,,
-,Liam,,31,Hold,,,,
-,Monty Schnitzel,,28,Hold,,,,
-,Nawi,,25,Hold,,,,
-,Snouty Wingman,,45,Hold,,,,
-,Tweet McOwl,,37,Hold,,,,
-,Yup,,34,Hold,,,,
-,,,,,,,,
-,Holding Pen Totals,13,428,0.81%,,,,
-,,,,,,,,
-,Not Played + Holding Pen,,428,#REF!,#REF!,<- Projected Score,,
+Battle Id,Opponent Name,Country,Our Score,Their Score,WL Factor,Our FP,Their FP,FP Difference
+20251101,Albatross,U.S.,2677,2408,10.05%,42708,42761,-0.12%
+
+Position,Player Name,Score,FP,Ratio,Ratio Pos
+8,Jim Me,155,2017,76.84680218,1
+19,Pomelo,91,1250,72.8,2
+4,Ave Falcon,202,2944,68.61413043,3
+9,Eggy Strike,153,2248,68.06049822,4
+7,Bossy,157,2465,63.69168357,5
+16,Flip,103,1652,62.34866828,6
+14,Jake,104,1791,58.06811837,7
+3,Sparky,232,4001,57.98550362,8
+68,Birdman,10,177,56.49717514,9
+11,Mindy,119,2109,56.4248459,10
+35,Lily,61,1113,54.80682839,11
+49,Chenna,34,627,54.22647528,12
+42,Mi Hung Lo,54,1002,53.89221557,13
+36,Aliss,59,1133,52.07413945,14
+18,Flight Feathers,96,1850,51.89189189,15
+10,Falafel,127,2485,51.10663984,16
+13,Kris,107,2122,50.42412818,17
+60,Dash Feathers,18,365,49.31506849,18
+12,Flappy Wingspan,109,2267,48.08116453,19
+43,roohby,51,1075,47.44186047,20
+46,The Real Meme,38,807,47.08798017,21
+28,Xax,73,1606,45.45454545,22
+24,Fury Silver,83,1827,45.42966612,23
+32,CJwoy,68,1530,44.44444444,24
+33,Wobbly Wings1,67,1737,38.57225101,25
+52,Notorious wingz,30,792,37.87878788,26
+65,Rush Schnitzel,12,317,37.85488959,27
+71,MeltedPeep,4,109,36.69724771,28
+67,Zoom Flocker,11,329,33.43465046,29
+25,Cubsontap,81,2451,33.04773562,30
+39,Lola awesome,57,1753,32.51568739,31
+70,Sebastin,6,218,27.52293578,32
+59,KELSO,19,696,27.29885057,33
+54,Bic,28,1058,26.46502836,34
+57,Snappy,23,899,25.5839822,35
+48,Babe,35,1433,24.42428472,36
+
+Nonplayers:
+
+Reserve:
+
+Blinky Barrelro,40,Hold
+Bobuguine,38,Hold
+Buzz Topple,25,Hold
+Cross BaconBust,27,Hold
+Dodgy Turkey,36,Hold
+Floppy Turkey,28,Hold
+Jinx Rooster,34,Hold
+Liam,31,Hold
+Monty Schnitzel,28,Hold
+Nawi,25,Hold
+Snouty Wingman,45,Hold
+Tweet McOwl,37,Hold
+Yup,34,Hold
 
 ---
 
-Outcome:,Opponent Name:,Country:,Our Score:,Their Score:,WL Factor,Our FP:,Their FP:,FP Difference:
-LOST,I Luv Bacon,U.S.,2607,2667,-2.30%,42322,41477,2.00%
-,,,,,,,,
-Position,Player Name,Score,FP,Ratio,Ratio Pos,,,
-4,Eggy Strike,161,2152,74.81412639,1,,,
-73,Birdman,12,161,74.53416149,2,,,
-19,Xax,96,1366,70.27818448,3,,,
-3,Ave Falcon,173,2465,70.18255578,4,,,
-26,Pomelo,86,1250,68.8,5,,,
-51,Notorious wingz,44,641,68.64274571,6,,,
-2,Sparky,233,3443,67.67354052,7,,,
-62,Chenna,26,392,66.32653061,8,,,
-8,Bossy,147,2226,66.03773585,9,,,
-15,Flight Feathers,99,1507,65.69343066,10,,,
-24,Jake,90,1452,61.98347107,11,,,
-44,The Real Meme,49,795,61.63522013,12,,,
-43,Mi Hung Lo,49,840,58.33333333,13,,,
-9,Jim Me,114,1969,57.89740985,14,,,
-17,Fury Silver,98,1785,54.90196078,15,,,
-40,Lily,57,1047,54.44126074,16,,,
-74,MeltedPeep,7,132,53.03030303,17,,,
-45,roohby,47,899,52.28031146,18,,,
-30,CJwoy,76,1456,52.1978022,19,,,
-25,Kris,90,1732,51.9630485,20,,,
-49,Bic,45,870,51.72413793,21,,,
-27,Wobbly Wings1,84,1625,51.69230769,22,,,
-52,Snappy,42,817,51.40758874,23,,,
-32,Lola awesome,73,1430,51.04895105,24,,,
-13,Falafel,102,2006,50.84745763,25,,,
-20,Flappy Wingspan,95,1891,50.23796933,26,,,
-34,Flip,72,1441,49.96530187,27,,,
-42,Aliss,49,986,49.69574037,28,,,
-14,Cubsontap,100,2032,49.21259843,29,,,
-18,Mindy,96,2061,46.57933042,30,,,
-60,niners,28,699,40.05722461,31,,,
-54,Babe,40,1033,38.72216844,32,,,
-70,Dash Feathers,14,380,36.84210526,33,,,
-71,KELSO,13,462,28.13852814,34,,,
-,,,,,,,,
-,Played Totals,2607,45443,55.81819243,,,,
-,,,,,,,,
-,Rush Schnitzel,,317,Kick,,,,
-,Sebastin,,216,Kick,,,,
-,Zoom Flocker,,336,,,,,
-,,,,,,,,
-,Not Played Totals,3,869,1.88%,2655.91784,<- Projected Score,,
-,,,,Not Played FP Ratio,,,,
-,,,,,,,,
-,Blinky Barrelro,,40,Hold,,,,
-,Bobuguine,,38,Hold,,,,
-,Buzz Topple,,25,Hold,,,,
-,Cross BaconBust,,27,Hold,,,,
-,Dodgy Turkey,,36,Hold,,,,
-,Floppy Turkey,,28,Hold,,,,
-,Jinx Rooster,,34,Hold,,,,
-,Liam,,31,Hold,,,,
-,Monty Schnitzel,,28,Hold,,,,
-,Nawi,,25,Hold,,,,
-,Snouty Wingman,,45,Hold,,,,
-,Tweet McOwl,,37,Hold,,,,
-,Yup,,34,Hold,,,,
-,,,,,,,,
-,Holding Pen Totals,13,428,0.92%,,,,
-,,,,,,,,
-,Not Played + Holding Pen,,1297,#REF!,#REF!,<- Projected Score,,
+Battle Id,Opponent Name,Country,Our Score,Their Score,WL Factor,Our FP,Their FP,FP Difference
+20251104,I Luv Bacon,U.S.,2607,2667,-2.30%,42322,41477,2.00%
+
+Position,Player Name,Score,FP,Ratio,Ratio Pos
+4,Eggy Strike,161,2152,74.81412639,1
+73,Birdman,12,161,74.53416149,2
+19,Xax,96,1366,70.27818448,3
+3,Ave Falcon,173,2465,70.18255578,4
+26,Pomelo,86,1250,68.8,5
+51,Notorious wingz,44,641,68.64274571,6
+2,Sparky,233,3443,67.67354052,7
+62,Chenna,26,392,66.32653061,8
+8,Bossy,147,2226,66.03773585,9
+15,Flight Feathers,99,1507,65.69343066,10
+24,Jake,90,1452,61.98347107,11
+44,The Real Meme,49,795,61.63522013,12
+43,Mi Hung Lo,49,840,58.33333333,13
+9,Jim Me,114,1969,57.89740985,14
+17,Fury Silver,98,1785,54.90196078,15
+40,Lily,57,1047,54.44126074,16
+74,MeltedPeep,7,132,53.03030303,17
+45,roohby,47,899,52.28031146,18
+30,CJwoy,76,1456,52.1978022,19
+25,Kris,90,1732,51.9630485,20
+49,Bic,45,870,51.72413793,21
+27,Wobbly Wings1,84,1625,51.69230769,22
+52,Snappy,42,817,51.40758874,23
+32,Lola awesome,73,1430,51.04895105,24
+13,Falafel,102,2006,50.84745763,25
+20,Flappy Wingspan,95,1891,50.23796933,26
+34,Flip,72,1441,49.96530187,27
+42,Aliss,49,986,49.69574037,28
+14,Cubsontap,100,2032,49.21259843,29
+18,Mindy,96,2061,46.57933042,30
+60,niners,28,699,40.05722461,31
+54,Babe,40,1033,38.72216844,32
+70,Dash Feathers,14,380,36.84210526,33
+71,KELSO,13,462,28.13852814,34
+
+Nonplayers:
+
+Rush Schnitzel,317,Kick
+Sebastin,216,Kick
+Zoom Flocker,336,
+
+Reserve:
+
+Blinky Barrelro,40,Hold
+Bobuguine,38,Hold
+Buzz Topple,25,Hold
+Cross BaconBust,27,Hold
+Dodgy Turkey,36,Hold
+Floppy Turkey,28,Hold
+Jinx Rooster,34,Hold
+Liam,31,Hold
+Monty Schnitzel,28,Hold
+Nawi,25,Hold
+Snouty Wingman,45,Hold
+Tweet McOwl,37,Hold
+Yup,34,Hold
 
 ---
 
-Outcome:,Opponent Name:,Country:,Our Score:,Their Score:,WL Factor,Our FP:,Their FP:,FP Difference:
-WON,Ekatepnhbypr96,Russia,3403,2646,22.25%,42694,36789,13.83%
-,,,,,,,,
-Position,Player Name,Score,FP,Ratio,Ratio Pos,,,
-14,Pomelo,140,1251,111.9104716,1,,,
-5,Eggy Strike,249,2248,110.7651246,2,,,
-2,Ave Falcon,287,2611,109.919571,3,,,
-4,Bossy,249,2329,106.9128381,4,,,
-6,Jim Me,208,1983,104.8915784,5,,,
-13,Jake,140,1564,89.5140665,6,,,
-27,Lily,94,1120,83.92857143,7,,,
-35,Mi Hung Lo,63,841,74.91082045,8,,,
-8,Mindy,157,2106,74.54890788,9,,,
-17,Flight Feathers,110,1555,70.73954984,10,,,
-39,Notorious wingz,60,850,70.58823529,11,,,
-15,Kris,134,1932,69.35817805,12,,,
-19,Xax,106,1577,67.21623335,13,,,
-10,Cubsontap,150,2232,67.20430108,14,,,
-11,Flappy Wingspan,143,2141,66.79121906,15,,,
-68,MeltedPeep,10,150,66.66666667,16,,,
-12,Falafel,141,2167,65.06691278,17,,,
-48,The Real Meme,52,807,64.4361834,18,,,
-3,Sparky,272,4284,63.49206349,19,,,
-20,Lola awesome,106,1780,59.5505618,20,,,
-60,Zoom Flocker,19,363,52.3415978,21,,,
-31,Flip,76,1491,50.97250168,22,,,
-47,Aliss,52,1027,50.63291139,23,,,
-45,Babe,53,1057,50.14191107,24,,,
-41,roohby,54,1096,49.27007299,25,,,
-28,Fury Silver,89,1811,49.14411927,26,,,
-62,Dash Feathers,18,401,44.88778055,27,,,
-69,Birdman,9,202,44.55445545,28,,,
-40,CJwoy,58,1480,39.18918919,29,,,
-58,niners,25,699,35.76537911,30,,,
-43,Wobbly Wings1,53,1628,32.55528256,31,,,
-73,Eggy Fierce,4,137,29.19708029,32,,,
-59,KELSO,22,859,25.61117579,33,,,
-,,,,,,,,
-,Played Totals,3403,47779,65.23259127,,,,
-,,,,,,,,
-,Bic,,882,,,,,
-,Chenna,,392,Kick (Inactive),,,,
-,Faray11,,56,Pass,,,,
-,Snappy,,841,,,,,
-,,,,,,,,
-,Not Played Totals,4,2171,4.35%,3550.906166,<- Projected Score,,
-,,,,Not Played FP Ratio,,,,
-,,,,,,,,
-,Blinky Barrelro,,40,Hold,,,,
-,Bobuguine,,38,Hold,,,,
-,Buzz Topple,,25,Hold,,,,
-,Cross BaconBust,,27,Hold,,,,
-,Dodgy Turkey,,36,Hold,,,,
-,Floppy Turkey,,28,Hold,,,,
-,Jinx Rooster,,34,Hold,,,,
-,Liam,,31,Hold,,,,
-,Monty Schnitzel,,28,Hold,,,,
-,Nawi,,25,Hold,,,,
-,Snouty Wingman,,45,Hold,,,,
-,Tweet McOwl,,37,Hold,,,,
-,Yup,,34,Hold,,,,
-,,,,,,,,
-,Holding Pen Totals,13,428,0.85%,,,,
-,,,,,,,,
-,Not Played + Holding Pen,,2599,#REF!,#REF!,<- Projected Score,,
+Battle Id,Opponent Name,Country,Our Score,Their Score,WL Factor,Our FP,Their FP,FP Difference
+20251107,Ekatepnhbypr96,Russia,3403,2646,22.25%,42694,36789,13.83%
+
+Position,Player Name,Score,FP,Ratio,Ratio Pos
+14,Pomelo,140,1251,111.9104716,1
+5,Eggy Strike,249,2248,110.7651246,2
+2,Ave Falcon,287,2611,109.919571,3
+4,Bossy,249,2329,106.9128381,4
+6,Jim Me,208,1983,104.8915784,5
+13,Jake,140,1564,89.5140665,6
+27,Lily,94,1120,83.92857143,7
+35,Mi Hung Lo,63,841,74.91082045,8
+8,Mindy,157,2106,74.54890788,9
+17,Flight Feathers,110,1555,70.73954984,10
+39,Notorious wingz,60,850,70.58823529,11
+15,Kris,134,1932,69.35817805,12
+19,Xax,106,1577,67.21623335,13
+10,Cubsontap,150,2232,67.20430108,14
+11,Flappy Wingspan,143,2141,66.79121906,15
+68,MeltedPeep,10,150,66.66666667,16
+12,Falafel,141,2167,65.06691278,17
+48,The Real Meme,52,807,64.4361834,18
+3,Sparky,272,4284,63.49206349,19
+20,Lola awesome,106,1780,59.5505618,20
+60,Zoom Flocker,19,363,52.3415978,21
+31,Flip,76,1491,50.97250168,22
+47,Aliss,52,1027,50.63291139,23
+45,Babe,53,1057,50.14191107,24
+41,roohby,54,1096,49.27007299,25
+28,Fury Silver,89,1811,49.14411927,26
+62,Dash Feathers,18,401,44.88778055,27
+69,Birdman,9,202,44.55445545,28
+40,CJwoy,58,1480,39.18918919,29
+58,niners,25,699,35.76537911,30
+43,Wobbly Wings1,53,1628,32.55528256,31
+73,Eggy Fierce,4,137,29.19708029,32
+59,KELSO,22,859,25.61117579,33
+
+Nonplayers:
+
+Bic,882,
+Chenna,392,Kick
+Faray11,56,Pass
+Snappy,841,
+
+Reserve:
+
+Blinky Barrelro,40,Hold
+Bobuguine,38,Hold
+Buzz Topple,25,Hold
+Cross BaconBust,27,Hold
+Dodgy Turkey,36,Hold
+Floppy Turkey,28,Hold
+Jinx Rooster,34,Hold
+Liam,31,Hold
+Monty Schnitzel,28,Hold
+Nawi,25,Hold
+Snouty Wingman,45,Hold
+Tweet McOwl,37,Hold
+Yup,34,Hold
 
 ---
 
-Outcome:,Opponent Name:,Country:,Our Score:,Their Score:,WL Factor,Our FP:,Their FP:,FP Difference:
-LOST,(Chinese Symbols),Taiwan,3318,3692,-11.27%,42559,43074,-1.21%
-,,,,,,,,
-Position,Player Name,Score,FP,Ratio,Ratio Pos,,,
-58,Aliss,34,1027,33.10613437,,,,
-6,Ave Falcon,218,2787,78.22030858,,,,
-37,Babe,79,1069,73.90084191,,,,
-69,Birdman,13,299,43.47826087,,,,
-5,Bossy,224,2588,86.55332303,,,,
-32,CJwoy,90,1480,60.81081081,,,,
-12,Cubsontap,165,2332,70.75471698,,,,
-72,Eggy Fierce,10,204,49.01960784,,,,
-7,Eggy Strike,202,2462,82.04711617,,,,
-11,Falafel,169,2369,71.33811735,,,,
-10,Flappy Wingspan,177,2191,80.78502967,,,,
-28,Flip,105,1609,65.25792418,,,,
-19,Fury Silver,139,1836,75.708061,,,,
-20,Jake,120,1652,72.63922518,,,,
-25,Jim Me,112,2121,52.80528053,,,,
-18,Kris,141,2032,69.38976378,,,,
-33,Lily,87,1120,77.67857143,,,,
-24,Lola awesome,115,1780,64.60674157,,,,
-71,MeltedPeep,10,154,64.93506494,,,,
-49,Mi Hung Lo,56,842,66.50831354,,,,
-17,Mindy,142,2107,67.39439962,,,,
-65,niners,23,708,32.48587571,,,,
-44,Notorious wingz,67,908,73.78854626,,,,
-21,Pomelo,118,1253,94.17398244,,,,
-42,roohby,72,1096,65.69343066,,,,
-53,Snappy,50,841,59.4530321,,,,
-1,Sparky,331,4164,79.49087416,,,,
-50,The Real Meme,55,819,67.15506716,,,,
-35,Wobbly Wings1,83,1836,45.20697168,,,,
-27,Xax,111,1678,66.15017878,,,,
-,,,,,,,,
-,Played Totals,3318,47364,66.35118574,,,,
-,,,,,,,,
-,Bic,,882,Kick,,,,
-,Dash Feathers,,401,,,,,
-,Faray11,,56,Kick,,,,
-,Flight Feathers,,1907,,,,,
-,KELSO,,999,,,,,
-,Phoenix,,171,Kick (First),,,,
-,Zoom Flocker,,380,,,,,
-,,,,,,,,
-,Not Played Totals,7,4796,9.19%,3623.082975,<- Projected Score,,
-,,,,Not Played FP Ratio,,,,
-,,,,,,,,
-,Blinky Barrelro,,40,Hold,,,,
-,Bobuguine,,38,Hold,,,,
-,Buzz Topple,,25,Hold,,,,
-,Cross BaconBust,,27,Hold,,,,
-,Dodgy Turkey,,36,Hold,,,,
-,Floppy Turkey,,28,Hold,,,,
-,Jinx Rooster,,34,Hold,,,,
-,Liam,,31,Hold,,,,
-,Monty Schnitzel,,28,Hold,,,,
-,Nawi,,25,Hold,,,,
-,Snouty Wingman,,45,Hold,,,,
-,Tweet McOwl,,37,Hold,,,,
-,Yup,,34,Hold,,,,
-,,,,,,,,
-,Holding Pen Totals,13,428,0.81%,,,,
-,,,,,,,,
-,Not Played + Holding Pen,,5224,#REF!,#REF!,<- Projected Score,,
+Battle Id,Opponent Name,Country,Our Score,Their Score,WL Factor,Our FP,Their FP,FP Difference
+20251110,(Chinese Symbols),Taiwan,3318,3692,-11.27%,42559,43074,-1.21%
+
+Position,Player Name,Score,FP,Ratio,Ratio Pos
+58,Aliss,34,1027,33.10613437,
+6,Ave Falcon,218,2787,78.22030858,
+37,Babe,79,1069,73.90084191,
+69,Birdman,13,299,43.47826087,
+5,Bossy,224,2588,86.55332303,
+32,CJwoy,90,1480,60.81081081,
+12,Cubsontap,165,2332,70.75471698,
+72,Eggy Fierce,10,204,49.01960784,
+7,Eggy Strike,202,2462,82.04711617,
+11,Falafel,169,2369,71.33811735,
+10,Flappy Wingspan,177,2191,80.78502967,
+28,Flip,105,1609,65.25792418,
+19,Fury Silver,139,1836,75.708061,
+20,Jake,120,1652,72.63922518,
+25,Jim Me,112,2121,52.80528053,
+18,Kris,141,2032,69.38976378,
+33,Lily,87,1120,77.67857143,
+24,Lola awesome,115,1780,64.60674157,
+71,MeltedPeep,10,154,64.93506494,
+49,Mi Hung Lo,56,842,66.50831354,
+17,Mindy,142,2107,67.39439962,
+65,niners,23,708,32.48587571,
+44,Notorious wingz,67,908,73.78854626,
+21,Pomelo,118,1253,94.17398244,
+42,roohby,72,1096,65.69343066,
+53,Snappy,50,841,59.4530321,
+1,Sparky,331,4164,79.49087416,
+50,The Real Meme,55,819,67.15506716,
+35,Wobbly Wings1,83,1836,45.20697168,
+27,Xax,111,1678,66.15017878,
+
+Nonplayers:
+
+Bic,882,Kick
+Dash Feathers,401,
+Faray11,56,Kick
+Flight Feathers,1907,
+KELSO,999,
+Phoenix,171,Kick
+Zoom Flocker,380,
+
+Reserve:
+
+Blinky Barrelro,40,Hold
+Bobuguine,38,Hold
+Buzz Topple,25,Hold
+Cross BaconBust,27,Hold
+Dodgy Turkey,36,Hold
+Floppy Turkey,28,Hold
+Jinx Rooster,34,Hold
+Liam,31,Hold
+Monty Schnitzel,28,Hold
+Nawi,25,Hold
+Snouty Wingman,45,Hold
+Tweet McOwl,37,Hold
+Yup,34,Hold
 
 ---
 
-Outcome:,Opponent Name:,Country:,Our Score:,Their Score:,WL Factor,Our FP:,Their FP:,FP Difference:
-WON,Ekatepnhbypr96,Russia,2526,2317,8.27%,42117,40525,3.78%
-,,,,,,,,
-Position,Player Name,Score,FP,Ratio,Ratio Pos,,,
-3,Ave Falcon,227,2493,91.05495387,1,,,
-18,Pomelo,100,1254,79.74481659,2,,,
-4,Bossy,176,2241,78.53636769,3,,,
-13,Flip,113,1463,77.23855092,4,,,
-7,Falafel,142,1944,73.04526749,5,,,
-15,Flight Feathers,110,1520,72.36842105,6,,,
-1,Sparky,249,3492,71.30584192,7,,,
-29,roohby,63,900,70,8,,,
-5,Eggy Strike,151,2162,69.84273821,9,,,
-20,Xax,94,1368,68.71345029,10,,,
-14,Kris,110,1688,65.16587678,11,,,
-22,CJwoy,89,1471,60.50305914,12,,,
-28,Lily,64,1073,59.64585275,13,,,
-46,Notorious wingz,40,685,58.39416058,14,,,
-10,Cubsontap,119,2040,58.33333333,15,,,
-39,Mi Hung Lo,49,845,57.98816568,16,,,
-67,MeltedPeep,9,156,57.69230769,17,,,
-16,Flappy Wingspan,107,1892,56.55391121,18,,,
-17,Jim Me,105,1971,53.27245053,19,,,
-25,Fury Silver,78,1794,43.47826087,20,,,
-56,KELSO,22,516,42.63565891,21,,,
-43,Aliss,41,1003,40.8773679,22,,,
-31,Jake,60,1470,40.81632653,23,,,
-24,Mindy,82,2080,39.42307692,24,,,
-54,The Real Meme,29,795,36.47798742,25,,,
-62,Zoom Flocker,13,374,34.75935829,26,,,
-34,Wobbly Wings1,56,1636,34.22982885,27,,,
-68,Eggy Fierce,8,289,27.6816609,28,,,
-72,Birdman,6,230,26.08695652,29,,,
-60,Snappy,14,817,17.13586291,30,,,
-,,,,,,,,
-,Played Totals,2526,41662,55.43339573,,,,
-,,,,,,,,
-,Babe,,1017,,,,,
-,Dash Feathers,,341,Kick (2/3),,,,
-,Krissy Sparrow,,79,,,,,
-,Lola awesome,,1430,,,,,
-,niners,,711,,,,,
-,,,,,,,,
-,Not Played Totals,5,3578,7.91%,2725.779576,<- Projected Score,,
-,,,,Not Played FP Ratio,,,,
-,,,,,,,,
-,Blinky Barrelro,,40,Hold,,,,
-,Bobuguine,,38,Hold,,,,
-,Buzz Topple,,25,Hold,,,,
-,Cross BaconBust,,27,Hold,,,,
-,Dodgy Turkey,,36,Hold,,,,
-,Floppy Turkey,,28,Hold,,,,
-,Jinx Rooster,,34,Hold,,,,
-,Liam,,31,Hold,,,,
-,Monty Schnitzel,,28,Hold,,,,
-,Nawi,,25,Hold,,,,
-,Snouty Wingman,,45,Hold,,,,
-,Tweet McOwl,,37,Hold,,,,
-,Yup,,34,Hold,,,,
-,,,,,,,,
-,Holding Pen Totals,13,428,0.94%,,,,
-,,,,,,,,
-,Not Played + Holding Pen,,4006,#REF!,#REF!,<- Projected Score,,
+Battle Id,Opponent Name,Country,Our Score,Their Score,WL Factor,Our FP,Their FP,FP Difference
+20251116,Ekatepnhbypr96,Russia,2526,2317,8.27%,42117,40525,3.78%
+
+Position,Player Name,Score,FP,Ratio,Ratio Pos
+3,Ave Falcon,227,2493,91.05495387,1
+18,Pomelo,100,1254,79.74481659,2
+4,Bossy,176,2241,78.53636769,3
+13,Flip,113,1463,77.23855092,4
+7,Falafel,142,1944,73.04526749,5
+15,Flight Feathers,110,1520,72.36842105,6
+1,Sparky,249,3492,71.30584192,7
+29,roohby,63,900,70,8
+5,Eggy Strike,151,2162,69.84273821,9
+20,Xax,94,1368,68.71345029,10
+14,Kris,110,1688,65.16587678,11
+22,CJwoy,89,1471,60.50305914,12
+28,Lily,64,1073,59.64585275,13
+46,Notorious wingz,40,685,58.39416058,14
+10,Cubsontap,119,2040,58.33333333,15
+39,Mi Hung Lo,49,845,57.98816568,16
+67,MeltedPeep,9,156,57.69230769,17
+16,Flappy Wingspan,107,1892,56.55391121,18
+17,Jim Me,105,1971,53.27245053,19
+25,Fury Silver,78,1794,43.47826087,20
+56,KELSO,22,516,42.63565891,21
+43,Aliss,41,1003,40.8773679,22
+31,Jake,60,1470,40.81632653,23
+24,Mindy,82,2080,39.42307692,24
+54,The Real Meme,29,795,36.47798742,25
+62,Zoom Flocker,13,374,34.75935829,26
+34,Wobbly Wings1,56,1636,34.22982885,27
+68,Eggy Fierce,8,289,27.6816609,28
+72,Birdman,6,230,26.08695652,29
+60,Snappy,14,817,17.13586291,30
+
+Nonplayers:
+
+Babe,1017,
+Dash Feathers,341,Kick
+Krissy Sparrow,79,
+Lola awesome,1430,
+niners,711,
+
+Reserve:
+
+Blinky Barrelro,40,Hold
+Bobuguine,38,Hold
+Buzz Topple,25,Hold
+Cross BaconBust,27,Hold
+Dodgy Turkey,36,Hold
+Floppy Turkey,28,Hold
+Jinx Rooster,34,Hold
+Liam,31,Hold
+Monty Schnitzel,28,Hold
+Nawi,25,Hold
+Snouty Wingman,45,Hold
+Tweet McOwl,37,Hold
+Yup,34,Hold
 
 ---
 
-Outcome:,Opponent Name:,Country:,Our Score:,Their Score:,WL Factor,Our FP:,Their FP:,FP Difference:
-WON,Demolition Plan,U.S.,3221,2726,15.37%,42049,39765,5.43%
-,,,,,,,,
-Position,Player Name,Score,FP,Ratio,Ratio Pos,,,
-4,Eggy Strike,241,2185,110.2974828,1,,,
-8,Jim Me,202,1982,101.9172553,2,,,
-19,Pomelo,127,1255,101.1952191,3,,,
-16,Flip,153,1513,101.1235955,4,,,
-23,Lily,103,1101,93.55131698,5,,,
-9,Flappy Wingspan,187,2091,89.43089431,6,,,
-5,Bossy,222,2553,86.95652174,7,,,
-17,Kris,150,1746,85.91065292,8,,,
-29,roohby,77,949,81.13804004,9,,,
-10,Falafel,187,2330,80.25751073,10,,,
-6,Ave Falcon,210,2658,79.00677201,11,,,
-12,Cubsontap,162,2064,78.48837209,12,,,
-13,Mindy,159,2093,75.96751075,13,,,
-22,Xax,104,1436,72.42339833,14,,,
-35,Notorious wingz,65,905,71.82320442,15,,,
-20,Fury Silver,122,1811,67.36609608,16,,,
-1,Sparky,257,3982,64.54043194,17,,,
-26,Lola awesome,93,1466,63.43792633,18,,,
-61,MeltedPeep,11,175,62.85714286,19,,,
-42,The Real Meme,48,807,59.4795539,20,,,
-43,Mi Hung Lo,48,846,56.73758865,21,,,
-28,Jake,83,1482,56.00539811,22,,,
-58,Eggy Fierce,17,316,53.79746835,23,,,
-32,Wobbly Wings1,74,1636,45.23227384,24,,,
-52,niners,29,679,42.70986745,25,,,
-36,CJwoy,63,1480,42.56756757,26,,,
-63,Birdman,9,271,33.2103321,27,,,
-57,KELSO,18,602,29.90033223,28,,,
-,,,,,,,,
-,Played Totals,3221,42414,70.97606166,,,,
-,,,,,,,,
-,Aliss,,1027,,,,,
-,Babe,,1017,Kick,,,,
-,Flight Feathers,,1710,,,,,
-,Krissy Sparrow,,79,Kick,,,,
-,Snappy,,817,,,,,
-,Soup,,73,Kick (First),,,,
-,Speedy McSwine,,54,Pass,,,,
-,Tricky Star,,72,Pass,,,,
-,Zoom Flocker,,382,,,,,
-,,,,,,,,
-,Not Played Totals,9,5231,10.98%,3574.637339,<- Projected Score,,
-,,,,Not Played FP Ratio,,,,
-,,,,,,,,
-,Blinky Barrelro,,40,Hold,,,,
-,Bobuguine,,38,Hold,,,,
-,Buzz Topple,,25,Hold,,,,
-,Cross BaconBust,,27,Hold,,,,
-,Dodgy Turkey,,36,Hold,,,,
-,Floppy Turkey,,28,Hold,,,,
-,Jinx Rooster,,34,Hold,,,,
-,Liam,,31,Hold,,,,
-,Monty Schnitzel,,28,Hold,,,,
-,Nawi,,25,Hold,,,,
-,Snouty Wingman,,45,Hold,,,,
-,Tweet McOwl,,37,Hold,,,,
-,Yup,,34,Hold,,,,
-,,,,,,,,
-,Holding Pen Totals,13,428,0.89%,,,,
-,,,,,,,,
-,Not Played + Holding Pen,,5659,#REF!,#REF!,<- Projected Score,,
+Battle Id,Opponent Name,Country,Our Score,Their Score,WL Factor,Our FP,Their FP,FP Difference
+20251119,Demolition Plan,U.S.,3221,2726,15.37%,42049,39765,5.43%
+
+Position,Player Name,Score,FP,Ratio,Ratio Pos
+4,Eggy Strike,241,2185,110.2974828,1
+8,Jim Me,202,1982,101.9172553,2
+19,Pomelo,127,1255,101.1952191,3
+16,Flip,153,1513,101.1235955,4
+23,Lily,103,1101,93.55131698,5
+9,Flappy Wingspan,187,2091,89.43089431,6
+5,Bossy,222,2553,86.95652174,7
+17,Kris,150,1746,85.91065292,8
+29,roohby,77,949,81.13804004,9
+10,Falafel,187,2330,80.25751073,10
+6,Ave Falcon,210,2658,79.00677201,11
+12,Cubsontap,162,2064,78.48837209,12
+13,Mindy,159,2093,75.96751075,13
+22,Xax,104,1436,72.42339833,14
+35,Notorious wingz,65,905,71.82320442,15
+20,Fury Silver,122,1811,67.36609608,16
+1,Sparky,257,3982,64.54043194,17
+26,Lola awesome,93,1466,63.43792633,18
+61,MeltedPeep,11,175,62.85714286,19
+42,The Real Meme,48,807,59.4795539,20
+43,Mi Hung Lo,48,846,56.73758865,21
+28,Jake,83,1482,56.00539811,22
+58,Eggy Fierce,17,316,53.79746835,23
+32,Wobbly Wings1,74,1636,45.23227384,24
+52,niners,29,679,42.70986745,25
+36,CJwoy,63,1480,42.56756757,26
+63,Birdman,9,271,33.2103321,27
+57,KELSO,18,602,29.90033223,28
+
+Nonplayers:
+
+Aliss,1027,
+Babe,1017,Kick
+Flight Feathers,1710,
+Krissy Sparrow,79,Kick
+Snappy,817,
+Soup,73,Kick
+Speedy McSwine,54,Pass
+Tricky Star,72,Pass
+Zoom Flocker,382,
+
+Reserve:
+
+Blinky Barrelro,40,Hold
+Bobuguine,38,Hold
+Buzz Topple,25,Hold
+Cross BaconBust,27,Hold
+Dodgy Turkey,36,Hold
+Floppy Turkey,28,Hold
+Jinx Rooster,34,Hold
+Liam,31,Hold
+Monty Schnitzel,28,Hold
+Nawi,25,Hold
+Snouty Wingman,45,Hold
+Tweet McOwl,37,Hold
+Yup,34,Hold
