@@ -189,7 +189,10 @@ export function MarginReportPage() {
                     dataKey="date"
                     label={{ value: 'Date', position: 'insideBottom', offset: -5 }}
                   />
-                  <YAxis label={{ value: 'Margin (%)', angle: -90, position: 'insideLeft' }} />
+                  <YAxis
+                    label={{ value: 'Margin (%)', angle: -90, position: 'insideLeft' }}
+                    domain={['auto', 'auto']}
+                  />
                   <Tooltip />
                   <Legend wrapperStyle={{ paddingTop: '20px' }} />
                   <ReferenceLine y={0} stroke="#000" />
