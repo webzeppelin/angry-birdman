@@ -79,11 +79,13 @@ export function MarginReportPage() {
     );
   }
 
-  // Determine bar color based on battle outcome
+  // Determine bar color based on margin ratio value
+  // For monthly aggregation, use the actual margin value since the boolean flags
+  // indicate whether there were ANY wins/losses in the month, not the overall result
   const getBarColor = (item: TrendResponse['margin'][0]) => {
-    if (item.isWin) return '#10b981'; // green
-    if (item.isLoss) return '#ef4444'; // red
-    return '#6b7280'; // gray for ties
+    if (item.marginRatio > 0) return '#10b981'; // green for positive margins
+    if (item.marginRatio < 0) return '#ef4444'; // red for negative margins
+    return '#6b7280'; // gray for zero/ties
   };
 
   return (
