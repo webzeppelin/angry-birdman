@@ -191,7 +191,7 @@ export function MarginReportPage() {
                   />
                   <YAxis label={{ value: 'Margin (%)', angle: -90, position: 'insideLeft' }} />
                   <Tooltip />
-                  <Legend />
+                  <Legend wrapperStyle={{ paddingTop: '20px' }} />
                   <ReferenceLine y={0} stroke="#000" />
                   <Bar
                     dataKey="marginRatio"

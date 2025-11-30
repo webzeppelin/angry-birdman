@@ -166,7 +166,7 @@ export function RatioReportPage() {
                   />
                   <YAxis label={{ value: 'Ratio', angle: -90, position: 'insideLeft' }} />
                   <Tooltip />
-                  <Legend />
+                  <Legend wrapperStyle={{ paddingTop: '20px' }} />
                   <Line
                     type="monotone"
                     dataKey="ratio"
