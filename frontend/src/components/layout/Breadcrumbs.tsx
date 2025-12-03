@@ -185,7 +185,7 @@ export function Breadcrumbs() {
   }
 
   // Don't show breadcrumbs on auth callback pages
-  if (location.pathname.includes('/callback')) {
+  if (location.pathname.includes('callback')) {
     return null;
   }
 

@@ -25,10 +25,12 @@ export function createTestToken(
   payload: Partial<JWTPayload> & { sub: string }
 ): string {
   const defaultPayload: JWTPayload = {
+    iss: 'http://localhost:8080/realms/angrybirdman',
     sub: payload.sub,
     email: payload.email,
     preferred_username: payload.preferred_username,
     realm_access: payload.realm_access || { roles: [] },
+    // @ts-expect-error - clanId is a test extension, not in actual JWT
     clanId: payload.clanId,
     exp: Math.floor(Date.now() / 1000) + 3600, // 1 hour from now
     iat: Math.floor(Date.now() / 1000),
@@ -42,6 +44,7 @@ export function createTestToken(
  */
 export function createTestUser(overrides?: Partial<JWTPayload>): JWTPayload {
   return {
+    iss: 'http://localhost:8080/realms/angrybirdman',
     sub: 'test-keycloak-user-id',
     email: 'test@example.com',
     preferred_username: 'testuser',
@@ -83,6 +86,7 @@ export function createTestClanOwner(clanId: string, overrides?: Partial<JWTPaylo
   return createTestUser({
     preferred_username: 'clanowner',
     email: 'owner@example.com',
+    // @ts-expect-error - clanId is a test extension, not in actual JWT
     clanId,
     realm_access: { roles: ['clan-owner'] },
     ...overrides,

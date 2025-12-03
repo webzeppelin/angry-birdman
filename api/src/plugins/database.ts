@@ -20,8 +20,21 @@ declare module 'fastify' {
 
 const databasePlugin: FastifyPluginAsync = async (fastify) => {
   // Initialize Prisma Client with appropriate logging
+  // In test mode, use DATABASE_URL_TEST if available
+  const databaseUrl =
+    process.env.NODE_ENV === 'test' && process.env.DATABASE_URL_TEST
+      ? process.env.DATABASE_URL_TEST
+      : undefined;
+
   const prisma = new PrismaClient({
     log: process.env.NODE_ENV === 'production' ? ['error', 'warn'] : ['query', 'error', 'warn'],
+    datasources: databaseUrl
+      ? {
+          db: {
+            url: databaseUrl,
+          },
+        }
+      : undefined,
   });
 
   // Test database connection
