@@ -7,7 +7,8 @@ export default defineConfig({
     globals: true,
     environment: 'node',
     include: ['tests/**/*.test.ts'],
-    exclude: ['**/node_modules/**', '**/dist/**', '**/.{idea,git,cache,output,temp}/**'],
+    // Vitest 4 simplified exclude - only add what's needed beyond defaults
+    exclude: ['**/dist/**', '**/.{idea,cache,output,temp}/**'],
 
     // Set environment variables for tests
     env: {
@@ -24,13 +25,12 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],
       reportsDirectory: './coverage',
+      // Vitest 4: explicitly include source files for coverage
       include: ['src/**/*.ts'],
       exclude: [
         'src/**/*.d.ts',
         'src/**/*.test.ts',
         'src/index.ts', // Entry point, tested via integration tests
-        '**/node_modules/**',
-        '**/dist/**',
       ],
       // Quality gates
       thresholds: {
@@ -52,7 +52,8 @@ export default defineConfig({
 
     // Run test files sequentially to avoid database conflicts
     // since all tests share the same test database
-    fileParallelism: false,
+    // Vitest 4: fileParallelism is replaced with maxWorkers + isolate
+    maxWorkers: 1,
 
     // Test timeout for database operations
     testTimeout: 10000,

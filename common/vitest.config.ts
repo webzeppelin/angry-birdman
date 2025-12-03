@@ -5,20 +5,20 @@ export default defineConfig({
     globals: true,
     environment: 'node',
     include: ['tests/**/*.test.ts'],
-    exclude: ['**/node_modules/**', '**/dist/**', '**/.{idea,git,cache,output,temp}/**'],
+    // Vitest 4 simplified exclude - only add what's needed beyond defaults
+    exclude: ['**/dist/**', '**/.{idea,cache,output,temp}/**'],
 
     // Coverage configuration
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],
       reportsDirectory: './coverage',
+      // Vitest 4: explicitly include source files for coverage
       include: ['src/**/*.ts'],
       exclude: [
         'src/**/*.d.ts',
         'src/**/*.test.ts',
         'src/index.ts', // Re-export file
-        '**/node_modules/**',
-        '**/dist/**',
       ],
       // Quality gates - higher standards for utility library
       thresholds: {

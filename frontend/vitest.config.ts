@@ -10,13 +10,15 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     include: ['tests/**/*.test.ts', 'tests/**/*.test.tsx'],
-    exclude: ['**/node_modules/**', '**/dist/**', '**/.{idea,git,cache,output,temp}/**'],
+    // Vitest 4 simplified exclude - only add what's needed beyond defaults
+    exclude: ['**/dist/**', '**/.{idea,cache,output,temp}/**'],
 
     // Coverage configuration
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],
       reportsDirectory: './coverage',
+      // Vitest 4: explicitly include source files for coverage
       include: ['src/**/*.{ts,tsx}'],
       exclude: [
         'src/**/*.d.ts',
@@ -24,8 +26,6 @@ export default defineConfig({
         'src/main.tsx', // Entry point, not typically unit tested
         'src/vite-env.d.ts',
         'src/**/*.stories.{ts,tsx}',
-        '**/node_modules/**',
-        '**/dist/**',
       ],
       // Quality gates
       thresholds: {
