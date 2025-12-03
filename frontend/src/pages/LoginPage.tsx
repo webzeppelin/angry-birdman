@@ -17,7 +17,7 @@ export function LoginPage() {
   useEffect(() => {
     // If already authenticated, redirect to intended destination
     if (isAuthenticated) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       const from: string = location.state?.from?.pathname || '/dashboard';
 
       // Superadmins should go to admin dashboard by default

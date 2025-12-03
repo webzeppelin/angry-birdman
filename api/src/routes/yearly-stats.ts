@@ -194,10 +194,10 @@ const yearlyStatsRoutes: FastifyPluginAsync = async (fastify) => {
       // Validate year ID format
       try {
         parseYearId(yearId);
-      } catch (error) {
+      } catch (_error) {
         return reply.status(400).send({
           error: 'Validation Error',
-          message: `Invalid year ID: ${yearId}`,
+          message: 'Invalid year ID format. Expected YYYY.',
         });
       }
 
@@ -336,10 +336,10 @@ const yearlyStatsRoutes: FastifyPluginAsync = async (fastify) => {
         });
       }
 
-      // Validate year ID format
+      // Validate year ID
       try {
         parseYearId(yearId);
-      } catch (error) {
+      } catch (_error) {
         return reply.status(400).send({
           error: 'Validation Error',
           message: `Invalid year ID: ${yearId}`,
@@ -540,7 +540,7 @@ const yearlyStatsRoutes: FastifyPluginAsync = async (fastify) => {
       // Validate year ID format
       try {
         parseYearId(yearId);
-      } catch (error) {
+      } catch (_error) {
         return reply.status(400).send({
           error: 'Validation Error',
           message: `Invalid year ID: ${yearId}`,
@@ -681,7 +681,7 @@ const yearlyStatsRoutes: FastifyPluginAsync = async (fastify) => {
       // Validate year ID format
       try {
         parseYearId(yearId);
-      } catch (error) {
+      } catch (_error) {
         return reply.status(400).send({
           error: 'Validation Error',
           message: `Invalid year ID: ${yearId}`,

@@ -58,7 +58,7 @@ export function ProtectedRoute({ children, requiredRoles = [] }: ProtectedRouteP
               You don&apos;t have permission to access this page.
             </p>
             <p className="mb-6 text-sm text-neutral-500">
-              {/* eslint-disable-next-line react/no-unescaped-entities */}
+              {}
               Required role: {requiredRoles.join(' or ')}
               <br />
               Your roles: {user?.roles?.join(', ') || 'none'}

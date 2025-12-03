@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { type FastifyInstance } from 'fastify';
 import { describe, it, expect, beforeEach } from 'vitest';
 

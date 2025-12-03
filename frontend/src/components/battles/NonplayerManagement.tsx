@@ -57,6 +57,7 @@ export default function NonplayerManagement({
         credentials: 'include',
       });
       if (!response.ok) throw new Error('Failed to fetch roster');
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return response.json();
     },
   });
@@ -122,7 +123,7 @@ export default function NonplayerManagement({
         await markAsLeftMutation.mutateAsync(playerId);
         // Remove from local state immediately
         setNonplayers((prev) => prev.filter((np) => np.playerId !== playerId));
-      } catch (error) {
+      } catch (_error) {
         alert('Failed to mark player as left. Please try again.');
       }
     }

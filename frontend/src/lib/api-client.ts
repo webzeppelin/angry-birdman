@@ -40,9 +40,9 @@ apiClient.interceptors.request.use(
 
     return config;
   },
-  // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
+
   (error) => {
-    return Promise.reject(error);
+    return Promise.reject(error instanceof Error ? error : new Error(String(error)));
   }
 );
 
@@ -92,7 +92,6 @@ apiClient.interceptors.response.use(
       console.error('Request error:', error.message);
     }
 
-    // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
     return Promise.reject(error);
   }
 );

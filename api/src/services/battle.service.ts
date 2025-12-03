@@ -464,7 +464,7 @@ export class BattleService {
     data: BattleEntry
   ): Promise<void> {
     // Process player action codes
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+
     for (const player of data.playerStats) {
       if (player.actionCode === 'KICK') {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call

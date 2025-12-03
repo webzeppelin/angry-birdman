@@ -17,7 +17,7 @@ beforeAll(async () => {
     server = mockServer;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     server.listen({ onUnhandledRequest: 'warn' });
-  } catch (error) {
+  } catch (_error) {
     // MSW not yet configured, skip
     // eslint-disable-next-line no-console
     console.log('MSW not yet configured, skipping API mocking in tests');
@@ -41,7 +41,7 @@ afterAll(() => {
 // Mock window.matchMedia (often needed for responsive components)
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
   value: vi.fn().mockImplementation((query: string) => ({
     matches: false,
     media: query,

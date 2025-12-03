@@ -63,7 +63,7 @@ async function main() {
         },
       });
       return false; // Should have thrown error
-    } catch (error) {
+    } catch (_error) {
       return true; // Expected error
     }
   })();
@@ -78,7 +78,7 @@ async function main() {
         },
       });
       return false; // Should have thrown error
-    } catch (error) {
+    } catch (_error) {
       return true; // Expected error
     }
   })();
@@ -96,7 +96,7 @@ async function main() {
         },
       });
       return false; // Should have thrown error
-    } catch (error) {
+    } catch (_error) {
       return true; // Expected error
     }
   })();
@@ -121,7 +121,7 @@ async function main() {
         },
       });
       return false; // Should have thrown error
-    } catch (error) {
+    } catch (_error) {
       return true; // Expected error
     }
   })();

@@ -190,13 +190,13 @@ const monthlyStatsRoutes: FastifyPluginAsync = async (fastify) => {
         });
       }
 
-      // Validate month ID format
+      // Validate month
       try {
         parseMonthId(monthId);
-      } catch (error) {
+      } catch (_error) {
         return reply.status(400).send({
           error: 'Validation Error',
-          message: `Invalid month ID: ${monthId}`,
+          message: 'Invalid month ID format',
         });
       }
 
@@ -337,10 +337,10 @@ const monthlyStatsRoutes: FastifyPluginAsync = async (fastify) => {
         });
       }
 
-      // Validate month ID format
+      // Validate month ID
       try {
         parseMonthId(monthId);
-      } catch (error) {
+      } catch (_error) {
         return reply.status(400).send({
           error: 'Validation Error',
           message: `Invalid month ID: ${monthId}`,
@@ -542,7 +542,7 @@ const monthlyStatsRoutes: FastifyPluginAsync = async (fastify) => {
       // Validate month ID format
       try {
         parseMonthId(monthId);
-      } catch (error) {
+      } catch (_error) {
         return reply.status(400).send({
           error: 'Validation Error',
           message: `Invalid month ID: ${monthId}`,
@@ -669,7 +669,7 @@ const monthlyStatsRoutes: FastifyPluginAsync = async (fastify) => {
       // Validate month ID format
       try {
         parseMonthId(monthId);
-      } catch (error) {
+      } catch (_error) {
         return reply.status(400).send({
           error: 'Validation Error',
           message: `Invalid month ID: ${monthId}`,
