@@ -9,19 +9,16 @@
     ".": "./index.ts"
   },
   "scripts": {
-    "migrate:dev": "prisma migrate dev --schema=prisma/schema.prisma",
-    "migrate:deploy": "prisma migrate deploy --schema=prisma/schema.prisma",
-    "migrate:reset": "prisma migrate reset --schema=prisma/schema.prisma --force",
-    "generate": "prisma generate --schema=prisma/schema.prisma",
-    "studio": "prisma studio --schema=prisma/schema.prisma",
+    "migrate:dev": "prisma migrate dev",
+    "migrate:deploy": "prisma migrate deploy",
+    "migrate:reset": "prisma migrate reset --force",
+    "generate": "prisma generate",
+    "studio": "prisma studio",
     "seed": "tsx prisma/seed.ts",
-    "db:push": "prisma db push --schema=prisma/schema.prisma",
-    "db:pull": "prisma db pull --schema=prisma/schema.prisma",
-    "format": "prisma format --schema=prisma/schema.prisma",
-    "validate": "prisma validate --schema=prisma/schema.prisma"
-  },
-  "prisma": {
-    "seed": "tsx prisma/seed.ts"
+    "db:push": "prisma db push",
+    "db:pull": "prisma db pull",
+    "format": "prisma format",
+    "validate": "prisma validate"
   },
   "keywords": [
     "angry-birds-2",
@@ -33,11 +30,11 @@
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^24.10.1",
-    "prisma": "^6.19.0",
+    "prisma": "^7.1.0",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@prisma/client": "^6.19.0"
+    "@prisma/client": "^7.1.0"
   }
 }

@@ -26,7 +26,7 @@ import {
   type BattleDetailResponse,
 } from '@angrybirdman/common';
 import { generateBattleId, generateMonthId, generateYearId } from '@angrybirdman/common';
-import { type Prisma, type PrismaClient } from '@prisma/client';
+import { type Prisma, type PrismaClient } from '@angrybirdman/database';
 
 export class BattleService {
   constructor(private prisma: PrismaClient) {}

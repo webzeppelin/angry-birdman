@@ -11,7 +11,7 @@ import { z } from 'zod';
 
 import { authenticate } from '../middleware/auth.js';
 
-import type { PrismaClient } from '@prisma/client';
+import type { PrismaClient } from '@angrybirdman/database';
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 
 // Type for Prisma transaction callback

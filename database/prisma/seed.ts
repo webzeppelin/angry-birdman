@@ -12,9 +12,23 @@
  * Run with: npm run seed
  */
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import dotenv from 'dotenv';
+import pg from 'pg';
 
-const prisma = new PrismaClient();
+import { PrismaClient } from '../generated/client/client';
+
+// Load environment variables from prisma directory
+dotenv.config({ path: './prisma/.env' });
+
+const connectionString = process.env.DATABASE_URL;
+if (!connectionString) {
+  throw new Error('DATABASE_URL environment variable is not set');
+}
+
+const pool = new pg.Pool({ connectionString });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log('🌱 Starting database seed...\n');

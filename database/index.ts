@@ -4,4 +4,4 @@
  * Re-exports Prisma Client and types for use by API and other services
  */
 
-export { PrismaClient, Prisma } from '@prisma/client';
+export { PrismaClient, Prisma } from './generated/client/client';

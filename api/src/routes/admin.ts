@@ -14,7 +14,7 @@ import {
 } from '../services/audit.service.js';
 import { createKeycloakService } from '../services/keycloak.service.js';
 
-import type { PrismaClient } from '@prisma/client';
+import type { PrismaClient } from '@angrybirdman/database';
 import type { FastifyPluginAsync } from 'fastify';
 
 // Type for Prisma transaction callback

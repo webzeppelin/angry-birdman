@@ -80,6 +80,7 @@ Thumbs.db
 prisma/.env
 database/prisma/dev.db
 database/prisma/dev.db-journal
+generated/
 
 # Husky
 .husky/_

@@ -3,13 +3,12 @@
 // Based on: specs/high-level-spec.md Section 6 (Data Concepts)
 
 generator client {
-  provider = "prisma-client-js"
-  output   = "../../node_modules/.prisma/client"
+  provider = "prisma-client"
+  output   = "../generated/client"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 // ============================================================================

@@ -1,9 +1,10 @@
-import {
-  PrismaClientKnownRequestError,
-  PrismaClientValidationError,
-} from '@prisma/client/runtime/library';
+import { Prisma } from '@angrybirdman/database';
 import { type FastifyError, type FastifyReply, type FastifyRequest } from 'fastify';
 import { ZodError } from 'zod';
+
+// Extract error types from Prisma namespace
+const PrismaClientKnownRequestError = Prisma.PrismaClientKnownRequestError;
+const PrismaClientValidationError = Prisma.PrismaClientValidationError;
 
 /**
  * Error Handler Middleware
@@ -130,7 +131,7 @@ export async function errorHandler(
  * Handle Prisma-specific errors with appropriate status codes and messages
  */
 async function handlePrismaError(
-  error: PrismaClientKnownRequestError,
+  error: typeof PrismaClientKnownRequestError.prototype,
   _request: FastifyRequest,
   reply: FastifyReply,
   timestamp: string,
