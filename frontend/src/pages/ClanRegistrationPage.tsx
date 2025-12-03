@@ -201,7 +201,7 @@ export default function ClanRegistrationPage() {
               onChange={handleChange}
               className={`mt-1 block w-full appearance-none border px-3 py-2 ${
                 errors.name ? 'border-red-300' : 'border-gray-300'
-              } focus:ring-primary focus:border-primary rounded-md placeholder-gray-400 shadow-sm focus:outline-none sm:text-sm`}
+              } rounded-md placeholder-gray-400 shadow-sm focus:border-primary focus:outline-none focus:ring-primary sm:text-sm`}
               placeholder="Enter clan name"
             />
             {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
@@ -225,7 +225,7 @@ export default function ClanRegistrationPage() {
               onChange={handleChange}
               className={`mt-1 block w-full appearance-none border px-3 py-2 ${
                 errors.rovioId ? 'border-red-300' : 'border-gray-300'
-              } focus:ring-primary focus:border-primary rounded-md placeholder-gray-400 shadow-sm focus:outline-none sm:text-sm`}
+              } rounded-md placeholder-gray-400 shadow-sm focus:border-primary focus:outline-none focus:ring-primary sm:text-sm`}
               placeholder="Enter Rovio ID"
             />
             {errors.rovioId && <p className="mt-1 text-sm text-red-600">{errors.rovioId}</p>}
@@ -249,7 +249,7 @@ export default function ClanRegistrationPage() {
               onChange={handleChange}
               className={`mt-1 block w-full appearance-none border px-3 py-2 ${
                 errors.country ? 'border-red-300' : 'border-gray-300'
-              } focus:ring-primary focus:border-primary rounded-md placeholder-gray-400 shadow-sm focus:outline-none sm:text-sm`}
+              } rounded-md placeholder-gray-400 shadow-sm focus:border-primary focus:outline-none focus:ring-primary sm:text-sm`}
               placeholder="Enter country"
             />
             {errors.country && <p className="mt-1 text-sm text-red-600">{errors.country}</p>}
@@ -263,7 +263,7 @@ export default function ClanRegistrationPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-primary hover:bg-primary-dark focus:ring-primary group relative flex w-full justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              className="hover:bg-primary-dark group relative flex w-full justify-center rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isSubmitting ? 'Creating Clan...' : 'Create Clan'}
             </button>

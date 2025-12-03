@@ -79,7 +79,7 @@ export default function PerformanceDataForm({
             value={score}
             onChange={(e) => setScore(e.target.value)}
             min="0"
-            className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
             required
           />
         </div>
@@ -95,7 +95,7 @@ export default function PerformanceDataForm({
             value={opponentScore}
             onChange={(e) => setOpponentScore(e.target.value)}
             min="0"
-            className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
             required
           />
         </div>
@@ -113,7 +113,7 @@ export default function PerformanceDataForm({
             value={baselineFp}
             onChange={(e) => setBaselineFp(e.target.value)}
             min="1"
-            className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
             required
           />
           <p className="mt-1 text-sm text-gray-500">Total FP of all clan members at battle start</p>
@@ -130,7 +130,7 @@ export default function PerformanceDataForm({
             value={opponentFp}
             onChange={(e) => setOpponentFp(e.target.value)}
             min="1"
-            className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
             required
           />
         </div>
@@ -156,7 +156,7 @@ export default function PerformanceDataForm({
         </div>
         <button
           type="submit"
-          className="bg-primary hover:bg-primary-dark rounded-md px-6 py-2 text-white transition-colors"
+          className="hover:bg-primary-dark rounded-md bg-primary px-6 py-2 text-white transition-colors"
         >
           Next →
         </button>

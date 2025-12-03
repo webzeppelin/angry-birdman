@@ -13,14 +13,14 @@ export function AboutPage() {
         {/* Header */}
         <div className="mb-12 text-center">
           <div className="mb-4 text-6xl">🐦</div>
-          <h1 className="font-display mb-4 text-4xl text-neutral-800">About Angry Birdman</h1>
+          <h1 className="mb-4 font-display text-4xl text-neutral-800">About Angry Birdman</h1>
           <p className="text-xl text-neutral-600">
             A comprehensive clan management system for Angry Birds 2
           </p>
         </div>
 
         {/* Purpose Section */}
-        <section className="shadow-card mb-8 rounded-lg bg-white p-8">
+        <section className="mb-8 rounded-lg bg-white p-8 shadow-card">
           <h2 className="mb-4 text-2xl font-semibold text-neutral-800">What is Angry Birdman?</h2>
           <p className="mb-4 text-neutral-700">
             Angry Birdman is a specialized clan management system designed for Angry Birds 2 clan
@@ -34,7 +34,7 @@ export function AboutPage() {
         </section>
 
         {/* Key Features */}
-        <section className="shadow-card mb-8 rounded-lg bg-white p-8">
+        <section className="mb-8 rounded-lg bg-white p-8 shadow-card">
           <h2 className="mb-6 text-2xl font-semibold text-neutral-800">Key Features</h2>
           <div className="space-y-6">
             <div>
@@ -86,7 +86,7 @@ export function AboutPage() {
         </section>
 
         {/* Key Concepts */}
-        <section className="shadow-card mb-8 rounded-lg bg-white p-8">
+        <section className="mb-8 rounded-lg bg-white p-8 shadow-card">
           <h2 className="mb-6 text-2xl font-semibold text-neutral-800">Key Concepts</h2>
           <div className="space-y-4">
             <div>
@@ -126,7 +126,7 @@ export function AboutPage() {
         </section>
 
         {/* User Roles */}
-        <section className="shadow-card mb-8 rounded-lg bg-white p-8">
+        <section className="mb-8 rounded-lg bg-white p-8 shadow-card">
           <h2 className="mb-6 text-2xl font-semibold text-neutral-800">User Roles</h2>
           <div className="space-y-4">
             <div>
@@ -164,12 +164,12 @@ export function AboutPage() {
         </section>
 
         {/* Getting Started */}
-        <section className="bg-primary/10 mb-8 rounded-lg p-8">
+        <section className="mb-8 rounded-lg bg-primary/10 p-8">
           <h2 className="mb-4 text-2xl font-semibold text-neutral-800">Getting Started</h2>
           <div className="space-y-3">
             <p className="text-neutral-700">
               <strong>To browse data:</strong> No account needed! Click{' '}
-              <Link to="/clans" className="text-primary font-medium hover:underline">
+              <Link to="/clans" className="font-medium text-primary hover:underline">
                 Browse Clans
               </Link>{' '}
               to explore clan statistics and battle history.
@@ -183,7 +183,7 @@ export function AboutPage() {
         </section>
 
         {/* Support */}
-        <section className="shadow-card rounded-lg bg-white p-8">
+        <section className="rounded-lg bg-white p-8 shadow-card">
           <h2 className="mb-4 text-2xl font-semibold text-neutral-800">Support & Feedback</h2>
           <p className="text-neutral-700">
             Angry Birdman is an independent project built for the Angry Birds 2 community.
@@ -198,7 +198,7 @@ export function AboutPage() {
         <div className="mt-12 text-center">
           <Link
             to="/"
-            className="text-primary hover:text-primary-600 inline-flex items-center gap-2 font-medium"
+            className="inline-flex items-center gap-2 font-medium text-primary hover:text-primary-600"
           >
             ← Back to Home
           </Link>

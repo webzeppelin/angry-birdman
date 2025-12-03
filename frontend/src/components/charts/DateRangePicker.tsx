@@ -120,7 +120,7 @@ export function DateRangePicker({ onDateRangeChange, className = '' }: DateRange
             id="start-date"
             value={startDate ? convertBattleIdToDateInput(startDate) : ''}
             onChange={handleStartDateChange}
-            className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </div>
         <div>
@@ -132,7 +132,7 @@ export function DateRangePicker({ onDateRangeChange, className = '' }: DateRange
             id="end-date"
             value={endDate ? convertBattleIdToDateInput(endDate) : ''}
             onChange={handleEndDateChange}
-            className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </div>
       </div>

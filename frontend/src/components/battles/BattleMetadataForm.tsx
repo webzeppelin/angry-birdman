@@ -104,7 +104,7 @@ export default function BattleMetadataForm({
             id="startDate"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
-            className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
             required
           />
         </div>
@@ -142,7 +142,7 @@ export default function BattleMetadataForm({
             id="opponentRovioId"
             value={opponentRovioId}
             onChange={(e) => setOpponentRovioId(e.target.value)}
-            className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
             placeholder="e.g., CLAN123"
           />
         </div>
@@ -157,7 +157,7 @@ export default function BattleMetadataForm({
             id="opponentName"
             value={opponentName}
             onChange={(e) => setOpponentName(e.target.value)}
-            className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
             placeholder="Opponent clan name"
             required
           />
@@ -174,7 +174,7 @@ export default function BattleMetadataForm({
           id="opponentCountry"
           value={opponentCountry}
           onChange={(e) => setOpponentCountry(e.target.value)}
-          className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2"
+          className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
           placeholder="e.g., US, UK, CA"
         />
       </div>
@@ -190,7 +190,7 @@ export default function BattleMetadataForm({
         </button>
         <button
           type="submit"
-          className="bg-primary hover:bg-primary-dark rounded-md px-6 py-2 text-white transition-colors"
+          className="hover:bg-primary-dark rounded-md bg-primary px-6 py-2 text-white transition-colors"
         >
           Next →
         </button>

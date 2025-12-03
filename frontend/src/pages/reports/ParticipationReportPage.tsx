@@ -76,7 +76,7 @@ export function ParticipationReportPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-6">
-        <h1 className="font-display mb-2 text-3xl font-bold text-gray-900">Participation Trends</h1>
+        <h1 className="mb-2 font-display text-3xl font-bold text-gray-900">Participation Trends</h1>
         <p className="text-gray-600">Monitor member engagement and participation patterns</p>
       </div>
 

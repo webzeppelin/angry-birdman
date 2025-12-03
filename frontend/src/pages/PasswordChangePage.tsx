@@ -161,7 +161,7 @@ export default function PasswordChangePage() {
             Your password has been updated. Redirecting to profile...
           </p>
           <div className="flex justify-center">
-            <Link to="/profile" className="text-primary hover:text-primary-dark font-medium">
+            <Link to="/profile" className="hover:text-primary-dark font-medium text-primary">
               Go to profile now
             </Link>
           </div>
@@ -222,7 +222,7 @@ export default function PasswordChangePage() {
                     onChange={handleChange}
                     className={`block w-full rounded-md border ${
                       formErrors.currentPassword ? 'border-red-300' : 'border-gray-300'
-                    } focus:border-primary focus:ring-primary px-3 py-2 pr-10 shadow-sm focus:outline-none sm:text-sm`}
+                    } px-3 py-2 pr-10 shadow-sm focus:border-primary focus:outline-none focus:ring-primary sm:text-sm`}
                     placeholder="Enter current password"
                   />
                   <button
@@ -287,7 +287,7 @@ export default function PasswordChangePage() {
                     onChange={handleChange}
                     className={`block w-full rounded-md border ${
                       formErrors.newPassword ? 'border-red-300' : 'border-gray-300'
-                    } focus:border-primary focus:ring-primary px-3 py-2 pr-10 shadow-sm focus:outline-none sm:text-sm`}
+                    } px-3 py-2 pr-10 shadow-sm focus:border-primary focus:outline-none focus:ring-primary sm:text-sm`}
                     placeholder="Enter new password"
                   />
                   <button
@@ -358,7 +358,7 @@ export default function PasswordChangePage() {
                     onChange={handleChange}
                     className={`block w-full rounded-md border ${
                       formErrors.confirmPassword ? 'border-red-300' : 'border-gray-300'
-                    } focus:border-primary focus:ring-primary px-3 py-2 pr-10 shadow-sm focus:outline-none sm:text-sm`}
+                    } px-3 py-2 pr-10 shadow-sm focus:border-primary focus:outline-none focus:ring-primary sm:text-sm`}
                     placeholder="Confirm new password"
                   />
                   <button
@@ -436,14 +436,14 @@ export default function PasswordChangePage() {
               <div className="flex justify-end space-x-3">
                 <Link
                   to="/profile"
-                  className="focus:ring-primary rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2"
+                  className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                 >
                   Cancel
                 </Link>
                 <button
                   type="submit"
                   disabled={changePassword.isPending}
-                  className="bg-primary hover:bg-primary-dark focus:ring-primary inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="hover:bg-primary-dark inline-flex items-center rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {changePassword.isPending ? 'Changing...' : 'Change Password'}
                 </button>

@@ -80,7 +80,7 @@ export function DashboardPage() {
     return (
       <div className="min-h-[60vh] bg-gray-50 py-12">
         <div className="container mx-auto px-4">
-          <div className="shadow-card rounded-lg bg-white p-12 text-center">
+          <div className="rounded-lg bg-white p-12 text-center shadow-card">
             <div className="mb-4 text-6xl">🏠</div>
             <h2 className="mb-4 text-2xl font-semibold text-neutral-800">No Clan Association</h2>
             <p className="mb-6 text-neutral-600">
@@ -114,7 +114,7 @@ export function DashboardPage() {
     return (
       <div className="min-h-[60vh] bg-gray-50 py-12">
         <div className="container mx-auto px-4">
-          <div className="shadow-card border-error rounded-lg border bg-white p-12 text-center">
+          <div className="border-error rounded-lg border bg-white p-12 text-center shadow-card">
             <div className="mb-4 text-6xl">⚠️</div>
             <h2 className="mb-4 text-2xl font-semibold text-neutral-800">
               Error Loading Dashboard
@@ -133,7 +133,7 @@ export function DashboardPage() {
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="font-display mb-2 text-4xl text-neutral-800">{clan.name} Dashboard</h1>
+          <h1 className="mb-2 font-display text-4xl text-neutral-800">{clan.name} Dashboard</h1>
           <p className="text-neutral-600">
             {clan.country} • Rovio ID: {clan.rovioId}
           </p>
@@ -142,12 +142,12 @@ export function DashboardPage() {
         {/* Key Metrics - Month and Year */}
         <div className="mb-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {/* Current Month Win Rate */}
-          <div className="shadow-card rounded-lg bg-white p-6">
+          <div className="rounded-lg bg-white p-6 shadow-card">
             <div className="mb-2 flex items-center gap-2 text-sm font-medium text-neutral-600">
-              <TrophyIcon className="text-success h-5 w-5" />
+              <TrophyIcon className="h-5 w-5 text-success" />
               Month Win Rate
             </div>
-            <div className="text-success mb-1 text-3xl font-bold">
+            <div className="mb-1 text-3xl font-bold text-success">
               {currentMonth.winRate.toFixed(1)}%
             </div>
             <div className="text-sm text-neutral-500">
@@ -157,7 +157,7 @@ export function DashboardPage() {
           </div>
 
           {/* Current Month Avg Ratio */}
-          <div className="shadow-card rounded-lg bg-white p-6">
+          <div className="rounded-lg bg-white p-6 shadow-card">
             <div className="mb-2 flex items-center gap-2 text-sm font-medium text-neutral-600">
               <ChartBarIcon className="text-info h-5 w-5" />
               Month Avg Ratio
@@ -171,12 +171,12 @@ export function DashboardPage() {
           </div>
 
           {/* Year Win Rate */}
-          <div className="shadow-card rounded-lg bg-white p-6">
+          <div className="rounded-lg bg-white p-6 shadow-card">
             <div className="mb-2 flex items-center gap-2 text-sm font-medium text-neutral-600">
-              <TrophyIcon className="text-warning h-5 w-5" />
+              <TrophyIcon className="h-5 w-5 text-warning" />
               Year Win Rate
             </div>
-            <div className="text-warning mb-1 text-3xl font-bold">
+            <div className="mb-1 text-3xl font-bold text-warning">
               {currentYear.winRate.toFixed(1)}%
             </div>
             <div className="text-sm text-neutral-500">
@@ -186,12 +186,12 @@ export function DashboardPage() {
           </div>
 
           {/* Year Avg Ratio */}
-          <div className="shadow-card rounded-lg bg-white p-6">
+          <div className="rounded-lg bg-white p-6 shadow-card">
             <div className="mb-2 flex items-center gap-2 text-sm font-medium text-neutral-600">
-              <ChartBarIcon className="text-primary h-5 w-5" />
+              <ChartBarIcon className="h-5 w-5 text-primary" />
               Year Avg Ratio
             </div>
-            <div className="text-primary mb-1 text-3xl font-bold">
+            <div className="mb-1 text-3xl font-bold text-primary">
               {currentYear.avgRatio.toFixed(2)}
             </div>
             <div className="text-sm text-neutral-500">
@@ -200,12 +200,12 @@ export function DashboardPage() {
           </div>
 
           {/* Next Battle */}
-          <div className="shadow-card rounded-lg bg-white p-6">
+          <div className="rounded-lg bg-white p-6 shadow-card">
             <div className="mb-2 flex items-center gap-2 text-sm font-medium text-neutral-600">
-              <CalendarIcon className="text-success h-5 w-5" />
+              <CalendarIcon className="h-5 w-5 text-success" />
               Next Battle
             </div>
-            <div className="text-success mb-1 text-3xl font-bold">
+            <div className="mb-1 text-3xl font-bold text-success">
               {nextBattleDate
                 ? new Date(nextBattleDate).toLocaleDateString(undefined, {
                     month: 'short',
@@ -224,7 +224,7 @@ export function DashboardPage() {
 
           {/* Alerts (if any) */}
           {(alerts.pendingAdminRequests > 0 || alerts.incompleteBattleDrafts > 0) && (
-            <div className="shadow-card rounded-lg bg-white p-6">
+            <div className="rounded-lg bg-white p-6 shadow-card">
               <div className="mb-2 flex items-center gap-2 text-sm font-medium text-neutral-600">
                 <ClipboardDocumentListIcon className="text-error h-5 w-5" />
                 Pending Items
@@ -251,10 +251,10 @@ export function DashboardPage() {
         <div className="mb-8 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Link
             to={`/clans/${clanId}/battles/new`}
-            className="shadow-card hover:shadow-card-hover flex items-center gap-4 rounded-lg bg-white p-6 transition-all hover:scale-105"
+            className="flex items-center gap-4 rounded-lg bg-white p-6 shadow-card transition-all hover:scale-105 hover:shadow-card-hover"
           >
-            <div className="bg-primary/10 rounded-lg p-3">
-              <PlusCircleIcon className="text-primary h-8 w-8" />
+            <div className="rounded-lg bg-primary/10 p-3">
+              <PlusCircleIcon className="h-8 w-8 text-primary" />
             </div>
             <div>
               <div className="font-semibold text-neutral-800">Record Battle</div>
@@ -264,7 +264,7 @@ export function DashboardPage() {
 
           <Link
             to={`/clans/${clanId}/roster`}
-            className="shadow-card hover:shadow-card-hover flex items-center gap-4 rounded-lg bg-white p-6 transition-all hover:scale-105"
+            className="flex items-center gap-4 rounded-lg bg-white p-6 shadow-card transition-all hover:scale-105 hover:shadow-card-hover"
           >
             <div className="bg-info/10 rounded-lg p-3">
               <UsersIcon className="text-info h-8 w-8" />
@@ -277,10 +277,10 @@ export function DashboardPage() {
 
           <Link
             to={`/clans/${clanId}/reports`}
-            className="shadow-card hover:shadow-card-hover flex items-center gap-4 rounded-lg bg-white p-6 transition-all hover:scale-105"
+            className="flex items-center gap-4 rounded-lg bg-white p-6 shadow-card transition-all hover:scale-105 hover:shadow-card-hover"
           >
-            <div className="bg-success/10 rounded-lg p-3">
-              <ChartBarIcon className="text-success h-8 w-8" />
+            <div className="rounded-lg bg-success/10 p-3">
+              <ChartBarIcon className="h-8 w-8 text-success" />
             </div>
             <div>
               <div className="font-semibold text-neutral-800">View Reports</div>
@@ -290,10 +290,10 @@ export function DashboardPage() {
 
           <Link
             to={`/clans/${clanId}/stats/months/${currentMonth.monthId}`}
-            className="shadow-card hover:shadow-card-hover flex items-center gap-4 rounded-lg bg-white p-6 transition-all hover:scale-105"
+            className="flex items-center gap-4 rounded-lg bg-white p-6 shadow-card transition-all hover:scale-105 hover:shadow-card-hover"
           >
-            <div className="bg-warning/10 rounded-lg p-3">
-              <CalendarIcon className="text-warning h-8 w-8" />
+            <div className="rounded-lg bg-warning/10 p-3">
+              <CalendarIcon className="h-8 w-8 text-warning" />
             </div>
             <div>
               <div className="font-semibold text-neutral-800">Monthly Stats</div>
@@ -303,7 +303,7 @@ export function DashboardPage() {
         </div>
 
         {/* Recent Battles */}
-        <div className="shadow-card mb-8 rounded-lg bg-white p-6">
+        <div className="mb-8 rounded-lg bg-white p-6 shadow-card">
           <h2 className="mb-6 text-xl font-semibold text-neutral-800">Recent Battles</h2>
           {recentBattles.length > 0 ? (
             <div className="overflow-x-auto">
@@ -358,7 +358,7 @@ export function DashboardPage() {
                       <td className="py-3">
                         <Link
                           to={`/clans/${clanId}/battles/${battle.battleId}`}
-                          className="text-primary hover:text-primary-600 text-sm font-medium"
+                          className="text-sm font-medium text-primary hover:text-primary-600"
                         >
                           View →
                         </Link>

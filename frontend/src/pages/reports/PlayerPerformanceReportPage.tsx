@@ -145,7 +145,7 @@ export function PlayerPerformanceReportPage() {
         >
           ← Back to Reports
         </Link>
-        <h1 className="font-display mb-2 text-3xl font-bold text-gray-900">
+        <h1 className="mb-2 font-display text-3xl font-bold text-gray-900">
           Player Performance Report
         </h1>
         <p className="text-lg text-gray-600">

@@ -79,7 +79,7 @@ export function ClanSettingsPage() {
       <div className="min-h-[60vh] bg-gray-50 py-12">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-3xl">
-            <div className="shadow-card border-error rounded-lg border bg-white p-12 text-center">
+            <div className="border-error rounded-lg border bg-white p-12 text-center shadow-card">
               <div className="mb-4 text-6xl">🔒</div>
               <h2 className="mb-4 text-2xl font-semibold text-neutral-800">
                 Authentication Required
@@ -89,7 +89,7 @@ export function ClanSettingsPage() {
               </p>
               <Link
                 to="/login"
-                className="text-primary hover:text-primary-600 inline-flex items-center gap-2 font-medium"
+                className="inline-flex items-center gap-2 font-medium text-primary hover:text-primary-600"
               >
                 Sign In →
               </Link>
@@ -105,7 +105,7 @@ export function ClanSettingsPage() {
       <div className="min-h-[60vh] bg-gray-50 py-12">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-3xl">
-            <div className="shadow-card animate-pulse rounded-lg bg-white p-8">
+            <div className="animate-pulse rounded-lg bg-white p-8 shadow-card">
               <div className="mb-6 h-10 w-1/2 rounded bg-neutral-200"></div>
               <div className="space-y-4">
                 {Array.from({ length: 2 }).map((_, i) => (
@@ -124,7 +124,7 @@ export function ClanSettingsPage() {
       <div className="min-h-[60vh] bg-gray-50 py-12">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-3xl">
-            <div className="shadow-card border-error rounded-lg border bg-white p-12 text-center">
+            <div className="border-error rounded-lg border bg-white p-12 text-center shadow-card">
               <div className="mb-4 text-6xl">⚠️</div>
               <h2 className="mb-4 text-2xl font-semibold text-neutral-800">Clan Not Found</h2>
               <p className="mb-6 text-neutral-600">
@@ -132,7 +132,7 @@ export function ClanSettingsPage() {
               </p>
               <Link
                 to="/clans"
-                className="text-primary hover:text-primary-600 inline-flex items-center gap-2 font-medium"
+                className="inline-flex items-center gap-2 font-medium text-primary hover:text-primary-600"
               >
                 ← Browse all clans
               </Link>
@@ -148,7 +148,7 @@ export function ClanSettingsPage() {
       <div className="min-h-[60vh] bg-gray-50 py-12">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-3xl">
-            <div className="shadow-card border-error rounded-lg border bg-white p-12 text-center">
+            <div className="border-error rounded-lg border bg-white p-12 text-center shadow-card">
               <div className="mb-4 text-6xl">🚫</div>
               <h2 className="mb-4 text-2xl font-semibold text-neutral-800">Access Denied</h2>
               <p className="mb-6 text-neutral-600">
@@ -156,7 +156,7 @@ export function ClanSettingsPage() {
               </p>
               <Link
                 to={`/clans/${clanId}`}
-                className="text-primary hover:text-primary-600 inline-flex items-center gap-2 font-medium"
+                className="inline-flex items-center gap-2 font-medium text-primary hover:text-primary-600"
               >
                 ← Back to Clan Dashboard
               </Link>
@@ -198,7 +198,7 @@ export function ClanSettingsPage() {
 
           {/* Page Header */}
           <div className="mb-8">
-            <h1 className="font-display mb-2 text-4xl text-neutral-800">Clan Settings</h1>
+            <h1 className="mb-2 font-display text-4xl text-neutral-800">Clan Settings</h1>
             <p className="text-neutral-600">Manage your clan configuration and options</p>
           </div>
 
@@ -224,7 +224,7 @@ export function ClanSettingsPage() {
           {/* Settings Sections */}
           <div className="space-y-6">
             {/* Danger Zone */}
-            <div className="shadow-card border-error/20 rounded-lg border-2 bg-white p-8">
+            <div className="border-error/20 rounded-lg border-2 bg-white p-8 shadow-card">
               <div className="mb-6">
                 <h2 className="mb-2 text-2xl font-semibold text-neutral-800">Danger Zone</h2>
                 <p className="text-sm text-neutral-600">
@@ -268,7 +268,7 @@ export function ClanSettingsPage() {
           <div className="mt-8 text-center">
             <Link
               to={`/clans/${clanId}`}
-              className="text-primary hover:text-primary-600 inline-flex items-center gap-2 font-medium"
+              className="inline-flex items-center gap-2 font-medium text-primary hover:text-primary-600"
             >
               ← Back to Clan Dashboard
             </Link>
@@ -279,7 +279,7 @@ export function ClanSettingsPage() {
       {/* Deactivate Confirmation Dialog */}
       {showDeactivateDialog && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="shadow-card w-full max-w-lg rounded-lg bg-white p-6">
+          <div className="w-full max-w-lg rounded-lg bg-white p-6 shadow-card">
             <h3 className="text-error mb-4 text-2xl font-semibold">⚠️ Deactivate Clan?</h3>
             <div className="mb-6 space-y-3 text-neutral-700">
               <p>

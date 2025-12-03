@@ -214,7 +214,7 @@ export default function PlayerHistoryPage() {
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Ratio:</span>
-              <span className="text-primary-600 font-semibold">
+              <span className="font-semibold text-primary-600">
                 {summary.averageRatio.toFixed(2)}
               </span>
             </div>

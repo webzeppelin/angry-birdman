@@ -207,12 +207,7 @@ export default function RosterImportPage() {
           type="file"
           accept=".csv,text/csv"
           onChange={handleFileSelect}
-          className="file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 block
-            w-full text-sm text-gray-500
-            file:mr-4 file:rounded
-            file:border-0 file:px-4
-            file:py-2 file:text-sm
-            file:font-semibold"
+          className="block w-full text-sm text-gray-500 file:mr-4 file:rounded file:border-0 file:bg-primary-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-primary-700 hover:file:bg-primary-100"
         />
         <p className="mt-2 text-sm text-gray-500">Or paste CSV data below</p>
       </div>
@@ -224,7 +219,7 @@ export default function RosterImportPage() {
           value={csvData}
           onChange={handleTextChange}
           placeholder="Player Name,Joined Date&#10;John Doe,2025-01-01&#10;Jane Smith,2025-01-15"
-          className="focus:ring-primary-500 h-48 w-full rounded-md border border-gray-300 px-3 py-2 font-mono text-sm focus:outline-none focus:ring-2"
+          className="h-48 w-full rounded-md border border-gray-300 px-3 py-2 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
         />
         {csvData && (
           <button

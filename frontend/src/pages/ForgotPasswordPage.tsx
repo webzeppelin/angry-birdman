@@ -67,9 +67,9 @@ export default function ForgotPasswordPage() {
         <div className="rounded-lg bg-white px-8 py-10 shadow-md">
           {/* Icon */}
           <div className="mb-6 flex justify-center">
-            <div className="bg-primary/10 rounded-full p-3">
+            <div className="rounded-full bg-primary/10 p-3">
               <svg
-                className="text-primary h-10 w-10"
+                className="h-10 w-10 text-primary"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -95,25 +95,25 @@ export default function ForgotPasswordPage() {
             <h2 className="text-sm font-semibold text-gray-900">How it works:</h2>
             <ol className="space-y-3 text-sm text-gray-700">
               <li className="flex items-start">
-                <span className="bg-primary/10 text-primary mr-3 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-semibold">
+                <span className="mr-3 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
                   1
                 </span>
                 <span>You&apos;ll be taken to our identity provider&apos;s secure page</span>
               </li>
               <li className="flex items-start">
-                <span className="bg-primary/10 text-primary mr-3 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-semibold">
+                <span className="mr-3 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
                   2
                 </span>
                 <span>Enter your account email or username</span>
               </li>
               <li className="flex items-start">
-                <span className="bg-primary/10 text-primary mr-3 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-semibold">
+                <span className="mr-3 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
                   3
                 </span>
                 <span>Follow the instructions to reset your password</span>
               </li>
               <li className="flex items-start">
-                <span className="bg-primary/10 text-primary mr-3 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-semibold">
+                <span className="mr-3 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
                   4
                 </span>
                 <span>Return here and log in with your new password</span>
@@ -146,7 +146,7 @@ export default function ForgotPasswordPage() {
           <button
             onClick={handleResetPassword}
             disabled={isRedirecting}
-            className="bg-primary hover:bg-primary-dark focus:ring-primary w-full rounded-md border border-transparent px-4 py-3 text-base font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            className="hover:bg-primary-dark w-full rounded-md border border-transparent bg-primary px-4 py-3 text-base font-medium text-white focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isRedirecting ? 'Redirecting...' : 'Continue to Password Reset'}
           </button>
@@ -156,7 +156,7 @@ export default function ForgotPasswordPage() {
             <Link to="/login" className="text-gray-600 hover:text-gray-900">
               ← Back to login
             </Link>
-            <Link to="/register" className="text-primary hover:text-primary-dark">
+            <Link to="/register" className="hover:text-primary-dark text-primary">
               Don&apos;t have an account? Register
             </Link>
           </div>

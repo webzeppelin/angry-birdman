@@ -28,7 +28,7 @@ export default function PostRegistrationTriagePage() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="border-primary mb-4 h-12 w-12 animate-spin rounded-full border-4 border-t-transparent"></div>
+          <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
           <p className="text-gray-600">Loading...</p>
         </div>
       </div>
@@ -78,12 +78,12 @@ export default function PostRegistrationTriagePage() {
             {/* Register New Clan */}
             <Link
               to="/register/clan"
-              className="hover:border-primary focus:ring-primary relative rounded-lg border border-gray-300 bg-white p-6 shadow-sm transition-all duration-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2"
+              className="relative rounded-lg border border-gray-300 bg-white p-6 shadow-sm transition-all duration-200 hover:border-primary hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
             >
               <div className="flex flex-col items-center space-y-4 text-center">
-                <div className="bg-primary-100 flex h-16 w-16 items-center justify-center rounded-full">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary-100">
                   <svg
-                    className="text-primary h-8 w-8"
+                    className="h-8 w-8 text-primary"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -104,7 +104,7 @@ export default function PostRegistrationTriagePage() {
                   </p>
                 </div>
                 <div className="mt-4">
-                  <span className="text-primary inline-flex items-center text-sm font-medium">
+                  <span className="inline-flex items-center text-sm font-medium text-primary">
                     Get started
                     <svg className="ml-2 h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
                       <path
@@ -121,12 +121,12 @@ export default function PostRegistrationTriagePage() {
             {/* Find Existing Clan */}
             <Link
               to="/clans"
-              className="hover:border-primary focus:ring-primary relative rounded-lg border border-gray-300 bg-white p-6 shadow-sm transition-all duration-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2"
+              className="relative rounded-lg border border-gray-300 bg-white p-6 shadow-sm transition-all duration-200 hover:border-primary hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
             >
               <div className="flex flex-col items-center space-y-4 text-center">
-                <div className="bg-secondary-100 flex h-16 w-16 items-center justify-center rounded-full">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-secondary-100">
                   <svg
-                    className="text-secondary h-8 w-8"
+                    className="h-8 w-8 text-secondary"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -147,7 +147,7 @@ export default function PostRegistrationTriagePage() {
                   </p>
                 </div>
                 <div className="mt-4">
-                  <span className="text-secondary inline-flex items-center text-sm font-medium">
+                  <span className="inline-flex items-center text-sm font-medium text-secondary">
                     Browse clans
                     <svg className="ml-2 h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
                       <path

@@ -163,7 +163,7 @@ export default function ActionCodeAssignment({
             <button
               type="button"
               onClick={() => applyBulkAction(true)}
-              className="bg-secondary hover:bg-secondary-dark rounded px-4 py-1 text-white"
+              className="hover:bg-secondary-dark rounded bg-secondary px-4 py-1 text-white"
             >
               Apply to All Players
             </button>
@@ -228,7 +228,7 @@ export default function ActionCodeAssignment({
             <button
               type="button"
               onClick={() => applyBulkAction(false)}
-              className="bg-secondary hover:bg-secondary-dark rounded px-4 py-1 text-white"
+              className="hover:bg-secondary-dark rounded bg-secondary px-4 py-1 text-white"
             >
               Apply to All Non-Players
             </button>
@@ -321,7 +321,7 @@ export default function ActionCodeAssignment({
         <button
           type="button"
           onClick={handleNext}
-          className="bg-primary hover:bg-primary-dark rounded-md px-6 py-2 text-white transition-colors"
+          className="hover:bg-primary-dark rounded-md bg-primary px-6 py-2 text-white transition-colors"
         >
           Next →
         </button>

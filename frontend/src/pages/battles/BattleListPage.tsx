@@ -121,7 +121,7 @@ export default function BattleListPage() {
         {canCreateBattle && (
           <Link
             to={`/clans/${clanIdNum}/battles/new`}
-            className="bg-primary hover:bg-primary-dark rounded-md px-6 py-2 font-semibold text-white transition-colors"
+            className="hover:bg-primary-dark rounded-md bg-primary px-6 py-2 font-semibold text-white transition-colors"
           >
             + Record New Battle
           </Link>
@@ -135,7 +135,7 @@ export default function BattleListPage() {
           {hasActiveFilters && (
             <button
               onClick={handleClearFilters}
-              className="text-primary hover:text-primary-dark text-sm font-medium"
+              className="hover:text-primary-dark text-sm font-medium text-primary"
             >
               Clear All
             </button>
@@ -149,7 +149,7 @@ export default function BattleListPage() {
               type="date"
               value={filters.startDate}
               onChange={(e) => handleFilterChange('startDate', e.target.value)}
-              className="focus:border-primary focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
             />
           </div>
           <div>
@@ -158,7 +158,7 @@ export default function BattleListPage() {
               type="date"
               value={filters.endDate}
               onChange={(e) => handleFilterChange('endDate', e.target.value)}
-              className="focus:border-primary focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
             />
           </div>
           {/* Opponent Search */}
@@ -169,7 +169,7 @@ export default function BattleListPage() {
               placeholder="Search..."
               value={filters.opponentName}
               onChange={(e) => handleFilterChange('opponentName', e.target.value)}
-              className="focus:border-primary focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
             />
           </div>
           <div>
@@ -179,7 +179,7 @@ export default function BattleListPage() {
               placeholder="Search..."
               value={filters.opponentCountry}
               onChange={(e) => handleFilterChange('opponentCountry', e.target.value)}
-              className="focus:border-primary focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
             />
           </div>
           {/* Result Filter */}
@@ -188,7 +188,7 @@ export default function BattleListPage() {
             <select
               value={filters.result}
               onChange={(e) => handleFilterChange('result', e.target.value)}
-              className="focus:border-primary focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
             >
               <option value="">All Results</option>
               <option value="1">Won</option>
@@ -229,7 +229,7 @@ export default function BattleListPage() {
                           sortBy === 'startDate' && sortOrder === 'desc' ? 'asc' : 'desc'
                         );
                       }}
-                      className="hover:text-primary flex items-center space-x-1"
+                      className="flex items-center space-x-1 hover:text-primary"
                     >
                       <span>Date</span>
                       {sortBy === 'startDate' && (
@@ -249,7 +249,7 @@ export default function BattleListPage() {
                         setSortBy('score');
                         setSortOrder(sortBy === 'score' && sortOrder === 'desc' ? 'asc' : 'desc');
                       }}
-                      className="hover:text-primary flex w-full items-center justify-center space-x-1"
+                      className="flex w-full items-center justify-center space-x-1 hover:text-primary"
                     >
                       <span>Score</span>
                       {sortBy === 'score' && (
@@ -263,7 +263,7 @@ export default function BattleListPage() {
                         setSortBy('ratio');
                         setSortOrder(sortBy === 'ratio' && sortOrder === 'desc' ? 'asc' : 'desc');
                       }}
-                      className="hover:text-primary flex w-full items-center justify-center space-x-1"
+                      className="flex w-full items-center justify-center space-x-1 hover:text-primary"
                     >
                       <span>Ratio</span>
                       {sortBy === 'ratio' && (
@@ -301,7 +301,7 @@ export default function BattleListPage() {
                       <td className="whitespace-nowrap px-6 py-4">
                         <Link
                           to={`/clans/${clanIdNum}/battles/${battle.battleId}`}
-                          className="text-primary font-medium hover:underline"
+                          className="font-medium text-primary hover:underline"
                         >
                           {battle.battleId}
                         </Link>
@@ -328,7 +328,7 @@ export default function BattleListPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4 text-center">
-                        <div className="text-primary text-sm font-semibold">
+                        <div className="text-sm font-semibold text-primary">
                           {battle.ratio.toFixed(2)}
                         </div>
                         <div className="text-xs text-gray-500">
@@ -386,7 +386,7 @@ export default function BattleListPage() {
             {canCreateBattle && (
               <Link
                 to={`/clans/${clanIdNum}/battles/new`}
-                className="bg-primary hover:bg-primary-dark inline-block rounded-md px-6 py-2 text-white transition-colors"
+                className="hover:bg-primary-dark inline-block rounded-md bg-primary px-6 py-2 text-white transition-colors"
               >
                 Record Your First Battle
               </Link>

@@ -261,7 +261,7 @@ export default function BattleEntryWizard({
                   currentStep === step.id
                     ? 'bg-primary text-white'
                     : currentStep > step.id
-                      ? 'bg-secondary hover:bg-secondary-dark cursor-pointer text-white'
+                      ? 'hover:bg-secondary-dark cursor-pointer bg-secondary text-white'
                       : 'cursor-not-allowed bg-gray-300 text-gray-600'
                 }`}
                 disabled={currentStep < step.id}
@@ -284,7 +284,7 @@ export default function BattleEntryWizard({
               key={step.id}
               className={`text-center ${
                 currentStep === step.id
-                  ? 'text-primary font-semibold'
+                  ? 'font-semibold text-primary'
                   : currentStep > step.id
                     ? 'text-secondary'
                     : 'text-gray-500'

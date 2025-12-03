@@ -109,7 +109,7 @@ export function CallbackPage() {
 
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <div className="shadow-card max-w-md rounded-lg bg-white p-8 text-center">
+        <div className="max-w-md rounded-lg bg-white p-8 text-center shadow-card">
           <div className="mb-4 text-6xl">{isDisabledAccount ? '🚫' : '❌'}</div>
           <h1 className="mb-2 text-2xl font-bold text-neutral-800">
             {isDisabledAccount ? 'Account Disabled' : 'Authentication Error'}
@@ -123,7 +123,7 @@ export function CallbackPage() {
           )}
           <a
             href="/"
-            className="bg-primary hover:bg-primary-600 inline-block rounded px-6 py-2 text-white"
+            className="inline-block rounded bg-primary px-6 py-2 text-white hover:bg-primary-600"
           >
             Go Home
           </a>
@@ -135,7 +135,7 @@ export function CallbackPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50">
       <div className="text-center">
-        <div className="border-t-primary mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-neutral-200"></div>
+        <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-neutral-200 border-t-primary"></div>
         <p className="text-neutral-600">Completing sign in...</p>
       </div>
     </div>

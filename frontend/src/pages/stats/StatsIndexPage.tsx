@@ -23,7 +23,7 @@ export default function StatsIndexPage() {
         <div className="mx-auto max-w-4xl">
           {/* Header */}
           <div className="mb-8 text-center">
-            <h1 className="font-display mb-2 text-4xl text-neutral-800">Statistics</h1>
+            <h1 className="mb-2 font-display text-4xl text-neutral-800">Statistics</h1>
             <p className="text-lg text-neutral-600">
               View monthly and yearly performance summaries
             </p>
@@ -33,10 +33,10 @@ export default function StatsIndexPage() {
           <div className="grid gap-6 md:grid-cols-2">
             <Link
               to={`/clans/${clanId}/stats/months/${currentMonthId}`}
-              className="shadow-card hover:shadow-card-hover group rounded-lg bg-white p-8 transition-all hover:scale-105"
+              className="group rounded-lg bg-white p-8 shadow-card transition-all hover:scale-105 hover:shadow-card-hover"
             >
               <div className="mb-4 text-5xl">📅</div>
-              <h3 className="group-hover:text-primary mb-3 text-2xl font-semibold text-neutral-800">
+              <h3 className="mb-3 text-2xl font-semibold text-neutral-800 group-hover:text-primary">
                 Monthly Stats
               </h3>
               <p className="text-neutral-600">
@@ -46,10 +46,10 @@ export default function StatsIndexPage() {
 
             <Link
               to={`/clans/${clanId}/stats/years/${currentYear}`}
-              className="shadow-card hover:shadow-card-hover group rounded-lg bg-white p-8 transition-all hover:scale-105"
+              className="group rounded-lg bg-white p-8 shadow-card transition-all hover:scale-105 hover:shadow-card-hover"
             >
               <div className="mb-4 text-5xl">🗓️</div>
-              <h3 className="group-hover:text-primary mb-3 text-2xl font-semibold text-neutral-800">
+              <h3 className="mb-3 text-2xl font-semibold text-neutral-800 group-hover:text-primary">
                 Yearly Stats
               </h3>
               <p className="text-neutral-600">
@@ -62,7 +62,7 @@ export default function StatsIndexPage() {
           <div className="mt-8 text-center">
             <Link
               to={`/clans/${clanId}`}
-              className="text-primary hover:text-primary-600 inline-flex items-center gap-2 font-medium"
+              className="inline-flex items-center gap-2 font-medium text-primary hover:text-primary-600"
             >
               ← Back to Clan Page
             </Link>

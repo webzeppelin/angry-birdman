@@ -149,7 +149,7 @@ export function EditPlayerForm({
               id="playerName"
               value={playerName}
               onChange={(e) => setPlayerName(e.target.value)}
-              className="focus:border-primary-500 focus:ring-primary-500 w-full rounded border border-neutral-300 px-3 py-2 focus:outline-none focus:ring-1"
+              className="w-full rounded border border-neutral-300 px-3 py-2 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
               placeholder="Enter player name"
               maxLength={100}
               required
@@ -166,7 +166,7 @@ export function EditPlayerForm({
               id="joinedDate"
               value={joinedDate}
               onChange={(e) => setJoinedDate(e.target.value)}
-              className="focus:border-primary-500 focus:ring-primary-500 w-full rounded border border-neutral-300 px-3 py-2 focus:outline-none focus:ring-1"
+              className="w-full rounded border border-neutral-300 px-3 py-2 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
               required
             />
           </div>
@@ -186,7 +186,7 @@ export function EditPlayerForm({
             </button>
             <button
               type="submit"
-              className="bg-primary-600 hover:bg-primary-700 rounded px-4 py-2 text-white disabled:opacity-50"
+              className="rounded bg-primary-600 px-4 py-2 text-white hover:bg-primary-700 disabled:opacity-50"
               disabled={updatePlayerMutation.isPending}
             >
               {updatePlayerMutation.isPending ? 'Saving...' : 'Save Changes'}

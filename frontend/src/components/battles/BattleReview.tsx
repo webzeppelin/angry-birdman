@@ -41,7 +41,7 @@ export default function BattleReview({
           <button
             type="button"
             onClick={() => onJumpToStep(1)}
-            className="text-primary text-sm hover:underline"
+            className="text-sm text-primary hover:underline"
           >
             Edit
           </button>
@@ -83,7 +83,7 @@ export default function BattleReview({
           <button
             type="button"
             onClick={() => onJumpToStep(2)}
-            className="text-primary text-sm hover:underline"
+            className="text-sm text-primary hover:underline"
           >
             Edit
           </button>
@@ -123,7 +123,7 @@ export default function BattleReview({
           <button
             type="button"
             onClick={() => onJumpToStep(3)}
-            className="text-primary text-sm hover:underline"
+            className="text-sm text-primary hover:underline"
           >
             Edit
           </button>
@@ -154,7 +154,7 @@ export default function BattleReview({
             <button
               type="button"
               onClick={() => onJumpToStep(4)}
-              className="text-primary text-sm hover:underline"
+              className="text-sm text-primary hover:underline"
             >
               Edit
             </button>
@@ -185,7 +185,7 @@ export default function BattleReview({
           <button
             type="button"
             onClick={() => onJumpToStep(5)}
-            className="text-primary text-sm hover:underline"
+            className="text-sm text-primary hover:underline"
           >
             Edit
           </button>

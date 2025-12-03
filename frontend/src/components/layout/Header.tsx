@@ -57,7 +57,7 @@ export function Header() {
   };
 
   return (
-    <header className="from-primary to-primary-600 sticky top-0 z-50 bg-gradient-to-r shadow-md">
+    <header className="sticky top-0 z-50 bg-gradient-to-r from-primary to-primary-600 shadow-md">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo/Brand */}
@@ -118,7 +118,7 @@ export function Header() {
                 </Link>
                 <button
                   onClick={handleLogin}
-                  className="text-primary rounded bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-white/90"
+                  className="rounded bg-white px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-white/90"
                 >
                   Sign In
                 </button>
@@ -219,7 +219,7 @@ export function Header() {
                       handleLogin();
                       setIsMobileMenuOpen(false);
                     }}
-                    className="text-primary rounded bg-white px-4 py-2 text-sm font-medium hover:bg-white/90"
+                    className="rounded bg-white px-4 py-2 text-sm font-medium text-primary hover:bg-white/90"
                   >
                     Sign In
                   </button>

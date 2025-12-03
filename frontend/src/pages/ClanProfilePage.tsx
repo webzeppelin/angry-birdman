@@ -58,7 +58,7 @@ export function ClanProfilePage() {
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-3xl space-y-6">
             {/* Loading skeleton */}
-            <div className="shadow-card rounded-lg bg-white p-8">
+            <div className="rounded-lg bg-white p-8 shadow-card">
               <div className="mb-6 h-10 w-1/2 animate-pulse rounded bg-neutral-200"></div>
               <div className="space-y-4">
                 {Array.from({ length: 5 }).map((_, i) => (
@@ -80,7 +80,7 @@ export function ClanProfilePage() {
       <div className="min-h-[60vh] bg-gray-50 py-12">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-3xl">
-            <div className="shadow-card border-error rounded-lg border bg-white p-12 text-center">
+            <div className="border-error rounded-lg border bg-white p-12 text-center shadow-card">
               <div className="mb-4 text-6xl">⚠️</div>
               <h2 className="mb-4 text-2xl font-semibold text-neutral-800">Clan Not Found</h2>
               <p className="mb-6 text-neutral-600">
@@ -88,7 +88,7 @@ export function ClanProfilePage() {
               </p>
               <Link
                 to="/clans"
-                className="text-primary hover:text-primary-600 inline-flex items-center gap-2 font-medium"
+                className="inline-flex items-center gap-2 font-medium text-primary hover:text-primary-600"
               >
                 ← Browse all clans
               </Link>
@@ -131,7 +131,7 @@ export function ClanProfilePage() {
           {/* Page Header */}
           <div className="mb-8 flex items-start justify-between">
             <div>
-              <h1 className="font-display mb-2 text-4xl text-neutral-800">Clan Profile</h1>
+              <h1 className="mb-2 font-display text-4xl text-neutral-800">Clan Profile</h1>
               <p className="text-neutral-600">View detailed clan information</p>
             </div>
             {isOwner && (
@@ -159,7 +159,7 @@ export function ClanProfilePage() {
           </div>
 
           {/* Profile Details Card */}
-          <div className="shadow-card rounded-lg bg-white p-8">
+          <div className="rounded-lg bg-white p-8 shadow-card">
             {/* Status Badge */}
             {!clan.active && (
               <div className="mb-6">
@@ -215,8 +215,8 @@ export function ClanProfilePage() {
             <div className="mt-8 border-t border-neutral-200 pt-8">
               <h3 className="mb-4 text-lg font-semibold text-neutral-800">Clan Statistics</h3>
               <div className="grid gap-4 md:grid-cols-3">
-                <div className="bg-primary/10 rounded-lg p-4 text-center">
-                  <div className="text-primary mb-1 text-3xl font-bold">
+                <div className="rounded-lg bg-primary/10 p-4 text-center">
+                  <div className="mb-1 text-3xl font-bold text-primary">
                     {clan.stats.totalBattles}
                   </div>
                   <div className="text-sm font-medium text-neutral-700">
@@ -231,8 +231,8 @@ export function ClanProfilePage() {
                   <div className="text-sm font-medium text-neutral-700">Active Players</div>
                 </div>
 
-                <div className="bg-success/10 rounded-lg p-4 text-center">
-                  <div className="text-success mb-1 text-3xl font-bold">
+                <div className="rounded-lg bg-success/10 p-4 text-center">
+                  <div className="mb-1 text-3xl font-bold text-success">
                     {clan.stats.totalPlayers}
                   </div>
                   <div className="text-sm font-medium text-neutral-700">Total Roster</div>
@@ -242,9 +242,9 @@ export function ClanProfilePage() {
 
             {/* Owner Info */}
             {isOwner && (
-              <div className="bg-primary/5 mt-8 rounded-lg p-4">
+              <div className="mt-8 rounded-lg bg-primary/5 p-4">
                 <div className="flex items-start gap-3">
-                  <div className="text-primary text-2xl">👑</div>
+                  <div className="text-2xl text-primary">👑</div>
                   <div>
                     <p className="font-medium text-neutral-800">You are the clan owner</p>
                     <p className="text-sm text-neutral-600">
@@ -260,7 +260,7 @@ export function ClanProfilePage() {
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <Link
               to={`/clans/${clan.clanId}`}
-              className="text-primary hover:text-primary-600 inline-flex items-center gap-2 font-medium"
+              className="inline-flex items-center gap-2 font-medium text-primary hover:text-primary-600"
             >
               ← Back to Clan Dashboard
             </Link>
@@ -269,7 +269,7 @@ export function ClanProfilePage() {
                 <span className="text-neutral-300">•</span>
                 <Link
                   to={`/clans/${clan.clanId}/admins`}
-                  className="text-primary hover:text-primary-600 inline-flex items-center gap-2 font-medium"
+                  className="inline-flex items-center gap-2 font-medium text-primary hover:text-primary-600"
                 >
                   View Admins
                 </Link>
@@ -278,7 +278,7 @@ export function ClanProfilePage() {
                     <span className="text-neutral-300">•</span>
                     <Link
                       to={`/clans/${clan.clanId}/settings`}
-                      className="text-primary hover:text-primary-600 inline-flex items-center gap-2 font-medium"
+                      className="inline-flex items-center gap-2 font-medium text-primary hover:text-primary-600"
                     >
                       Clan Settings
                     </Link>
