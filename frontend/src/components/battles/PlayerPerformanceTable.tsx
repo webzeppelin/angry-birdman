@@ -45,7 +45,7 @@ export default function PlayerPerformanceTable({
         credentials: 'include',
       });
       if (!response.ok) throw new Error('Failed to fetch roster');
-      return response.json();
+      return response.json() as Promise<RosterResponse>;
     },
   });
 

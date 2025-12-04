@@ -208,14 +208,15 @@ export function MatchupAnalysisPage() {
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                   <Pie
-                    data={matchupData.countries as any}
+                    data={matchupData.countries as unknown as Array<Record<string, unknown>>}
                     dataKey="battles"
                     nameKey="country"
                     cx="50%"
                     cy="50%"
                     outerRadius={100}
-                    label={(props: any) => {
-                      const entry = props.payload as CountryStats;
+                    label={(props: { payload?: CountryStats }) => {
+                      const entry = props.payload;
+                      if (!entry) return '';
                       return `${entry.country} (${entry.percentage}%)`;
                     }}
                   >
