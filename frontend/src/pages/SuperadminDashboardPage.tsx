@@ -167,16 +167,16 @@ export default function SuperadminDashboardPage() {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Username
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Email
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Clan
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Registered
                 </th>
               </tr>
@@ -185,16 +185,16 @@ export default function SuperadminDashboardPage() {
               {recentUsers && recentUsers.length > 0 ? (
                 recentUsers.map((user) => (
                   <tr key={user.userId} className="hover:bg-gray-50">
-                    <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
+                    <td className="px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900">
                       {user.username}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-600">
+                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600">
                       {user.email}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-600">
-                      {user.clanName || <span className="italic text-gray-400">No clan</span>}
+                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600">
+                      {user.clanName || <span className="text-gray-400 italic">No clan</span>}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-600">
+                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600">
                       {new Date(user.createdAt).toLocaleDateString()}
                     </td>
                   </tr>

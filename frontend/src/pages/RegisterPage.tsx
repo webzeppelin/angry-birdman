@@ -210,7 +210,7 @@ export default function RegisterPage() {
                 onChange={handleChange}
                 className={`relative mt-1 block w-full appearance-none border px-3 py-2 ${
                   errors.username ? 'border-red-300' : 'border-gray-300'
-                } rounded-md text-gray-900 placeholder-gray-500 focus:z-10 focus:border-primary focus:outline-none focus:ring-primary sm:text-sm`}
+                } focus:border-primary focus:ring-primary rounded-md text-gray-900 placeholder-gray-500 focus:z-10 focus:outline-none sm:text-sm`}
                 placeholder="username"
               />
               {errors.username && <p className="mt-1 text-sm text-red-600">{errors.username}</p>}
@@ -231,7 +231,7 @@ export default function RegisterPage() {
                 onChange={handleChange}
                 className={`relative mt-1 block w-full appearance-none border px-3 py-2 ${
                   errors.email ? 'border-red-300' : 'border-gray-300'
-                } rounded-md text-gray-900 placeholder-gray-500 focus:z-10 focus:border-primary focus:outline-none focus:ring-primary sm:text-sm`}
+                } focus:border-primary focus:ring-primary rounded-md text-gray-900 placeholder-gray-500 focus:z-10 focus:outline-none sm:text-sm`}
                 placeholder="you@example.com"
               />
               {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
@@ -252,7 +252,7 @@ export default function RegisterPage() {
                 onChange={handleChange}
                 className={`relative mt-1 block w-full appearance-none border px-3 py-2 ${
                   errors.password ? 'border-red-300' : 'border-gray-300'
-                } rounded-md text-gray-900 placeholder-gray-500 focus:z-10 focus:border-primary focus:outline-none focus:ring-primary sm:text-sm`}
+                } focus:border-primary focus:ring-primary rounded-md text-gray-900 placeholder-gray-500 focus:z-10 focus:outline-none sm:text-sm`}
                 placeholder="••••••••"
               />
               {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
@@ -276,7 +276,7 @@ export default function RegisterPage() {
                 onChange={handleChange}
                 className={`relative mt-1 block w-full appearance-none border px-3 py-2 ${
                   errors.passwordConfirm ? 'border-red-300' : 'border-gray-300'
-                } rounded-md text-gray-900 placeholder-gray-500 focus:z-10 focus:border-primary focus:outline-none focus:ring-primary sm:text-sm`}
+                } focus:border-primary focus:ring-primary rounded-md text-gray-900 placeholder-gray-500 focus:z-10 focus:outline-none sm:text-sm`}
                 placeholder="••••••••"
               />
               {errors.passwordConfirm && (
@@ -292,8 +292,8 @@ export default function RegisterPage() {
               disabled={isSubmitting}
               className={`group relative flex w-full justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white ${
                 isSubmitting
-                  ? 'cursor-not-allowed bg-primary-400'
-                  : 'bg-primary hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2'
+                  ? 'bg-primary-400 cursor-not-allowed'
+                  : 'bg-primary hover:bg-primary-600 focus:ring-primary focus:ring-2 focus:ring-offset-2 focus:outline-none'
               }`}
             >
               {isSubmitting ? 'Creating account...' : 'Create account'}
@@ -304,7 +304,7 @@ export default function RegisterPage() {
           <div className="text-center">
             <p className="text-sm text-gray-600">
               Already have an account?{' '}
-              <Link to="/login" className="font-medium text-primary hover:text-primary-600">
+              <Link to="/login" className="text-primary hover:text-primary-600 font-medium">
                 Sign in
               </Link>
             </p>

@@ -283,7 +283,7 @@ export default function NonplayerManagement({
         <button
           type="button"
           onClick={handleNext}
-          className="hover:bg-primary-dark rounded-md bg-primary px-6 py-2 text-white transition-colors"
+          className="hover:bg-primary-dark bg-primary rounded-md px-6 py-2 text-white transition-colors"
         >
           Next →
         </button>

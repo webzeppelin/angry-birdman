@@ -121,7 +121,7 @@ export default function BattleListPage() {
         {canCreateBattle && (
           <Link
             to={`/clans/${clanIdNum}/battles/new`}
-            className="hover:bg-primary-dark rounded-md bg-primary px-6 py-2 font-semibold text-white transition-colors"
+            className="hover:bg-primary-dark bg-primary rounded-md px-6 py-2 font-semibold text-white transition-colors"
           >
             + Record New Battle
           </Link>
@@ -135,7 +135,7 @@ export default function BattleListPage() {
           {hasActiveFilters && (
             <button
               onClick={handleClearFilters}
-              className="hover:text-primary-dark text-sm font-medium text-primary"
+              className="hover:text-primary-dark text-primary text-sm font-medium"
             >
               Clear All
             </button>
@@ -149,7 +149,7 @@ export default function BattleListPage() {
               type="date"
               value={filters.startDate}
               onChange={(e) => handleFilterChange('startDate', e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              className="focus:border-primary focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-1 focus:outline-none"
             />
           </div>
           <div>
@@ -158,7 +158,7 @@ export default function BattleListPage() {
               type="date"
               value={filters.endDate}
               onChange={(e) => handleFilterChange('endDate', e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              className="focus:border-primary focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-1 focus:outline-none"
             />
           </div>
           {/* Opponent Search */}
@@ -169,7 +169,7 @@ export default function BattleListPage() {
               placeholder="Search..."
               value={filters.opponentName}
               onChange={(e) => handleFilterChange('opponentName', e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              className="focus:border-primary focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-1 focus:outline-none"
             />
           </div>
           <div>
@@ -179,7 +179,7 @@ export default function BattleListPage() {
               placeholder="Search..."
               value={filters.opponentCountry}
               onChange={(e) => handleFilterChange('opponentCountry', e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              className="focus:border-primary focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-1 focus:outline-none"
             />
           </div>
           {/* Result Filter */}
@@ -188,7 +188,7 @@ export default function BattleListPage() {
             <select
               value={filters.result}
               onChange={(e) => handleFilterChange('result', e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              className="focus:border-primary focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-1 focus:outline-none"
             >
               <option value="">All Results</option>
               <option value="1">Won</option>
@@ -221,7 +221,7 @@ export default function BattleListPage() {
             <table className="min-w-full">
               <thead className="border-b border-gray-200 bg-gray-100">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700">
+                  <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-700 uppercase">
                     <button
                       onClick={() => {
                         setSortBy('startDate');
@@ -229,7 +229,7 @@ export default function BattleListPage() {
                           sortBy === 'startDate' && sortOrder === 'desc' ? 'asc' : 'desc'
                         );
                       }}
-                      className="flex items-center space-x-1 hover:text-primary"
+                      className="hover:text-primary flex items-center space-x-1"
                     >
                       <span>Date</span>
                       {sortBy === 'startDate' && (
@@ -237,19 +237,19 @@ export default function BattleListPage() {
                       )}
                     </button>
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-700">
+                  <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-700 uppercase">
                     Opponent
                   </th>
-                  <th className="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-700">
+                  <th className="px-6 py-3 text-center text-xs font-medium tracking-wider text-gray-700 uppercase">
                     Result
                   </th>
-                  <th className="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-700">
+                  <th className="px-6 py-3 text-center text-xs font-medium tracking-wider text-gray-700 uppercase">
                     <button
                       onClick={() => {
                         setSortBy('score');
                         setSortOrder(sortBy === 'score' && sortOrder === 'desc' ? 'asc' : 'desc');
                       }}
-                      className="flex w-full items-center justify-center space-x-1 hover:text-primary"
+                      className="hover:text-primary flex w-full items-center justify-center space-x-1"
                     >
                       <span>Score</span>
                       {sortBy === 'score' && (
@@ -257,13 +257,13 @@ export default function BattleListPage() {
                       )}
                     </button>
                   </th>
-                  <th className="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-700">
+                  <th className="px-6 py-3 text-center text-xs font-medium tracking-wider text-gray-700 uppercase">
                     <button
                       onClick={() => {
                         setSortBy('ratio');
                         setSortOrder(sortBy === 'ratio' && sortOrder === 'desc' ? 'asc' : 'desc');
                       }}
-                      className="flex w-full items-center justify-center space-x-1 hover:text-primary"
+                      className="hover:text-primary flex w-full items-center justify-center space-x-1"
                     >
                       <span>Ratio</span>
                       {sortBy === 'ratio' && (
@@ -271,10 +271,10 @@ export default function BattleListPage() {
                       )}
                     </button>
                   </th>
-                  <th className="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-700">
+                  <th className="px-6 py-3 text-center text-xs font-medium tracking-wider text-gray-700 uppercase">
                     Players
                   </th>
-                  <th className="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-700">
+                  <th className="px-6 py-3 text-center text-xs font-medium tracking-wider text-gray-700 uppercase">
                     Participation
                   </th>
                 </tr>
@@ -298,10 +298,10 @@ export default function BattleListPage() {
                     : '0';
                   return (
                     <tr key={battle.battleId} className="hover:bg-gray-50">
-                      <td className="whitespace-nowrap px-6 py-4">
+                      <td className="px-6 py-4 whitespace-nowrap">
                         <Link
                           to={`/clans/${clanIdNum}/battles/${battle.battleId}`}
-                          className="font-medium text-primary hover:underline"
+                          className="text-primary font-medium hover:underline"
                         >
                           {battle.battleId}
                         </Link>
@@ -314,7 +314,7 @@ export default function BattleListPage() {
                           <div className="text-sm text-gray-500">{battle.opponentCountry}</div>
                         )}
                       </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-center">
+                      <td className="px-6 py-4 text-center whitespace-nowrap">
                         <span
                           className={`inline-block rounded px-2 py-1 text-xs font-semibold ${resultClass}`}
                         >
@@ -328,7 +328,7 @@ export default function BattleListPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4 text-center">
-                        <div className="text-sm font-semibold text-primary">
+                        <div className="text-primary text-sm font-semibold">
                           {battle.ratio.toFixed(2)}
                         </div>
                         <div className="text-xs text-gray-500">
@@ -386,7 +386,7 @@ export default function BattleListPage() {
             {canCreateBattle && (
               <Link
                 to={`/clans/${clanIdNum}/battles/new`}
-                className="hover:bg-primary-dark inline-block rounded-md bg-primary px-6 py-2 text-white transition-colors"
+                className="hover:bg-primary-dark bg-primary inline-block rounded-md px-6 py-2 text-white transition-colors"
               >
                 Record Your First Battle
               </Link>

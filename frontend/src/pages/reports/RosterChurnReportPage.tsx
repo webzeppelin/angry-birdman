@@ -131,7 +131,7 @@ export function RosterChurnReportPage() {
     return (
       <div className="min-h-[60vh] bg-gray-50 py-12">
         <div className="container mx-auto px-4">
-          <div className="border-error rounded-lg border bg-white p-12 text-center shadow-card">
+          <div className="border-error shadow-card rounded-lg border bg-white p-12 text-center">
             <div className="mb-4 text-6xl">⚠️</div>
             <h2 className="mb-4 text-2xl font-semibold text-neutral-800">Error Loading Data</h2>
             <p className="text-neutral-600">Failed to load roster churn data. Please try again.</p>
@@ -173,31 +173,31 @@ export function RosterChurnReportPage() {
             <span className="mx-2">/</span>
             <span className="font-medium text-neutral-800">Roster Churn</span>
           </nav>
-          <h1 className="mb-2 font-display text-4xl text-neutral-800">Roster Churn Analysis</h1>
+          <h1 className="font-display mb-2 text-4xl text-neutral-800">Roster Churn Analysis</h1>
           <p className="text-neutral-600">
             Track roster stability, member retention, and turnover patterns
           </p>
         </div>
 
         {/* Date Range Picker */}
-        <div className="mb-8 rounded-lg bg-white p-6 shadow-card">
+        <div className="shadow-card mb-8 rounded-lg bg-white p-6">
           <DateRangePicker onDateRangeChange={handleDateRangeChange} />
         </div>
 
         {/* Summary Cards */}
         <div className="mb-8 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           {/* Active Members */}
-          <div className="rounded-lg bg-white p-6 shadow-card">
+          <div className="shadow-card rounded-lg bg-white p-6">
             <div className="mb-2 flex items-center gap-2 text-sm font-medium text-neutral-600">
-              <UsersIcon className="h-5 w-5 text-success" />
+              <UsersIcon className="text-success h-5 w-5" />
               Active Members
             </div>
-            <div className="mb-1 text-3xl font-bold text-success">{summary.activeMembers}</div>
+            <div className="text-success mb-1 text-3xl font-bold">{summary.activeMembers}</div>
             <div className="text-sm text-neutral-500">{summary.inactiveMembers} inactive</div>
           </div>
 
           {/* Retention Rate */}
-          <div className="rounded-lg bg-white p-6 shadow-card">
+          <div className="shadow-card rounded-lg bg-white p-6">
             <div className="mb-2 flex items-center gap-2 text-sm font-medium text-neutral-600">
               <ChartBarIcon className="text-info h-5 w-5" />
               Retention Rate
@@ -209,17 +209,17 @@ export function RosterChurnReportPage() {
           </div>
 
           {/* Average Tenure */}
-          <div className="rounded-lg bg-white p-6 shadow-card">
+          <div className="shadow-card rounded-lg bg-white p-6">
             <div className="mb-2 flex items-center gap-2 text-sm font-medium text-neutral-600">
-              <ClockIcon className="h-5 w-5 text-warning" />
+              <ClockIcon className="text-warning h-5 w-5" />
               Avg. Tenure
             </div>
-            <div className="mb-1 text-3xl font-bold text-warning">{summary.avgTenureDays}</div>
+            <div className="text-warning mb-1 text-3xl font-bold">{summary.avgTenureDays}</div>
             <div className="text-sm text-neutral-500">days</div>
           </div>
 
           {/* Churn Rate */}
-          <div className="rounded-lg bg-white p-6 shadow-card">
+          <div className="shadow-card rounded-lg bg-white p-6">
             <div className="mb-2 flex items-center gap-2 text-sm font-medium text-neutral-600">
               <XCircleIcon className="text-error h-5 w-5" />
               Total Departures
@@ -234,7 +234,7 @@ export function RosterChurnReportPage() {
         </div>
 
         {/* Churn by Month Chart */}
-        <div className="mb-8 rounded-lg bg-white p-6 shadow-card">
+        <div className="shadow-card mb-8 rounded-lg bg-white p-6">
           <h2 className="mb-6 text-xl font-semibold text-neutral-800">Monthly Roster Changes</h2>
           {churnByMonth.length > 0 ? (
             <ResponsiveContainer width="100%" height={400}>
@@ -265,7 +265,7 @@ export function RosterChurnReportPage() {
         {/* Two-column layout for Action Codes and Longest Tenured */}
         <div className="mb-8 grid gap-6 lg:grid-cols-2">
           {/* Action Code Frequency */}
-          <div className="rounded-lg bg-white p-6 shadow-card">
+          <div className="shadow-card rounded-lg bg-white p-6">
             <h2 className="mb-6 text-xl font-semibold text-neutral-800">
               Action Code Distribution
             </h2>
@@ -334,7 +334,7 @@ export function RosterChurnReportPage() {
           </div>
 
           {/* Longest Tenured Members */}
-          <div className="rounded-lg bg-white p-6 shadow-card">
+          <div className="shadow-card rounded-lg bg-white p-6">
             <h2 className="mb-6 text-xl font-semibold text-neutral-800">Longest Tenured Members</h2>
             {longestTenured.length > 0 ? (
               <div className="overflow-x-auto">
@@ -354,7 +354,7 @@ export function RosterChurnReportPage() {
                         <td className="py-3">
                           <Link
                             to={`/clans/${clanId}/roster/${member.playerId}/history`}
-                            className="font-medium text-primary hover:text-primary-600"
+                            className="text-primary hover:text-primary-600 font-medium"
                           >
                             {member.playerName}
                           </Link>
@@ -380,7 +380,7 @@ export function RosterChurnReportPage() {
         <div className="text-center">
           <Link
             to={`/clans/${clanId}/reports`}
-            className="inline-flex items-center gap-2 font-medium text-primary hover:text-primary-600"
+            className="text-primary hover:text-primary-600 inline-flex items-center gap-2 font-medium"
           >
             ← Back to Reports
           </Link>

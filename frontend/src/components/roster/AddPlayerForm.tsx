@@ -109,7 +109,7 @@ export function AddPlayerForm({ clanId, isOpen, onClose, onSuccess }: AddPlayerF
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+      className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black"
       onClick={onClose}
     >
       <div
@@ -131,7 +131,7 @@ export function AddPlayerForm({ clanId, isOpen, onClose, onSuccess }: AddPlayerF
               id="playerName"
               value={playerName}
               onChange={(e) => setPlayerName(e.target.value)}
-              className="w-full rounded border border-neutral-300 px-3 py-2 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              className="focus:border-primary-500 focus:ring-primary-500 w-full rounded border border-neutral-300 px-3 py-2 focus:ring-1 focus:outline-none"
               placeholder="Enter player name"
               maxLength={100}
               required
@@ -148,7 +148,7 @@ export function AddPlayerForm({ clanId, isOpen, onClose, onSuccess }: AddPlayerF
               id="joinedDate"
               value={joinedDate}
               onChange={(e) => setJoinedDate(e.target.value)}
-              className="w-full rounded border border-neutral-300 px-3 py-2 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              className="focus:border-primary-500 focus:ring-primary-500 w-full rounded border border-neutral-300 px-3 py-2 focus:ring-1 focus:outline-none"
               required
             />
           </div>
@@ -168,7 +168,7 @@ export function AddPlayerForm({ clanId, isOpen, onClose, onSuccess }: AddPlayerF
             </button>
             <button
               type="submit"
-              className="rounded bg-primary-600 px-4 py-2 text-white hover:bg-primary-700 disabled:opacity-50"
+              className="bg-primary-600 hover:bg-primary-700 rounded px-4 py-2 text-white disabled:opacity-50"
               disabled={addPlayerMutation.isPending}
             >
               {addPlayerMutation.isPending ? 'Adding...' : 'Add Player'}

@@ -210,7 +210,7 @@ export function Breadcrumbs() {
                 ) : (
                   <Link
                     to={item.path}
-                    className="text-neutral-600 transition-colors hover:text-primary"
+                    className="hover:text-primary text-neutral-600 transition-colors"
                   >
                     {item.label}
                   </Link>

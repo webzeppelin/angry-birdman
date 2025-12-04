@@ -19,19 +19,19 @@ export function HomePage() {
   return (
     <div className="bg-gray-50">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary to-primary-700 py-20 text-white">
+      <section className="from-primary to-primary-700 bg-gradient-to-br py-20 text-white">
         <div className="container mx-auto px-4 text-center">
           <img
             src="/images/angry_birdman_logo_512.png"
             alt="Angry Birdman"
             className="mx-auto mb-4 h-64 w-64 md:h-96 md:w-96 lg:h-[512px] lg:w-[512px]"
           />
-          <h1 className="mb-4 font-display text-4xl md:text-5xl">Angry Birdman</h1>
+          <h1 className="font-display mb-4 text-4xl md:text-5xl">Angry Birdman</h1>
           <p className="mb-8 text-xl md:text-2xl">Clan Management for Angry Birds 2</p>
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link
               to="/clans"
-              className="rounded-lg bg-white px-8 py-3 text-lg font-semibold text-primary shadow-lg transition-transform hover:scale-105"
+              className="text-primary rounded-lg bg-white px-8 py-3 text-lg font-semibold shadow-lg transition-transform hover:scale-105"
             >
               Browse Clans
             </Link>
@@ -50,10 +50,10 @@ export function HomePage() {
       {/* Features Section */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <h2 className="mb-12 text-center font-display text-3xl text-neutral-800">Key Features</h2>
+          <h2 className="font-display mb-12 text-center text-3xl text-neutral-800">Key Features</h2>
           <div className="grid gap-8 md:grid-cols-3">
             {/* Battle Tracking */}
-            <div className="rounded-lg bg-white p-6 shadow-card transition-shadow hover:shadow-card-hover">
+            <div className="shadow-card hover:shadow-card-hover rounded-lg bg-white p-6 transition-shadow">
               <div className="mb-4 text-4xl">⚔️</div>
               <h3 className="mb-2 text-xl font-semibold text-neutral-800">Battle Tracking</h3>
               <p className="text-neutral-600">
@@ -63,7 +63,7 @@ export function HomePage() {
             </div>
 
             {/* Analytics */}
-            <div className="rounded-lg bg-white p-6 shadow-card transition-shadow hover:shadow-card-hover">
+            <div className="shadow-card hover:shadow-card-hover rounded-lg bg-white p-6 transition-shadow">
               <div className="mb-4 text-4xl">📊</div>
               <h3 className="mb-2 text-xl font-semibold text-neutral-800">Advanced Analytics</h3>
               <p className="text-neutral-600">
@@ -73,7 +73,7 @@ export function HomePage() {
             </div>
 
             {/* Roster Management */}
-            <div className="rounded-lg bg-white p-6 shadow-card transition-shadow hover:shadow-card-hover">
+            <div className="shadow-card hover:shadow-card-hover rounded-lg bg-white p-6 transition-shadow">
               <div className="mb-4 text-4xl">👥</div>
               <h3 className="mb-2 text-xl font-semibold text-neutral-800">Roster Management</h3>
               <p className="text-neutral-600">
@@ -88,7 +88,7 @@ export function HomePage() {
       {/* Clan Browser Section */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <h2 className="mb-8 text-center font-display text-3xl text-neutral-800">Browse Clans</h2>
+          <h2 className="font-display mb-8 text-center text-3xl text-neutral-800">Browse Clans</h2>
           <p className="mx-auto mb-8 max-w-2xl text-center text-neutral-600">
             Explore clan statistics and battle performance. Find your clan or check out the
             competition!
@@ -100,11 +100,11 @@ export function HomePage() {
       {/* Getting Started Section */}
       <section className="bg-white py-16">
         <div className="container mx-auto px-4">
-          <h2 className="mb-8 text-center font-display text-3xl text-neutral-800">How It Works</h2>
+          <h2 className="font-display mb-8 text-center text-3xl text-neutral-800">How It Works</h2>
           <div className="mx-auto max-w-3xl">
             <div className="space-y-6">
               <div className="flex gap-4">
-                <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-primary font-semibold text-white">
+                <div className="bg-primary flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full font-semibold text-white">
                   1
                 </div>
                 <div>
@@ -118,7 +118,7 @@ export function HomePage() {
                 </div>
               </div>
               <div className="flex gap-4">
-                <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-primary font-semibold text-white">
+                <div className="bg-primary flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full font-semibold text-white">
                   2
                 </div>
                 <div>
@@ -130,7 +130,7 @@ export function HomePage() {
                 </div>
               </div>
               <div className="flex gap-4">
-                <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-primary font-semibold text-white">
+                <div className="bg-primary flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full font-semibold text-white">
                   3
                 </div>
                 <div>

@@ -288,7 +288,7 @@ export function AdminRequestsPage() {
 
       {/* Confirmation Modal */}
       {reviewingRequest && reviewAction && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black">
           <div className="mx-4 w-full max-w-md rounded-lg bg-white p-6">
             <h3 className="mb-4 text-xl font-semibold text-gray-900">
               Confirm {reviewAction === 'approve' ? 'Approval' : 'Rejection'}

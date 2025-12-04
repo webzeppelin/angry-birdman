@@ -138,7 +138,7 @@ export function MatchupAnalysisPage() {
         >
           ← Back to Reports
         </Link>
-        <h1 className="mb-2 font-display text-3xl font-bold text-gray-900">Matchup Analysis</h1>
+        <h1 className="font-display mb-2 text-3xl font-bold text-gray-900">Matchup Analysis</h1>
         <p className="text-lg text-gray-600">
           Analyze opponents and understand your competitive environment
         </p>
@@ -329,7 +329,7 @@ export function MatchupAnalysisPage() {
 
           {/* Opponent Detail Modal */}
           {selectedOpponent && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black">
               <div className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-lg bg-white p-6 shadow-xl">
                 <div className="mb-4 flex items-center justify-between">
                   <div>

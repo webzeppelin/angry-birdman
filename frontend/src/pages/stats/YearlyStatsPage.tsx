@@ -217,7 +217,7 @@ export default function YearlyStatsPage() {
             <select
               value={yearId}
               onChange={(e) => void navigate(`/clans/${clanId}/stats/years/${e.target.value}`)}
-              className="rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
             >
               {yearsData?.map((year) => (
                 <option key={year.yearId} value={year.yearId}>
@@ -408,43 +408,43 @@ export default function YearlyStatsPage() {
                       <tr>
                         <th
                           onClick={() => handleSort('playerName')}
-                          className="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 hover:bg-gray-100"
+                          className="cursor-pointer px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase hover:bg-gray-100"
                         >
                           Player Name {sortBy === 'playerName' && (sortOrder === 'asc' ? '↑' : '↓')}
                         </th>
                         <th
                           onClick={() => handleSort('battleCount')}
-                          className="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 hover:bg-gray-100"
+                          className="cursor-pointer px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase hover:bg-gray-100"
                         >
                           Battles {sortBy === 'battleCount' && (sortOrder === 'asc' ? '↑' : '↓')}
                         </th>
                         <th
                           onClick={() => handleSort('averageScore')}
-                          className="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 hover:bg-gray-100"
+                          className="cursor-pointer px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase hover:bg-gray-100"
                         >
                           Avg Score {sortBy === 'averageScore' && (sortOrder === 'asc' ? '↑' : '↓')}
                         </th>
                         <th
                           onClick={() => handleSort('averageFp')}
-                          className="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 hover:bg-gray-100"
+                          className="cursor-pointer px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase hover:bg-gray-100"
                         >
                           Avg FP {sortBy === 'averageFp' && (sortOrder === 'asc' ? '↑' : '↓')}
                         </th>
                         <th
                           onClick={() => handleSort('averageRatio')}
-                          className="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 hover:bg-gray-100"
+                          className="cursor-pointer px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase hover:bg-gray-100"
                         >
                           Avg Ratio {sortBy === 'averageRatio' && (sortOrder === 'asc' ? '↑' : '↓')}
                         </th>
                         <th
                           onClick={() => handleSort('averageRank')}
-                          className="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 hover:bg-gray-100"
+                          className="cursor-pointer px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase hover:bg-gray-100"
                         >
                           Avg Rank {sortBy === 'averageRank' && (sortOrder === 'asc' ? '↑' : '↓')}
                         </th>
                         <th
                           onClick={() => handleSort('averageRatioRank')}
-                          className="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 hover:bg-gray-100"
+                          className="cursor-pointer px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase hover:bg-gray-100"
                         >
                           Avg Ratio Rank{' '}
                           {sortBy === 'averageRatioRank' && (sortOrder === 'asc' ? '↑' : '↓')}
@@ -454,7 +454,7 @@ export default function YearlyStatsPage() {
                     <tbody className="divide-y divide-gray-200 bg-white">
                       {sortedPlayerStats.map((player, index) => (
                         <tr key={`${player.playerId}-${index}`} className="hover:bg-gray-50">
-                          <td className="whitespace-nowrap px-6 py-4">
+                          <td className="px-6 py-4 whitespace-nowrap">
                             <Link
                               to={`/clans/${clanId}/roster/${player.playerId}/history?from=yearly&yearId=${yearId}`}
                               className="font-medium text-blue-600 hover:text-blue-800"
@@ -462,22 +462,22 @@ export default function YearlyStatsPage() {
                               {player.playerName}
                             </Link>
                           </td>
-                          <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                          <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
                             {player.battleCount}
                           </td>
-                          <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                          <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
                             {player.averageScore.toLocaleString()}
                           </td>
-                          <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                          <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
                             {player.averageFp.toLocaleString()}
                           </td>
-                          <td className="whitespace-nowrap px-6 py-4 text-sm font-semibold text-gray-900">
+                          <td className="px-6 py-4 text-sm font-semibold whitespace-nowrap text-gray-900">
                             {player.averageRatio.toFixed(2)}
                           </td>
-                          <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                          <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
                             {player.averageRank.toFixed(1)}
                           </td>
-                          <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                          <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
                             {player.averageRatioRank.toFixed(1)}
                           </td>
                         </tr>

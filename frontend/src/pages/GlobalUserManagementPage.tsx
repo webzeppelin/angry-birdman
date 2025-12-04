@@ -228,7 +228,7 @@ export default function GlobalUserManagementPage() {
               value={filters.search}
               onChange={(e) => handleSearch(e.target.value)}
               placeholder="Username or email..."
-              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
           </div>
 
@@ -241,7 +241,7 @@ export default function GlobalUserManagementPage() {
               id="enabled"
               value={filters.enabled}
               onChange={(e) => handleEnabledFilter(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             >
               <option value="">All users</option>
               <option value="true">Enabled only</option>
@@ -264,22 +264,22 @@ export default function GlobalUserManagementPage() {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Username
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Email
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Clan
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Registered
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-right text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Actions
                 </th>
               </tr>
@@ -288,7 +288,7 @@ export default function GlobalUserManagementPage() {
               {users.length > 0 ? (
                 users.map((user) => (
                   <tr key={user.userId} className="hover:bg-gray-50">
-                    <td className="whitespace-nowrap px-6 py-4">
+                    <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="text-sm font-medium text-gray-900">{user.username}</div>
                         {user.owner && (
@@ -298,13 +298,13 @@ export default function GlobalUserManagementPage() {
                         )}
                       </div>
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-600">
+                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600">
                       {user.email}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-600">
-                      {user.clanName || <span className="italic text-gray-400">No clan</span>}
+                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600">
+                      {user.clanName || <span className="text-gray-400 italic">No clan</span>}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4">
+                    <td className="px-6 py-4 whitespace-nowrap">
                       {user.enabled ? (
                         <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
                           Enabled
@@ -315,10 +315,10 @@ export default function GlobalUserManagementPage() {
                         </span>
                       )}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-600">
+                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600">
                       {new Date(user.createdAt).toLocaleDateString()}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
+                    <td className="px-6 py-4 text-right text-sm font-medium whitespace-nowrap">
                       <div className="flex justify-end gap-2">
                         <button
                           onClick={() => openConfirmation(user, 'resetPassword')}
@@ -384,7 +384,7 @@ export default function GlobalUserManagementPage() {
 
       {/* Confirmation Dialog */}
       {showConfirmation && selectedUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black">
           <div className="mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
             <h3 className="mb-4 text-lg font-semibold text-gray-900">Confirm Action</h3>
             <p className="mb-6 text-gray-600">
@@ -419,7 +419,7 @@ export default function GlobalUserManagementPage() {
 
       {/* Password Display Dialog */}
       {showPasswordDialog && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black">
           <div className="mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
             <h3 className="mb-4 text-lg font-semibold text-gray-900">Password Reset Successful</h3>
             <p className="mb-4 text-gray-600">

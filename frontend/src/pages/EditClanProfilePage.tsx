@@ -125,7 +125,7 @@ export function EditClanProfilePage() {
       <div className="min-h-[60vh] bg-gray-50 py-12">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-2xl">
-            <div className="animate-pulse rounded-lg bg-white p-8 shadow-card">
+            <div className="shadow-card animate-pulse rounded-lg bg-white p-8">
               <div className="mb-6 h-10 w-1/2 rounded bg-neutral-200"></div>
               <div className="space-y-4">
                 {Array.from({ length: 3 }).map((_, i) => (
@@ -144,7 +144,7 @@ export function EditClanProfilePage() {
       <div className="min-h-[60vh] bg-gray-50 py-12">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-2xl">
-            <div className="border-error rounded-lg border bg-white p-12 text-center shadow-card">
+            <div className="border-error shadow-card rounded-lg border bg-white p-12 text-center">
               <div className="mb-4 text-6xl">⚠️</div>
               <h2 className="mb-4 text-2xl font-semibold text-neutral-800">Clan Not Found</h2>
               <p className="mb-6 text-neutral-600">
@@ -152,7 +152,7 @@ export function EditClanProfilePage() {
               </p>
               <Link
                 to="/clans"
-                className="inline-flex items-center gap-2 font-medium text-primary hover:text-primary-600"
+                className="text-primary hover:text-primary-600 inline-flex items-center gap-2 font-medium"
               >
                 ← Browse all clans
               </Link>
@@ -169,7 +169,7 @@ export function EditClanProfilePage() {
       <div className="min-h-[60vh] bg-gray-50 py-12">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-2xl">
-            <div className="border-error rounded-lg border bg-white p-12 text-center shadow-card">
+            <div className="border-error shadow-card rounded-lg border bg-white p-12 text-center">
               <div className="mb-4 text-6xl">🚫</div>
               <h2 className="mb-4 text-2xl font-semibold text-neutral-800">Access Denied</h2>
               <p className="mb-6 text-neutral-600">
@@ -177,7 +177,7 @@ export function EditClanProfilePage() {
               </p>
               <Link
                 to={`/clans/${clanId}/profile`}
-                className="inline-flex items-center gap-2 font-medium text-primary hover:text-primary-600"
+                className="text-primary hover:text-primary-600 inline-flex items-center gap-2 font-medium"
               >
                 ← Back to Clan Profile
               </Link>
@@ -225,12 +225,12 @@ export function EditClanProfilePage() {
 
           {/* Page Header */}
           <div className="mb-8">
-            <h1 className="mb-2 font-display text-4xl text-neutral-800">Edit Clan Profile</h1>
+            <h1 className="font-display mb-2 text-4xl text-neutral-800">Edit Clan Profile</h1>
             <p className="text-neutral-600">Update your clan&apos;s information</p>
           </div>
 
           {/* Edit Form */}
-          <div className="rounded-lg bg-white p-8 shadow-card">
+          <div className="shadow-card rounded-lg bg-white p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* API Error Message */}
               {apiError && (

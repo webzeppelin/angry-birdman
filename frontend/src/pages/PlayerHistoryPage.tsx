@@ -214,7 +214,7 @@ export default function PlayerHistoryPage() {
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Ratio:</span>
-              <span className="font-semibold text-primary-600">
+              <span className="text-primary-600 font-semibold">
                 {summary.averageRatio.toFixed(2)}
               </span>
             </div>
@@ -260,28 +260,28 @@ export default function PlayerHistoryPage() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead>
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                     Battle Date
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                     Status
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-4 py-3 text-right text-xs font-medium tracking-wider text-gray-500 uppercase">
                     Rank
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-4 py-3 text-right text-xs font-medium tracking-wider text-gray-500 uppercase">
                     Score
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-4 py-3 text-right text-xs font-medium tracking-wider text-gray-500 uppercase">
                     FP
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-4 py-3 text-right text-xs font-medium tracking-wider text-gray-500 uppercase">
                     Ratio
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-4 py-3 text-right text-xs font-medium tracking-wider text-gray-500 uppercase">
                     Ratio Rank
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                     Action Code
                   </th>
                 </tr>
@@ -289,7 +289,7 @@ export default function PlayerHistoryPage() {
               <tbody className="divide-y divide-gray-200 bg-white">
                 {recentBattles.map((battle) => (
                   <tr key={battle.battleId} className={battle.participated ? '' : 'bg-gray-50'}>
-                    <td className="whitespace-nowrap px-4 py-3">
+                    <td className="px-4 py-3 whitespace-nowrap">
                       <Link
                         to={`/clans/${clanId}/battles/${battle.battleId}`}
                         className="text-primary-600 hover:text-primary-800 hover:underline"
@@ -297,29 +297,29 @@ export default function PlayerHistoryPage() {
                         {new Date(battle.startDate).toLocaleDateString()}
                       </Link>
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3">
+                    <td className="px-4 py-3 whitespace-nowrap">
                       <span
                         className={`rounded px-2 py-1 text-xs ${battle.participated ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}
                       >
                         {battle.participated ? 'Played' : 'Did Not Play'}
                       </span>
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-right">
+                    <td className="px-4 py-3 text-right whitespace-nowrap">
                       {battle.rank !== null ? battle.rank : '-'}
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-right">
+                    <td className="px-4 py-3 text-right whitespace-nowrap">
                       {battle.score !== null ? battle.score.toLocaleString() : '-'}
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-right">
+                    <td className="px-4 py-3 text-right whitespace-nowrap">
                       {battle.fp !== null ? battle.fp.toLocaleString() : '-'}
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-right">
+                    <td className="px-4 py-3 text-right whitespace-nowrap">
                       {battle.ratio !== null ? battle.ratio.toFixed(2) : '-'}
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-right">
+                    <td className="px-4 py-3 text-right whitespace-nowrap">
                       {battle.ratioRank !== null ? battle.ratioRank : '-'}
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3">
+                    <td className="px-4 py-3 whitespace-nowrap">
                       <span className="text-sm font-medium">{battle.actionCode}</span>
                       {battle.actionReason && (
                         <span className="block text-xs text-gray-500" title={battle.actionReason}>

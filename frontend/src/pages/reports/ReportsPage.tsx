@@ -89,7 +89,7 @@ export function ReportsPage() {
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Page Header */}
       <div className="mb-8">
-        <h1 className="mb-2 font-display text-3xl font-bold text-gray-900">Performance Reports</h1>
+        <h1 className="font-display mb-2 text-3xl font-bold text-gray-900">Performance Reports</h1>
         <p className="text-lg text-gray-600">
           Analyze your clan&apos;s performance trends with detailed reports and visualizations
         </p>

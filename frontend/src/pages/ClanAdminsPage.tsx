@@ -132,7 +132,7 @@ export function ClanAdminsPage() {
       <div className="min-h-[60vh] bg-gray-50 py-12">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-4xl">
-            <div className="border-error rounded-lg border bg-white p-12 text-center shadow-card">
+            <div className="border-error shadow-card rounded-lg border bg-white p-12 text-center">
               <div className="mb-4 text-6xl">🔒</div>
               <h2 className="mb-4 text-2xl font-semibold text-neutral-800">
                 Authentication Required
@@ -142,7 +142,7 @@ export function ClanAdminsPage() {
               </p>
               <Link
                 to="/login"
-                className="inline-flex items-center gap-2 font-medium text-primary hover:text-primary-600"
+                className="text-primary hover:text-primary-600 inline-flex items-center gap-2 font-medium"
               >
                 Sign In →
               </Link>
@@ -158,7 +158,7 @@ export function ClanAdminsPage() {
       <div className="min-h-[60vh] bg-gray-50 py-12">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-4xl">
-            <div className="rounded-lg bg-white p-8 shadow-card">
+            <div className="shadow-card rounded-lg bg-white p-8">
               <div className="mb-6 h-10 w-1/2 animate-pulse rounded bg-neutral-200"></div>
               <div className="space-y-4">
                 {Array.from({ length: 3 }).map((_, i) => (
@@ -177,7 +177,7 @@ export function ClanAdminsPage() {
       <div className="min-h-[60vh] bg-gray-50 py-12">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-4xl">
-            <div className="border-error rounded-lg border bg-white p-12 text-center shadow-card">
+            <div className="border-error shadow-card rounded-lg border bg-white p-12 text-center">
               <div className="mb-4 text-6xl">⚠️</div>
               <h2 className="mb-4 text-2xl font-semibold text-neutral-800">Error Loading Admins</h2>
               <p className="mb-6 text-neutral-600">
@@ -185,7 +185,7 @@ export function ClanAdminsPage() {
               </p>
               <Link
                 to={`/clans/${clanId}`}
-                className="inline-flex items-center gap-2 font-medium text-primary hover:text-primary-600"
+                className="text-primary hover:text-primary-600 inline-flex items-center gap-2 font-medium"
               >
                 ← Back to Clan Dashboard
               </Link>
@@ -227,7 +227,7 @@ export function ClanAdminsPage() {
 
           {/* Page Header */}
           <div className="mb-8">
-            <h1 className="mb-2 font-display text-4xl text-neutral-800">Clan Administrators</h1>
+            <h1 className="font-display mb-2 text-4xl text-neutral-800">Clan Administrators</h1>
             <p className="text-neutral-600">
               {admins.length} {admins.length === 1 ? 'administrator' : 'administrators'}
             </p>
@@ -253,7 +253,7 @@ export function ClanAdminsPage() {
           )}
 
           {/* Admins List */}
-          <div className="rounded-lg bg-white shadow-card">
+          <div className="shadow-card rounded-lg bg-white">
             <div className="divide-y divide-neutral-200">
               {admins.map((admin) => (
                 <div key={admin.userId} className="p-6">
@@ -262,7 +262,7 @@ export function ClanAdminsPage() {
                       <div className="mb-2 flex items-center gap-3">
                         <h3 className="text-lg font-semibold text-neutral-800">{admin.username}</h3>
                         {admin.owner && (
-                          <span className="rounded bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
+                          <span className="bg-primary/10 text-primary rounded px-2 py-1 text-xs font-medium">
                             👑 Owner
                           </span>
                         )}
@@ -319,7 +319,7 @@ export function ClanAdminsPage() {
           <div className="mt-8 text-center">
             <Link
               to={`/clans/${clanId}`}
-              className="inline-flex items-center gap-2 font-medium text-primary hover:text-primary-600"
+              className="text-primary hover:text-primary-600 inline-flex items-center gap-2 font-medium"
             >
               ← Back to Clan Dashboard
             </Link>
@@ -330,7 +330,7 @@ export function ClanAdminsPage() {
       {/* Confirmation Dialog */}
       {confirmDialog && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-card">
+          <div className="shadow-card w-full max-w-md rounded-lg bg-white p-6">
             <h3 className="mb-4 text-xl font-semibold text-neutral-800">
               {confirmDialog.type === 'promote' ? 'Promote to Owner?' : 'Remove Admin?'}
             </h3>

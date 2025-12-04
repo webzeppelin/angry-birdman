@@ -167,7 +167,7 @@ export default function ProfilePage() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="mb-4 inline-block h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+          <div className="border-primary mb-4 inline-block h-12 w-12 animate-spin rounded-full border-4 border-t-transparent" />
           <p className="text-gray-600">Loading profile...</p>
         </div>
       </div>
@@ -203,7 +203,7 @@ export default function ProfilePage() {
             {getProfileErrorMessage(queryError)}
           </p>
           <div className="flex justify-center">
-            <Link to="/" className="hover:text-primary-dark font-medium text-primary">
+            <Link to="/" className="hover:text-primary-dark text-primary font-medium">
               Return to home
             </Link>
           </div>
@@ -245,7 +245,7 @@ export default function ProfilePage() {
         <div className="overflow-hidden bg-white shadow sm:rounded-lg">
           {/* Read-only Information */}
           <div className="border-b border-gray-200 bg-gray-50 px-4 py-5 sm:px-6">
-            <h2 className="text-lg font-medium leading-6 text-gray-900">Account Information</h2>
+            <h2 className="text-lg leading-6 font-medium text-gray-900">Account Information</h2>
           </div>
 
           <div className="px-4 py-5 sm:p-6">
@@ -253,7 +253,7 @@ export default function ProfilePage() {
               {/* User ID (Read-only) */}
               <div className="sm:col-span-2">
                 <dt className="text-sm font-medium text-gray-500">User ID</dt>
-                <dd className="mt-1 break-all font-mono text-sm text-gray-900">{profile.userId}</dd>
+                <dd className="mt-1 font-mono text-sm break-all text-gray-900">{profile.userId}</dd>
               </div>
 
               {/* Roles (Read-only) */}
@@ -296,12 +296,12 @@ export default function ProfilePage() {
           {/* Editable Information */}
           <div className="border-t border-gray-200 bg-gray-50 px-4 py-5 sm:px-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-medium leading-6 text-gray-900">Profile Settings</h2>
+              <h2 className="text-lg leading-6 font-medium text-gray-900">Profile Settings</h2>
               {!isEditing && (
                 <button
                   type="button"
                   onClick={() => setIsEditing(true)}
-                  className="hover:bg-primary-dark inline-flex items-center rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                  className="hover:bg-primary-dark bg-primary focus:ring-primary inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white focus:ring-2 focus:ring-offset-2 focus:outline-none"
                 >
                   Edit Profile
                 </button>
@@ -327,7 +327,7 @@ export default function ProfilePage() {
                         onChange={handleChange}
                         className={`mt-1 block w-full rounded-md border ${
                           formErrors.username ? 'border-red-300' : 'border-gray-300'
-                        } px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-primary sm:text-sm`}
+                        } focus:border-primary focus:ring-primary px-3 py-2 shadow-sm focus:outline-none sm:text-sm`}
                         placeholder="Enter username"
                       />
                       {formErrors.username && (
@@ -354,7 +354,7 @@ export default function ProfilePage() {
                         onChange={handleChange}
                         className={`mt-1 block w-full rounded-md border ${
                           formErrors.email ? 'border-red-300' : 'border-gray-300'
-                        } px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-primary sm:text-sm`}
+                        } focus:border-primary focus:ring-primary px-3 py-2 shadow-sm focus:outline-none sm:text-sm`}
                         placeholder="Enter email"
                       />
                       {formErrors.email && (
@@ -398,14 +398,14 @@ export default function ProfilePage() {
                     <button
                       type="button"
                       onClick={handleCancel}
-                      className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                      className="focus:ring-primary rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-offset-2 focus:outline-none"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
                       disabled={updateProfile.isPending}
-                      className="hover:bg-primary-dark inline-flex items-center rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="hover:bg-primary-dark bg-primary focus:ring-primary inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       {updateProfile.isPending ? 'Saving...' : 'Save Changes'}
                     </button>
@@ -421,7 +421,7 @@ export default function ProfilePage() {
           {/* Change Password */}
           <Link
             to="/profile/change-password"
-            className="flex items-center justify-between rounded-lg border border-gray-300 bg-white p-4 transition-all hover:border-primary hover:shadow-md"
+            className="hover:border-primary flex items-center justify-between rounded-lg border border-gray-300 bg-white p-4 transition-all hover:shadow-md"
           >
             <div className="flex items-center">
               <svg
@@ -454,7 +454,7 @@ export default function ProfilePage() {
           {/* Return to Dashboard */}
           <Link
             to="/dashboard"
-            className="flex items-center justify-between rounded-lg border border-gray-300 bg-white p-4 transition-all hover:border-primary hover:shadow-md"
+            className="hover:border-primary flex items-center justify-between rounded-lg border border-gray-300 bg-white p-4 transition-all hover:shadow-md"
           >
             <div className="flex items-center">
               <svg

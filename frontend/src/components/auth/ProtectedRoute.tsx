@@ -31,7 +31,7 @@ export function ProtectedRoute({ children, requiredRoles = [] }: ProtectedRouteP
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
-          <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-neutral-200 border-t-primary"></div>
+          <div className="border-t-primary mb-4 h-12 w-12 animate-spin rounded-full border-4 border-neutral-200"></div>
           <p className="text-neutral-600">Loading...</p>
         </div>
       </div>
@@ -51,7 +51,7 @@ export function ProtectedRoute({ children, requiredRoles = [] }: ProtectedRouteP
     if (!hasRequiredRole) {
       return (
         <div className="flex min-h-screen items-center justify-center bg-gray-50">
-          <div className="max-w-md rounded-lg bg-white p-8 text-center shadow-card">
+          <div className="shadow-card max-w-md rounded-lg bg-white p-8 text-center">
             <div className="mb-4 text-6xl">🚫</div>
             <h1 className="mb-2 text-2xl font-bold text-neutral-800">Access Denied</h1>
             <p className="mb-4 text-neutral-600">
@@ -65,7 +65,7 @@ export function ProtectedRoute({ children, requiredRoles = [] }: ProtectedRouteP
             </p>
             <a
               href="/"
-              className="inline-block rounded bg-primary px-6 py-2 text-white hover:bg-primary-600"
+              className="bg-primary hover:bg-primary-600 inline-block rounded px-6 py-2 text-white"
             >
               Go Home
             </a>

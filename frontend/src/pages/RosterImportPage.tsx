@@ -207,7 +207,7 @@ export default function RosterImportPage() {
           type="file"
           accept=".csv,text/csv"
           onChange={handleFileSelect}
-          className="block w-full text-sm text-gray-500 file:mr-4 file:rounded file:border-0 file:bg-primary-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-primary-700 hover:file:bg-primary-100"
+          className="file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 block w-full text-sm text-gray-500 file:mr-4 file:rounded file:border-0 file:px-4 file:py-2 file:text-sm file:font-semibold"
         />
         <p className="mt-2 text-sm text-gray-500">Or paste CSV data below</p>
       </div>
@@ -219,7 +219,7 @@ export default function RosterImportPage() {
           value={csvData}
           onChange={handleTextChange}
           placeholder="Player Name,Joined Date&#10;John Doe,2025-01-01&#10;Jane Smith,2025-01-15"
-          className="h-48 w-full rounded-md border border-gray-300 px-3 py-2 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+          className="focus:ring-primary-500 h-48 w-full rounded-md border border-gray-300 px-3 py-2 font-mono text-sm focus:ring-2 focus:outline-none"
         />
         {csvData && (
           <button
@@ -235,7 +235,7 @@ export default function RosterImportPage() {
       {parseError && (
         <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-6">
           <h2 className="mb-2 text-lg font-semibold text-red-900">Parse Errors</h2>
-          <pre className="whitespace-pre-wrap text-sm text-red-800">{parseError}</pre>
+          <pre className="text-sm whitespace-pre-wrap text-red-800">{parseError}</pre>
         </div>
       )}
 
@@ -258,10 +258,10 @@ export default function RosterImportPage() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead>
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Player Name
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Joined Date
                   </th>
                 </tr>
@@ -269,8 +269,8 @@ export default function RosterImportPage() {
               <tbody className="divide-y divide-gray-200 bg-white">
                 {previewData.slice(0, 50).map((player, index) => (
                   <tr key={index}>
-                    <td className="whitespace-nowrap px-4 py-3">{player.playerName}</td>
-                    <td className="whitespace-nowrap px-4 py-3">
+                    <td className="px-4 py-3 whitespace-nowrap">{player.playerName}</td>
+                    <td className="px-4 py-3 whitespace-nowrap">
                       {player.joinedDate || <span className="text-gray-400">Today</span>}
                     </td>
                   </tr>

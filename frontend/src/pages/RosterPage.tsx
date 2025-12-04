@@ -174,14 +174,14 @@ export function RosterPage() {
     return (
       <div className="min-h-[60vh] bg-gray-50 py-12">
         <div className="container mx-auto px-4">
-          <div className="mx-auto max-w-2xl rounded-lg bg-white p-8 text-center shadow-card">
+          <div className="shadow-card mx-auto max-w-2xl rounded-lg bg-white p-8 text-center">
             <h1 className="mb-4 text-2xl font-bold text-red-600">Access Denied</h1>
             <p className="mb-6 text-neutral-600">
               You must be a clan admin or owner to manage the roster.
             </p>
             <Link
               to={`/clans/${clanId}`}
-              className="inline-block rounded bg-primary-600 px-6 py-2 text-white hover:bg-primary-700"
+              className="bg-primary-600 hover:bg-primary-700 inline-block rounded px-6 py-2 text-white"
             >
               Back to Clan
             </Link>
@@ -228,7 +228,7 @@ export function RosterPage() {
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-6xl">
             <div className="mb-6 h-10 w-1/3 animate-pulse rounded bg-neutral-200"></div>
-            <div className="rounded-lg bg-white p-6 shadow-card">
+            <div className="shadow-card rounded-lg bg-white p-6">
               <div className="space-y-4">
                 {Array.from({ length: 10 }).map((_, i) => (
                   <div key={i} className="h-16 animate-pulse rounded bg-neutral-100"></div>
@@ -245,14 +245,14 @@ export function RosterPage() {
     return (
       <div className="min-h-[60vh] bg-gray-50 py-12">
         <div className="container mx-auto px-4">
-          <div className="mx-auto max-w-2xl rounded-lg bg-white p-8 text-center shadow-card">
+          <div className="shadow-card mx-auto max-w-2xl rounded-lg bg-white p-8 text-center">
             <h1 className="mb-4 text-2xl font-bold text-red-600">Error Loading Roster</h1>
             <p className="mb-6 text-neutral-600">
               {error instanceof Error ? error.message : 'An unexpected error occurred'}
             </p>
             <button
               onClick={() => void navigate(-1)}
-              className="rounded bg-primary-600 px-6 py-2 text-white hover:bg-primary-700"
+              className="bg-primary-600 hover:bg-primary-700 rounded px-6 py-2 text-white"
             >
               Go Back
             </button>
@@ -274,7 +274,7 @@ export function RosterPage() {
             <h1 className="text-3xl font-bold text-neutral-900">Roster Management</h1>
             <button
               onClick={() => setShowAddModal(true)}
-              className="flex items-center gap-2 rounded bg-primary-600 px-4 py-2 text-white hover:bg-primary-700"
+              className="bg-primary-600 hover:bg-primary-700 flex items-center gap-2 rounded px-4 py-2 text-white"
             >
               <span className="text-xl">+</span>
               Add Player
@@ -282,7 +282,7 @@ export function RosterPage() {
           </div>
 
           {/* Filters and Search */}
-          <div className="mb-6 rounded-lg bg-white p-4 shadow-card">
+          <div className="shadow-card mb-6 rounded-lg bg-white p-4">
             <div className="grid gap-4 md:grid-cols-3">
               {/* Search */}
               <div>
@@ -293,7 +293,7 @@ export function RosterPage() {
                   value={searchQuery}
                   onChange={handleSearchChange}
                   autoComplete="off"
-                  className="w-full rounded border border-neutral-300 px-4 py-2 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  className="focus:border-primary-500 focus:ring-primary-500 w-full rounded border border-neutral-300 px-4 py-2 focus:ring-1 focus:outline-none"
                 />
               </div>
 
@@ -305,7 +305,7 @@ export function RosterPage() {
                     setActiveFilter(e.target.value as ActiveFilter);
                     setPage(1);
                   }}
-                  className="w-full rounded border border-neutral-300 px-4 py-2 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  className="focus:border-primary-500 focus:ring-primary-500 w-full rounded border border-neutral-300 px-4 py-2 focus:ring-1 focus:outline-none"
                 >
                   <option value="all">All Players</option>
                   <option value="active">Active Only</option>
@@ -318,7 +318,7 @@ export function RosterPage() {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as SortField)}
-                  className="flex-1 rounded border border-neutral-300 px-3 py-2 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  className="focus:border-primary-500 focus:ring-primary-500 flex-1 rounded border border-neutral-300 px-3 py-2 focus:ring-1 focus:outline-none"
                 >
                   <option value="playerName">Name</option>
                   <option value="joinedDate">Join Date</option>
@@ -336,7 +336,7 @@ export function RosterPage() {
           </div>
 
           {/* Player List */}
-          <div className="rounded-lg bg-white shadow-card">
+          <div className="shadow-card rounded-lg bg-white">
             {players.length === 0 ? (
               <div className="p-12 text-center">
                 <p className="mb-2 text-4xl text-neutral-300">👥</p>
@@ -344,7 +344,7 @@ export function RosterPage() {
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery('')}
-                    className="mt-4 text-primary-600 hover:text-primary-700"
+                    className="text-primary-600 hover:text-primary-700 mt-4"
                   >
                     Clear search
                   </button>
@@ -379,7 +379,7 @@ export function RosterPage() {
                           <td className="px-6 py-4 text-sm">
                             <Link
                               to={`/clans/${clanId}/roster/${player.playerId}/history`}
-                              className="font-medium text-primary-600 hover:text-primary-800 hover:underline"
+                              className="text-primary-600 hover:text-primary-800 font-medium hover:underline"
                             >
                               {player.playerName}
                             </Link>

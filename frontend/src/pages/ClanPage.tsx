@@ -67,7 +67,7 @@ export function ClanPage() {
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-4xl space-y-6">
             {/* Loading skeleton */}
-            <div className="rounded-lg bg-white p-8 shadow-card">
+            <div className="shadow-card rounded-lg bg-white p-8">
               <div className="mb-4 h-10 w-1/2 animate-pulse rounded bg-neutral-200"></div>
               <div className="mb-8 h-6 w-1/3 animate-pulse rounded bg-neutral-200"></div>
               <div className="grid gap-4 md:grid-cols-3">
@@ -87,7 +87,7 @@ export function ClanPage() {
       <div className="min-h-[60vh] bg-gray-50 py-12">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-4xl">
-            <div className="border-error rounded-lg border bg-white p-12 text-center shadow-card">
+            <div className="border-error shadow-card rounded-lg border bg-white p-12 text-center">
               <div className="mb-4 text-6xl">⚠️</div>
               <h2 className="mb-4 text-2xl font-semibold text-neutral-800">Clan Not Found</h2>
               <p className="mb-6 text-neutral-600">
@@ -95,7 +95,7 @@ export function ClanPage() {
               </p>
               <Link
                 to="/clans"
-                className="inline-flex items-center gap-2 font-medium text-primary hover:text-primary-600"
+                className="text-primary hover:text-primary-600 inline-flex items-center gap-2 font-medium"
               >
                 ← Browse all clans
               </Link>
@@ -130,10 +130,10 @@ export function ClanPage() {
           </nav>
 
           {/* Clan Header */}
-          <div className="mb-8 rounded-lg bg-white p-8 shadow-card">
+          <div className="shadow-card mb-8 rounded-lg bg-white p-8">
             <div className="mb-6 flex items-start justify-between gap-4">
               <div className="flex-1">
-                <h1 className="mb-2 font-display text-4xl text-neutral-800">{clan.name}</h1>
+                <h1 className="font-display mb-2 text-4xl text-neutral-800">{clan.name}</h1>
                 <p className="text-lg text-neutral-600">
                   {clan.country} • Rovio ID: {clan.rovioId}
                 </p>
@@ -150,8 +150,8 @@ export function ClanPage() {
 
             {/* Stats Cards */}
             <div className="grid gap-4 md:grid-cols-3">
-              <div className="rounded-lg bg-primary/10 p-6 text-center">
-                <div className="mb-2 text-4xl font-bold text-primary">
+              <div className="bg-primary/10 rounded-lg p-6 text-center">
+                <div className="text-primary mb-2 text-4xl font-bold">
                   {clan.stats.totalBattles}
                 </div>
                 <div className="text-sm font-medium text-neutral-700">
@@ -164,8 +164,8 @@ export function ClanPage() {
                 <div className="text-sm font-medium text-neutral-700">Active Players</div>
               </div>
 
-              <div className="rounded-lg bg-success/10 p-6 text-center">
-                <div className="mb-2 text-4xl font-bold text-success">
+              <div className="bg-success/10 rounded-lg p-6 text-center">
+                <div className="text-success mb-2 text-4xl font-bold">
                   {clan.stats.totalPlayers}
                 </div>
                 <div className="text-sm font-medium text-neutral-700">Total Roster Size</div>
@@ -182,10 +182,10 @@ export function ClanPage() {
           <div className="mb-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             <Link
               to={`/clans/${clan.clanId}/battles`}
-              className="group rounded-lg bg-white p-6 shadow-card transition-all hover:scale-105 hover:shadow-card-hover"
+              className="group shadow-card hover:shadow-card-hover rounded-lg bg-white p-6 transition-all hover:scale-105"
             >
               <div className="mb-3 text-3xl">⚔️</div>
-              <h3 className="mb-2 text-lg font-semibold text-neutral-800 group-hover:text-primary">
+              <h3 className="group-hover:text-primary mb-2 text-lg font-semibold text-neutral-800">
                 Battle History
               </h3>
               <p className="text-sm text-neutral-600">
@@ -195,10 +195,10 @@ export function ClanPage() {
 
             <Link
               to={rosterLink}
-              className="group rounded-lg bg-white p-6 shadow-card transition-all hover:scale-105 hover:shadow-card-hover"
+              className="group shadow-card hover:shadow-card-hover rounded-lg bg-white p-6 transition-all hover:scale-105"
             >
               <div className="mb-3 text-3xl">👥</div>
-              <h3 className="mb-2 text-lg font-semibold text-neutral-800 group-hover:text-primary">
+              <h3 className="group-hover:text-primary mb-2 text-lg font-semibold text-neutral-800">
                 Clan Roster
               </h3>
               <p className="text-sm text-neutral-600">
@@ -210,10 +210,10 @@ export function ClanPage() {
 
             <Link
               to={`/clans/${clan.clanId}/reports`}
-              className="group rounded-lg bg-white p-6 shadow-card transition-all hover:scale-105 hover:shadow-card-hover"
+              className="group shadow-card hover:shadow-card-hover rounded-lg bg-white p-6 transition-all hover:scale-105"
             >
               <div className="mb-3 text-3xl">📊</div>
-              <h3 className="mb-2 text-lg font-semibold text-neutral-800 group-hover:text-primary">
+              <h3 className="group-hover:text-primary mb-2 text-lg font-semibold text-neutral-800">
                 Performance Reports
               </h3>
               <p className="text-sm text-neutral-600">Performance trends and analytical reports</p>
@@ -221,10 +221,10 @@ export function ClanPage() {
 
             <Link
               to={`/clans/${clan.clanId}/stats/months/${new Date().toISOString().slice(0, 7).replace('-', '')}`}
-              className="group rounded-lg bg-white p-6 shadow-card transition-all hover:scale-105 hover:shadow-card-hover"
+              className="group shadow-card hover:shadow-card-hover rounded-lg bg-white p-6 transition-all hover:scale-105"
             >
               <div className="mb-3 text-3xl">📅</div>
-              <h3 className="mb-2 text-lg font-semibold text-neutral-800 group-hover:text-primary">
+              <h3 className="group-hover:text-primary mb-2 text-lg font-semibold text-neutral-800">
                 Monthly Stats
               </h3>
               <p className="text-sm text-neutral-600">
@@ -234,10 +234,10 @@ export function ClanPage() {
 
             <Link
               to={`/clans/${clan.clanId}/stats/years/${new Date().getFullYear()}`}
-              className="group rounded-lg bg-white p-6 shadow-card transition-all hover:scale-105 hover:shadow-card-hover"
+              className="group shadow-card hover:shadow-card-hover rounded-lg bg-white p-6 transition-all hover:scale-105"
             >
               <div className="mb-3 text-3xl">🗓️</div>
-              <h3 className="mb-2 text-lg font-semibold text-neutral-800 group-hover:text-primary">
+              <h3 className="group-hover:text-primary mb-2 text-lg font-semibold text-neutral-800">
                 Yearly Stats
               </h3>
               <p className="text-sm text-neutral-600">
@@ -248,7 +248,7 @@ export function ClanPage() {
 
           {/* Coming Soon Notice */}
           {clan.stats.totalBattles === 0 && (
-            <div className="rounded-lg bg-white p-8 text-center shadow-card">
+            <div className="shadow-card rounded-lg bg-white p-8 text-center">
               <div className="mb-4 text-5xl">📝</div>
               <h3 className="mb-2 text-xl font-semibold text-neutral-800">No Battles Yet</h3>
               <p className="text-neutral-600">
@@ -262,7 +262,7 @@ export function ClanPage() {
           <div className="mt-8 text-center">
             <Link
               to="/clans"
-              className="inline-flex items-center gap-2 font-medium text-primary hover:text-primary-600"
+              className="text-primary hover:text-primary-600 inline-flex items-center gap-2 font-medium"
             >
               ← Browse all clans
             </Link>

@@ -49,7 +49,7 @@ export default function BattleDetailPage() {
         </div>
         <Link
           to={`/clans/${clanIdNum}/battles`}
-          className="mt-4 inline-block text-primary hover:underline"
+          className="text-primary mt-4 inline-block hover:underline"
         >
           ← Back to Battles
         </Link>
@@ -79,7 +79,7 @@ export default function BattleDetailPage() {
       <div className="mb-6">
         <Link
           to={`/clans/${clanIdNum}/battles`}
-          className="mb-2 inline-block text-primary hover:underline"
+          className="text-primary mb-2 inline-block hover:underline"
         >
           ← Back to Battles
         </Link>
@@ -103,12 +103,12 @@ export default function BattleDetailPage() {
       <div className="mb-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-lg bg-white p-6 shadow">
           <h3 className="mb-2 text-sm font-medium text-gray-600">Clan Ratio</h3>
-          <p className="text-3xl font-bold text-primary">{battle.ratio.toFixed(2)}</p>
+          <p className="text-primary text-3xl font-bold">{battle.ratio.toFixed(2)}</p>
           <p className="mt-1 text-xs text-gray-500">Score ÷ Baseline FP × 1,000</p>
         </div>
         <div className="rounded-lg bg-white p-6 shadow">
           <h3 className="mb-2 text-sm font-medium text-gray-600">Average Ratio</h3>
-          <p className="text-3xl font-bold text-secondary">{battle.averageRatio.toFixed(2)}</p>
+          <p className="text-secondary text-3xl font-bold">{battle.averageRatio.toFixed(2)}</p>
           <p className="mt-1 text-xs text-gray-500">Score ÷ Actual FP × 1,000</p>
         </div>
         <div className="rounded-lg bg-white p-6 shadow">
@@ -169,11 +169,11 @@ export default function BattleDetailPage() {
             </div>
             <div className="flex justify-between border-b pb-2">
               <dt className="text-gray-600">Clan Ratio:</dt>
-              <dd className="font-bold text-primary">{battle.ratio.toFixed(2)}</dd>
+              <dd className="text-primary font-bold">{battle.ratio.toFixed(2)}</dd>
             </div>
             <div className="flex justify-between border-b pb-2">
               <dt className="text-gray-600">Average Ratio:</dt>
-              <dd className="font-bold text-secondary">{battle.averageRatio.toFixed(2)}</dd>
+              <dd className="text-secondary font-bold">{battle.averageRatio.toFixed(2)}</dd>
             </div>
             <div className="flex justify-between border-b pb-2">
               <dt className="flex items-center text-gray-600">
@@ -281,28 +281,28 @@ export default function BattleDetailPage() {
           <table className="min-w-full">
             <thead className="bg-gray-100">
               <tr>
-                <th className="px-4 py-3 text-center text-xs font-medium uppercase text-gray-700">
+                <th className="px-4 py-3 text-center text-xs font-medium text-gray-700 uppercase">
                   Ratio Rank
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase text-gray-700">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">
                   Player
                 </th>
-                <th className="px-4 py-3 text-center text-xs font-medium uppercase text-gray-700">
+                <th className="px-4 py-3 text-center text-xs font-medium text-gray-700 uppercase">
                   Score Rank
                 </th>
-                <th className="px-6 py-3 text-center text-xs font-medium uppercase text-gray-700">
+                <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase">
                   Score
                 </th>
-                <th className="px-6 py-3 text-center text-xs font-medium uppercase text-gray-700">
+                <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase">
                   FP
                 </th>
-                <th className="px-6 py-3 text-center text-xs font-medium uppercase text-gray-700">
+                <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase">
                   Ratio
                 </th>
-                <th className="px-6 py-3 text-center text-xs font-medium uppercase text-gray-700">
+                <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase">
                   Tier
                 </th>
-                <th className="px-6 py-3 text-center text-xs font-medium uppercase text-gray-700">
+                <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase">
                   Action
                 </th>
               </tr>
@@ -331,32 +331,32 @@ export default function BattleDetailPage() {
 
                   return (
                     <tr key={player.playerId} className="hover:bg-gray-50">
-                      <td className="whitespace-nowrap px-4 py-4 text-center">
-                        <span className="text-lg font-bold text-primary">#{player.ratioRank}</span>
+                      <td className="px-4 py-4 text-center whitespace-nowrap">
+                        <span className="text-primary text-lg font-bold">#{player.ratioRank}</span>
                       </td>
                       <td className="px-6 py-4">
                         <div className="text-sm font-medium text-gray-900">{player.playerName}</div>
                       </td>
-                      <td className="whitespace-nowrap px-4 py-4 text-center text-sm text-gray-600">
+                      <td className="px-4 py-4 text-center text-sm whitespace-nowrap text-gray-600">
                         #{player.rank}
                       </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-center text-sm font-medium">
+                      <td className="px-6 py-4 text-center text-sm font-medium whitespace-nowrap">
                         {player.score.toLocaleString()}
                       </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-center text-sm text-gray-600">
+                      <td className="px-6 py-4 text-center text-sm whitespace-nowrap text-gray-600">
                         {player.fp.toLocaleString()}
                       </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-center text-base font-bold">
+                      <td className="px-6 py-4 text-center text-base font-bold whitespace-nowrap">
                         {player.ratio.toFixed(2)}
                       </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-center">
+                      <td className="px-6 py-4 text-center whitespace-nowrap">
                         <span
                           className={`inline-block rounded px-2 py-1 text-xs font-semibold ${tierClass}`}
                         >
                           {tier}
                         </span>
                       </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-center text-sm">
+                      <td className="px-6 py-4 text-center text-sm whitespace-nowrap">
                         <span className="rounded bg-gray-100 px-2 py-1 text-xs font-medium text-gray-800">
                           {player.actionCode}
                         </span>
@@ -432,16 +432,16 @@ export default function BattleDetailPage() {
                     <table className="min-w-full">
                       <thead className="bg-gray-50">
                         <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium uppercase text-gray-700">
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">
                             Player
                           </th>
-                          <th className="px-6 py-3 text-center text-xs font-medium uppercase text-gray-700">
+                          <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase">
                             FP
                           </th>
-                          <th className="px-6 py-3 text-center text-xs font-medium uppercase text-gray-700">
+                          <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase">
                             % of Total FP
                           </th>
-                          <th className="px-6 py-3 text-center text-xs font-medium uppercase text-gray-700">
+                          <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase">
                             Action
                           </th>
                         </tr>
@@ -451,16 +451,16 @@ export default function BattleDetailPage() {
                           .filter((np) => !np.reserve)
                           .map((nonplayer, index) => (
                             <tr key={index} className="hover:bg-gray-50">
-                              <td className="whitespace-nowrap px-6 py-4 text-sm font-medium">
+                              <td className="px-6 py-4 text-sm font-medium whitespace-nowrap">
                                 {nonplayer.playerName}
                               </td>
-                              <td className="whitespace-nowrap px-6 py-4 text-center text-sm font-medium">
+                              <td className="px-6 py-4 text-center text-sm font-medium whitespace-nowrap">
                                 {nonplayer.fp.toLocaleString()}
                               </td>
-                              <td className="whitespace-nowrap px-6 py-4 text-center text-sm text-gray-600">
+                              <td className="px-6 py-4 text-center text-sm whitespace-nowrap text-gray-600">
                                 {((nonplayer.fp / battle.fp) * 100).toFixed(2)}%
                               </td>
-                              <td className="whitespace-nowrap px-6 py-4 text-center text-sm">
+                              <td className="px-6 py-4 text-center text-sm whitespace-nowrap">
                                 <span className="rounded bg-gray-100 px-2 py-1 text-xs font-medium text-gray-800">
                                   {nonplayer.actionCode}
                                 </span>
@@ -498,16 +498,16 @@ export default function BattleDetailPage() {
                     <table className="min-w-full">
                       <thead className="bg-orange-50">
                         <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium uppercase text-orange-700">
+                          <th className="px-6 py-3 text-left text-xs font-medium text-orange-700 uppercase">
                             Player
                           </th>
-                          <th className="px-6 py-3 text-center text-xs font-medium uppercase text-orange-700">
+                          <th className="px-6 py-3 text-center text-xs font-medium text-orange-700 uppercase">
                             FP
                           </th>
-                          <th className="px-6 py-3 text-center text-xs font-medium uppercase text-orange-700">
+                          <th className="px-6 py-3 text-center text-xs font-medium text-orange-700 uppercase">
                             % of Total FP
                           </th>
-                          <th className="px-6 py-3 text-center text-xs font-medium uppercase text-orange-700">
+                          <th className="px-6 py-3 text-center text-xs font-medium text-orange-700 uppercase">
                             Action
                           </th>
                         </tr>
@@ -517,20 +517,20 @@ export default function BattleDetailPage() {
                           .filter((np) => np.reserve)
                           .map((nonplayer, index) => (
                             <tr key={index} className="bg-orange-50/30 hover:bg-orange-50">
-                              <td className="whitespace-nowrap px-6 py-4 text-sm font-medium">
+                              <td className="px-6 py-4 text-sm font-medium whitespace-nowrap">
                                 {nonplayer.playerName}
                               </td>
-                              <td className="whitespace-nowrap px-6 py-4 text-center text-sm font-medium">
+                              <td className="px-6 py-4 text-center text-sm font-medium whitespace-nowrap">
                                 {nonplayer.fp.toLocaleString()}
                               </td>
-                              <td className="whitespace-nowrap px-6 py-4 text-center text-sm text-gray-600">
+                              <td className="px-6 py-4 text-center text-sm whitespace-nowrap text-gray-600">
                                 {(
                                   (nonplayer.fp / (battle.fp + battle.reserveCount * 50)) *
                                   100
                                 ).toFixed(2)}
                                 %
                               </td>
-                              <td className="whitespace-nowrap px-6 py-4 text-center text-sm">
+                              <td className="px-6 py-4 text-center text-sm whitespace-nowrap">
                                 <span className="rounded bg-orange-100 px-2 py-1 text-xs font-medium text-orange-800">
                                   {nonplayer.actionCode}
                                 </span>

@@ -15,7 +15,7 @@ export function Footer() {
         <div className="grid gap-8 md:grid-cols-3">
           {/* About Section */}
           <div>
-            <h3 className="mb-4 font-display text-lg text-neutral-800">Angry Birdman</h3>
+            <h3 className="font-display mb-4 text-lg text-neutral-800">Angry Birdman</h3>
             <p className="text-sm text-neutral-600">
               Clan management system for Angry Birds 2. Track battles, manage rosters, and analyze
               performance.
@@ -27,17 +27,17 @@ export function Footer() {
             <h3 className="mb-4 font-semibold text-neutral-800">Quick Links</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link to="/" className="text-neutral-600 hover:text-primary">
+                <Link to="/" className="hover:text-primary text-neutral-600">
                   Home
                 </Link>
               </li>
               <li>
-                <Link to="/clans" className="text-neutral-600 hover:text-primary">
+                <Link to="/clans" className="hover:text-primary text-neutral-600">
                   Browse Clans
                 </Link>
               </li>
               <li>
-                <Link to="/about" className="text-neutral-600 hover:text-primary">
+                <Link to="/about" className="hover:text-primary text-neutral-600">
                   About
                 </Link>
               </li>
@@ -49,12 +49,12 @@ export function Footer() {
             <h3 className="mb-4 font-semibold text-neutral-800">Legal</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link to="/privacy" className="text-neutral-600 hover:text-primary">
+                <Link to="/privacy" className="hover:text-primary text-neutral-600">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link to="/terms" className="text-neutral-600 hover:text-primary">
+                <Link to="/terms" className="hover:text-primary text-neutral-600">
                   Terms of Service
                 </Link>
               </li>
@@ -63,7 +63,7 @@ export function Footer() {
                   href="https://github.com/webzeppelin/angry-birdman"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-neutral-600 hover:text-primary"
+                  className="hover:text-primary text-neutral-600"
                 >
                   GitHub
                 </a>

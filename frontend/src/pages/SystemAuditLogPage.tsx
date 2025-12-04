@@ -184,7 +184,7 @@ export default function SystemAuditLogPage() {
               value={filters.userId}
               onChange={(e) => handleFilterChange('userId', e.target.value)}
               placeholder="Filter by user ID..."
-              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
           </div>
 
@@ -198,7 +198,7 @@ export default function SystemAuditLogPage() {
               type="date"
               value={filters.startDate}
               onChange={(e) => handleFilterChange('startDate', e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
           </div>
 
@@ -212,7 +212,7 @@ export default function SystemAuditLogPage() {
               type="date"
               value={filters.endDate}
               onChange={(e) => handleFilterChange('endDate', e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
           </div>
 
@@ -257,19 +257,19 @@ export default function SystemAuditLogPage() {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Timestamp
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   User
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Action
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Resource
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-3 text-right text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Details
                 </th>
               </tr>
@@ -278,19 +278,19 @@ export default function SystemAuditLogPage() {
               {logs.length > 0 ? (
                 logs.map((log) => (
                   <tr key={log.logId} className="hover:bg-gray-50">
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-600">
+                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600">
                       {new Date(log.timestamp).toLocaleString()}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
+                    <td className="px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900">
                       {log.username}
                       <div className="text-xs text-gray-500">{log.userId}</div>
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4">
+                    <td className="px-6 py-4 whitespace-nowrap">
                       <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
                         {formatActionType(log.action)}
                       </span>
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-600">
+                    <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600">
                       {formatResourceType(log.resourceType)}
                       <div className="text-xs text-gray-500">{log.resourceId}</div>
                     </td>
@@ -347,7 +347,7 @@ export default function SystemAuditLogPage() {
 
       {/* Details Modal */}
       {selectedLog && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black">
           <div className="mx-4 w-full max-w-2xl rounded-lg bg-white p-6 shadow-xl">
             <h3 className="mb-4 text-lg font-semibold text-gray-900">Audit Log Details</h3>
             <div className="mb-6 space-y-3">

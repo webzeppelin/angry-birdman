@@ -95,7 +95,7 @@ export function ClanSelector({
             placeholder="Search clan name..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full rounded-lg border border-neutral-300 px-4 py-2 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="focus:border-primary focus:ring-primary/20 w-full rounded-lg border border-neutral-300 px-4 py-2 focus:ring-2 focus:outline-none"
           />
         </div>
 
@@ -108,7 +108,7 @@ export function ClanSelector({
               id="country-filter"
               value={selectedCountry}
               onChange={(e) => setSelectedCountry(e.target.value)}
-              className="w-full rounded-lg border border-neutral-300 px-4 py-2 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="focus:border-primary focus:ring-primary/20 w-full rounded-lg border border-neutral-300 px-4 py-2 focus:ring-2 focus:outline-none"
             >
               <option value="">All Countries</option>
               {countries.map((country) => (
@@ -124,7 +124,7 @@ export function ClanSelector({
               type="checkbox"
               checked={showActive}
               onChange={(e) => setShowActive(e.target.checked)}
-              className="h-4 w-4 rounded border-neutral-300 text-primary focus:ring-primary"
+              className="text-primary focus:ring-primary h-4 w-4 rounded border-neutral-300"
             />
             <span className="text-sm text-neutral-700">Active only</span>
           </label>
@@ -135,7 +135,7 @@ export function ClanSelector({
       {isLoading ? (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="animate-pulse rounded-lg bg-white p-4 shadow-card">
+            <div key={i} className="shadow-card animate-pulse rounded-lg bg-white p-4">
               <div className="mb-2 h-6 w-3/4 rounded bg-neutral-200"></div>
               <div className="mb-3 h-4 w-1/2 rounded bg-neutral-200"></div>
               <div className="h-4 w-full rounded bg-neutral-200"></div>
@@ -156,10 +156,10 @@ export function ClanSelector({
               <Link
                 key={clan.clanId}
                 to={`/clans/${clan.clanId}`}
-                className="group rounded-lg bg-white p-4 shadow-card transition-all hover:scale-105 hover:shadow-card-hover"
+                className="group shadow-card hover:shadow-card-hover rounded-lg bg-white p-4 transition-all hover:scale-105"
               >
                 <div className="mb-2 flex items-start justify-between">
-                  <h3 className="text-lg font-semibold text-neutral-800 group-hover:text-primary">
+                  <h3 className="group-hover:text-primary text-lg font-semibold text-neutral-800">
                     {clan.name}
                   </h3>
                   {!clan.active && (
@@ -175,7 +175,7 @@ export function ClanSelector({
                   <span className="text-neutral-700">
                     {clan.battleCount} {clan.battleCount === 1 ? 'battle' : 'battles'}
                   </span>
-                  <span className="font-medium text-primary">View →</span>
+                  <span className="text-primary font-medium">View →</span>
                 </div>
               </Link>
             ))}
@@ -185,7 +185,7 @@ export function ClanSelector({
             <div className="text-center">
               <Link
                 to="/clans"
-                className="inline-flex items-center gap-2 font-medium text-primary transition-colors hover:text-primary-600"
+                className="text-primary hover:text-primary-600 inline-flex items-center gap-2 font-medium transition-colors"
               >
                 View all {data.pagination.total} clans
                 <span aria-hidden="true">→</span>
