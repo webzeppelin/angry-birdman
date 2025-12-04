@@ -102,7 +102,7 @@ export function EditClanProfilePage() {
 
     if (!result.success) {
       const errors: Partial<Record<keyof ClanProfileUpdate, string>> = {};
-      result.error.errors.forEach((err) => {
+      result.error.issues.forEach((err) => {
         if (err.path[0]) {
           errors[err.path[0] as keyof ClanProfileUpdate] = err.message;
         }

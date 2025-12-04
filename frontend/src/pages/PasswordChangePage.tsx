@@ -105,7 +105,7 @@ export default function PasswordChangePage() {
     } catch (error) {
       if (error instanceof z.ZodError) {
         const errors: Partial<Record<keyof PasswordChangeFormData, string>> = {};
-        error.errors.forEach((err) => {
+        error.issues.forEach((err) => {
           const field = err.path[0] as keyof PasswordChangeFormData;
           errors[field] = err.message;
         });

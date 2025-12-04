@@ -99,7 +99,7 @@ export default function ProfilePage() {
     } catch (error) {
       if (error instanceof z.ZodError) {
         const errors: Partial<Record<keyof ProfileFormData, string>> = {};
-        error.errors.forEach((err) => {
+        error.issues.forEach((err) => {
           const field = err.path[0] as keyof ProfileFormData;
           errors[field] = err.message;
         });

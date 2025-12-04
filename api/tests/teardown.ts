@@ -1,4 +1,4 @@
-import type { PrismaClient } from '@prisma/client';
+import type { PrismaClient } from '@angrybirdman/database';
 
 // Extend global type to include our test client
 declare global {

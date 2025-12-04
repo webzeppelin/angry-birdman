@@ -1,5 +1,7 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@angrybirdman/database';
+import { PrismaPg } from '@prisma/adapter-pg';
 import { config } from 'dotenv';
+import pg from 'pg';
 import { beforeEach, afterAll } from 'vitest';
 
 // Load environment variables from .env file
@@ -8,17 +10,20 @@ config({ path: '../../.env' });
 // Create a singleton PrismaClient for tests
 // Use a separate database or schema for testing
 // Default to local database connection if not explicitly set
-const databaseUrl =
+const connectionString =
   process.env.DATABASE_URL_TEST ||
   process.env.DATABASE_URL ||
   'postgresql://angrybirdman:angrybirdman_dev_password@localhost:5432/angrybirdman?schema=public';
 
-const prisma = new PrismaClient({
-  datasources: {
-    db: {
-      url: databaseUrl,
-    },
-  },
+// Create PostgreSQL connection pool
+const pool = new pg.Pool({ connectionString });
+
+// Create Prisma adapter
+const adapter = new PrismaPg(pool);
+
+// Initialize Prisma Client with adapter
+const prisma: PrismaClient = new PrismaClient({
+  adapter,
   log: process.env.LOG_QUERIES === 'true' ? ['query', 'error', 'warn'] : ['error'],
 });
 

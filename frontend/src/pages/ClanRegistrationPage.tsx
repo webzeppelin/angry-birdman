@@ -24,7 +24,10 @@ const clanRegistrationSchema = z.object({
     .min(2, 'Clan name must be at least 2 characters')
     .max(100, 'Clan name cannot exceed 100 characters'),
   rovioId: z
-    .number({ invalid_type_error: 'Rovio ID must be a number' })
+    .number({
+      error: (issue) =>
+        issue.input === undefined ? 'Rovio ID is required' : 'Rovio ID must be a number',
+    })
     .int('Rovio ID must be an integer')
     .positive('Rovio ID must be positive')
     .max(2147483647, 'Rovio ID is too large'),
@@ -100,7 +103,7 @@ export default function ClanRegistrationPage() {
     } catch (error) {
       if (error instanceof z.ZodError) {
         const fieldErrors: Record<string, string> = {};
-        error.errors.forEach((err) => {
+        error.issues.forEach((err) => {
           if (err.path.length > 0) {
             const field = err.path[0] as string;
             fieldErrors[field] = err.message;
