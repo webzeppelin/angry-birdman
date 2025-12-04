@@ -85,15 +85,14 @@
   --font-size-4xl: 2.5rem;
   --font-size-4xl--line-height: 1.2;
 
-  /* Custom Spacing - Note: Tailwind v4 changed xs/sm/md/lg/xl naming conflicts */
-  /* We'll use custom names to avoid conflicts with default Tailwind spacing */
-  --spacing-2xs: 0.25rem; /* 4px */
-  --spacing-xs: 0.5rem; /* 8px */
-  --spacing-sm: 1rem; /* 16px */
-  --spacing-md: 1.5rem; /* 24px */
-  --spacing-lg: 2rem; /* 32px */
-  --spacing-xl: 3rem; /* 48px */
-  --spacing-2xl: 4rem; /* 64px */
+  /* Custom Spacing - Using app-specific names to avoid conflicts with Tailwind defaults */
+  --spacing-app-2xs: 0.25rem; /* 4px */
+  --spacing-app-xs: 0.5rem; /* 8px */
+  --spacing-app-sm: 1rem; /* 16px */
+  --spacing-app-md: 1.5rem; /* 24px */
+  --spacing-app-lg: 2rem; /* 32px */
+  --spacing-app-xl: 3rem; /* 48px */
+  --spacing-app-2xl: 4rem; /* 64px */
 
   /* Custom Border Radius */
   --radius: 0.5rem;
