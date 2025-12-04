@@ -223,8 +223,8 @@ export default function MonthlyStatsPage() {
             {/* Month Selector */}
             <select
               value={monthId}
-              onChange={(e) => navigate(`/clans/${clanId}/stats/months/${e.target.value}`)}
-              className="rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              onChange={(e) => void navigate(`/clans/${clanId}/stats/months/${e.target.value}`)}
+              className="rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-1 focus:ring-blue-500"
             >
               {monthsData?.map((month) => (
                 <option key={month.monthId} value={month.monthId}>

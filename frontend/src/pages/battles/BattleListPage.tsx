@@ -41,12 +41,12 @@ export default function BattleListPage() {
   // Fetch battle list (must be before early return per React hooks rules)
   const { data, isLoading, error } = useQuery<BattleListResponse>({
     queryKey: ['battles', clanIdNum, { page, limit, sortBy, sortOrder, filters }],
-    queryFn: async () => {
+    queryFn: async (): Promise<BattleListResponse> => {
       const response = await fetch(`/api/clans/${clanIdNum}/battles?${buildQueryString()}`, {
         credentials: 'include',
       });
       if (!response.ok) throw new Error('Failed to fetch battles');
-      return response.json();
+      return response.json() as Promise<BattleListResponse>;
     },
     enabled: !!clanIdNum,
   });

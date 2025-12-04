@@ -324,7 +324,7 @@ export default function RosterImportPage() {
           {importResult.imported > 0 && (
             <div className="mt-4">
               <button
-                onClick={() => navigate(`/clans/${clanId}/roster`)}
+                onClick={() => void navigate(`/clans/${clanId}/roster`)}
                 className="rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700"
               >
                 View Updated Roster

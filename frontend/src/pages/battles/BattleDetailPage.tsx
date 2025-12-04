@@ -16,12 +16,12 @@ export default function BattleDetailPage() {
     error,
   } = useQuery<BattleResponse>({
     queryKey: ['battle', clanIdNum, battleId],
-    queryFn: async () => {
+    queryFn: async (): Promise<BattleResponse> => {
       const response = await fetch(`/api/clans/${clanIdNum}/battles/${battleId}`, {
         credentials: 'include',
       });
       if (!response.ok) throw new Error('Failed to fetch battle');
-      return response.json();
+      return response.json() as Promise<BattleResponse>;
     },
     enabled: !!clanIdNum && !!battleId,
   });

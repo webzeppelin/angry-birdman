@@ -216,7 +216,7 @@ export default function YearlyStatsPage() {
             {/* Year Selector */}
             <select
               value={yearId}
-              onChange={(e) => navigate(`/clans/${clanId}/stats/years/${e.target.value}`)}
+              onChange={(e) => void navigate(`/clans/${clanId}/stats/years/${e.target.value}`)}
               className="rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
               {yearsData?.map((year) => (

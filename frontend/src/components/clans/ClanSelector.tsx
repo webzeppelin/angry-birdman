@@ -64,13 +64,13 @@ export function ClanSelector({
     if (!data?.clans) return [];
     const uniqueCountries = new Set(data.clans.map((c) => c.country));
     return Array.from(uniqueCountries).sort();
-  }, [data?.clans]);
+  }, [data]);
 
   // Filter and limit results
   const displayedClans = useMemo(() => {
     if (!data?.clans) return [];
     return data.clans.slice(0, maxDisplay);
-  }, [data?.clans, maxDisplay]);
+  }, [data, maxDisplay]);
 
   if (error) {
     return (

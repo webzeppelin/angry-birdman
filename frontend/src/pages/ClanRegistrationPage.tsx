@@ -7,6 +7,7 @@
  * Upon successful clan creation, the user becomes the clan owner.
  */
 
+import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
@@ -51,6 +52,7 @@ type ClanRegistrationResponse = {
  */
 export default function ClanRegistrationPage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const [formData, setFormData] = useState<ClanRegistrationFormData>({
     name: '',
@@ -138,8 +140,9 @@ export default function ClanRegistrationPage() {
           payload
         );
 
-        // Clan created successfully, navigate to clan dashboard
-        navigate(`/clans/${response.data.clanId}`, {
+        // Clan created successfully, invalidate queries and navigate
+        void queryClient.invalidateQueries({ queryKey: ['user'] });
+        void navigate(`/clans/${response.data.clanId}`, {
           state: { newClan: true, clanName: response.data.name },
         });
       } catch (error) {

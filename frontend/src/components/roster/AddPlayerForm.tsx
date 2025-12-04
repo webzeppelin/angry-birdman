@@ -13,7 +13,7 @@
  */
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState, type FormEvent, useEffect, useRef } from 'react';
+import React, { useState, type FormEvent, useEffect, useRef } from 'react';
 
 import { apiClient } from '@/lib/api-client';
 
@@ -46,9 +46,12 @@ export function AddPlayerForm({ clanId, isOpen, onClose, onSuccess }: AddPlayerF
   // Reset form when modal closes
   useEffect(() => {
     if (!isOpen) {
-      setPlayerName('');
-      setJoinedDate(new Date().toISOString().split('T')[0] as string);
-      setError(null);
+      // Use startTransition to defer state updates and avoid cascading render warning
+      React.startTransition(() => {
+        setPlayerName('');
+        setJoinedDate(new Date().toISOString().split('T')[0] as string);
+        setError(null);
+      });
     }
   }, [isOpen]);
 

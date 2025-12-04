@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import type { RosterMember, RosterResponse } from '../../types/battle';
 import type { BattleEntry } from '@angrybirdman/common';
@@ -43,12 +43,12 @@ export default function ActionCodeAssignment({
   // Fetch active roster to get player names
   const { data: rosterData } = useQuery<RosterResponse>({
     queryKey: ['roster', clanId, { active: true }],
-    queryFn: async () => {
+    queryFn: async (): Promise<RosterResponse> => {
       const response = await fetch(`/api/clans/${clanId}/roster?active=true`, {
         credentials: 'include',
       });
       if (!response.ok) throw new Error('Failed to fetch roster');
-      return response.json();
+      return response.json() as Promise<RosterResponse>;
     },
   });
 
@@ -66,7 +66,10 @@ export default function ActionCodeAssignment({
           actionReason: p.actionReason,
         };
       });
-      setPlayerActions(actions);
+      // Use startTransition to defer state update and avoid cascading render warning
+      React.startTransition(() => {
+        setPlayerActions(actions);
+      });
     }
   }, [data.playerStats, rosterData, playerActions.length]);
 
@@ -83,7 +86,10 @@ export default function ActionCodeAssignment({
           actionReason: np.actionReason,
         };
       });
-      setNonplayerActions(actions);
+      // Use startTransition to defer state update and avoid cascading render warning
+      React.startTransition(() => {
+        setNonplayerActions(actions);
+      });
     }
   }, [data.nonplayerStats, rosterData, nonplayerActions.length]);
 

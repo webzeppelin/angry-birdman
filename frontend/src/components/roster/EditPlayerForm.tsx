@@ -12,7 +12,7 @@
  */
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState, type FormEvent, useEffect } from 'react';
+import React, { useState, type FormEvent, useEffect } from 'react';
 
 import { apiClient } from '@/lib/api-client';
 
@@ -48,17 +48,23 @@ export function EditPlayerForm({
   // Populate form when player changes
   useEffect(() => {
     if (player) {
-      setPlayerName(player.playerName);
-      // Extract date part from ISO timestamp
-      const datePart = player.joinedDate.split('T')[0];
-      setJoinedDate(datePart as string);
+      // Use startTransition to defer state updates and avoid cascading render warning
+      React.startTransition(() => {
+        setPlayerName(player.playerName);
+        // Extract date part from ISO timestamp
+        const datePart = player.joinedDate.split('T')[0];
+        setJoinedDate(datePart as string);
+      });
     }
   }, [player]);
 
   // Reset error when modal closes
   useEffect(() => {
     if (!isOpen) {
-      setError(null);
+      // Use startTransition to defer state update and avoid cascading render warning
+      React.startTransition(() => {
+        setError(null);
+      });
     }
   }, [isOpen]);
 

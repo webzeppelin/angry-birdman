@@ -145,16 +145,17 @@ export default function RegisterPage() {
           });
 
           // Refresh the auth context to update user state
-          await refreshUser();
+          void refreshUser();
 
           // Navigate to post-registration triage (now authenticated)
-          navigate('/register/triage', {
+          void navigate('/register/triage', {
             state: { userId: response.data.userId, username: formData.username },
           });
         } catch (loginError) {
           // If auto-login fails, still navigate but user will need to login manually
           console.error('Auto-login failed after registration:', loginError);
-          navigate('/register/triage', {
+          void refreshUser();
+          void navigate('/register/triage', {
             state: { userId: response.data.userId, username: formData.username },
           });
         }

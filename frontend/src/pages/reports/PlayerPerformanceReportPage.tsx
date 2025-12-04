@@ -6,7 +6,7 @@
 
 import { ArrowUpIcon, ArrowDownIcon, MinusIcon } from '@heroicons/react/24/outline';
 import { useQuery } from '@tanstack/react-query';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
   LineChart,
@@ -90,7 +90,10 @@ export function PlayerPerformanceReportPage() {
     if (roster?.players && roster.players.length > 0 && !selectedPlayerId) {
       const firstPlayer = roster.players[0];
       if (firstPlayer) {
-        setSelectedPlayerId(firstPlayer.playerId);
+        // Use startTransition to defer state update and avoid cascading render warning
+        React.startTransition(() => {
+          setSelectedPlayerId(firstPlayer.playerId);
+        });
       }
     }
   }, [roster, selectedPlayerId]);

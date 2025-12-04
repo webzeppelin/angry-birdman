@@ -150,9 +150,9 @@ export default function BattleEntryWizard({
       }
       // Navigate to battle details if we got a battleId, otherwise to battle list
       if (result && result.battleId) {
-        navigate(`/clans/${clanId}/battles/${result.battleId}`);
+        void navigate(`/clans/${clanId}/battles/${result.battleId}`);
       } else {
-        navigate(`/clans/${clanId}/battles`);
+        void navigate(`/clans/${clanId}/battles`);
       }
     } catch (error) {
       console.error('Error submitting battle:', error);
@@ -167,7 +167,7 @@ export default function BattleEntryWizard({
       'Are you sure you want to cancel? Your progress will be saved as a draft.'
     );
     if (shouldCancel) {
-      navigate(`/clans/${clanId}/battles`);
+      void navigate(`/clans/${clanId}/battles`);
     }
   };
 

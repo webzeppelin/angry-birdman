@@ -81,7 +81,7 @@ export function EditClanProfilePage() {
       // Invalidate and refetch clan data
       void queryClient.invalidateQueries({ queryKey: ['clan', clanId] });
       // Navigate back to profile page
-      navigate(`/clans/${clanId}/profile`);
+      void navigate(`/clans/${clanId}/profile`);
     },
     onError: (error) => {
       setApiError(getApiErrorMessage(error));
@@ -117,7 +117,7 @@ export function EditClanProfilePage() {
 
   // Handle cancel
   const handleCancel = () => {
-    navigate(`/clans/${clanId}/profile`);
+    void navigate(`/clans/${clanId}/profile`);
   };
 
   if (isLoading) {

@@ -8,7 +8,7 @@
  * Provides edit mode for updating username and email.
  */
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { z } from 'zod';
 
@@ -51,9 +51,12 @@ export default function ProfilePage() {
   // Initialize form data when profile loads
   useEffect(() => {
     if (profile) {
-      setFormData({
-        username: profile.username,
-        email: profile.email,
+      // Use startTransition to defer state update and avoid cascading render warning
+      React.startTransition(() => {
+        setFormData({
+          username: profile.username,
+          email: profile.email,
+        });
       });
     }
   }, [profile]);

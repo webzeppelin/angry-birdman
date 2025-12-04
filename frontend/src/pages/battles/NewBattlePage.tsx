@@ -4,6 +4,7 @@ import { useParams, Navigate } from 'react-router-dom';
 import BattleEntryWizard from '../../components/battles/BattleEntryWizard';
 import { useAuth } from '../../contexts/AuthContext';
 
+import type { BattleResponse } from '../../types/battle';
 import type { BattleEntry } from '@angrybirdman/common';
 
 export default function NewBattlePage() {
@@ -30,7 +31,7 @@ export default function NewBattlePage() {
         throw new Error(errorData.message ?? 'Failed to create battle');
       }
 
-      return response.json();
+      return response.json() as Promise<BattleResponse>;
     },
     onSuccess: () => {
       // Invalidate battles list query to trigger refetch

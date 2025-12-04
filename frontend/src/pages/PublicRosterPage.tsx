@@ -86,7 +86,7 @@ export function PublicRosterPage() {
               {error instanceof Error ? error.message : 'An unexpected error occurred'}
             </p>
             <button
-              onClick={() => navigate(-1)}
+              onClick={() => void navigate(-1)}
               className="rounded bg-primary-600 px-6 py-2 text-white hover:bg-primary-700"
             >
               Go Back
@@ -155,7 +155,7 @@ export function PublicRosterPage() {
               <strong>Note:</strong> This is a public view showing only active players. Clan
               administrators can{' '}
               <button
-                onClick={() => navigate(`/clans/${clanId}/roster`)}
+                onClick={() => void navigate(`/clans/${clanId}/roster`)}
                 className="underline hover:text-blue-800"
               >
                 sign in

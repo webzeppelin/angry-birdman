@@ -54,9 +54,10 @@ export function ClanSettingsPage() {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['clan', clanId] });
       void queryClient.invalidateQueries({ queryKey: ['clans'] });
+      void queryClient.invalidateQueries({ queryKey: ['user'] });
       setShowDeactivateDialog(false);
       // Navigate to clans list
-      navigate('/clans');
+      void navigate('/clans');
     },
     onError: (error) => {
       setApiError(getApiErrorMessage(error));

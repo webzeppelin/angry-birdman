@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import type { BattleListResponse } from '../../types/battle';
 import type { BattleEntry } from '@angrybirdman/common';
@@ -42,15 +42,18 @@ export default function BattleMetadataForm({
       end.setDate(end.getDate() + 1);
       const endDateStr = end.toISOString().split('T')[0];
       if (endDateStr) {
-        setEndDate(endDateStr);
+        // Use startTransition to defer state update and avoid cascading render warning
+        React.startTransition(() => {
+          setEndDate(endDateStr);
+        });
       }
     }
   }, [startDate]);
 
   // Check for duplicate battles (exact date match)
   const { data: existingBattles } = useQuery<BattleListResponse>({
-    queryKey: ['battles', clanId, { startDate }],
-    queryFn: async () => {
+    queryKey: ['battles', clanId, startDate],
+    queryFn: async (): Promise<BattleListResponse> => {
       const response = await fetch(
         `/api/clans/${clanId}/battles?startDate=${startDate}&endDate=${startDate}`,
         {
@@ -58,19 +61,22 @@ export default function BattleMetadataForm({
         }
       );
       if (!response.ok) throw new Error('Failed to fetch battles');
-      return response.json();
+      return response.json() as Promise<BattleListResponse>;
     },
     enabled: !!startDate,
   });
 
   useEffect(() => {
-    if (existingBattles && existingBattles.battles.length > 0) {
-      setDuplicateWarning(
-        `Warning: A battle already exists for ${startDate}. Creating another will result in duplicate data.`
-      );
-    } else {
-      setDuplicateWarning(null);
-    }
+    // Use startTransition to defer state update and avoid cascading render warning
+    React.startTransition(() => {
+      if (existingBattles && existingBattles.battles.length > 0) {
+        setDuplicateWarning(
+          `Warning: A battle already exists for ${startDate}. Creating another will result in duplicate data.`
+        );
+      } else {
+        setDuplicateWarning(null);
+      }
+    });
   }, [existingBattles, startDate]);
 
   const handleNext = (e: React.FormEvent) => {

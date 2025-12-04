@@ -52,7 +52,7 @@ export function CallbackPage() {
 
         if (result.success) {
           // Refresh user data from backend
-          await refreshUser();
+          void refreshUser();
 
           // Check user role and clan affiliation to determine redirect
           const userResponse = await fetch(
@@ -68,19 +68,19 @@ export function CallbackPage() {
 
             // Superadmins go to admin dashboard regardless of clan affiliation
             if (userData.roles?.includes('superadmin')) {
-              navigate('/admin', { replace: true });
+              void navigate('/admin', { replace: true });
               return;
             }
 
             // Regular users without a clan go to post-registration triage (Story 2.3)
             if (!userData.clanId) {
-              navigate('/register/triage', { replace: true });
+              void navigate('/register/triage', { replace: true });
               return;
             }
           }
 
           // User has a clan or we couldn't verify - go to home
-          navigate('/', { replace: true });
+          void navigate('/', { replace: true });
         } else if (result.error === 'Account disabled') {
           // Handle disabled account - logout from Keycloak and show error
           setError(result.message || 'Your account has been disabled');

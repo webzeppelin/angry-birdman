@@ -22,9 +22,9 @@ export function LoginPage() {
 
       // Superadmins should go to admin dashboard by default
       if (user?.roles?.includes('superadmin') && from === '/dashboard') {
-        navigate('/admin', { replace: true });
+        void navigate('/admin', { replace: true });
       } else {
-        navigate(from, { replace: true });
+        void navigate(from, { replace: true });
       }
     }
   }, [isAuthenticated, navigate, location, user]);

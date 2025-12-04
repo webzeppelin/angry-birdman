@@ -15,6 +15,7 @@ import {
   ClipboardDocumentListIcon,
 } from '@heroicons/react/24/outline';
 import { useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { useAuth } from '@/contexts/AuthContext';
@@ -75,6 +76,13 @@ export function DashboardPage() {
     enabled: !!clanId,
   });
 
+  // Calculate days until next battle (memoized, using new Date() instead of Date.now())
+  const daysUntilNextBattle = useMemo(() => {
+    if (!data?.nextBattleDate) return null;
+    const now = new Date().getTime();
+    return Math.ceil((new Date(data.nextBattleDate).getTime() - now) / (1000 * 60 * 60 * 24));
+  }, [data]);
+
   // Redirect if user doesn't have clan association
   if (!user || !user.clanId) {
     return (
@@ -86,7 +94,7 @@ export function DashboardPage() {
             <p className="mb-6 text-neutral-600">
               You need to be associated with a clan to access the dashboard.
             </p>
-            <button onClick={() => navigate('/clans')} className="btn-primary">
+            <button onClick={() => void navigate('/clans')} className="btn-primary">
               Browse Clans
             </button>
           </div>
@@ -214,11 +222,7 @@ export function DashboardPage() {
                 : 'TBD'}
             </div>
             <div className="text-sm text-neutral-500">
-              {nextBattleDate
-                ? Math.ceil(
-                    (new Date(nextBattleDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
-                  ) + ' days'
-                : 'No battles yet'}
+              {daysUntilNextBattle !== null ? `${daysUntilNextBattle} days` : 'No battles yet'}
             </div>
           </div>
 

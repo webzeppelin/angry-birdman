@@ -132,7 +132,7 @@ export default function PlayerHistoryPage() {
             {error instanceof Error ? error.message : 'Failed to load player history'}
           </p>
           <button
-            onClick={() => navigate(navInfo.backPath)}
+            onClick={() => void navigate(navInfo.backPath)}
             className="mt-4 rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700"
           >
             {navInfo.backLabel}

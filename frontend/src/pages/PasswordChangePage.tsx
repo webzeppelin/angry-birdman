@@ -67,7 +67,7 @@ export default function PasswordChangePage() {
   useEffect(() => {
     if (changePassword.isSuccess) {
       const timer = setTimeout(() => {
-        navigate('/profile');
+        void navigate('/profile');
       }, 3000);
       return () => clearTimeout(timer);
     }
