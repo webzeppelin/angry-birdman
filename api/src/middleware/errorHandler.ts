@@ -61,7 +61,7 @@ export async function errorHandler(
       error: 'Validation Error',
       message: 'Request validation failed',
       statusCode: 400,
-      details: error.errors.map((err) => ({
+      details: error.issues.map((err) => ({
         path: err.path.join('.'),
         message: err.message,
         code: err.code,

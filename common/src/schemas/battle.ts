@@ -20,29 +20,26 @@ import { z } from 'zod';
 export const battleMetadataSchema = z
   .object({
     startDate: z.coerce.date({
-      required_error: 'Start date is required',
-      invalid_type_error: 'Start date must be a valid date',
+      message: 'Start date is required and must be a valid date',
     }),
     endDate: z.coerce.date({
-      required_error: 'End date is required',
-      invalid_type_error: 'End date must be a valid date',
+      message: 'End date is required and must be a valid date',
     }),
     opponentRovioId: z
       .number({
-        required_error: 'Opponent Rovio ID is required',
-        invalid_type_error: 'Opponent Rovio ID must be a number',
+        message: 'Opponent Rovio ID is required and must be a number',
       })
       .int()
       .positive('Opponent Rovio ID must be positive'),
     opponentName: z
       .string({
-        required_error: 'Opponent name is required',
+        message: 'Opponent name is required',
       })
       .min(1, 'Opponent name cannot be empty')
       .max(100, 'Opponent name too long'),
     opponentCountry: z
       .string({
-        required_error: 'Opponent country is required',
+        message: 'Opponent country is required',
       })
       .min(1, 'Opponent country cannot be empty')
       .max(100, 'Opponent country too long'),
@@ -65,15 +62,13 @@ export type BattleMetadata = z.infer<typeof battleMetadataSchema>;
 export const clanPerformanceSchema = z.object({
   score: z
     .number({
-      required_error: 'Clan score is required',
-      invalid_type_error: 'Clan score must be a number',
+      message: 'Clan score is required and must be a number',
     })
     .int()
     .nonnegative('Clan score cannot be negative'),
   baselineFp: z
     .number({
-      required_error: 'Clan baseline FP is required',
-      invalid_type_error: 'Clan baseline FP must be a number',
+      message: 'Clan baseline FP is required and must be a number',
     })
     .int()
     .positive('Clan baseline FP must be positive'),
@@ -88,15 +83,13 @@ export type ClanPerformance = z.infer<typeof clanPerformanceSchema>;
 export const opponentPerformanceSchema = z.object({
   opponentScore: z
     .number({
-      required_error: 'Opponent score is required',
-      invalid_type_error: 'Opponent score must be a number',
+      message: 'Opponent score is required and must be a number',
     })
     .int()
     .nonnegative('Opponent score cannot be negative'),
   opponentFp: z
     .number({
-      required_error: 'Opponent FP is required',
-      invalid_type_error: 'Opponent FP must be a number',
+      message: 'Opponent FP is required and must be a number',
     })
     .int()
     .positive('Opponent FP must be positive'),
@@ -116,35 +109,31 @@ export type OpponentPerformance = z.infer<typeof opponentPerformanceSchema>;
 export const playerStatsInputSchema = z.object({
   playerId: z
     .number({
-      required_error: 'Player ID is required',
-      invalid_type_error: 'Player ID must be a number',
+      message: 'Player ID is required and must be a number',
     })
     .int()
     .positive('Player ID must be positive'),
   rank: z
     .number({
-      required_error: 'Player rank is required',
-      invalid_type_error: 'Player rank must be a number',
+      message: 'Player rank is required and must be a number',
     })
     .int()
     .positive('Player rank must be positive'),
   score: z
     .number({
-      required_error: 'Player score is required',
-      invalid_type_error: 'Player score must be a number',
+      message: 'Player score is required and must be a number',
     })
     .int()
     .nonnegative('Player score cannot be negative'),
   fp: z
     .number({
-      required_error: 'Player FP is required',
-      invalid_type_error: 'Player FP must be a number',
+      message: 'Player FP is required and must be a number',
     })
     .int()
     .positive('Player FP must be positive'),
   actionCode: z
     .string({
-      required_error: 'Action code is required',
+      message: 'Action code is required',
     })
     .min(1, 'Action code cannot be empty'),
   actionReason: z.string().max(1000, 'Action reason too long').optional(),
@@ -172,27 +161,24 @@ export type PlayerStatsArray = z.infer<typeof playerStatsArraySchema>;
 export const nonplayerStatsInputSchema = z.object({
   playerId: z
     .number({
-      required_error: 'Player ID is required',
-      invalid_type_error: 'Player ID must be a number',
+      message: 'Player ID is required and must be a number',
     })
     .int()
     .positive('Player ID must be positive'),
   fp: z
     .number({
-      required_error: 'Player FP is required',
-      invalid_type_error: 'Player FP must be a number',
+      message: 'Player FP is required and must be a number',
     })
     .int()
     .positive('Player FP must be positive'),
   reserve: z
     .boolean({
-      required_error: 'Reserve status is required',
-      invalid_type_error: 'Reserve status must be a boolean',
+      message: 'Reserve status is required and must be a boolean',
     })
     .default(false),
   actionCode: z
     .string({
-      required_error: 'Action code is required',
+      message: 'Action code is required',
     })
     .min(1, 'Action code cannot be empty'),
   actionReason: z.string().max(1000, 'Action reason too long').optional(),
@@ -219,29 +205,26 @@ export const battleEntrySchema = z
   .object({
     // Battle metadata (Story 4.2)
     startDate: z.coerce.date({
-      required_error: 'Start date is required',
-      invalid_type_error: 'Start date must be a valid date',
+      message: 'Start date is required and must be a valid date',
     }),
     endDate: z.coerce.date({
-      required_error: 'End date is required',
-      invalid_type_error: 'End date must be a valid date',
+      message: 'End date is required and must be a valid date',
     }),
     opponentRovioId: z
       .number({
-        required_error: 'Opponent Rovio ID is required',
-        invalid_type_error: 'Opponent Rovio ID must be a number',
+        message: 'Opponent Rovio ID is required and must be a number',
       })
       .int()
       .positive('Opponent Rovio ID must be positive'),
     opponentName: z
       .string({
-        required_error: 'Opponent name is required',
+        message: 'Opponent name is required',
       })
       .min(1, 'Opponent name cannot be empty')
       .max(100, 'Opponent name too long'),
     opponentCountry: z
       .string({
-        required_error: 'Opponent country is required',
+        message: 'Opponent country is required',
       })
       .min(1, 'Opponent country cannot be empty')
       .max(100, 'Opponent country too long'),
@@ -249,15 +232,13 @@ export const battleEntrySchema = z
     // Clan performance (Story 4.3)
     score: z
       .number({
-        required_error: 'Clan score is required',
-        invalid_type_error: 'Clan score must be a number',
+        message: 'Clan score is required and must be a number',
       })
       .int()
       .nonnegative('Clan score cannot be negative'),
     baselineFp: z
       .number({
-        required_error: 'Clan baseline FP is required',
-        invalid_type_error: 'Clan baseline FP must be a number',
+        message: 'Clan baseline FP is required and must be a number',
       })
       .int()
       .positive('Clan baseline FP must be positive'),
@@ -265,15 +246,13 @@ export const battleEntrySchema = z
     // Opponent performance (Story 4.4)
     opponentScore: z
       .number({
-        required_error: 'Opponent score is required',
-        invalid_type_error: 'Opponent score must be a number',
+        message: 'Opponent score is required and must be a number',
       })
       .int()
       .nonnegative('Opponent score cannot be negative'),
     opponentFp: z
       .number({
-        required_error: 'Opponent FP is required',
-        invalid_type_error: 'Opponent FP must be a number',
+        message: 'Opponent FP is required and must be a number',
       })
       .int()
       .positive('Opponent FP must be positive'),

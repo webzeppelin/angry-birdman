@@ -155,7 +155,7 @@ export default function clanRoutes(fastify: FastifyInstance, _opts: unknown, don
         return reply.status(400).send({
           error: 'Validation Error',
           message: 'Invalid query parameters',
-          details: queryResult.error.errors,
+          details: queryResult.error.issues,
         });
       }
 
@@ -350,7 +350,7 @@ export default function clanRoutes(fastify: FastifyInstance, _opts: unknown, don
         return reply.status(400).send({
           error: 'Validation Error',
           message: 'Invalid clan data',
-          details: bodyResult.error.errors,
+          details: bodyResult.error.issues,
         });
       }
 
@@ -492,7 +492,7 @@ export default function clanRoutes(fastify: FastifyInstance, _opts: unknown, don
         return reply.status(400).send({
           error: 'Validation Error',
           message: 'Invalid clan data',
-          details: bodyResult.error.errors,
+          details: bodyResult.error.issues,
         });
       }
 

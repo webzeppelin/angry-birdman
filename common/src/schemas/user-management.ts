@@ -170,7 +170,7 @@ export const adminRequestReviewSchema = z.object({
     .int('Request ID must be an integer')
     .positive('Request ID must be positive'),
   action: z.enum(['approve', 'reject'], {
-    errorMap: () => ({ message: 'Action must be either approve or reject' }),
+    message: 'Action must be either approve or reject',
   }),
   rejectionReason: z
     .string()
