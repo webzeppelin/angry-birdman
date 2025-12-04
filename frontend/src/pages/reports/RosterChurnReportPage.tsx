@@ -279,9 +279,10 @@ export function RosterChurnReportPage() {
                         cx="50%"
                         cy="50%"
                         labelLine={false}
-                        label={(entry: { name: string; percentage: number }) =>
-                          `${entry.name} (${entry.percentage}%)`
-                        }
+                        label={(props: any) => {
+                          const entry = props.payload as { name: string; percentage: number };
+                          return `${entry.name} (${entry.percentage}%)`;
+                        }}
                         outerRadius={80}
                         fill="#8884d8"
                         dataKey="value"

@@ -208,13 +208,16 @@ export function MatchupAnalysisPage() {
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                   <Pie
-                    data={matchupData.countries}
+                    data={matchupData.countries as any}
                     dataKey="battles"
                     nameKey="country"
                     cx="50%"
                     cy="50%"
                     outerRadius={100}
-                    label={(entry: CountryStats) => `${entry.country} (${entry.percentage}%)`}
+                    label={(props: any) => {
+                      const entry = props.payload as CountryStats;
+                      return `${entry.country} (${entry.percentage}%)`;
+                    }}
                   >
                     {matchupData.countries.map((_entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />

@@ -232,7 +232,9 @@ export default function PlayerPerformanceTable({
                 </td>
                 <td className="border px-4 py-2">
                   <input
-                    ref={(el) => (rankInputRefs.current[index] = el)}
+                    ref={(el) => {
+                      rankInputRefs.current[index] = el;
+                    }}
                     type="text"
                     inputMode="numeric"
                     value={player.rank > 0 ? player.rank : ''}
