@@ -305,14 +305,46 @@ Phase 1 is complete. Ready to proceed with Phase 2:
 5. **Testing Order**: Always test migration on clean database AND database with
    existing data.
 
-## Commit
+## Additional Updates
+
+### Import Scripts
+
+After completing the core implementation, updated the Newdoodles data import
+scripts to work with the new schema:
+
+**Changes to `scripts/import-newdoodles-data.ts`**:
+
+1. Added `getOrCreateMasterBattle()` function
+   - Checks if master battle exists before creating clan battle
+   - Creates master battle entry if missing (to satisfy foreign key)
+   - Converts dates to GMT timestamps
+2. Updated PrismaClient instantiation for Prisma 7
+   - Added PostgreSQL adapter setup
+   - Loaded environment variables
+3. Updated imports to use generated client path
+
+**Changes to `scripts/verify-import.ts`**:
+
+- Updated PrismaClient instantiation for Prisma 7 compatibility
+
+These changes ensure the sample data import continues to work after the schema
+changes.
+
+## Commits
 
 **Commit Hash**: e7f46f9  
 **Commit Message**:
 `feat(database): Phase 1 - Add Master Battle schedule and System Settings`
 
+**Commit Hash**: 1e94e4a  
+**Commit Message**: `docs: Add Phase 1 implementation log for Major Change 01`
+
+**Commit Hash**: e93b1c0  
+**Commit Message**:
+`fix(scripts): Update import scripts for Master Battle schedule`
+
 ---
 
-**Implementation Time**: ~2.5 hours  
+**Implementation Time**: ~3 hours  
 **Estimated Time**: 2-4 hours  
-**Status**: ✅ On Schedule
+**Status**: ✅ Complete and On Schedule
