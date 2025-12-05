@@ -14,7 +14,9 @@
 
 import { readFileSync } from 'fs';
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import dotenv from 'dotenv';
+import pg from 'pg';
 
 import {
   calculateBattleResult,
@@ -33,8 +35,19 @@ import {
   calculateReserveFp,
   calculatePlayerRatioRanks,
 } from '../common/src/utils/calculations.js';
+import { PrismaClient } from '../database/generated/client/client.js';
 
-const prisma = new PrismaClient();
+// Load environment variables
+dotenv.config({ path: './database/prisma/.env' });
+
+const connectionString = process.env.DATABASE_URL;
+if (!connectionString) {
+  throw new Error('DATABASE_URL environment variable is not set');
+}
+
+const pool = new pg.Pool({ connectionString });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 
 // Constants for the Newdoodles clan
 const CLAN_NAME = 'Newdoodles';
@@ -398,6 +411,45 @@ async function handleLeft(clanId: number, leftDate: Date, playerName: string): P
 }
 
 /**
+ * Get or create a master battle entry
+ * Master battles must exist before clan battles can be created (foreign key constraint)
+ */
+async function getOrCreateMasterBattle(
+  battleId: string,
+  startDate: Date,
+  endDate: Date
+): Promise<void> {
+  // Check if master battle already exists
+  const existingMasterBattle = await prisma.masterBattle.findUnique({
+    where: { battleId },
+  });
+
+  if (existingMasterBattle) {
+    // Master battle already exists, nothing to do
+    return;
+  }
+
+  // Create master battle entry
+  // Convert dates to timestamps in GMT (midnight for start, 23:59:59 for end)
+  const startTimestamp = new Date(startDate);
+  startTimestamp.setUTCHours(0, 0, 0, 0);
+
+  const endTimestamp = new Date(endDate);
+  endTimestamp.setUTCHours(23, 59, 59, 999);
+
+  console.log(`  + Creating master battle entry for ${battleId}`);
+  await prisma.masterBattle.create({
+    data: {
+      battleId,
+      startTimestamp,
+      endTimestamp,
+      createdBy: null, // NULL indicates imported/migrated data
+      notes: 'Imported from Newdoodles battle data',
+    },
+  });
+}
+
+/**
  * Import a single battle
  */
 async function importBattle(clanId: number, battle: BattleData): Promise<void> {
@@ -507,6 +559,9 @@ async function importBattle(clanId: number, battle: BattleData): Promise<void> {
     `  Score: ${battle.score} - ${battle.opponentScore} (${result === 1 ? 'WIN' : result === -1 ? 'LOSS' : 'TIE'})`
   );
   console.log(`  Ratio: ${ratio.toFixed(2)} | Avg Ratio: ${averageRatio.toFixed(2)}`);
+
+  // Ensure master battle exists before creating clan battle
+  await getOrCreateMasterBattle(battle.battleId, battle.startDate, battle.endDate);
 
   // Create the battle
   await prisma.clanBattle.create({

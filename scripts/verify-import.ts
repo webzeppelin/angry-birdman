@@ -1,7 +1,21 @@
 /* eslint-disable no-console */
-import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import dotenv from 'dotenv';
+import pg from 'pg';
 
-const prisma = new PrismaClient();
+import { PrismaClient } from '../database/generated/client/client.js';
+
+// Load environment variables
+dotenv.config({ path: './database/prisma/.env' });
+
+const connectionString = process.env.DATABASE_URL;
+if (!connectionString) {
+  throw new Error('DATABASE_URL environment variable is not set');
+}
+
+const pool = new pg.Pool({ connectionString });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 
 async function verifyImport() {
   console.log('=== Verifying Newdoodles Import ===\n');
