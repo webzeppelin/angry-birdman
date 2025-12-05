@@ -101,7 +101,7 @@ schedule and correct it when Rovio changes their timing.
 
 - Battle selection dropdown shows available battles from Master Battle list
 - Battles displayed with Battle ID (YYYYMMDD) and dates in user's local timezone
-- Most recent uncompleted battle selected by default
+- Most recent battle from the master battle data selected by default
 - Dropdown sorted with most recent battles first
 - Only started battles available (no future battles)
 - System checks if selected battle already has data recorded
@@ -234,99 +234,14 @@ The following stories were reviewed but did not require changes:
 - Stories 7.1-7.8 remain unchanged
 - Reports and visualizations work with Battle IDs regardless of source
 
-## Implementation Impact
+---
 
-### Database Schema Changes Required
-
-1. **New Table: MasterBattle**
-   - battleId (String, PK) - Format: YYYYMMDD
-   - startTimestamp (DateTime, GMT)
-   - endTimestamp (DateTime, GMT)
-
-2. **New System Setting: NextBattleStartDate**
-   - Store as timestamp in Official Angry Birds Time (EST)
-
-3. **Modified: ClanBattle Table**
-   - battleId now foreign key to MasterBattle
-   - Remove startDate and endDate fields (get from MasterBattle)
-   - OR keep as denormalized for query performance
-
-### API Changes Required
-
-1. **New Endpoints**:
-   - GET /api/admin/master-battles - List all master battles
-   - GET /api/admin/next-battle - Get next scheduled battle
-   - PUT /api/admin/next-battle - Update next battle date (Superadmin only)
-   - GET /api/battles/available - Get available battles for selection (started
-     but not in future)
-
-2. **Modified Endpoints**:
-   - POST /api/clans/{clanId}/battles - Accept battleId instead of
-     startDate/endDate
-   - PUT /api/clans/{clanId}/battles/{battleId} - Battle ID is now from master
-     schedule
-   - GET /api/clans/{clanId}/battles - Return Master Battle metadata with clan
-     data
-
-### Frontend Changes Required
-
-1. **New Components**:
-   - MasterBattleScheduleManager (Superadmin)
-   - BattleSelector dropdown component
-   - NextBattleDisplay component
-
-2. **Modified Components**:
-   - BattleEntryForm - Replace date inputs with battle selector
-   - BattleList - Display Battle ID and timezone-adjusted dates
-   - BattleDashboard - Show next battle from Master schedule
-
-### Scheduled Job Required
-
-1. **New Job: Battle Schedule Checker**
-   - Runs hourly
-   - Checks if current time (GMT) > next battle start time
-   - Creates new MasterBattle entry if needed
-   - Updates NextBattleStartDate to +3 days
-   - Logs actions to audit log
-
-## Benefits of Changes
-
-1. **Consistency**: All clans use same Battle IDs for same events
-2. **Efficiency**: 99% of users just select default battle (most recent)
-3. **Cross-Clan Comparison**: Future feature enabling comparison between clans
-4. **Timezone Clarity**: Clear distinction between Official Angry Birds Time
-   (EST) and user display timezone
-5. **Reduced Errors**: No manual date entry eliminates date-related data entry
-   errors
-6. **Automation**: Scheduled job reduces Superadmin burden for routine battle
-   creation
-
-## Migration Strategy
-
-Since data will be reseeded after these changes:
-
-1. Create Master Battle table
-2. Seed with historical battles from existing ClanBattle dates
-3. Set NextBattleStartDate based on most recent battle + 3 days
-4. Deploy scheduled job
-5. Update API endpoints
-6. Update frontend components
-7. Import clan data referencing new Master Battle IDs
-
-## Future Enhancements
-
-The centralized battle schedule enables future features:
-
-1. **Cross-Clan Leaderboards**: Compare performance across all clans for same
-   battle
-2. **Battle Reminders**: Notify users of upcoming battles
-3. **Historical Battle Browser**: Browse all battles system-wide
-4. **Schedule Changes**: Handle Rovio schedule changes gracefully
-5. **Battle Analytics**: System-wide battle statistics and trends
-
-## Conclusion
+## Summary
 
 These specification changes lay the foundation for a more robust, consistent,
 and user-friendly battle data management system. By centralizing the battle
 schedule, we eliminate inconsistencies, reduce manual data entry, and enable
 future cross-clan features while maintaining clarity about timezone handling.
+
+**Next Steps**: See `specs/major-change-01-plan.md` for detailed implementation
+plan and `specs/major-change-01-status.md` for progress tracking.
