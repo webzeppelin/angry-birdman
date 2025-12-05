@@ -55,6 +55,104 @@ async function main() {
   console.log(`✅ Created ${actionCodes.length} action codes\n`);
 
   // ============================================================================
+  // 1.5. Seed System Settings
+  // ============================================================================
+  console.log('⚙️ Seeding system settings...');
+
+  // Next battle date (3 days after most recent battle in our seed data)
+  await prisma.systemSetting.upsert({
+    where: { key: 'nextBattleStartDate' },
+    update: {},
+    create: {
+      key: 'nextBattleStartDate',
+      value: JSON.stringify(new Date('2025-11-22T05:00:00Z')), // Next battle after 20251119
+      description: 'Next scheduled battle start date in Official Angry Birds Time (EST)',
+      dataType: 'date',
+    },
+  });
+
+  // Scheduler enabled flag
+  await prisma.systemSetting.upsert({
+    where: { key: 'schedulerEnabled' },
+    update: {},
+    create: {
+      key: 'schedulerEnabled',
+      value: 'true',
+      description: 'Enable/disable automatic battle creation via scheduler',
+      dataType: 'boolean',
+    },
+  });
+
+  console.log('✅ Created 2 system settings\n');
+
+  // ============================================================================
+  // 1.6. Seed Master Battles
+  // ============================================================================
+  console.log('📅 Seeding master battles...');
+
+  const masterBattles = [
+    {
+      battleId: '20241101',
+      startTimestamp: new Date('2024-11-01T00:00:00Z'),
+      endTimestamp: new Date('2024-11-02T23:59:59Z'),
+    },
+    {
+      battleId: '20251023',
+      startTimestamp: new Date('2025-10-23T00:00:00Z'),
+      endTimestamp: new Date('2025-10-24T23:59:59Z'),
+    },
+    {
+      battleId: '20251026',
+      startTimestamp: new Date('2025-10-26T00:00:00Z'),
+      endTimestamp: new Date('2025-10-27T23:59:59Z'),
+    },
+    {
+      battleId: '20251101',
+      startTimestamp: new Date('2025-11-01T00:00:00Z'),
+      endTimestamp: new Date('2025-11-02T23:59:59Z'),
+    },
+    {
+      battleId: '20251104',
+      startTimestamp: new Date('2025-11-04T00:00:00Z'),
+      endTimestamp: new Date('2025-11-05T23:59:59Z'),
+    },
+    {
+      battleId: '20251107',
+      startTimestamp: new Date('2025-11-07T00:00:00Z'),
+      endTimestamp: new Date('2025-11-08T23:59:59Z'),
+    },
+    {
+      battleId: '20251110',
+      startTimestamp: new Date('2025-11-10T00:00:00Z'),
+      endTimestamp: new Date('2025-11-11T23:59:59Z'),
+    },
+    {
+      battleId: '20251116',
+      startTimestamp: new Date('2025-11-16T00:00:00Z'),
+      endTimestamp: new Date('2025-11-17T23:59:59Z'),
+    },
+    {
+      battleId: '20251119',
+      startTimestamp: new Date('2025-11-19T00:00:00Z'),
+      endTimestamp: new Date('2025-11-20T23:59:59Z'),
+    },
+  ];
+
+  for (const battle of masterBattles) {
+    await prisma.masterBattle.upsert({
+      where: { battleId: battle.battleId },
+      update: {},
+      create: {
+        ...battle,
+        createdBy: null, // Automatic/seeded battles
+        notes: null,
+      },
+    });
+  }
+
+  console.log(`✅ Created ${masterBattles.length} master battles\n`);
+
+  // ============================================================================
   // 2. Seed Sample Clans
   // ============================================================================
   console.log('🏛️ Seeding clans...');

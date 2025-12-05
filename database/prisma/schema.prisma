@@ -171,8 +171,53 @@ model RosterMember {
 }
 
 // ============================================================================
+// System Configuration
+// ============================================================================
+
+/// System-wide configuration settings
+model SystemSetting {
+  // Primary Key
+  key String @id @db.VarChar(100)
+
+  // Core Fields
+  value       String  @db.Text // JSON-encoded value
+  description String? @db.Text
+  dataType    String  @db.VarChar(50) // 'string', 'number', 'boolean', 'date', 'json'
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("system_settings")
+}
+
+// ============================================================================
 // Battle Data
 // ============================================================================
+
+/// Master schedule of all CvC battles in Official Angry Birds Time
+model MasterBattle {
+  // Primary Key
+  battleId String @id @map("battle_id") @db.VarChar(8) // Format: YYYYMMDD
+
+  // Core Fields
+  startTimestamp DateTime @map("start_timestamp") // Start in GMT
+  endTimestamp   DateTime @map("end_timestamp") // End in GMT
+
+  // Metadata
+  createdBy String? @map("created_by") @db.VarChar(255) // userId who created (NULL if automatic)
+  notes     String? @db.Text // Optional notes about schedule changes
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  clanBattles ClanBattle[]
+
+  @@map("master_battles")
+  @@index([startTimestamp], name: "idx_master_battle_start")
+}
 
 /// Represents a Clan-vs-Clan (CvC) battle
 model ClanBattle {
@@ -217,8 +262,9 @@ model ClanBattle {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   // Relationships
-  clan          Clan                         @relation(fields: [clanId], references: [clanId], onDelete: Cascade)
-  playerStats   ClanBattlePlayerStats[]
+  clan           Clan                         @relation(fields: [clanId], references: [clanId], onDelete: Cascade)
+  masterBattle   MasterBattle                 @relation(fields: [battleId], references: [battleId], onDelete: Restrict)
+  playerStats    ClanBattlePlayerStats[]
   nonplayerStats ClanBattleNonplayerStats[]
 
   @@id([clanId, battleId])
