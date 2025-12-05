@@ -458,6 +458,32 @@ that** I can provide support and enforce policies.
 - Log can be exported for analysis
 - Log entries cannot be modified or deleted
 
+### Story 2.18: Manage Master Battle Schedule (Superadmin)
+
+**As a** Superadmin, **I want to** manage the master battle schedule, **so
+that** all clans can select from a consistent set of battle dates and the system
+can automatically create new battles.
+
+**Acceptance Criteria**:
+
+- Superadmin can view the "Next Battle Start Date" in Official Angry Birds Time
+  (EST, not EDT)
+- Superadmin can edit the "Next Battle Start Date" to correct it before the
+  battle starts if Rovio changes the schedule
+- Date picker shows the date/time in EST with clear indication of the timezone
+- System validates that the new date is in the future
+- Superadmin can view the complete Master Battle list showing all past and
+  current battles
+- Master Battle list displays: Battle ID (YYYYMMDD), Start Timestamp (GMT), End
+  Timestamp (GMT), with local timezone display for user convenience
+- System automatically creates new Master Battle entries when current time
+  passes the "Next Battle Start Date"
+- When a battle is created, the "Next Battle Start Date" is automatically set to
+  3 days after the newly created battle
+- Scheduled job runs hourly to check for and create new battles
+- Battle timestamps use Official Angry Birds Time (EST always, never EDT)
+- Changes to battle schedule are logged in audit log
+
 ---
 
 ## Epic 3: Maintain Clan Roster
@@ -610,21 +636,29 @@ can capture the results before the details become unavailable in the game.
 - Workflow is optimized for keyboard-only data entry
 - Can save draft and return later to complete
 
-### Story 4.2: Enter Battle Metadata
+### Story 4.2: Select Battle and Enter Metadata
 
-**As a** Clan Admin, **I want to** enter basic battle information, **so that** I
-can identify when and against whom the battle occurred.
+**As a** Clan Admin, **I want to** select a battle from the master schedule and
+enter opponent information, **so that** I can identify which battle and against
+whom the clan fought.
 
 **Acceptance Criteria**:
 
-- Form fields in order: start date, end date, opponent name, opponent Rovio ID,
-  opponent country
-- System checks for existing battle on selected date and warns if duplicate
-- Start date defaults to most recent battle date + 3 days (typical cycle)
-- End date defaults to start date + 1 day
-- Battle ID (YYYYMMDD) is generated automatically from start date
+- Battle selection dropdown shows available battles from Master Battle list
+- Battles are displayed with Battle ID (YYYYMMDD format) and dates in user's
+  local timezone
+- Most recent uncompleted battle is selected by default
+- Dropdown is sorted with most recent battles first
+- Only battles that have started are available for selection (future battles are
+  not shown)
+- System checks if selected battle already has data recorded and warns if
+  duplicate
+- After battle selection, form fields for opponent data: opponent name, opponent
+  Rovio ID, opponent country
+- Battle start/end dates are automatically populated from the Master Battle
+  entry (not user input)
 - Tab key advances through fields in optimal order
-- Field validation prevents invalid dates and missing required fields
+- Field validation ensures required opponent fields are filled
 
 ### Story 4.3: Enter Clan Performance Data
 
@@ -744,7 +778,7 @@ that** I can return to finish it later without losing my work.
 - Draft is saved to user's session, not to the database
 - User can return to draft from dashboard "Incomplete Battles" section
 - Draft expires after reasonable period (e.g., 7 days)
-- Only one draft per battle date is allowed
+- Only one draft per battle ID is allowed
 - User can delete draft if no longer needed
 
 ### Story 4.11: Edit Existing Battle
@@ -775,9 +809,10 @@ battles, understanding clan and player performance.
 
 **Acceptance Criteria**:
 
-- Battle list shows: date, opponent, result (W/L/T), clan score, opponent score,
-  clan ratio
-- List is sorted by date (most recent first) by default
+- Battle list shows: Battle ID (YYYYMMDD), date (displayed in user's local
+  timezone), opponent, result (W/L/T), clan score, opponent score, clan ratio
+- Battle dates are retrieved from Master Battle schedule
+- List is sorted by Battle ID (most recent first) by default
 - Can filter by: date range, opponent, result (won/lost/tied)
 - Can search by opponent name
 - Pagination for many battles
@@ -790,7 +825,10 @@ battle, **so that** I can understand how the clan performed.
 
 **Acceptance Criteria**:
 
-- Battle detail page shows: date, opponent information, result
+- Battle detail page shows: Battle ID (YYYYMMDD), battle dates (start/end in
+  user's local timezone, with indication they are from Official Angry Birds
+  Time), opponent information, result
+- Battle dates are retrieved from Master Battle schedule
 - Shows clan stats: score, baseline FP, ratio, projected score
 - Shows opponent stats: score, FP
 - Shows calculated stats: margin ratio, FP margin
@@ -1160,7 +1198,9 @@ I can get a quick overview of clan status.
 **Acceptance Criteria**:
 
 - Dashboard shows: recent battles (last 5), current month stats summary, next
-  battle countdown
+  battle countdown (using Master Battle schedule)
+- Next battle information displays Battle ID, start date/time in user's local
+  timezone
 - Shows key metrics: win rate (month/year), average ratio (month/year),
   participation rate
 - Shows alerts: incomplete battle drafts, admin user requests
