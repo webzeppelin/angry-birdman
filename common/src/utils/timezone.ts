@@ -104,41 +104,55 @@ export function createEstDate(
 
 /**
  * Format date for display in user's local timezone
- * @param date - Date to format
- * @param timezone - IANA timezone (e.g., 'America/New_York'), optional
- * @param options - Intl.DateTimeFormatOptions for formatting
+ * @param date - Date to format (can be Date object or ISO string)
+ * @param timezoneOrOptions - IANA timezone string OR Intl.DateTimeFormatOptions
+ * @param optionsParam - Intl.DateTimeFormatOptions (only used if second param is timezone string)
  * @returns Formatted date string
  */
 export function formatForUserTimezone(
-  date: Date,
-  timezone?: string,
-  options: Intl.DateTimeFormatOptions = {
+  date: Date | string,
+  timezoneOrOptions?: string | Intl.DateTimeFormatOptions,
+  optionsParam?: Intl.DateTimeFormatOptions
+): string {
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+
+  const defaultOptions: Intl.DateTimeFormatOptions = {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
     hour: '2-digit',
     minute: '2-digit',
     timeZoneName: 'short',
+  };
+
+  // If second parameter is a string, it's a timezone
+  if (typeof timezoneOrOptions === 'string') {
+    const options = optionsParam || defaultOptions;
+    const formatOptions = { ...options, timeZone: timezoneOrOptions };
+    return new Intl.DateTimeFormat('en-US', formatOptions).format(dateObj);
   }
-): string {
-  const formatOptions = timezone ? { ...options, timeZone: timezone } : options;
-  return new Intl.DateTimeFormat('en-US', formatOptions).format(date);
+
+  // Otherwise, second parameter is options
+  const formatOptions = timezoneOrOptions || defaultOptions;
+  return new Intl.DateTimeFormat('en-US', formatOptions).format(dateObj);
 }
 
 /**
  * Format date in EST timezone with explicit indication
- * @param date - Date to format
+ * @param date - Date to format (can be Date object or ISO string)
+ * @param options - Optional Intl.DateTimeFormatOptions for custom formatting
  * @returns Formatted date string with EST indicator
  */
-export function formatInEst(date: Date): string {
-  return formatForUserTimezone(date, 'America/New_York', {
+export function formatInEst(date: Date | string, options?: Intl.DateTimeFormatOptions): string {
+  const defaultOptions: Intl.DateTimeFormatOptions = {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
     hour: '2-digit',
     minute: '2-digit',
     timeZoneName: 'short',
-  });
+  };
+  return formatForUserTimezone(date, 'America/New_York', options || defaultOptions);
 }
 
 /**
@@ -194,4 +208,97 @@ export function isInFuture(date: Date): boolean {
 export function isInPast(date: Date): boolean {
   const now = new Date();
   return date.getTime() < now.getTime();
+}
+
+/**
+ * Get the user's current timezone from the browser (client-side only)
+ * @returns IANA timezone string (e.g., "America/Chicago")
+ */
+export function getUserTimezone(): string {
+  return Intl.DateTimeFormat().resolvedOptions().timeZone;
+}
+
+/**
+ * Format a date as a simple date string (no time)
+ * @param date - Date to format (can be Date object or ISO string)
+ * @param timezone - Optional timezone (defaults to user's timezone)
+ * @returns Date string like "Dec 5, 2024"
+ */
+export function formatDateOnly(date: Date | string, timezone?: string): string {
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    ...(timezone ? { timeZone: timezone } : {}),
+  };
+
+  return new Intl.DateTimeFormat('en-US', options).format(dateObj);
+}
+
+/**
+ * Format a date for display in battle lists (compact format)
+ * @param date - Date to format (can be Date object or ISO string)
+ * @returns Compact date string like "12/05/24"
+ */
+export function formatBattleDate(date: Date | string): string {
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+
+  return new Intl.DateTimeFormat('en-US', {
+    year: '2-digit',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(dateObj);
+}
+
+/**
+ * Calculate time remaining until a future date
+ * @param targetDate - Future date to count down to (can be Date object or ISO string)
+ * @returns Object with days, hours, minutes, seconds remaining
+ */
+export function getTimeRemaining(targetDate: Date | string): {
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
+  total: number;
+} {
+  const target = typeof targetDate === 'string' ? new Date(targetDate) : targetDate;
+  const now = new Date();
+  const total = target.getTime() - now.getTime();
+
+  if (total <= 0) {
+    return { days: 0, hours: 0, minutes: 0, seconds: 0, total: 0 };
+  }
+
+  const seconds = Math.floor((total / 1000) % 60);
+  const minutes = Math.floor((total / 1000 / 60) % 60);
+  const hours = Math.floor((total / (1000 * 60 * 60)) % 24);
+  const days = Math.floor(total / (1000 * 60 * 60 * 24));
+
+  return { days, hours, minutes, seconds, total };
+}
+
+/**
+ * Format time remaining as a human-readable string
+ * @param targetDate - Future date to count down to (can be Date object or ISO string)
+ * @returns String like "2 days, 5 hours" or "Started" if past
+ */
+export function formatTimeRemaining(targetDate: Date | string): string {
+  const remaining = getTimeRemaining(targetDate);
+
+  if (remaining.total <= 0) {
+    return 'Started';
+  }
+
+  if (remaining.days > 0) {
+    return `${remaining.days} day${remaining.days !== 1 ? 's' : ''}, ${remaining.hours} hour${remaining.hours !== 1 ? 's' : ''}`;
+  }
+
+  if (remaining.hours > 0) {
+    return `${remaining.hours} hour${remaining.hours !== 1 ? 's' : ''}, ${remaining.minutes} minute${remaining.minutes !== 1 ? 's' : ''}`;
+  }
+
+  return `${remaining.minutes} minute${remaining.minutes !== 1 ? 's' : ''}`;
 }

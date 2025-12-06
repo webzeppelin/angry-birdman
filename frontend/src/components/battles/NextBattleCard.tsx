@@ -9,12 +9,12 @@
  * Used in dashboard and clan pages to show upcoming battle info.
  */
 
+import { formatForUserTimezone, getTimeRemaining } from '@angrybirdman/common';
 import { CalendarIcon } from '@heroicons/react/24/outline';
 import { useQuery } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
 
 import { getBattleScheduleInfo } from '../../api/masterBattles';
-import { formatForUserTimezone, getTimeRemaining } from '../../utils/timezone';
 
 import type { BattleScheduleInfo } from '@angrybirdman/common';
 

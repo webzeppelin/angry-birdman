@@ -10,6 +10,7 @@
  * - Manually create master battles (for corrections)
  */
 
+import { formatInEst, formatForUserTimezone } from '@angrybirdman/common';
 import { CalendarIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
@@ -21,7 +22,6 @@ import {
   createMasterBattle,
   type MasterBattleListResponse,
 } from '../../api/masterBattles';
-import { formatInEST, formatForUserTimezone } from '../../utils/timezone';
 
 import type {
   MasterBattle,
@@ -166,7 +166,7 @@ export default function BattleScheduleManager() {
               The scheduler will automatically create the next battle at:
             </p>
             <p className="mt-2 text-2xl font-bold text-gray-900">
-              {formatInEST(nextDateData.nextBattleStartDate)}
+              {formatInEst(nextDateData.nextBattleStartDate)}
             </p>
             <p className="mt-1 text-sm text-gray-500">
               (Your timezone: {formatForUserTimezone(nextDateData.nextBattleStartDate)})
@@ -341,7 +341,7 @@ export default function BattleScheduleManager() {
                         {battle.battleId}
                       </td>
                       <td className="px-4 py-3 text-sm whitespace-nowrap text-gray-600">
-                        {formatInEST(battle.startTimestamp, {
+                        {formatInEst(battle.startTimestamp, {
                           month: 'short',
                           day: 'numeric',
                           year: 'numeric',
@@ -350,7 +350,7 @@ export default function BattleScheduleManager() {
                         })}
                       </td>
                       <td className="px-4 py-3 text-sm whitespace-nowrap text-gray-600">
-                        {formatInEST(battle.endTimestamp, {
+                        {formatInEst(battle.endTimestamp, {
                           month: 'short',
                           day: 'numeric',
                           year: 'numeric',

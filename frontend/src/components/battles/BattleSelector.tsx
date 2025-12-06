@@ -13,11 +13,11 @@
  * - Only shows started battles (no future battles)
  */
 
+import { formatForUserTimezone } from '@angrybirdman/common';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
 import { getAvailableBattles } from '../../api/masterBattles';
-import { formatForUserTimezone } from '../../utils/timezone';
 
 import type { BattleListResponse } from '../../types/battle';
 import type { MasterBattle } from '@angrybirdman/common';
