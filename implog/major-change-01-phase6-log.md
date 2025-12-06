@@ -684,3 +684,52 @@ All deliverables completed, all tests passing, ready for Phase 7 (deployment).
 
 **Phase 6 Complete** ✅  
 **Ready for Phase 7: Data Migration and Deployment**
+
+---
+
+## Post-Implementation Refinement
+
+### Code Consolidation (Timezone Utilities)
+
+**Issue Identified:** Duplicate timezone functionality between
+`frontend/src/utils/timezone.ts` and `common/src/utils/timezone.ts`
+
+**Resolution (Commit 698e097):**
+
+1. **Removed** frontend timezone utility file completely
+2. **Enhanced** common library with UI-focused functions:
+   - `getUserTimezone()` - Detect browser timezone via Intl API
+   - `formatDateOnly()` - Date without time components
+   - `formatBattleDate()` - Battle-specific date formatting
+   - `getTimeRemaining()` - Calculate time remaining to future date
+   - `formatTimeRemaining()` - Human-readable countdown strings
+3. **Updated** `formatForUserTimezone()` signature:
+   - Accepts options directly as second parameter, OR
+   - Timezone string + options as second/third parameters
+   - Enables flexible usage: `formatForUserTimezone(date, options)` or
+     `formatForUserTimezone(date, timezone, options)`
+4. **Updated** `formatInEst()` signature:
+   - Now accepts `Date | string` (was `Date` only)
+   - Now accepts optional formatting options
+5. **Updated** all imports in three components:
+   - `BattleSelector.tsx`
+   - `NextBattleCard.tsx`
+   - `BattleScheduleManager.tsx`
+
+**Benefits:**
+
+- ✅ Single source of truth for timezone utilities
+- ✅ All functions available to frontend, API, and scheduler
+- ✅ Reduced code duplication (removed 166 duplicate lines)
+- ✅ More flexible function signatures
+- ✅ Easier to maintain and test
+
+**Files Changed:**
+
+- `common/src/utils/timezone.ts` (+126 lines of functionality)
+- `frontend/src/utils/timezone.ts` (deleted, -166 lines)
+- `frontend/src/components/battles/BattleSelector.tsx` (import updated)
+- `frontend/src/components/battles/NextBattleCard.tsx` (import updated)
+- `frontend/src/components/admin/BattleScheduleManager.tsx` (import updated)
+
+**Build Status After Consolidation:** ✅ All checks passing
