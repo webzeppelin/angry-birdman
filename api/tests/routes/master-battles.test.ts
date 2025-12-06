@@ -78,9 +78,9 @@ describe('Master Battle Routes', () => {
     it('should support pagination parameters', async () => {
       // Create 5 test battles
       const battles = Array.from({ length: 5 }, (_, i) => {
-        const date = new Date('2025-12-01');
+        const date = new Date('2025-11-01');
         date.setDate(date.getDate() + i * 3);
-        const battleId = date.toISOString().split('T')[0].replace(/-/g, '');
+        const battleId = date.toISOString().split('T')[0]!.replace(/-/g, '');
         return {
           battleId,
           startTimestamp: new Date(date.getTime() + 5 * 60 * 60 * 1000), // 5am GMT
@@ -185,7 +185,7 @@ describe('Master Battle Routes', () => {
       for (let i = 5; i > 0; i--) {
         const date = new Date(now);
         date.setDate(date.getDate() - i * 3);
-        const battleId = date.toISOString().split('T')[0].replace(/-/g, '');
+        const battleId = date.toISOString().split('T')[0]!.replace(/-/g, '');
         battles.push({
           battleId,
           startTimestamp: date,
@@ -270,7 +270,7 @@ describe('Master Battle Routes', () => {
 
     it('should require superadmin role', async () => {
       const user = createTestUser();
-      const headers = createAuthenticatedHeaders(user.userId);
+      const headers = createAuthenticatedHeaders(app, user);
 
       const response = await app.inject({
         method: 'GET',
@@ -282,8 +282,19 @@ describe('Master Battle Routes', () => {
     });
 
     it('should return next battle date for superadmin', async () => {
-      const superadmin = createTestSuperadmin();
-      const headers = createAuthenticatedHeaders(superadmin.userId);
+      const dbAdmin = await prisma.user.create({
+        data: {
+          userId: 'keycloak:test-superadmin-get-next-2',
+          username: 'superadmin',
+          roles: ['superadmin'],
+          email: 'superadmin@example.com',
+        },
+      });
+      const superadmin = createTestSuperadmin({
+        sub: dbAdmin.userId.split(':')[1]!,
+        email: dbAdmin.email,
+      });
+      const headers = createAuthenticatedHeaders(app, superadmin);
 
       const nextDate = new Date('2025-12-15T05:00:00Z');
       await prisma.systemSetting.upsert({
@@ -311,8 +322,19 @@ describe('Master Battle Routes', () => {
     });
 
     it('should return 404 if next battle date not configured', async () => {
-      const superadmin = createTestSuperadmin();
-      const headers = createAuthenticatedHeaders(superadmin.userId);
+      const dbAdmin = await prisma.user.create({
+        data: {
+          userId: 'keycloak:test-superadmin-get-next-3',
+          username: 'superadmin2',
+          roles: ['superadmin'],
+          email: 'superadmin2@example.com',
+        },
+      });
+      const superadmin = createTestSuperadmin({
+        sub: dbAdmin.userId.split(':')[1]!,
+        email: dbAdmin.email,
+      });
+      const headers = createAuthenticatedHeaders(app, superadmin);
 
       const response = await app.inject({
         method: 'GET',
@@ -338,8 +360,15 @@ describe('Master Battle Routes', () => {
     });
 
     it('should require superadmin role', async () => {
-      const user = createTestUser();
-      const headers = createAuthenticatedHeaders(user.userId);
+      const dbUser = await prisma.user.create({
+        data: {
+          userId: 'keycloak:test-user-put-next-1',
+          username: 'testuser',
+          email: 'test@example.com',
+        },
+      });
+      const user = createTestUser({ sub: dbUser.userId.split(':')[1]!, email: dbUser.email });
+      const headers = createAuthenticatedHeaders(app, user);
 
       const response = await app.inject({
         method: 'PUT',
@@ -354,8 +383,19 @@ describe('Master Battle Routes', () => {
     });
 
     it('should update next battle date for superadmin', async () => {
-      const superadmin = createTestSuperadmin();
-      const headers = createAuthenticatedHeaders(superadmin.userId);
+      const dbAdmin = await prisma.user.create({
+        data: {
+          userId: 'keycloak:test-superadmin-put-next-2',
+          username: 'superadmin',
+          roles: ['superadmin'],
+          email: 'superadmin@example.com',
+        },
+      });
+      const superadmin = createTestSuperadmin({
+        sub: dbAdmin.userId.split(':')[1]!,
+        email: dbAdmin.email,
+      });
+      const headers = createAuthenticatedHeaders(app, superadmin);
 
       const futureDate = new Date();
       futureDate.setDate(futureDate.getDate() + 10);
@@ -381,8 +421,19 @@ describe('Master Battle Routes', () => {
     });
 
     it('should reject past dates', async () => {
-      const superadmin = createTestSuperadmin();
-      const headers = createAuthenticatedHeaders(superadmin.userId);
+      const dbAdmin = await prisma.user.create({
+        data: {
+          userId: 'keycloak:test-superadmin-put-next-3',
+          username: 'superadmin2',
+          roles: ['superadmin'],
+          email: 'superadmin2@example.com',
+        },
+      });
+      const superadmin = createTestSuperadmin({
+        sub: dbAdmin.userId.split(':')[1]!,
+        email: dbAdmin.email,
+      });
+      const headers = createAuthenticatedHeaders(app, superadmin);
 
       const pastDate = new Date();
       pastDate.setDate(pastDate.getDate() - 10);
@@ -402,8 +453,19 @@ describe('Master Battle Routes', () => {
     });
 
     it('should create audit log entry', async () => {
-      const superadmin = createTestSuperadmin();
-      const headers = createAuthenticatedHeaders(superadmin.userId);
+      const dbAdmin = await prisma.user.create({
+        data: {
+          userId: 'keycloak:test-superadmin-put-next-4',
+          username: 'superadmin3',
+          roles: ['superadmin'],
+          email: 'superadmin3@example.com',
+        },
+      });
+      const superadmin = createTestSuperadmin({
+        sub: dbAdmin.userId.split(':')[1]!,
+        email: dbAdmin.email,
+      });
+      const headers = createAuthenticatedHeaders(app, superadmin);
 
       const futureDate = new Date();
       futureDate.setDate(futureDate.getDate() + 10);
@@ -420,7 +482,7 @@ describe('Master Battle Routes', () => {
       // Verify audit log was created
       const auditLog = await prisma.auditLog.findFirst({
         where: {
-          actorId: superadmin.userId,
+          actorId: superadmin.sub,
           entityType: 'SYSTEM_SETTING',
           entityId: 'nextBattleStartDate',
         },
@@ -447,8 +509,15 @@ describe('Master Battle Routes', () => {
     });
 
     it('should require superadmin role', async () => {
-      const user = createTestUser();
-      const headers = createAuthenticatedHeaders(user.userId);
+      const dbUser = await prisma.user.create({
+        data: {
+          userId: 'keycloak:test-user-post-battle-1',
+          username: 'testuser',
+          email: 'test@example.com',
+        },
+      });
+      const user = createTestUser({ sub: dbUser.userId.split(':')[1]!, email: dbUser.email });
+      const headers = createAuthenticatedHeaders(app, user);
 
       const response = await app.inject({
         method: 'POST',
@@ -464,8 +533,19 @@ describe('Master Battle Routes', () => {
     });
 
     it('should create master battle for superadmin', async () => {
-      const superadmin = createTestSuperadmin();
-      const headers = createAuthenticatedHeaders(superadmin.userId);
+      const dbAdmin = await prisma.user.create({
+        data: {
+          userId: 'keycloak:test-superadmin-post-battle-2',
+          username: 'superadmin',
+          roles: ['superadmin'],
+          email: 'superadmin@example.com',
+        },
+      });
+      const superadmin = createTestSuperadmin({
+        sub: dbAdmin.userId.split(':')[1]!,
+        email: dbAdmin.email,
+      });
+      const headers = createAuthenticatedHeaders(app, superadmin);
 
       const startDate = new Date('2025-12-20T00:00:00-05:00');
 
@@ -483,13 +563,24 @@ describe('Master Battle Routes', () => {
       const body = JSON.parse(response.body);
       expect(body).toHaveProperty('battleId');
       expect(body.battleId).toBe('20251220');
-      expect(body.createdBy).toBe(superadmin.userId);
+      expect(body.createdBy).toBe(superadmin.sub);
       expect(body.notes).toBe('Manually created test battle');
     });
 
     it('should reject duplicate battle IDs', async () => {
-      const superadmin = createTestSuperadmin();
-      const headers = createAuthenticatedHeaders(superadmin.userId);
+      const dbAdmin = await prisma.user.create({
+        data: {
+          userId: 'keycloak:test-superadmin-post-battle-3',
+          username: 'superadmin2',
+          roles: ['superadmin'],
+          email: 'superadmin2@example.com',
+        },
+      });
+      const superadmin = createTestSuperadmin({
+        sub: dbAdmin.userId.split(':')[1]!,
+        email: dbAdmin.email,
+      });
+      const headers = createAuthenticatedHeaders(app, superadmin);
 
       // Create existing battle
       await prisma.masterBattle.create({
@@ -518,8 +609,19 @@ describe('Master Battle Routes', () => {
     });
 
     it('should create audit log entry', async () => {
-      const superadmin = createTestSuperadmin();
-      const headers = createAuthenticatedHeaders(superadmin.userId);
+      const dbAdmin = await prisma.user.create({
+        data: {
+          userId: 'keycloak:test-superadmin-post-battle-4',
+          username: 'superadmin3',
+          roles: ['superadmin'],
+          email: 'superadmin3@example.com',
+        },
+      });
+      const superadmin = createTestSuperadmin({
+        sub: dbAdmin.userId.split(':')[1]!,
+        email: dbAdmin.email,
+      });
+      const headers = createAuthenticatedHeaders(app, superadmin);
 
       const startDate = new Date('2025-12-25T00:00:00-05:00');
 
@@ -536,7 +638,7 @@ describe('Master Battle Routes', () => {
       // Verify audit log was created
       const auditLog = await prisma.auditLog.findFirst({
         where: {
-          actorId: superadmin.userId,
+          actorId: superadmin.sub,
           entityType: 'MASTER_BATTLE',
         },
         orderBy: { createdAt: 'desc' },

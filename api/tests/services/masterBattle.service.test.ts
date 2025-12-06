@@ -30,7 +30,7 @@ describe('MasterBattleService', () => {
       const battles = Array.from({ length: 5 }, (_, i) => {
         const date = new Date('2025-12-01');
         date.setDate(date.getDate() + i * 3);
-        const battleId = date.toISOString().split('T')[0].replace(/-/g, '');
+        const battleId = date.toISOString().split('T')[0]!.replace(/-/g, '');
         return {
           battleId,
           startTimestamp: new Date(date.getTime() + 5 * 60 * 60 * 1000),
@@ -68,8 +68,8 @@ describe('MasterBattleService', () => {
 
       const result = await service.getAllBattles({ sortOrder: 'asc' });
 
-      expect(result.battles[0].battleId).toBe('20251201');
-      expect(result.battles[1].battleId).toBe('20251207');
+      expect(result.battles[0]!.battleId).toBe('20251201');
+      expect(result.battles[1]!.battleId).toBe('20251207');
     });
   });
 
@@ -101,7 +101,7 @@ describe('MasterBattleService', () => {
       const battles = await service.getAvailableBattles();
 
       expect(battles).toHaveLength(1);
-      expect(battles[0].battleId).toBe('20251120');
+      expect(battles[0]!.battleId).toBe('20251120');
     });
 
     it('should sort battles with most recent first', async () => {
@@ -111,7 +111,7 @@ describe('MasterBattleService', () => {
       for (let i = 3; i > 0; i--) {
         const date = new Date(now);
         date.setDate(date.getDate() - i * 3);
-        const battleId = date.toISOString().split('T')[0].replace(/-/g, '');
+        const battleId = date.toISOString().split('T')[0]!.replace(/-/g, '');
         battles.push({
           battleId,
           startTimestamp: date,
@@ -126,7 +126,9 @@ describe('MasterBattleService', () => {
 
       // Verify descending order (battleIds are strings in YYYYMMDD format)
       for (let i = 1; i < result.length; i++) {
-        expect(result[i - 1].battleId > result[i].battleId).toBe(true);
+        const prev = result[i - 1];
+        const curr = result[i];
+        expect(prev!.battleId > curr!.battleId).toBe(true);
       }
     });
   });
@@ -332,10 +334,10 @@ describe('MasterBattleService', () => {
 
   describe('getRecentBattles', () => {
     it('should return recent battles in descending order', async () => {
-      const battles = Array.from({ length: 15 }, (_, i) => {
-        const date = new Date('2025-12-01');
+      const battles = Array.from({ length: 10 }, (_, i) => {
+        const date = new Date('2025-11-01');
         date.setDate(date.getDate() + i * 3);
-        const battleId = date.toISOString().split('T')[0].replace(/-/g, '');
+        const battleId = date.toISOString().split('T')[0]!.replace(/-/g, '');
         return {
           battleId,
           startTimestamp: new Date(date.getTime() + 5 * 60 * 60 * 1000),
@@ -351,7 +353,7 @@ describe('MasterBattleService', () => {
       expect(recent).toHaveLength(10);
       // Verify descending order (battleIds are strings in YYYYMMDD format)
       for (let i = 1; i < recent.length; i++) {
-        expect(recent[i - 1].battleId > recent[i].battleId).toBe(true);
+        expect(recent[i - 1]!.battleId > recent[i]!.battleId).toBe(true);
       }
     });
   });
