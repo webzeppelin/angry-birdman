@@ -204,9 +204,9 @@ describe('Master Battle Routes', () => {
       expect(response.statusCode).toBe(200);
       const body = JSON.parse(response.body);
       expect(body.length).toBeGreaterThan(1);
-      // Verify descending order
+      // Verify descending order (battleIds are strings in YYYYMMDD format)
       for (let i = 1; i < body.length; i++) {
-        expect(body[i - 1].battleId).toBeGreaterThan(body[i].battleId);
+        expect(body[i - 1].battleId > body[i].battleId).toBe(true);
       }
     });
   });
@@ -269,7 +269,14 @@ describe('Master Battle Routes', () => {
     });
 
     it('should require superadmin role', async () => {
-      const user = createTestUser();
+      const dbUser = await prisma.user.create({
+        data: {
+          userId: 'keycloak:test-user-get-next-1',
+          username: 'testuser',
+          email: 'test@example.com',
+        },
+      });
+      const user = createTestUser({ sub: dbUser.userId.split(':')[1]!, email: dbUser.email });
       const headers = createAuthenticatedHeaders(app, user);
 
       const response = await app.inject({
@@ -482,7 +489,7 @@ describe('Master Battle Routes', () => {
       // Verify audit log was created
       const auditLog = await prisma.auditLog.findFirst({
         where: {
-          actorId: superadmin.sub,
+          actorId: dbAdmin.userId,
           entityType: 'SYSTEM_SETTING',
           entityId: 'nextBattleStartDate',
         },
@@ -547,7 +554,8 @@ describe('Master Battle Routes', () => {
       });
       const headers = createAuthenticatedHeaders(app, superadmin);
 
-      const startDate = new Date('2025-12-20T00:00:00-05:00');
+      // Use Date constructor for consistent timezone handling
+      const startDate = new Date(2025, 11, 20); // Dec 20, 2025
 
       const response = await app.inject({
         method: 'POST',
@@ -563,7 +571,7 @@ describe('Master Battle Routes', () => {
       const body = JSON.parse(response.body);
       expect(body).toHaveProperty('battleId');
       expect(body.battleId).toBe('20251220');
-      expect(body.createdBy).toBe(superadmin.sub);
+      expect(body.createdBy).toBe(dbAdmin.userId);
       expect(body.notes).toBe('Manually created test battle');
     });
 
@@ -592,7 +600,8 @@ describe('Master Battle Routes', () => {
         },
       });
 
-      const startDate = new Date('2025-12-20T00:00:00-05:00');
+      // Use Date constructor for consistent timezone handling
+      const startDate = new Date(2025, 11, 20); // Dec 20, 2025
 
       const response = await app.inject({
         method: 'POST',
@@ -623,7 +632,7 @@ describe('Master Battle Routes', () => {
       });
       const headers = createAuthenticatedHeaders(app, superadmin);
 
-      const startDate = new Date('2025-12-25T00:00:00-05:00');
+      const startDate = new Date(2025, 11, 25); // Dec 25, 2025
 
       await app.inject({
         method: 'POST',
@@ -638,7 +647,7 @@ describe('Master Battle Routes', () => {
       // Verify audit log was created
       const auditLog = await prisma.auditLog.findFirst({
         where: {
-          actorId: superadmin.sub,
+          actorId: dbAdmin.userId,
           entityType: 'MASTER_BATTLE',
         },
         orderBy: { createdAt: 'desc' },
