@@ -151,17 +151,18 @@ export function getBattleStartTimestamp(date: Date): Date {
 }
 
 /**
- * Get battle end timestamp (23:59:59 EST, 2 days after start)
+ * Get battle end timestamp (23:59:59 EST, 1 day after start for 48-hour duration)
  * @param startDate - Battle start date
- * @returns Date representing end of battle (2 days later, at 23:59:59 EST)
+ * @returns Date representing end of battle (48 hours = 1 day later at 23:59:59 EST)
  */
 export function getBattleEndTimestamp(startDate: Date): Date {
-  // Calculate 2 days later
+  // Battle lasts 48 hours: starts at midnight day 0, ends at 23:59:59 day 1
+  // So we add 1 day, not 2
   const endYear = startDate.getFullYear();
   const endMonth = startDate.getMonth() + 1;
-  const endDay = startDate.getDate() + 2;
+  const endDay = startDate.getDate() + 1;
 
-  // Create date with 2 days added (Date constructor handles overflow)
+  // Create date with 1 day added (Date constructor handles overflow)
   const tempDate = new Date(endYear, endMonth - 1, endDay);
 
   // Set to 23:59:59

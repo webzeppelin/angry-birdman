@@ -43,7 +43,7 @@ export const masterBattleSchema = z.object({
  * Schema for creating a new Master Battle
  */
 export const createMasterBattleSchema = z.object({
-  startDate: z.date(),
+  startDate: z.coerce.date(),
   createdBy: z.string().optional(),
   notes: z.string().max(1000).optional(),
 });
@@ -94,12 +94,12 @@ export const updateSystemSettingSchema = z.object({
  * Schema for Master Battle query options
  */
 export const masterBattleQuerySchema = z.object({
-  page: z.number().int().positive().default(1),
-  limit: z.number().int().positive().max(100).default(20),
+  page: z.coerce.number().int().positive().default(1),
+  limit: z.coerce.number().int().positive().max(100).default(20),
   sortBy: z.enum(['battleId', 'startTimestamp', 'createdAt']).default('battleId'),
   sortOrder: z.enum(['asc', 'desc']).default('desc'),
-  startDateFrom: z.date().optional(),
-  startDateTo: z.date().optional(),
+  startDateFrom: z.coerce.date().optional(),
+  startDateTo: z.coerce.date().optional(),
 });
 
 /**
