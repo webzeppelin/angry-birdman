@@ -141,13 +141,20 @@ export default function SuperadminDashboardPage() {
       </div>
 
       {/* Quick Actions */}
-      <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2">
+      <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         <ActionCard
           title="User Management"
           description="Search, view, and manage all user accounts in the system"
           icon="👤"
           linkTo="/admin/users"
           linkText="Manage Users"
+        />
+        <ActionCard
+          title="Battle Schedule"
+          description="Manage the centralized Master Battle schedule and auto-generation"
+          icon="📅"
+          linkTo="/admin/battle-schedule"
+          linkText="Manage Schedule"
         />
         <ActionCard
           title="Audit Log"

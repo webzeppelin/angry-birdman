@@ -1,5 +1,3 @@
-import { formatDateISO } from '@angrybirdman/common';
-
 import type { BattleEntry } from '@angrybirdman/common';
 
 interface BattleReviewProps {
@@ -48,16 +46,8 @@ export default function BattleReview({
         </div>
         <dl className="grid grid-cols-2 gap-4">
           <div>
-            <dt className="text-sm text-gray-600">Start Date</dt>
-            <dd className="font-medium">
-              {data.startDate ? formatDateISO(new Date(data.startDate)) : 'Not set'}
-            </dd>
-          </div>
-          <div>
-            <dt className="text-sm text-gray-600">End Date</dt>
-            <dd className="font-medium">
-              {data.endDate ? formatDateISO(new Date(data.endDate)) : 'Not set'}
-            </dd>
+            <dt className="text-sm text-gray-600">Battle ID</dt>
+            <dd className="font-medium">{data.battleId || 'Not set'}</dd>
           </div>
           <div>
             <dt className="text-sm text-gray-600">Opponent</dt>
@@ -207,11 +197,7 @@ export default function BattleReview({
       </div>
 
       {/* Validation Warnings */}
-      {(!data.startDate ||
-        !data.endDate ||
-        !data.opponentName ||
-        !data.score ||
-        !data.baselineFp) && (
+      {(!data.battleId || !data.opponentName || !data.score || !data.baselineFp) && (
         <div className="rounded-md border border-red-200 bg-red-50 p-4">
           <p className="font-semibold text-red-800">⚠️ Missing required fields</p>
           <p className="text-sm text-red-700">
@@ -243,7 +229,7 @@ export default function BattleReview({
         <button
           type="button"
           onClick={onSubmit}
-          disabled={isSubmitting || !data.startDate || !data.opponentName || !data.score}
+          disabled={isSubmitting || !data.battleId || !data.opponentName || !data.score}
           className="rounded-md bg-green-600 px-8 py-2 font-semibold text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-400"
         >
           {isSubmitting ? 'Submitting...' : 'Submit Battle ✓'}

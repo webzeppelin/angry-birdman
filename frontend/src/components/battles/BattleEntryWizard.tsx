@@ -84,7 +84,7 @@ export default function BattleEntryWizard({
         // Check if draft has meaningful data
         const hasData =
           draft.data &&
-          (draft.data.startDate ||
+          (draft.data.battleId ||
             draft.data.score !== undefined ||
             draft.data.playerStats?.length ||
             draft.data.nonplayerStats?.length);

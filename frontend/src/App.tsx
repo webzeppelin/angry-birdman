@@ -51,6 +51,7 @@ import {
   SuperadminDashboardPage,
   GlobalUserManagementPage,
   SystemAuditLogPage,
+  BattleSchedulePage,
   NotFoundPage,
 } from '@/pages';
 
@@ -402,6 +403,16 @@ function App() {
                 <Layout>
                   <ProtectedRoute requiredRoles={['superadmin']}>
                     <SystemAuditLogPage />
+                  </ProtectedRoute>
+                </Layout>
+              }
+            />
+            <Route
+              path="/admin/battle-schedule"
+              element={
+                <Layout>
+                  <ProtectedRoute requiredRoles={['superadmin']}>
+                    <BattleSchedulePage />
                   </ProtectedRoute>
                 </Layout>
               }

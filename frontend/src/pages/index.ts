@@ -31,4 +31,5 @@ export { default as ForgotPasswordPage } from './ForgotPasswordPage';
 export { default as SuperadminDashboardPage } from './SuperadminDashboardPage';
 export { default as GlobalUserManagementPage } from './GlobalUserManagementPage';
 export { default as SystemAuditLogPage } from './SystemAuditLogPage';
+export { default as BattleSchedulePage } from './BattleSchedulePage';
 export { NotFoundPage } from './NotFoundPage';

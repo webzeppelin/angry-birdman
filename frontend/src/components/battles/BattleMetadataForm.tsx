@@ -1,7 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 
-import type { BattleListResponse } from '../../types/battle';
+import BattleSelector from './BattleSelector';
+
 import type { BattleEntry } from '@angrybirdman/common';
 
 interface BattleMetadataFormProps {
@@ -19,77 +19,21 @@ export default function BattleMetadataForm({
   onNext,
   onCancel,
 }: BattleMetadataFormProps) {
-  // Convert dates to string format for form inputs
-  const initialStartDate =
-    data.startDate instanceof Date
-      ? data.startDate.toISOString().split('T')[0]
-      : data.startDate || '';
-  const initialEndDate =
-    data.endDate instanceof Date ? data.endDate.toISOString().split('T')[0] : data.endDate || '';
-
-  const [startDate, setStartDate] = useState(initialStartDate);
-  const [endDate, setEndDate] = useState(initialEndDate);
+  const [battleId, setBattleId] = useState(data.battleId || '');
   const [opponentRovioId, setOpponentRovioId] = useState(data.opponentRovioId?.toString() || '');
   const [opponentName, setOpponentName] = useState(data.opponentName || '');
   const [opponentCountry, setOpponentCountry] = useState(data.opponentCountry || '');
-  const [duplicateWarning, setDuplicateWarning] = useState<string | null>(null);
-
-  // Auto-calculate end date (1 day after start)
-  useEffect(() => {
-    if (startDate) {
-      const start = new Date(startDate);
-      const end = new Date(start);
-      end.setDate(end.getDate() + 1);
-      const endDateStr = end.toISOString().split('T')[0];
-      if (endDateStr) {
-        // Use startTransition to defer state update and avoid cascading render warning
-        React.startTransition(() => {
-          setEndDate(endDateStr);
-        });
-      }
-    }
-  }, [startDate]);
-
-  // Check for duplicate battles (exact date match)
-  const { data: existingBattles } = useQuery<BattleListResponse>({
-    queryKey: ['battles', clanId, startDate],
-    queryFn: async (): Promise<BattleListResponse> => {
-      const response = await fetch(
-        `/api/clans/${clanId}/battles?startDate=${startDate}&endDate=${startDate}`,
-        {
-          credentials: 'include',
-        }
-      );
-      if (!response.ok) throw new Error('Failed to fetch battles');
-      return response.json() as Promise<BattleListResponse>;
-    },
-    enabled: !!startDate,
-  });
-
-  useEffect(() => {
-    // Use startTransition to defer state update and avoid cascading render warning
-    React.startTransition(() => {
-      if (existingBattles && existingBattles.battles.length > 0) {
-        setDuplicateWarning(
-          `Warning: A battle already exists for ${startDate}. Creating another will result in duplicate data.`
-        );
-      } else {
-        setDuplicateWarning(null);
-      }
-    });
-  }, [existingBattles, startDate]);
 
   const handleNext = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!startDate || !endDate || !opponentName) {
+    if (!battleId || !opponentName) {
       alert('Please fill in all required fields');
       return;
     }
 
     onUpdate({
-      startDate: new Date(startDate),
-      endDate: new Date(endDate),
+      battleId,
       opponentRovioId: opponentRovioId ? parseInt(opponentRovioId, 10) : undefined,
       opponentName,
       opponentCountry: opponentCountry || undefined,
@@ -99,43 +43,8 @@ export default function BattleMetadataForm({
 
   return (
     <form onSubmit={handleNext} className="space-y-6">
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        {/* Start Date */}
-        <div>
-          <label htmlFor="startDate" className="mb-2 block text-sm font-medium text-gray-700">
-            Start Date <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="date"
-            id="startDate"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:outline-none"
-            required
-          />
-        </div>
-
-        {/* End Date */}
-        <div>
-          <label htmlFor="endDate" className="mb-2 block text-sm font-medium text-gray-700">
-            End Date <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="date"
-            id="endDate"
-            value={endDate}
-            readOnly
-            className="w-full cursor-not-allowed rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-gray-600"
-            required
-          />
-        </div>
-      </div>
-
-      {duplicateWarning && (
-        <div className="rounded-md border border-yellow-200 bg-yellow-50 px-4 py-3 text-yellow-800">
-          <p className="font-semibold">⚠️ {duplicateWarning}</p>
-        </div>
-      )}
+      {/* Battle Selector - replaces date inputs */}
+      <BattleSelector value={battleId} onChange={setBattleId} clanId={clanId} />
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* Opponent Rovio ID */}
