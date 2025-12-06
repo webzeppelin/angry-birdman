@@ -28,7 +28,7 @@ Higher FP means higher potential scores.
 
 ### Ratio Score
 
-The key performance metric: `(score / fp) * 10`. Normalizes performance across
+The key performance metric: `(score / fp) * 1000`. Normalizes performance across
 different FP levels so players can be fairly compared regardless of their power
 level.
 
@@ -291,19 +291,19 @@ npm run type-check
 **Clan Ratio (Official)**:
 
 ```
-ratio = (score / baselineFp) * 10
+ratio = (score / baselineFp) * 1000
 ```
 
 **Average Ratio**:
 
 ```
-averageRatio = (score / fp) * 10
+averageRatio = (score / fp) * 1000
 ```
 
 **Player Ratio**:
 
 ```
-playerRatio = (score / fp) * 10
+playerRatio = (score / fp) * 1000
 ```
 
 **Margin Ratio** (Win/Loss margin):
