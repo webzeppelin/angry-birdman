@@ -254,8 +254,9 @@ describe('BattleService with Master Battle Integration', () => {
       expect(result.result).toBe(1); // Win
       expect(result.ratio).toBeCloseTo(20000); // (50000 / 2500) * 1000
       expect(result.fp).toBe(2500); // Total FP
-      expect(result.playerStats[0].ratio).toBeCloseTo(25000); // (25000 / 1000) * 1000
-      expect(result.playerStats[1].ratio).toBeCloseTo(16666.67, 1); // (25000 / 1500) * 1000
+      expect(result.playerStats).toHaveLength(2);
+      expect(result.playerStats[0]?.ratio).toBeCloseTo(25000); // (25000 / 1000) * 1000
+      expect(result.playerStats[1]?.ratio).toBeCloseTo(16666.67, 1); // (25000 / 1500) * 1000
     });
   });
 
@@ -303,7 +304,8 @@ describe('BattleService with Master Battle Integration', () => {
 
       expect(result.battleId).toBe(masterBattleId);
       expect(result.score).toBe(55000);
-      expect(result.playerStats[0].score).toBe(30000);
+      expect(result.playerStats).toHaveLength(1);
+      expect(result.playerStats[0]?.score).toBe(30000);
       // Dates should remain from MasterBattle
       expect(result.startDate).toBeDefined();
       expect(result.endDate).toBeDefined();
