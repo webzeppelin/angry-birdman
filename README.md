@@ -156,8 +156,10 @@ angrybirdman/
 2. **Start infrastructure services**
 
    ```bash
-   docker-compose up -d database keycloak valkey
+   docker-compose up -d
    ```
+
+   This starts PostgreSQL, Keycloak, and Valkey.
 
 3. **Install dependencies**
 
@@ -165,19 +167,24 @@ angrybirdman/
    npm install
    ```
 
-4. **Initialize database**
+4. **Run database migrations**
 
    ```bash
-   cd database/postgres
-   psql -U postgres -d angrybirdman -f schema.sql
-   psql -U postgres -d angrybirdman -f seed-data.sql
+   cd database
+   npx prisma migrate deploy
    ```
 
-5. **Generate Prisma Client**
+5. **Seed the database**
 
    ```bash
-   npx prisma generate
+   npm run seed
    ```
+
+   This creates:
+   - Action codes (HOLD, WARN, KICK, RESERVE, PASS)
+   - System settings (including Master Battle schedule)
+   - Sample clans and test users
+   - Test users matching Keycloak credentials
 
 6. **Start development servers**
 
