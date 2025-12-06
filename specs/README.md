@@ -354,9 +354,9 @@ instructions, and maintenance procedures.
 
 ### Common Calculations (high-level-spec.md Section 7)
 
-- **Clan Ratio**: `(score / baselineFp) * 10`
-- **Average Ratio**: `(score / fp) * 10`
-- **Player Ratio**: `(score / fp) * 10`
+- **Clan Ratio**: `(score / baselineFp) * 1000`
+- **Average Ratio**: `(score / fp) * 1000`
+- **Player Ratio**: `(score / fp) * 1000`
 - **Margin Ratio**: `((score - opponentScore) / score) * 100`
 - **FP Margin**: `((baselineFp - opponentFp) / baselineFp) * 100`
 
