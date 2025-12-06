@@ -11,15 +11,15 @@
 
 ## Overall Progress
 
-| Phase                        | Status         | Started | Completed | Notes |
-| ---------------------------- | -------------- | ------- | --------- | ----- |
-| Phase 1: Database Schema     | ⬜ Not Started | -       | -         |       |
-| Phase 2: Common Utilities    | ⬜ Not Started | -       | -         |       |
-| Phase 3: Scheduler Service   | ⬜ Not Started | -       | -         |       |
-| Phase 4: API - Master Battle | ⬜ Not Started | -       | -         |       |
-| Phase 5: API - Battle Entry  | ⬜ Not Started | -       | -         |       |
-| Phase 6: Frontend            | ⬜ Not Started | -       | -         |       |
-| Phase 7: Migration & Deploy  | ⬜ Not Started | -       | -         |       |
+| Phase                        | Status         | Started    | Completed  | Notes              |
+| ---------------------------- | -------------- | ---------- | ---------- | ------------------ |
+| Phase 1: Database Schema     | ⬜ Not Started | -          | -          |                    |
+| Phase 2: Common Utilities    | ✅ Complete    | 2025-12-05 | 2025-12-05 | 100% test coverage |
+| Phase 3: Scheduler Service   | ⬜ Not Started | -          | -          |                    |
+| Phase 4: API - Master Battle | ⬜ Not Started | -          | -          |                    |
+| Phase 5: API - Battle Entry  | ⬜ Not Started | -          | -          |                    |
+| Phase 6: Frontend            | ⬜ Not Started | -          | -          |                    |
+| Phase 7: Migration & Deploy  | ⬜ Not Started | -          | -          |                    |
 
 **Legend**: ⬜ Not Started | 🟡 In Progress | ✅ Complete | ❌ Blocked
 
@@ -63,39 +63,64 @@
 
 ## Phase 2: Common Library Utilities
 
-**Status**: ⬜ Not Started  
-**Owner**: TBD  
-**Estimated Duration**: 3-4 hours
+**Status**: ✅ Complete  
+**Owner**: AI Agent  
+**Started**: December 5, 2025  
+**Completed**: December 5, 2025  
+**Actual Duration**: ~4 hours  
+**Commit**: 8bd86c1
 
 ### Tasks
 
-- [ ] 2.1: Battle ID Utilities (`common/src/utils/battleId.ts`)
-- [ ] 2.2: Timezone Utilities (`common/src/utils/timezone.ts`)
-- [ ] 2.3: Battle Schedule Validators
-      (`common/src/validators/battleSchedule.ts`)
-- [ ] 2.4: Battle Schedule Types (`common/src/types/battleSchedule.ts`)
-- [ ] 2.5: Unit Tests (>90% coverage target)
+- [x] 2.1: Battle ID Utilities (`common/src/utils/battleId.ts`)
+- [x] 2.2: Timezone Utilities (`common/src/utils/timezone.ts`)
+- [x] 2.3: Battle Schedule Validators (`common/src/schemas/battleSchedule.ts`)
+- [x] 2.4: Battle Schedule Types (`common/src/types/battleSchedule.ts`)
+- [x] 2.5: Unit Tests (>90% coverage target)
 
 ### Deliverables
 
-- [ ] `common/src/utils/battleId.ts` with full implementation
-- [ ] `common/src/utils/timezone.ts` with EST/GMT conversions
-- [ ] `common/src/validators/battleSchedule.ts` with Zod schemas
-- [ ] `common/src/types/battleSchedule.ts` with TypeScript types
-- [ ] Unit tests in `common/tests/`
+- [x] `common/src/utils/battleId.ts` with full implementation
+- [x] `common/src/utils/timezone.ts` with EST/GMT conversions
+- [x] `common/src/schemas/battleSchedule.ts` with Zod schemas
+- [x] `common/src/types/battleSchedule.ts` with TypeScript types
+- [x] Unit tests in `common/tests/`
 
 ### Verification Checklist
 
-- [ ] All unit tests pass
-- [ ] Coverage >90% for utilities
-- [ ] Edge cases handled (leap years, timezone boundaries)
-- [ ] Type definitions export correctly
-- [ ] Documentation clear and accurate
-- [ ] ESLint and Prettier pass
+- [x] All unit tests pass (249/249 tests)
+- [x] Coverage >90% for utilities (96.08% statements, 100% for core utilities)
+- [x] Edge cases handled (leap years, timezone boundaries)
+- [x] Type definitions export correctly
+- [x] Documentation clear and accurate
+- [x] ESLint and Prettier pass
 
 ### Notes
 
-<!-- Add implementation notes, issues encountered, etc. -->
+**Key Accomplishments:**
+
+- Created comprehensive battle ID utilities (8 functions)
+- Implemented timezone conversion utilities (11 functions) for EST handling
+- Defined complete TypeScript type system for battle schedule domain
+- Created Zod validation schemas with detailed error messages
+- Achieved excellent test coverage: 100% for battleId.ts and timezone.ts
+- All 249 tests passing across entire common library
+
+**Design Decisions:**
+
+- Reused existing generateBattleId/parseBattleId from date-formatting.ts to
+  avoid duplication
+- Renamed validation helpers to avoid naming conflicts
+- Documented that Official Angry Birds Time is always EST (UTC-5), never EDT
+- Separated GMT storage from EST business logic for clarity
+
+**Challenges Resolved:**
+
+- Naming conflicts with existing date-formatting utilities
+- Timezone conversion edge cases
+- Test timing issues with current time checks
+
+See `implog/major-change-01-phase2-log.md` for complete implementation details.
 
 ---
 
