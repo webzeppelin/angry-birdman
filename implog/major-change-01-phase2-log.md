@@ -346,12 +346,73 @@ With Phase 2 complete, the project can proceed to:
 4. **Error Messages:** Use `*WithError()` helpers for user-friendly API error
    responses
 
+## Post-Implementation Refactoring
+
+### Timezone Bug Discovery and Consolidation
+
+After completing the initial Phase 2 implementation, a critical timezone issue
+was discovered in the existing `generateBattleId()` function in
+`date-formatting.ts`:
+
+**Problem:** The existing `generateBattleId(date: Date)` function used local
+timezone methods (`getFullYear()`, `getMonth()`, `getDate()`), which would
+produce different battle IDs for the same game event depending on the user's
+timezone. Since Official Angry Birds Time is EST (UTC-5, never EDT), this
+creates inconsistency.
+
+**Solution:** Refactored `common/src/utils/battleId.ts` to be the authoritative
+module for all battle ID operations:
+
+1. **Created `generateBattleIdFromEst(estDate: Date)`:**
+   - Takes a Date object that represents an EST date/time
+   - Uses UTC methods (`getUTCFullYear()`, `getUTCMonth()`, `getUTCDate()`) to
+     extract components
+   - Ensures consistent battle ID generation across all timezones
+   - Properly documented with timezone warnings
+
+2. **Consolidated `parseBattleId(battleId: string)`:**
+   - Moved full implementation from `date-formatting.ts` to `battleId.ts`
+   - Returns a Date object in local timezone for backward compatibility
+   - Validates format and date components
+
+3. **Consolidated `validateBattleId(battleId: string)`:**
+   - Moved implementation from `date-formatting.ts` to `battleId.ts`
+   - Simple boolean validation wrapper around `parseBattleId()`
+
+4. **Updated Battle ID Manipulation Functions:**
+   - `getNextBattleId()` and `getPreviousBattleId()` now inline their logic
+   - No longer depend on removed helper functions
+   - More maintainable with clear implementation
+
+**Deprecation Strategy:**
+
+- Added `@deprecated` JSDoc warnings to old functions in `date-formatting.ts`
+- Old functions kept for backward compatibility during migration
+- Clearly documented that new code should use `battleId.ts` equivalents
+- After Phase 6 (when date entry UI is replaced with battle selector), old
+  functions can be removed
+
+**Testing:** All 249 tests pass with the refactored implementation. Test file
+updated to import from `battleId.ts` and use correct function names
+(`validateBattleId` instead of `isValidBattleId`, `parseBattleId` now returns
+Date object).
+
+**Impact:**
+
+- `api/src/services/battle.service.ts` currently uses
+  `generateBattleId(data.startDate)` - will need update in later phase
+- Frontend `BattleMetadataForm.tsx` allows manual date entry - will be replaced
+  in Phase 6
+- Future battle ID generation will be consistent across all users and timezones
+
 ## Conclusion
 
 Phase 2 successfully created a robust foundation of utilities for battle
 schedule management. All objectives met with excellent test coverage and code
-quality. The utilities are well-documented, thoroughly tested, and ready for use
-in subsequent phases.
+quality. Post-implementation refactoring addressed a critical timezone bug and
+consolidated battle ID operations into a single authoritative module. The
+utilities are well-documented, thoroughly tested, and ready for use in
+subsequent phases.
 
-**Status:** ✅ Complete and verified **Next Phase:** Phase 3 - Battle Scheduler
-Service
+**Status:** ✅ Complete and verified (including refactoring)  
+**Next Phase:** Phase 3 - Battle Scheduler Service

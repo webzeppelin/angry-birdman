@@ -5,8 +5,8 @@
 import { describe, it, expect } from 'vitest';
 
 import {
-  parseBattleIdComponents,
-  isValidBattleId,
+  parseBattleId,
+  validateBattleId,
   getNextBattleId,
   getPreviousBattleId,
   battleIdToDate,
@@ -39,49 +39,49 @@ describe('battleId utilities', () => {
     });
   });
 
-  describe('parseBattleIdComponents', () => {
+  describe('parseBattleId', () => {
     it('should parse valid battle ID correctly', () => {
-      const result = parseBattleIdComponents('20250115');
-      expect(result).toEqual({ year: 2025, month: 1, day: 15 });
+      const result = parseBattleId('20250115');
+      expect(result).toEqual(new Date(2025, 0, 15));
     });
 
     it('should parse battle ID with leading zeros', () => {
-      const result = parseBattleIdComponents('20250105');
-      expect(result).toEqual({ year: 2025, month: 1, day: 5 });
+      const result = parseBattleId('20250105');
+      expect(result).toEqual(new Date(2025, 0, 5));
     });
 
     it('should throw error for invalid format', () => {
-      expect(() => parseBattleIdComponents('2025011')).toThrow();
-      expect(() => parseBattleIdComponents('202501155')).toThrow();
-      expect(() => parseBattleIdComponents('abcd1234')).toThrow();
+      expect(() => parseBattleId('2025011')).toThrow();
+      expect(() => parseBattleId('202501155')).toThrow();
+      expect(() => parseBattleId('abcd1234')).toThrow();
     });
 
     it('should throw error for invalid date', () => {
-      expect(() => parseBattleIdComponents('20250229')).toThrow(); // 2025 is not a leap year
-      expect(() => parseBattleIdComponents('20250132')).toThrow(); // January has 31 days max
-      expect(() => parseBattleIdComponents('20251332')).toThrow(); // Month 13 doesn't exist
+      expect(() => parseBattleId('20250229')).toThrow(); // 2025 is not a leap year
+      expect(() => parseBattleId('20250132')).toThrow(); // January has 31 days max
+      expect(() => parseBattleId('20251332')).toThrow(); // Month 13 doesn't exist
     });
   });
 
-  describe('isValidBattleId', () => {
+  describe('validateBattleId', () => {
     it('should return true for valid battle IDs', () => {
-      expect(isValidBattleId('20250115')).toBe(true);
-      expect(isValidBattleId('20240229')).toBe(true); // Leap year
-      expect(isValidBattleId('20241231')).toBe(true);
+      expect(validateBattleId('20250115')).toBe(true);
+      expect(validateBattleId('20240229')).toBe(true); // Leap year
+      expect(validateBattleId('20241231')).toBe(true);
     });
 
     it('should return false for invalid format', () => {
-      expect(isValidBattleId('2025011')).toBe(false); // Too short
-      expect(isValidBattleId('202501155')).toBe(false); // Too long
-      expect(isValidBattleId('abcd1234')).toBe(false); // Not numeric
-      expect(isValidBattleId('')).toBe(false); // Empty
+      expect(validateBattleId('2025011')).toBe(false); // Too short
+      expect(validateBattleId('202501155')).toBe(false); // Too long
+      expect(validateBattleId('abcd1234')).toBe(false); // Not numeric
+      expect(validateBattleId('')).toBe(false); // Empty
     });
 
     it('should return false for invalid dates', () => {
-      expect(isValidBattleId('20250229')).toBe(false); // Not a leap year
-      expect(isValidBattleId('20250132')).toBe(false); // January 32nd
-      expect(isValidBattleId('20251332')).toBe(false); // Month 13
-      expect(isValidBattleId('20250431')).toBe(false); // April 31st
+      expect(validateBattleId('20250229')).toBe(false); // Not a leap year
+      expect(validateBattleId('20250132')).toBe(false); // January 32nd
+      expect(validateBattleId('20251332')).toBe(false); // Month 13
+      expect(validateBattleId('20250431')).toBe(false); // April 31st
     });
   });
 

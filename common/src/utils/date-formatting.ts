@@ -12,6 +12,11 @@ import { BATTLE_ID_LENGTH, MONTH_ID_LENGTH, YEAR_ID_LENGTH } from '../constants/
 /**
  * Generate a battle ID from a date
  * Format: YYYYMMDD
+ *
+ * @deprecated Use generateBattleIdFromEst() from battleId.ts instead.
+ * This function uses local timezone which can cause inconsistencies.
+ * For Master Battle schedule, use EST-aware functions.
+ *
  * @param date - The date to convert
  * @returns Battle ID string
  */
@@ -50,6 +55,10 @@ export function generateYearId(date: Date): string {
 
 /**
  * Parse a battle ID to a Date object
+ *
+ * @deprecated Use parseBattleId() from battleId.ts instead.
+ * This function is kept for backward compatibility only.
+ *
  * @param battleId - Battle ID string (YYYYMMDD)
  * @returns Date object
  * @throws Error if battle ID is invalid
@@ -135,6 +144,10 @@ export function parseYearId(yearId: string): Date {
 
 /**
  * Validate a battle ID format
+ *
+ * @deprecated Use validateBattleId() from battleId.ts instead.
+ * This function is kept for backward compatibility only.
+ *
  * @param battleId - Battle ID to validate
  * @returns true if valid
  * @throws Error if invalid

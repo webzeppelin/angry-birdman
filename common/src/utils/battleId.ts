@@ -1,12 +1,87 @@
 /**
- * Extended utilities for working with Battle IDs (YYYYMMDD format)
+ * Battle ID utilities for Angry Birdman
  * All Battle IDs are based on Official Angry Birds Time (EST, never EDT)
  *
- * NOTE: Core functions generateBattleId and parseBattleId are in date-formatting.ts
- * This file contains additional battle ID manipulation utilities.
+ * This is the authoritative module for battle ID operations.
+ * Functions in date-formatting.ts are deprecated for battle ID use.
  */
 
-import { parseBattleId as parseBattleIdToDate } from './date-formatting.js';
+import { BATTLE_ID_LENGTH } from '../constants/index.js';
+
+// ============================================================================
+// Core Battle ID Operations
+// ============================================================================
+
+/**
+ * Generate a battle ID from a date in EST timezone
+ *
+ * IMPORTANT: This function expects the date to already be normalized to EST.
+ * Use createEstDate() or getBattleStartTimestamp() from timezone.ts to ensure
+ * correct timezone handling.
+ *
+ * @param estDate - Date in EST timezone (UTC components represent EST time)
+ * @returns Battle ID in YYYYMMDD format
+ *
+ * @example
+ * ```typescript
+ * import { createEstDate } from './timezone.js';
+ * const estDate = createEstDate(2025, 1, 15);
+ * const battleId = generateBattleIdFromEst(estDate); // "20250115"
+ * ```
+ */
+export function generateBattleIdFromEst(estDate: Date): string {
+  const year = estDate.getUTCFullYear();
+  const month = String(estDate.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(estDate.getUTCDate()).padStart(2, '0');
+  return `${year}${month}${day}`;
+}
+
+/**
+ * Parse a battle ID to a Date object
+ * Returns a date in local timezone with the parsed date components
+ *
+ * @param battleId - Battle ID string (YYYYMMDD)
+ * @returns Date object with parsed date components
+ * @throws Error if battle ID is invalid
+ */
+export function parseBattleId(battleId: string): Date {
+  if (battleId.length !== BATTLE_ID_LENGTH) {
+    throw new Error(
+      `Invalid battle ID length: expected ${BATTLE_ID_LENGTH}, got ${battleId.length}`
+    );
+  }
+
+  const year = parseInt(battleId.substring(0, 4), 10);
+  const month = parseInt(battleId.substring(4, 6), 10);
+  const day = parseInt(battleId.substring(6, 8), 10);
+
+  if (isNaN(year) || isNaN(month) || isNaN(day)) {
+    throw new Error(`Invalid battle ID format: ${battleId}`);
+  }
+
+  const date = new Date(year, month - 1, day);
+
+  // Validate that the date is valid (e.g., not Feb 30)
+  if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
+    throw new Error(`Invalid date in battle ID: ${battleId}`);
+  }
+
+  return date;
+}
+
+/**
+ * Validate a battle ID format
+ * @param battleId - Battle ID to validate
+ * @returns true if valid YYYYMMDD format, false otherwise
+ */
+export function validateBattleId(battleId: string): boolean {
+  try {
+    parseBattleId(battleId);
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 /**
  * Parse Battle ID into date components
@@ -19,7 +94,7 @@ export function parseBattleIdComponents(battleId: string): {
   month: number;
   day: number;
 } {
-  const date = parseBattleIdToDate(battleId);
+  const date = parseBattleId(battleId);
   return {
     year: date.getFullYear(),
     month: date.getMonth() + 1,
@@ -27,19 +102,9 @@ export function parseBattleIdComponents(battleId: string): {
   };
 }
 
-/**
- * Validate Battle ID format
- * @param battleId - Battle ID to validate
- * @returns true if valid YYYYMMDD format, false otherwise
- */
-export function isValidBattleId(battleId: string): boolean {
-  try {
-    parseBattleIdToDate(battleId);
-    return true;
-  } catch {
-    return false;
-  }
-}
+// ============================================================================
+// Battle ID Manipulation
+// ============================================================================
 
 /**
  * Get next battle ID (3 days after given battle)
@@ -48,13 +113,16 @@ export function isValidBattleId(battleId: string): boolean {
  * @throws Error if battleId format is invalid
  */
 export function getNextBattleId(battleId: string): string {
-  const date = parseBattleIdToDate(battleId);
+  const date = parseBattleId(battleId);
 
   // Add 3 days (battle lasts 2 days + 1 day between battles)
   date.setDate(date.getDate() + 3);
 
-  // Re-generate battle ID from new date
-  return generateBattleId(date);
+  // Re-generate battle ID from new date (uses local timezone components)
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}${month}${day}`;
 }
 
 /**
@@ -64,13 +132,16 @@ export function getNextBattleId(battleId: string): string {
  * @throws Error if battleId format is invalid
  */
 export function getPreviousBattleId(battleId: string): string {
-  const date = parseBattleIdToDate(battleId);
+  const date = parseBattleId(battleId);
 
   // Subtract 3 days
   date.setDate(date.getDate() - 3);
 
-  // Re-generate battle ID from new date
-  return generateBattleId(date);
+  // Re-generate battle ID from new date (uses local timezone components)
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}${month}${day}`;
 }
 
 /**
@@ -80,15 +151,7 @@ export function getPreviousBattleId(battleId: string): string {
  * @throws Error if battleId format is invalid
  */
 export function battleIdToDate(battleId: string): Date {
-  return parseBattleIdToDate(battleId);
-}
-
-// Helper function for generating battle IDs
-function generateBattleId(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}${month}${day}`;
+  return parseBattleId(battleId);
 }
 
 /**
