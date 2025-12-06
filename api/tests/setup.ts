@@ -46,6 +46,8 @@ beforeEach(async () => {
   await prisma.clanBattlePlayerStats.deleteMany();
   await prisma.clanBattleNonplayerStats.deleteMany();
   await prisma.clanBattle.deleteMany();
+  await prisma.masterBattle.deleteMany();
+  await prisma.systemSetting.deleteMany();
   await prisma.actionCode.deleteMany();
   await prisma.rosterMember.deleteMany();
   await prisma.adminRequest.deleteMany();

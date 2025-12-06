@@ -13,6 +13,7 @@ import {
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 import configPlugin from './plugins/config.js';
 import databasePlugin from './plugins/database.js';
+import schedulerPlugin from './plugins/scheduler.js';
 import swaggerPlugin from './plugins/swagger.js';
 import adminRequestsRoutes from './routes/admin-requests.js';
 import adminRoutes from './routes/admin.js';
@@ -104,6 +105,9 @@ export async function buildApp() {
 
   // Database plugin
   await fastify.register(databasePlugin);
+
+  // Battle scheduler plugin (must be after database plugin)
+  await fastify.register(schedulerPlugin);
 
   // Documentation plugin
   await fastify.register(swaggerPlugin);
