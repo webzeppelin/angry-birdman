@@ -6,6 +6,9 @@
 
 import type { ActionCode, BattleResult } from '../constants/index.js';
 
+// Export battle schedule types
+export * from './battleSchedule.js';
+
 // ============================================================================
 // Core Entity Types
 // ============================================================================

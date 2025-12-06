@@ -14,6 +14,9 @@ export * from './roster.js';
 // Re-export battle management schemas
 export * from './battle.js';
 
+// Re-export battle schedule schemas
+export * from './battleSchedule.js';
+
 import {
   ACTION_CODES,
   BATTLE_ID_LENGTH,

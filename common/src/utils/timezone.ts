@@ -1,0 +1,196 @@
+/**
+ * Utilities for Official Angry Birds Time (EST) and timezone conversions
+ *
+ * IMPORTANT: Official Angry Birds Time is ALWAYS Eastern Standard Time (EST),
+ * it does NOT observe daylight saving time (never EDT).
+ *
+ * EST is UTC-5 year-round.
+ */
+
+// EST offset from UTC in milliseconds (5 hours)
+const EST_OFFSET_MS = 5 * 60 * 60 * 1000;
+
+/**
+ * Convert any date to Official Angry Birds Time (EST)
+ * This normalizes a date to EST timezone (UTC-5)
+ *
+ * @param date - Date in any timezone
+ * @returns Date normalized to EST (UTC-5)
+ */
+export function toOfficialAngryBirdsTime(date: Date): Date {
+  // Get UTC timestamp
+  const utcTime = date.getTime();
+
+  // Calculate EST time (UTC - 5 hours)
+  const estTime = utcTime - EST_OFFSET_MS;
+
+  // Create new date in EST
+  const estDate = new Date(estTime);
+
+  // Return date with time adjusted to EST
+  return new Date(
+    Date.UTC(
+      estDate.getUTCFullYear(),
+      estDate.getUTCMonth(),
+      estDate.getUTCDate(),
+      estDate.getUTCHours(),
+      estDate.getUTCMinutes(),
+      estDate.getUTCSeconds(),
+      estDate.getUTCMilliseconds()
+    )
+  );
+}
+
+/**
+ * Convert EST date to GMT for database storage
+ * Takes a date that represents EST time and converts it to GMT
+ *
+ * @param estDate - Date representing EST time
+ * @returns Date converted to GMT (adds 5 hours)
+ */
+export function estToGmt(estDate: Date): Date {
+  // EST is UTC-5, so to convert to GMT we add 5 hours
+  const gmtTime = estDate.getTime() + EST_OFFSET_MS;
+  return new Date(gmtTime);
+}
+
+/**
+ * Convert GMT date to EST for display
+ * Takes a GMT date and converts it to EST time
+ *
+ * @param gmtDate - Date in GMT timezone
+ * @returns Date converted to EST (subtracts 5 hours)
+ */
+export function gmtToEst(gmtDate: Date): Date {
+  // GMT to EST is UTC-5, so we subtract 5 hours
+  const estTime = gmtDate.getTime() - EST_OFFSET_MS;
+  return new Date(estTime);
+}
+
+/**
+ * Get current time in Official Angry Birds Time (EST)
+ * @returns Current date/time in EST timezone
+ */
+export function getCurrentAngryBirdsTime(): Date {
+  return toOfficialAngryBirdsTime(new Date());
+}
+
+/**
+ * Create a date in EST timezone from date components
+ * @param year - Year
+ * @param month - Month (1-12, not 0-11)
+ * @param day - Day of month
+ * @param hour - Hour (0-23), defaults to 0
+ * @param minute - Minute (0-59), defaults to 0
+ * @param second - Second (0-59), defaults to 0
+ * @returns Date in EST timezone
+ */
+export function createEstDate(
+  year: number,
+  month: number,
+  day: number,
+  hour: number = 0,
+  minute: number = 0,
+  second: number = 0
+): Date {
+  // Create date in UTC first (month is 0-indexed)
+  const utcDate = new Date(Date.UTC(year, month - 1, day, hour, minute, second));
+
+  // This date is already in the correct time, but we need to treat it as EST
+  // So we return it as-is since our convention is that the Date object
+  // represents the wall clock time in EST
+  return utcDate;
+}
+
+/**
+ * Format date for display in user's local timezone
+ * @param date - Date to format
+ * @param timezone - IANA timezone (e.g., 'America/New_York'), optional
+ * @param options - Intl.DateTimeFormatOptions for formatting
+ * @returns Formatted date string
+ */
+export function formatForUserTimezone(
+  date: Date,
+  timezone?: string,
+  options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZoneName: 'short',
+  }
+): string {
+  const formatOptions = timezone ? { ...options, timeZone: timezone } : options;
+  return new Intl.DateTimeFormat('en-US', formatOptions).format(date);
+}
+
+/**
+ * Format date in EST timezone with explicit indication
+ * @param date - Date to format
+ * @returns Formatted date string with EST indicator
+ */
+export function formatInEst(date: Date): string {
+  return formatForUserTimezone(date, 'America/New_York', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZoneName: 'short',
+  });
+}
+
+/**
+ * Get battle start timestamp (midnight EST) for a given date
+ * @param date - Date in any timezone
+ * @returns Date representing midnight EST on the given date
+ */
+export function getBattleStartTimestamp(date: Date): Date {
+  return createEstDate(date.getFullYear(), date.getMonth() + 1, date.getDate(), 0, 0, 0);
+}
+
+/**
+ * Get battle end timestamp (23:59:59 EST, 2 days after start)
+ * @param startDate - Battle start date
+ * @returns Date representing end of battle (2 days later, at 23:59:59 EST)
+ */
+export function getBattleEndTimestamp(startDate: Date): Date {
+  // Calculate 2 days later
+  const endYear = startDate.getFullYear();
+  const endMonth = startDate.getMonth() + 1;
+  const endDay = startDate.getDate() + 2;
+
+  // Create date with 2 days added (Date constructor handles overflow)
+  const tempDate = new Date(endYear, endMonth - 1, endDay);
+
+  // Set to 23:59:59
+  return createEstDate(
+    tempDate.getFullYear(),
+    tempDate.getMonth() + 1,
+    tempDate.getDate(),
+    23,
+    59,
+    59
+  );
+}
+
+/**
+ * Check if a date is in the future (compared to current Official Angry Birds Time)
+ * @param date - Date to check
+ * @returns true if date is in the future
+ */
+export function isInFuture(date: Date): boolean {
+  const now = new Date();
+  return date.getTime() > now.getTime();
+}
+
+/**
+ * Check if a date is in the past (compared to current Official Angry Birds Time)
+ * @param date - Date to check
+ * @returns true if date is in the past
+ */
+export function isInPast(date: Date): boolean {
+  const now = new Date();
+  return date.getTime() < now.getTime();
+}
