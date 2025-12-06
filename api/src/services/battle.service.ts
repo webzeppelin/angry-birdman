@@ -25,7 +25,7 @@ import {
   type BattleQuery,
   type BattleDetailResponse,
 } from '@angrybirdman/common';
-import { generateBattleId, generateMonthId, generateYearId } from '@angrybirdman/common';
+import { generateMonthId, generateYearId } from '@angrybirdman/common';
 import { type Prisma, type PrismaClient } from '@angrybirdman/database';
 
 export class BattleService {
@@ -33,12 +33,21 @@ export class BattleService {
 
   /**
    * Create a new battle with all player and nonplayer stats
+   * Now uses battleId from MasterBattle table instead of generating from startDate
    */
   async createBattle(clanId: number, data: BattleEntry): Promise<BattleDetailResponse> {
-    // Generate battle ID from start date
-    const battleId = generateBattleId(data.startDate);
+    const { battleId } = data;
 
-    // Check for duplicate battle
+    // Validate battleId exists in MasterBattle table
+    const masterBattle = await this.prisma.masterBattle.findUnique({
+      where: { battleId },
+    });
+
+    if (!masterBattle) {
+      throw new Error(`Battle ${battleId} does not exist in the master schedule`);
+    }
+
+    // Check for duplicate battle (clan already recorded this battle)
     const existing = await this.prisma.clanBattle.findUnique({
       where: {
         clanId_battleId: { clanId, battleId },
@@ -46,8 +55,12 @@ export class BattleService {
     });
 
     if (existing) {
-      throw new Error(`Battle ${battleId} already exists for this clan`);
+      throw new Error(`Battle ${battleId} has already been recorded for this clan`);
     }
+
+    // Get start/end dates from MasterBattle for denormalization
+    const startDate = masterBattle.startTimestamp;
+    const endDate = masterBattle.endTimestamp;
 
     // Calculate player ratios and add to stats
     const playerStatsWithRatios: PlayerStatsWithRatio[] = data.playerStats.map((player) => ({
@@ -84,13 +97,13 @@ export class BattleService {
 
     // Create battle with all stats in a transaction
     await this.prisma.$transaction(async (tx) => {
-      // Create the battle record
+      // Create the battle record with dates from MasterBattle
       const createdBattle = await tx.clanBattle.create({
         data: {
           clanId,
           battleId,
-          startDate: data.startDate,
-          endDate: data.endDate,
+          startDate, // From MasterBattle (denormalized)
+          endDate, // From MasterBattle (denormalized)
           result,
           score: data.score,
           fp: totalFp,
@@ -152,8 +165,8 @@ export class BattleService {
     });
 
     // Update monthly and yearly summaries (outside transaction for performance)
-    await this.updateMonthlySummary(clanId, data.startDate);
-    await this.updateYearlySummary(clanId, data.startDate);
+    await this.updateMonthlySummary(clanId, startDate);
+    await this.updateYearlySummary(clanId, startDate);
 
     // Fetch and return complete battle data
     return this.getBattleById(clanId, battleId);
@@ -374,6 +387,8 @@ export class BattleService {
 
   /**
    * Update an existing battle
+   * Note: battleId cannot be changed - it identifies the battle
+   * Note: startDate and endDate cannot be changed - they come from MasterBattle
    */
   async updateBattle(
     clanId: number,
@@ -406,9 +421,10 @@ export class BattleService {
       });
 
       // Recreate with updated data (merge existing and updates)
+      // Note: battleId stays the same, dates come from MasterBattle
       const mergedData: BattleEntry = {
-        startDate: data.startDate || existing.startDate,
-        endDate: data.endDate || existing.endDate,
+        battleId, // battleId cannot be changed
+        // startDate and endDate removed - they come from MasterBattle
         opponentRovioId: data.opponentRovioId || existing.opponentRovioId,
         opponentName: data.opponentName || existing.opponentName,
         opponentCountry: data.opponentCountry || existing.opponentCountry,

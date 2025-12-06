@@ -15,39 +15,35 @@ import { z } from 'zod';
 /**
  * Battle metadata input schema
  * Field order matches data entry workflow from game UI:
- * startDate → endDate → opponentRovioId → opponentName → opponentCountry
+ * battleId → opponentRovioId → opponentName → opponentCountry
+ *
+ * Note: startDate and endDate are now derived from battleId via MasterBattle table
  */
-export const battleMetadataSchema = z
-  .object({
-    startDate: z.coerce.date({
-      message: 'Start date is required and must be a valid date',
-    }),
-    endDate: z.coerce.date({
-      message: 'End date is required and must be a valid date',
-    }),
-    opponentRovioId: z
-      .number({
-        message: 'Opponent Rovio ID is required and must be a number',
-      })
-      .int()
-      .positive('Opponent Rovio ID must be positive'),
-    opponentName: z
-      .string({
-        message: 'Opponent name is required',
-      })
-      .min(1, 'Opponent name cannot be empty')
-      .max(100, 'Opponent name too long'),
-    opponentCountry: z
-      .string({
-        message: 'Opponent country is required',
-      })
-      .min(1, 'Opponent country cannot be empty')
-      .max(100, 'Opponent country too long'),
-  })
-  .refine((data) => data.endDate >= data.startDate, {
-    message: 'End date must be on or after start date',
-    path: ['endDate'],
-  });
+export const battleMetadataSchema = z.object({
+  battleId: z
+    .string({
+      message: 'Battle ID is required',
+    })
+    .regex(/^\d{8}$/, 'Battle ID must be in YYYYMMDD format'),
+  opponentRovioId: z
+    .number({
+      message: 'Opponent Rovio ID is required and must be a number',
+    })
+    .int()
+    .positive('Opponent Rovio ID must be positive'),
+  opponentName: z
+    .string({
+      message: 'Opponent name is required',
+    })
+    .min(1, 'Opponent name cannot be empty')
+    .max(100, 'Opponent name too long'),
+  opponentCountry: z
+    .string({
+      message: 'Opponent country is required',
+    })
+    .min(1, 'Opponent country cannot be empty')
+    .max(100, 'Opponent country too long'),
+});
 
 export type BattleMetadata = z.infer<typeof battleMetadataSchema>;
 
@@ -200,73 +196,70 @@ export type NonplayerStatsArray = z.infer<typeof nonplayerStatsArraySchema>;
 /**
  * Complete battle entry data combining all input sections
  * This represents the full data needed to create a battle record
+ *
+ * Note: startDate and endDate are no longer input fields - they are derived
+ * from the battleId by looking up the MasterBattle record
  */
-export const battleEntrySchema = z
-  .object({
-    // Battle metadata (Story 4.2)
-    startDate: z.coerce.date({
-      message: 'Start date is required and must be a valid date',
-    }),
-    endDate: z.coerce.date({
-      message: 'End date is required and must be a valid date',
-    }),
-    opponentRovioId: z
-      .number({
-        message: 'Opponent Rovio ID is required and must be a number',
-      })
-      .int()
-      .positive('Opponent Rovio ID must be positive'),
-    opponentName: z
-      .string({
-        message: 'Opponent name is required',
-      })
-      .min(1, 'Opponent name cannot be empty')
-      .max(100, 'Opponent name too long'),
-    opponentCountry: z
-      .string({
-        message: 'Opponent country is required',
-      })
-      .min(1, 'Opponent country cannot be empty')
-      .max(100, 'Opponent country too long'),
+export const battleEntrySchema = z.object({
+  // Battle metadata (Story 4.2) - now using battleId from MasterBattle
+  battleId: z
+    .string({
+      message: 'Battle ID is required',
+    })
+    .regex(/^\d{8}$/, 'Battle ID must be in YYYYMMDD format'),
+  opponentRovioId: z
+    .number({
+      message: 'Opponent Rovio ID is required and must be a number',
+    })
+    .int()
+    .positive('Opponent Rovio ID must be positive'),
+  opponentName: z
+    .string({
+      message: 'Opponent name is required',
+    })
+    .min(1, 'Opponent name cannot be empty')
+    .max(100, 'Opponent name too long'),
+  opponentCountry: z
+    .string({
+      message: 'Opponent country is required',
+    })
+    .min(1, 'Opponent country cannot be empty')
+    .max(100, 'Opponent country too long'),
 
-    // Clan performance (Story 4.3)
-    score: z
-      .number({
-        message: 'Clan score is required and must be a number',
-      })
-      .int()
-      .nonnegative('Clan score cannot be negative'),
-    baselineFp: z
-      .number({
-        message: 'Clan baseline FP is required and must be a number',
-      })
-      .int()
-      .positive('Clan baseline FP must be positive'),
+  // Clan performance (Story 4.3)
+  score: z
+    .number({
+      message: 'Clan score is required and must be a number',
+    })
+    .int()
+    .nonnegative('Clan score cannot be negative'),
+  baselineFp: z
+    .number({
+      message: 'Clan baseline FP is required and must be a number',
+    })
+    .int()
+    .positive('Clan baseline FP must be positive'),
 
-    // Opponent performance (Story 4.4)
-    opponentScore: z
-      .number({
-        message: 'Opponent score is required and must be a number',
-      })
-      .int()
-      .nonnegative('Opponent score cannot be negative'),
-    opponentFp: z
-      .number({
-        message: 'Opponent FP is required and must be a number',
-      })
-      .int()
-      .positive('Opponent FP must be positive'),
+  // Opponent performance (Story 4.4)
+  opponentScore: z
+    .number({
+      message: 'Opponent score is required and must be a number',
+    })
+    .int()
+    .nonnegative('Opponent score cannot be negative'),
+  opponentFp: z
+    .number({
+      message: 'Opponent FP is required and must be a number',
+    })
+    .int()
+    .positive('Opponent FP must be positive'),
 
-    // Player stats (Story 4.5)
-    playerStats: playerStatsArraySchema,
+  // Player stats (Story 4.5)
+  playerStats: playerStatsArraySchema,
 
-    // Nonplayer stats (Story 4.6)
-    nonplayerStats: nonplayerStatsArraySchema,
-  })
-  .refine((data) => data.endDate >= data.startDate, {
-    message: 'End date must be on or after start date',
-    path: ['endDate'],
-  });
+  // Nonplayer stats (Story 4.6)
+  nonplayerStats: nonplayerStatsArraySchema,
+});
 
 export type BattleEntry = z.infer<typeof battleEntrySchema>;
 
@@ -276,44 +269,29 @@ export type BattleEntry = z.infer<typeof battleEntrySchema>;
 
 /**
  * Schema for updating an existing battle (all fields optional except what changed)
- * This is the same as battleEntrySchema but with all fields optional
+ * Note: battleId cannot be changed - it identifies the battle
+ * Note: startDate and endDate cannot be changed - they come from MasterBattle
  */
-export const battleUpdateSchema = z
-  .object({
-    // Battle metadata (Story 4.2)
-    startDate: z.coerce.date().optional(),
-    endDate: z.coerce.date().optional(),
-    opponentRovioId: z.number().int().positive().optional(),
-    opponentName: z.string().min(1).max(100).optional(),
-    opponentCountry: z.string().min(1).max(100).optional(),
+export const battleUpdateSchema = z.object({
+  // Battle metadata (Story 4.2) - battleId and dates cannot be changed
+  opponentRovioId: z.number().int().positive().optional(),
+  opponentName: z.string().min(1).max(100).optional(),
+  opponentCountry: z.string().min(1).max(100).optional(),
 
-    // Clan performance (Story 4.3)
-    score: z.number().int().nonnegative().optional(),
-    baselineFp: z.number().int().positive().optional(),
+  // Clan performance (Story 4.3)
+  score: z.number().int().nonnegative().optional(),
+  baselineFp: z.number().int().positive().optional(),
 
-    // Opponent performance (Story 4.4)
-    opponentScore: z.number().int().nonnegative().optional(),
-    opponentFp: z.number().int().positive().optional(),
+  // Opponent performance (Story 4.4)
+  opponentScore: z.number().int().nonnegative().optional(),
+  opponentFp: z.number().int().positive().optional(),
 
-    // Player stats (Story 4.5)
-    playerStats: playerStatsArraySchema.optional(),
+  // Player stats (Story 4.5)
+  playerStats: playerStatsArraySchema.optional(),
 
-    // Nonplayer stats (Story 4.6)
-    nonplayerStats: nonplayerStatsArraySchema.optional(),
-  })
-  .refine(
-    (data) => {
-      // Only validate date relationship if both dates are provided
-      if (data.startDate && data.endDate) {
-        return data.endDate >= data.startDate;
-      }
-      return true;
-    },
-    {
-      message: 'End date must be on or after start date',
-      path: ['endDate'],
-    }
-  );
+  // Nonplayer stats (Story 4.6)
+  nonplayerStats: nonplayerStatsArraySchema.optional(),
+});
 
 export type BattleUpdate = z.infer<typeof battleUpdateSchema>;
 
