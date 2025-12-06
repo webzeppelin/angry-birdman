@@ -150,6 +150,23 @@ describe('MasterBattleService', () => {
       expect(result).toBeInstanceOf(Date);
     });
 
+    it('should handle JSON-stringified date value from legacy seed', async () => {
+      const nextDate = new Date('2025-12-15T05:00:00Z');
+      await prisma.systemSetting.create({
+        data: {
+          key: 'nextBattleStartDate',
+          value: JSON.stringify(nextDate.toISOString()),
+          description: 'Next scheduled battle start date',
+          dataType: 'date',
+        },
+      });
+
+      const result = await service.getNextBattleDate();
+
+      expect(result).toBeInstanceOf(Date);
+      expect(result.toString()).not.toBe('Invalid Date');
+    });
+
     it('should throw error if setting not found', async () => {
       await expect(service.getNextBattleDate()).rejects.toThrow(
         'Next battle start date not configured'

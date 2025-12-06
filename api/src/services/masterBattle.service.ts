@@ -126,8 +126,18 @@ export class MasterBattleService {
       throw new Error('Next battle start date not configured in system settings');
     }
 
+    // Value may be stored as JSON string (from seed) or plain ISO string (from API update)
+    // Parse JSON if needed, otherwise use directly
+    let dateValue: string;
+    try {
+      const parsed: unknown = JSON.parse(setting.value);
+      dateValue = typeof parsed === 'string' ? parsed : setting.value;
+    } catch {
+      dateValue = setting.value;
+    }
+
     // Value is stored as ISO string in GMT, convert to EST for return
-    const gmtDate = new Date(setting.value);
+    const gmtDate = new Date(dateValue);
     return gmtToEst(gmtDate);
   }
 

@@ -65,7 +65,7 @@ async function main() {
     update: {},
     create: {
       key: 'nextBattleStartDate',
-      value: JSON.stringify(new Date('2025-11-22T05:00:00Z')), // Next battle after 20251119
+      value: new Date('2025-12-09T05:00:00Z').toISOString(), // Next battle after 20251206
       description: 'Next scheduled battle start date in Official Angry Birds Time (EST)',
       dataType: 'date',
     },
