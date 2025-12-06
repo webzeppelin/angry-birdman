@@ -344,7 +344,7 @@ See `implog/major-change-01-phase5-log.md` for complete implementation details.
 **Started**: December 6, 2025  
 **Completed**: December 6, 2025  
 **Actual Duration**: ~4 hours  
-**Commit**: TBD
+**Commits**: 91622f5, 698e097, 58360cf
 
 ### Tasks
 
@@ -361,7 +361,6 @@ See `implog/major-change-01-phase5-log.md` for complete implementation details.
 
 **New Files Created:**
 
-- [x] `frontend/src/utils/timezone.ts` - Timezone utilities (166 lines)
 - [x] `frontend/src/api/masterBattles.ts` - API client (106 lines)
 - [x] `frontend/src/components/battles/BattleSelector.tsx` - Selection dropdown
       (175 lines)
@@ -373,6 +372,8 @@ See `implog/major-change-01-phase5-log.md` for complete implementation details.
 
 **Files Modified:**
 
+- [x] `common/src/utils/timezone.ts` - Enhanced with UI utilities and flexible
+      signatures
 - [x] `frontend/src/components/battles/BattleMetadataForm.tsx` - Replaced dates
       with selector
 - [x] `frontend/src/components/battles/BattleReview.tsx` - Show Battle ID
@@ -436,7 +437,6 @@ See `implog/major-change-01-phase5-log.md` for complete implementation details.
 - Shows next scheduled battle
 - Countdown timer (updates every minute)
 - Current vs upcoming battle styling
-- Timezone-aware display
 
 ### Notes
 
@@ -465,56 +465,20 @@ See `implog/major-change-01-phase5-log.md` for complete implementation details.
 - EST for Superadmin (matches game timing)
 - Auto-select most recent battle (convenience)
 
+**Code Consolidation (Post-Implementation):**
+
+- Eliminated duplicate timezone utilities (commit 698e097)
+- Moved all timezone functions to common library
+- Enhanced function signatures for flexibility (Date | string, flexible params)
+- Added 5 UI-focused functions: getUserTimezone(), formatDateOnly(),
+  formatBattleDate(), getTimeRemaining(), formatTimeRemaining()
+- Removed 166 duplicate lines from frontend
+- All components now import from `@angrybirdman/common`
+- API compilation verified clean after common changes
+
 See `implog/major-change-01-phase6-log.md` for complete implementation details.
 
----
-
-**Status**: ⬜ Not Started  
-**Owner**: TBD  
-**Estimated Duration**: 6-8 hours
-
-### Tasks
-
-- [ ] 6.1: API Client Updates (`frontend/src/api/battles.ts`)
-- [ ] 6.2: Battle Selector Component
-- [ ] 6.3: Update Battle Entry Form (replace date pickers)
-- [ ] 6.4: Dashboard Updates (next battle display)
-- [ ] 6.5: Battle List Updates (show Battle ID)
-- [ ] 6.6: Superadmin Battle Schedule Manager
-- [ ] 6.7: Timezone Display Utilities
-- [ ] 6.8: Component Tests (>80% coverage target)
-
-### Deliverables
-
-- [ ] Updated `frontend/src/api/battles.ts`
-- [ ] `frontend/src/components/battles/BattleSelector.tsx`
-- [ ] Updated `frontend/src/components/battles/BattleEntryForm.tsx`
-- [ ] Updated `frontend/src/components/dashboard/Dashboard.tsx`
-- [ ] Updated `frontend/src/components/battles/BattleList.tsx`
-- [ ] `frontend/src/components/admin/BattleScheduleManager.tsx`
-- [ ] `frontend/src/utils/timezone.ts`
-- [ ] Component tests
-- [ ] Updated Storybook stories (if applicable)
-
-### Verification Checklist
-
-- [ ] Battle selector loads and displays correctly
-- [ ] Default selection works (most recent uncompleted battle)
-- [ ] Cannot select future battles
-- [ ] Duplicate battle warning shown clearly
-- [ ] Dates display in user's timezone
-- [ ] EST clearly indicated for Superadmin schedule manager
-- [ ] Dashboard shows next battle countdown
-- [ ] Battle list shows Battle IDs
-- [ ] Superadmin can view and update next battle date
-- [ ] All forms validate correctly
-- [ ] Tests pass with >80% coverage
-- [ ] Responsive design works on mobile/tablet/desktop
-- [ ] Keyboard navigation works
-
-### Notes
-
-<!-- Add implementation notes, issues encountered, etc. -->
+See `implog/major-change-01-phase6-log.md` for complete implementation details.
 
 ---
 
@@ -855,6 +819,20 @@ Implementation is considered successful when all criteria are met:
 - All builds passing (TypeScript + Vite)
 - All linting clean (0 errors)
 - ~1,200 lines of new/modified code
+
+**2025-12-06**: Phase 6 Code Consolidation
+
+- Identified duplicate timezone utilities between frontend and common
+- Consolidated all timezone functions into common library
+- Enhanced formatForUserTimezone() with flexible parameter handling
+- Enhanced formatInEst() to accept Date | string and optional formatting
+- Added 5 UI-focused functions to common: getUserTimezone, formatDateOnly,
+  formatBattleDate, getTimeRemaining, formatTimeRemaining
+- Updated all component imports (BattleSelector, NextBattleCard,
+  BattleScheduleManager)
+- Removed 166 duplicate lines from frontend
+- Verified API compilation clean after common library changes
+- All TypeScript and ESLint checks passing
 
 ---
 
