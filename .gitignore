@@ -9,6 +9,9 @@
 **/.adminpwd
 .adminpwd
 
+# Local Keycloak test user mappings (generated per dev instance)
+scripts/local-keycloak-test-users.json
+
 # Dependencies
 node_modules/
 package-lock.json
