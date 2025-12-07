@@ -93,48 +93,48 @@ async function main() {
   const masterBattles = [
     {
       battleId: '20241101',
-      startTimestamp: new Date('2024-11-01T00:00:00Z'),
-      endTimestamp: new Date('2024-11-02T23:59:59Z'),
+      startTimestamp: new Date('2024-11-01T05:00:00Z'), // Nov 1 00:00 EST
+      endTimestamp: new Date('2024-11-03T04:59:59Z'), // Nov 2 23:59:59 EST
     },
     {
       battleId: '20251023',
-      startTimestamp: new Date('2025-10-23T00:00:00Z'),
-      endTimestamp: new Date('2025-10-24T23:59:59Z'),
+      startTimestamp: new Date('2025-10-23T05:00:00Z'), // Oct 23 00:00 EST
+      endTimestamp: new Date('2025-10-25T04:59:59Z'), // Oct 24 23:59:59 EST
     },
     {
       battleId: '20251026',
-      startTimestamp: new Date('2025-10-26T00:00:00Z'),
-      endTimestamp: new Date('2025-10-27T23:59:59Z'),
+      startTimestamp: new Date('2025-10-26T05:00:00Z'), // Oct 26 00:00 EST
+      endTimestamp: new Date('2025-10-28T04:59:59Z'), // Oct 27 23:59:59 EST
     },
     {
       battleId: '20251101',
-      startTimestamp: new Date('2025-11-01T00:00:00Z'),
-      endTimestamp: new Date('2025-11-02T23:59:59Z'),
+      startTimestamp: new Date('2025-11-01T05:00:00Z'), // Nov 1 00:00 EST
+      endTimestamp: new Date('2025-11-03T04:59:59Z'), // Nov 2 23:59:59 EST
     },
     {
       battleId: '20251104',
-      startTimestamp: new Date('2025-11-04T00:00:00Z'),
-      endTimestamp: new Date('2025-11-05T23:59:59Z'),
+      startTimestamp: new Date('2025-11-04T05:00:00Z'), // Nov 4 00:00 EST
+      endTimestamp: new Date('2025-11-06T04:59:59Z'), // Nov 5 23:59:59 EST
     },
     {
       battleId: '20251107',
-      startTimestamp: new Date('2025-11-07T00:00:00Z'),
-      endTimestamp: new Date('2025-11-08T23:59:59Z'),
+      startTimestamp: new Date('2025-11-07T05:00:00Z'), // Nov 7 00:00 EST
+      endTimestamp: new Date('2025-11-09T04:59:59Z'), // Nov 8 23:59:59 EST
     },
     {
       battleId: '20251110',
-      startTimestamp: new Date('2025-11-10T00:00:00Z'),
-      endTimestamp: new Date('2025-11-11T23:59:59Z'),
+      startTimestamp: new Date('2025-11-10T05:00:00Z'), // Nov 10 00:00 EST
+      endTimestamp: new Date('2025-11-12T04:59:59Z'), // Nov 11 23:59:59 EST
     },
     {
       battleId: '20251116',
-      startTimestamp: new Date('2025-11-16T00:00:00Z'),
-      endTimestamp: new Date('2025-11-17T23:59:59Z'),
+      startTimestamp: new Date('2025-11-16T05:00:00Z'), // Nov 16 00:00 EST
+      endTimestamp: new Date('2025-11-18T04:59:59Z'), // Nov 17 23:59:59 EST
     },
     {
       battleId: '20251119',
-      startTimestamp: new Date('2025-11-19T00:00:00Z'),
-      endTimestamp: new Date('2025-11-20T23:59:59Z'),
+      startTimestamp: new Date('2025-11-19T05:00:00Z'), // Nov 19 00:00 EST
+      endTimestamp: new Date('2025-11-21T04:59:59Z'), // Nov 20 23:59:59 EST
     },
   ];
 
