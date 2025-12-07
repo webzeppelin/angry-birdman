@@ -135,21 +135,34 @@ export function formatForUserTimezone(
 }
 
 /**
- * Format date in EST timezone with explicit indication
+ * Format date in EST timezone (permanent UTC-5, no DST)
+ * Official Angry Birds Time is always EST, never EDT
  * @param date - Date to format (can be Date object or ISO string)
  * @param options - Optional Intl.DateTimeFormatOptions for custom formatting
- * @returns Formatted date string with EST indicator
+ * @returns Formatted date string in EST (always UTC-5)
  */
 export function formatInEst(date: Date | string, options?: Intl.DateTimeFormatOptions): string {
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+
+  // Subtract 5 hours to get EST time (UTC-5, no DST)
+  const estTime = new Date(dateObj.getTime() - EST_OFFSET_MS);
+
+  // Format using UTC methods (which will show the EST time we calculated)
   const defaultOptions: Intl.DateTimeFormatOptions = {
     year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
+    month: 'short',
+    day: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
-    timeZoneName: 'short',
   };
-  return formatForUserTimezone(date, 'America/New_York', options || defaultOptions);
+
+  const formatOptions = options || defaultOptions;
+  const formatted = new Intl.DateTimeFormat('en-US', {
+    ...formatOptions,
+    timeZone: 'UTC', // Use UTC so it shows the pre-adjusted time
+  }).format(estTime);
+
+  return formatted;
 }
 
 /**

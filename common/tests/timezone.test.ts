@@ -167,14 +167,16 @@ describe('timezone utilities', () => {
   });
 
   describe('formatInEst', () => {
-    it('should format date in EST timezone', () => {
+    it('should format date in EST timezone (permanent UTC-5, no DST)', () => {
       const date = new Date(Date.UTC(2025, 0, 15, 12, 0, 0));
       const formatted = formatInEst(date);
 
-      // Should include year and timezone indicator
+      // Should include year, month (short form), and day
       expect(formatted).toMatch(/2025/);
-      expect(formatted).toMatch(/01/);
+      expect(formatted).toMatch(/Jan/); // Short month name
       expect(formatted).toMatch(/15/);
+      // UTC 12:00 - 5 hours = 07:00 EST
+      expect(formatted).toMatch(/07:00/);
     });
   });
 
