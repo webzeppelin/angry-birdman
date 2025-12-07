@@ -19,10 +19,7 @@ import {
   generateBattleId,
   getBattleStartTimestamp,
   getBattleEndTimestamp,
-  estToGmt,
-  gmtToEst,
   isInFuture,
-  getCurrentAngryBirdsTime,
 } from '@angrybirdman/common';
 import { type PrismaClient } from '@angrybirdman/database';
 
@@ -93,13 +90,12 @@ export class MasterBattleService {
    * @returns Array of available master battles
    */
   async getAvailableBattles(): Promise<MasterBattle[]> {
-    const now = getCurrentAngryBirdsTime();
-    const nowGmt = estToGmt(now);
+    const now = new Date(); // Current time (instant in time, timezone-agnostic)
 
     const battles = await this.prisma.masterBattle.findMany({
       where: {
         startTimestamp: {
-          lte: nowGmt, // Only battles that have started
+          lte: now, // Only battles that have started
         },
       },
       orderBy: {
@@ -136,9 +132,10 @@ export class MasterBattleService {
       dateValue = setting.value;
     }
 
-    // Value is stored as ISO string in GMT, convert to EST for return
-    const gmtDate = new Date(dateValue);
-    return gmtToEst(gmtDate);
+    // Value is stored as ISO string (UTC/GMT representation of the battle start time)
+    // Return as-is - ISO strings already encode the correct absolute time
+    // Frontend will format for display in EST or user's timezone as needed
+    return new Date(dateValue);
   }
 
   /**
@@ -156,20 +153,19 @@ export class MasterBattleService {
       throw new Error('Next battle date must be in the future');
     }
 
-    // Convert EST to GMT for storage
-    const gmtDate = estToGmt(newDate);
-
+    // Store as ISO string - already in correct UTC representation
+    // No conversion needed since ISO strings encode timezone correctly
     // Update system setting with upsert pattern
     await this.prisma.systemSetting.upsert({
       where: { key: 'nextBattleStartDate' },
       create: {
         key: 'nextBattleStartDate',
-        value: gmtDate.toISOString(),
+        value: newDate.toISOString(),
         description: 'Next scheduled battle start date in Official Angry Birds Time (EST)',
         dataType: 'date',
       },
       update: {
-        value: gmtDate.toISOString(),
+        value: newDate.toISOString(),
         updatedAt: new Date(),
       },
     });
@@ -201,20 +197,16 @@ export class MasterBattleService {
       throw new Error(`Battle ${battleId} already exists`);
     }
 
-    // Calculate timestamps
+    // Calculate timestamps (already in correct UTC representation)
     const startTimestamp = getBattleStartTimestamp(startDate);
     const endTimestamp = getBattleEndTimestamp(startDate);
-
-    // Convert EST to GMT for database storage
-    const startGmt = estToGmt(startTimestamp);
-    const endGmt = estToGmt(endTimestamp);
 
     // Create battle
     const battle = await this.prisma.masterBattle.create({
       data: {
         battleId,
-        startTimestamp: startGmt,
-        endTimestamp: endGmt,
+        startTimestamp,
+        endTimestamp,
         createdBy: userId,
         notes: notes || null,
       },
@@ -230,17 +222,16 @@ export class MasterBattleService {
    * @returns Complete battle schedule information
    */
   async getBattleScheduleInfo(): Promise<BattleScheduleInfo> {
-    const now = getCurrentAngryBirdsTime();
-    const nowGmt = estToGmt(now);
+    const now = new Date(); // Current instant in time
 
     // Get current battle (one that has started but not ended)
     const currentBattle = await this.prisma.masterBattle.findFirst({
       where: {
         startTimestamp: {
-          lte: nowGmt,
+          lte: now,
         },
         endTimestamp: {
-          gte: nowGmt,
+          gte: now,
         },
       },
       orderBy: {

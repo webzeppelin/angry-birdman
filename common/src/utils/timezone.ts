@@ -93,13 +93,10 @@ export function createEstDate(
   minute: number = 0,
   second: number = 0
 ): Date {
-  // Create date in UTC first (month is 0-indexed)
-  const utcDate = new Date(Date.UTC(year, month - 1, day, hour, minute, second));
-
-  // This date is already in the correct time, but we need to treat it as EST
-  // So we return it as-is since our convention is that the Date object
-  // represents the wall clock time in EST
-  return utcDate;
+  // Create date representing EST time, stored as UTC
+  // EST is UTC-5, so to represent midnight EST we need 05:00 UTC
+  // Example: Dec 9 00:00 EST = Dec 9 05:00 UTC
+  return new Date(Date.UTC(year, month - 1, day, hour + 5, minute, second));
 }
 
 /**

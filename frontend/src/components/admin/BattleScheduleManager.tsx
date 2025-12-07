@@ -96,8 +96,25 @@ export default function BattleScheduleManager() {
       return;
     }
 
+    // The datetime-local input value is interpreted as EST (Official Angry Birds Time)
+    // We need to convert it to the correct UTC representation
+    // Example: "2025-12-09T00:00" in EST = "2025-12-09T05:00:00.000Z" in UTC
+    const [datePart, timePart] = nextDateInput.split('T');
+    if (!datePart || !timePart) {
+      alert('Invalid date format');
+      return;
+    }
+
+    // Parse the date/time as if it's in EST
+    const [year, month, day] = datePart.split('-').map(Number);
+    const [hours, minutes] = timePart.split(':').map(Number);
+
+    // Create date in EST (UTC-5)
+    // To get midnight EST as UTC, we add 5 hours
+    const utcDate = new Date(Date.UTC(year!, month! - 1, day, hours! + 5, minutes));
+
     updateDateMutation.mutate({
-      nextBattleStartDate: new Date(nextDateInput).toISOString(),
+      nextBattleStartDate: utcDate.toISOString(),
     });
   };
 
@@ -136,12 +153,15 @@ export default function BattleScheduleManager() {
               onClick={() => {
                 setEditingNextDate(true);
                 if (nextDateData?.nextBattleStartDate) {
-                  // Convert to local datetime-local format
-                  const date = new Date(nextDateData.nextBattleStartDate);
-                  const localDateStr = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
-                    .toISOString()
-                    .slice(0, 16);
-                  setNextDateInput(localDateStr);
+                  // Convert UTC date to EST for datetime-local input
+                  // The stored value is UTC, we need to show it as EST time
+                  const utcDate = new Date(nextDateData.nextBattleStartDate);
+                  // Subtract 5 hours to get EST time
+                  const estTime = utcDate.getTime() - 5 * 60 * 60 * 1000;
+                  const estDate = new Date(estTime);
+                  // Format as datetime-local string (YYYY-MM-DDTHH:MM)
+                  const estDateStr = estDate.toISOString().slice(0, 16);
+                  setNextDateInput(estDateStr);
                 }
               }}
               className="text-primary hover:text-primary-dark text-sm font-medium"
