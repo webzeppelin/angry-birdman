@@ -42,6 +42,13 @@ ratio score.
 Low-FP inactive players kept to suppress the clan's total FP for easier
 matchmaking.
 
+### Master Battle Schedule
+
+A centralized schedule of all CvC battles maintained by the system. All clans
+select battles from this master schedule, ensuring consistent Battle IDs across
+all clans and enabling cross-clan performance comparisons. New battles are
+automatically created every 3 days by the battle scheduler service.
+
 ## Architecture
 
 Three-tier web application built with modern open-source technologies:
@@ -70,9 +77,10 @@ Three-tier web application built with modern open-source technologies:
 - **Frontend**: React 18+, Vite 5+, TypeScript 5+, Tailwind CSS, React Query,
   React Router
 - **Backend**: Node.js 20 LTS+, Fastify 4+, TypeScript 5+, JWT authentication
-- **Database**: PostgreSQL 15+, Prisma ORM 5+
-- **Authentication**: Keycloak 23+ (OAuth2/OpenID Connect)
+- **Database**: PostgreSQL 15+, Prisma ORM 6+
+- **Authentication**: Keycloak 25+ (OAuth2/OpenID Connect)
 - **Cache**: Valkey (Redis fork) for session management
+- **Scheduler**: node-cron for automated battle creation
 - **Infrastructure**: Docker 24+, Docker Compose for local dev
 - **Common**: Shared TypeScript library for code reuse between frontend and
   backend
@@ -87,10 +95,21 @@ Three-tier web application built with modern open-source technologies:
 
 ## Key Features
 
+### Battle Scheduling & Management
+
+- **Automated Battle Creation** - Scheduler automatically creates new battles
+  every 3 days
+- **Centralized Schedule** - All clans share the same Master Battle schedule
+- **Consistent Battle IDs** - Each battle has a unique ID (YYYYMMDD format)
+  across all clans
+- **Timezone Support** - Official Angry Birds Time (EST) with user-local display
+- **Cross-Clan Comparisons** - Compare performance across different clans for
+  the same battle
+
 ### Battle Data Entry (Epic 4)
 
 - Efficient keyboard-first data entry workflow
-- Field order matches game UI for quick tab navigation
+- Battle selection from dropdown (no manual date entry required)
 - Automatic calculation of ratio scores and rankings
 - Draft saving for interrupted sessions
 - Validation to prevent data entry errors
@@ -181,8 +200,9 @@ angrybirdman/
    ```
 
    This creates:
-   - Action codes (HOLD, WARN, KICK, RESERVE, PASS)
+   - Action codes (HOLD, WARN, KICK, RESERVE, PASS, LEFT)
    - System settings (including Master Battle schedule)
+   - Master Battle schedule (historical and next battle)
    - Sample clans and test users
    - Test users matching Keycloak credentials
 
@@ -286,9 +306,13 @@ npm run type-check
 
 ### Core Entities
 
+- **Master Battles** - Centralized schedule of all CvC battles (system-wide)
+- **System Settings** - Global configuration (next battle date, scheduler
+  settings)
 - **Clans** - Registered clans with Rovio ID, name, country
 - **Roster Members** - Players with join/leave/kick tracking
-- **Clan Battles** - Comprehensive battle data with calculated metrics
+- **Clan Battles** - Comprehensive battle data with calculated metrics (linked
+  to Master Battle)
 - **Battle Player Stats** - Individual player performance
 - **Battle Nonplayer Stats** - Non-participants (including reserves)
 - **Monthly/Yearly Stats** - Aggregated performance summaries

@@ -72,7 +72,13 @@ database/
 
 ## Database Schema
 
-The database consists of **11 core tables** organized into logical groups:
+The database consists of **13 core tables** organized into logical groups:
+
+### System Configuration
+
+- **system_settings** - Global configuration settings (next battle date,
+  scheduler config)
+- **master_battles** - Centralized schedule of all CvC battles (system-wide)
 
 ### Core Entities
 
@@ -83,7 +89,7 @@ The database consists of **11 core tables** organized into logical groups:
 
 ### Battle Data
 
-- **clan_battles** - Individual CvC battle records
+- **clan_battles** - Individual CvC battle records (linked to Master Battle)
 - **clan_battle_player_stats** - Player performance in battles
 - **clan_battle_nonplayer_stats** - Non-participating player tracking
 
@@ -252,6 +258,47 @@ npm run studio
 
 ## Data Model Reference
 
+### System Settings
+
+System-wide configuration settings.
+
+| Field       | Type     | Description                                              | Nullable |
+| :---------- | :------- | :------------------------------------------------------- | :------- |
+| key         | String   | Primary key (e.g., "nextBattleStartDate")                | No       |
+| value       | String   | JSON-encoded value                                       | No       |
+| description | String   | Optional description of the setting                      | Yes      |
+| dataType    | String   | Data type: 'string', 'number', 'boolean', 'date', 'json' | No       |
+| createdAt   | DateTime | Record creation timestamp                                | No       |
+| updatedAt   | DateTime | Record update timestamp                                  | No       |
+
+**Key Settings**:
+
+- `nextBattleStartDate` - ISO timestamp for next battle (EST timezone)
+- `schedulerEnabled` - Boolean to enable/disable automatic battle creation
+
+**Relationships**: System-wide, no foreign keys
+
+### Master Battles
+
+Centralized schedule of all CvC battles in Official Angry Birds Time (EST).
+
+| Field          | Type     | Description                           | Nullable |
+| :------------- | :------- | :------------------------------------ | :------- |
+| battleId       | String   | Primary key (YYYYMMDD format)         | No       |
+| startTimestamp | DateTime | Battle start time (GMT)               | No       |
+| endTimestamp   | DateTime | Battle end time (GMT)                 | No       |
+| createdBy      | String   | userId of creator (NULL if automatic) | Yes      |
+| notes          | String   | Optional notes about schedule changes | Yes      |
+| createdAt      | DateTime | Record creation timestamp             | No       |
+| updatedAt      | DateTime | Record update timestamp               | No       |
+
+**Indexes**: startTimestamp  
+**Relationships**: Has many ClanBattles (one-to-many)
+
+**Note**: Battles are automatically created every 3 days by the battle scheduler
+service. Start/end times are stored in GMT but Battle IDs are based on EST
+dates.
+
 ### Clans
 
 Represents a clan using Angry Birdman to manage their data.
@@ -324,35 +371,41 @@ Lookup table for post-battle actions.
 
 Individual Clan-vs-Clan (CvC) battle records.
 
-| Field             | Type     | Description                    | Calculated | Nullable |
-| :---------------- | :------- | :----------------------------- | :--------- | :------- |
-| clanId            | Int      | Clan identifier (PK)           | No         | No       |
-| battleId          | String   | Battle ID: YYYYMMDD (PK)       | Yes        | No       |
-| startDate         | DateTime | Battle start date              | No         | No       |
-| endDate           | DateTime | Battle end date                | No         | No       |
-| result            | Int      | 1=Win, -1=Loss, 0=Tie          | Yes        | No       |
-| score             | Int      | Clan's total score             | No         | No       |
-| fp                | Int      | Sum of all FP (excl. reserves) | Yes        | No       |
-| baselineFp        | Int      | Clan baseline FP               | No         | No       |
-| ratio             | Float    | (score / baselineFp) \* 10     | Yes        | No       |
-| averageRatio      | Float    | (score / fp) \* 10             | Yes        | No       |
-| projectedScore    | Float    | Score if all played            | Yes        | No       |
-| opponentName      | String   | Opponent clan name             | No         | No       |
-| opponentRovioId   | Int      | Opponent Rovio ID              | No         | No       |
-| opponentCountry   | String   | Opponent country               | No         | No       |
-| opponentScore     | Int      | Opponent's score               | No         | No       |
-| opponentFp        | Int      | Opponent baseline FP           | No         | No       |
-| marginRatio       | Float    | Win/loss margin %              | Yes        | No       |
-| fpMargin          | Float    | FP difference %                | Yes        | No       |
-| nonplayingCount   | Int      | Non-players (excl. reserves)   | Yes        | No       |
-| nonplayingFpRatio | Float    | % FP from non-players          | Yes        | No       |
-| reserveCount      | Int      | Reserve players count          | Yes        | No       |
-| reserveFpRatio    | Float    | % FP from reserves             | Yes        | No       |
-| createdAt         | DateTime | Record creation timestamp      | No         | No       |
-| updatedAt         | DateTime | Record update timestamp        | No         | No       |
+| Field             | Type     | Description                              | Calculated | Nullable |
+| :---------------- | :------- | :--------------------------------------- | :--------- | :------- |
+| clanId            | Int      | Clan identifier (PK)                     | No         | No       |
+| battleId          | String   | Battle ID: YYYYMMDD (PK, FK)             | Yes        | No       |
+| startDate         | DateTime | Battle start date (denormalized from MB) | No         | No       |
+| endDate           | DateTime | Battle end date (denormalized from MB)   | No         | No       |
+| result            | Int      | 1=Win, -1=Loss, 0=Tie                    | Yes        | No       |
+| score             | Int      | Clan's total score                       | No         | No       |
+| fp                | Int      | Sum of all FP (excl. reserves)           | Yes        | No       |
+| baselineFp        | Int      | Clan baseline FP                         | No         | No       |
+| ratio             | Float    | (score / baselineFp) \* 10               | Yes        | No       |
+| averageRatio      | Float    | (score / fp) \* 10                       | Yes        | No       |
+| projectedScore    | Float    | Score if all played                      | Yes        | No       |
+| opponentName      | String   | Opponent clan name                       | No         | No       |
+| opponentRovioId   | Int      | Opponent Rovio ID                        | No         | No       |
+| opponentCountry   | String   | Opponent country                         | No         | No       |
+| opponentScore     | Int      | Opponent's score                         | No         | No       |
+| opponentFp        | Int      | Opponent baseline FP                     | No         | No       |
+| marginRatio       | Float    | Win/loss margin %                        | Yes        | No       |
+| fpMargin          | Float    | FP difference %                          | Yes        | No       |
+| nonplayingCount   | Int      | Non-players (excl. reserves)             | Yes        | No       |
+| nonplayingFpRatio | Float    | % FP from non-players                    | Yes        | No       |
+| reserveCount      | Int      | Reserve players count                    | Yes        | No       |
+| reserveFpRatio    | Float    | % FP from reserves                       | Yes        | No       |
+| createdAt         | DateTime | Record creation timestamp                | No         | No       |
+| updatedAt         | DateTime | Record update timestamp                  | No         | No       |
 
 **Indexes**: clanId, battleId, startDate  
-**Composite Primary Key**: (clanId, battleId)
+**Composite Primary Key**: (clanId, battleId)  
+**Foreign Keys**: battleId → MasterBattle.battleId (Restrict)  
+**Relationships**: Belongs to Clan, Belongs to MasterBattle
+
+**Note**: startDate and endDate are denormalized from MasterBattle for query
+performance. Battle ID must exist in MasterBattle before ClanBattle can be
+created.
 
 ### Clan Battle Player Stats
 
@@ -469,6 +522,11 @@ period).
 ### Entity Relationship Diagram (Text)
 
 ```
+SystemSettings (system-wide config, no foreign keys)
+
+MasterBattle (centralized schedule)
+└─ Has Many: ClanBattles
+
 Clan
 ├─ Has Many: Users
 ├─ Has Many: RosterMembers
@@ -490,6 +548,7 @@ RosterMember
 
 ClanBattle
 ├─ Belongs To: Clan
+├─ Belongs To: MasterBattle (battleId FK)
 ├─ Has Many: ClanBattlePlayerStats
 └─ Has Many: ClanBattleNonplayerStats
 
