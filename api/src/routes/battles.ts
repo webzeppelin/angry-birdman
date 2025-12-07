@@ -214,7 +214,11 @@ const battlesRoutes: FastifyPluginAsync = async (fastify) => {
         const battle = await battleService.createBattle(clanId, request.body);
         return reply.status(201).send(battle);
       } catch (error) {
-        if (error instanceof Error && error.message.includes('already exists')) {
+        if (
+          error instanceof Error &&
+          (error.message.includes('already exists') ||
+            error.message.includes('already been recorded'))
+        ) {
           return reply.status(409).send({
             error: 'Conflict',
             message: error.message,
@@ -313,12 +317,9 @@ const battlesRoutes: FastifyPluginAsync = async (fastify) => {
         security: [{ bearerAuth: [] }],
         params: battleIdParamSchema,
         response: {
-          200: {
-            type: 'object',
-            properties: {
-              success: { type: 'boolean' },
-            },
-          },
+          200: z.object({
+            success: z.boolean(),
+          }),
           404: errorResponseSchema,
         },
       },

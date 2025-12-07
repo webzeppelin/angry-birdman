@@ -124,11 +124,10 @@ export class BattleSchedulerService {
     }
 
     // Calculate end timestamp (start + 2 days - 1 millisecond)
-    // Battles last for 2 days (48 hours), ending at 23:59:59.999 on the second day
-    // If start is Dec 15 00:00:00, end is Dec 16 23:59:59.999
+    // Battles last for 2 days (48 hours)
+    // If start is Dec 15 00:00:00, end is Dec 16 23:59:59.999 (48 hours later minus 1ms)
     const endDate = new Date(startDate);
-    endDate.setUTCDate(endDate.getUTCDate() + 1); // Go to second day
-    endDate.setUTCHours(23, 59, 59, 999); // End of second day
+    endDate.setUTCMilliseconds(endDate.getUTCMilliseconds() + 48 * 60 * 60 * 1000 - 1); // Add 48 hours minus 1ms
 
     // Convert EST times to GMT for storage
     const startTimestampGmt = estToGmt(startDate);

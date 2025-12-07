@@ -404,47 +404,68 @@ export class BattleService {
       throw new Error(`Battle ${battleId} not found for clan ${clanId}`);
     }
 
-    // If updating battle data, recalculate everything
-    // For simplicity, we'll delete and recreate (transaction ensures atomicity)
-    if (data.playerStats || data.nonplayerStats) {
-      await this.prisma.$transaction(async (tx) => {
-        // Delete existing stats
-        await tx.clanBattlePlayerStats.deleteMany({
-          where: { clanId, battleId },
-        });
-        await tx.clanBattleNonplayerStats.deleteMany({
-          where: { clanId, battleId },
-        });
-        await tx.clanBattle.delete({
-          where: { clanId_battleId: { clanId, battleId } },
-        });
-      });
+    // Get existing player and nonplayer stats to merge if not provided
+    const existingBattleWithStats = await this.prisma.clanBattle.findUnique({
+      where: { clanId_battleId: { clanId, battleId } },
+      include: {
+        playerStats: true,
+        nonplayerStats: true,
+      },
+    });
 
-      // Recreate with updated data (merge existing and updates)
-      // Note: battleId stays the same, dates come from MasterBattle
-      const mergedData: BattleEntry = {
-        battleId, // battleId cannot be changed
-        // startDate and endDate removed - they come from MasterBattle
-        opponentRovioId: data.opponentRovioId || existing.opponentRovioId,
-        opponentName: data.opponentName || existing.opponentName,
-        opponentCountry: data.opponentCountry || existing.opponentCountry,
-        score: data.score !== undefined ? data.score : existing.score,
-        baselineFp: data.baselineFp || existing.baselineFp,
-        opponentScore:
-          data.opponentScore !== undefined ? data.opponentScore : existing.opponentScore,
-        opponentFp: data.opponentFp || existing.opponentFp,
-        playerStats: data.playerStats || [],
-        nonplayerStats: data.nonplayerStats || [],
-      };
-
-      return this.createBattle(clanId, mergedData);
+    if (!existingBattleWithStats) {
+      throw new Error(`Battle ${battleId} not found for clan ${clanId}`);
     }
 
-    // Update monthly and yearly summaries
-    await this.updateMonthlySummary(clanId, existing.startDate);
-    await this.updateYearlySummary(clanId, existing.startDate);
+    // If updating battle data, recalculate everything
+    // For simplicity, we'll delete and recreate (transaction ensures atomicity)
+    await this.prisma.$transaction(async (tx) => {
+      // Delete existing stats
+      await tx.clanBattlePlayerStats.deleteMany({
+        where: { clanId, battleId },
+      });
+      await tx.clanBattleNonplayerStats.deleteMany({
+        where: { clanId, battleId },
+      });
+      await tx.clanBattle.delete({
+        where: { clanId_battleId: { clanId, battleId } },
+      });
+    });
 
-    return this.getBattleById(clanId, battleId);
+    // Recreate with updated data (merge existing and updates)
+    // Note: battleId stays the same, dates come from MasterBattle
+    const mergedData: BattleEntry = {
+      battleId, // battleId cannot be changed
+      // startDate and endDate removed - they come from MasterBattle
+      opponentRovioId: data.opponentRovioId || existing.opponentRovioId,
+      opponentName: data.opponentName || existing.opponentName,
+      opponentCountry: data.opponentCountry || existing.opponentCountry,
+      score: data.score !== undefined ? data.score : existing.score,
+      baselineFp: data.baselineFp || existing.baselineFp,
+      opponentScore: data.opponentScore !== undefined ? data.opponentScore : existing.opponentScore,
+      opponentFp: data.opponentFp || existing.opponentFp,
+      playerStats:
+        data.playerStats ||
+        existingBattleWithStats.playerStats.map((ps) => ({
+          playerId: ps.playerId,
+          rank: ps.rank,
+          score: ps.score,
+          fp: ps.fp,
+          actionCode: ps.actionCode,
+          actionReason: ps.actionReason,
+        })),
+      nonplayerStats:
+        data.nonplayerStats ||
+        existingBattleWithStats.nonplayerStats.map((nps) => ({
+          playerId: nps.playerId,
+          fp: nps.fp,
+          reserve: nps.reserve,
+          actionCode: nps.actionCode,
+          actionReason: nps.actionReason,
+        })),
+    };
+
+    return this.createBattle(clanId, mergedData);
   }
 
   /**

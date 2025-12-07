@@ -51,6 +51,15 @@ describe('Clan Routes', () => {
         },
       });
 
+      // Create master battle first (required for foreign key constraint)
+      await prisma.masterBattle.create({
+        data: {
+          battleId: '20250101',
+          startTimestamp: new Date('2025-01-01T05:00:00.000Z'),
+          endTimestamp: new Date('2025-01-03T04:59:59.999Z'),
+        },
+      });
+
       // Create some battles for clan1
       await prisma.clanBattle.create({
         data: {
@@ -268,6 +277,15 @@ describe('Clan Routes', () => {
           name: 'Test Clan',
           country: 'US',
           registrationDate: new Date('2025-01-01'),
+        },
+      });
+
+      // Create master battle first (required for foreign key constraint)
+      await prisma.masterBattle.create({
+        data: {
+          battleId: '20250101',
+          startTimestamp: new Date('2025-01-01T05:00:00.000Z'),
+          endTimestamp: new Date('2025-01-03T04:59:59.999Z'),
         },
       });
 

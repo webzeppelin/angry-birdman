@@ -24,6 +24,7 @@ export default [
       '**/.turbo/**',
       '**/*.min.js',
       'database/prisma/migrations/**',
+      'database/generated/**',
       '**/tailwind.config.js',
       '**/postcss.config.js',
       'keycloak/test/**/*.js',
