@@ -116,6 +116,139 @@ Restore the database from a backup file.
 - Shows current database state before overwriting
 - Validates backup file exists before starting
 
+### Keycloak Management
+
+#### create-keycloak-realm.sh
+
+Create and configure the Angry Birdman realm in Keycloak with all necessary
+clients and service account permissions.
+
+```bash
+# Create realm (requires admin password)
+export KEYCLOAK_ADMIN_PASSWORD='your-admin-password'
+./scripts/create-keycloak-realm.sh
+
+# Or pass via environment inline
+KEYCLOAK_ADMIN_PASSWORD='your-password' ./scripts/create-keycloak-realm.sh
+```
+
+**Environment Variables:**
+
+- `KEYCLOAK_URL` - Keycloak base URL (default: http://localhost:8080)
+- `KEYCLOAK_ADMIN_USER` - Admin username (default: admin)
+- `KEYCLOAK_ADMIN_PASSWORD` - Admin password (required)
+
+**What it does:**
+
+1. Validates prerequisites (realm file exists, Keycloak running)
+2. Authenticates with Keycloak admin
+3. Checks if realm already exists (prompts to delete if found)
+4. Imports realm configuration from `keycloak/config/angrybirdman-realm.json`
+5. Retrieves service account client secret
+6. Assigns required Admin API permissions to service account:
+   - manage-users
+   - view-users
+   - query-users
+7. Displays client credentials for .env configuration
+
+**Created Clients:**
+
+- `angrybirdman-frontend` - Public OAuth2 client for React frontend
+- `angrybirdman-api-service` - Confidential service account for user management
+
+**Output:**
+
+- Service account client ID and secret
+- Instructions for updating .env file
+
+**Next Steps:** Run `create-keycloak-test-users.sh` to create test users
+
+#### create-keycloak-test-users.sh
+
+Create test users in Keycloak and generate a mapping file for database seeding.
+
+```bash
+# Create test users (requires admin password)
+export KEYCLOAK_ADMIN_PASSWORD='your-admin-password'
+./scripts/create-keycloak-test-users.sh
+```
+
+**Environment Variables:**
+
+- `KEYCLOAK_URL` - Keycloak base URL (default: http://localhost:8080)
+- `KEYCLOAK_ADMIN_USER` - Admin username (default: admin)
+- `KEYCLOAK_ADMIN_PASSWORD` - Admin password (required)
+
+**What it does:**
+
+1. Authenticates with Keycloak
+2. Creates or updates test users with passwords
+3. Assigns 'user' role to all test users
+4. Generates `scripts/local-keycloak-test-users.json` mapping file
+
+**Test Users Created:**
+
+| Username       | Password       | Description            |
+| -------------- | -------------- | ---------------------- |
+| testsuperadmin | SuperAdmin123! | Superadmin (no clan)   |
+| testowner      | ClanOwner123!  | Clan owner for clan 54 |
+| testadmin      | ClanAdmin123!  | Clan admin for clan 54 |
+| testuser       | TestUser123!   | Basic user for clan 54 |
+| testowner2     | ClanOwner2123! | Clan owner for clan 55 |
+
+**Output File:**
+
+- `scripts/local-keycloak-test-users.json` - Username to Keycloak subject ID
+  mapping
+- This file is used by `database/prisma/seed.ts` to create user records with
+  correct IDs
+- File is gitignored (each dev instance has unique IDs)
+
+**Next Steps:** Run database seed to create user records in database
+
+#### test-keycloak-auth.js
+
+Test authentication flows and JWT token validation for Keycloak users.
+
+```bash
+# Test authentication for a user
+./scripts/test-keycloak-auth.js testuser TestUser123!
+
+# Use with different Keycloak instance
+KEYCLOAK_URL=https://keycloak.example.com ./scripts/test-keycloak-auth.js testuser password
+
+# Test with custom client
+CLIENT_ID=my-client ./scripts/test-keycloak-auth.js testuser password
+```
+
+**Environment Variables:**
+
+- `KEYCLOAK_URL` - Keycloak base URL (default: http://localhost:8080)
+- `KEYCLOAK_REALM` - Realm name (default: angrybirdman)
+- `CLIENT_ID` - Client ID to use (default: angrybirdman-frontend)
+
+**What it does:**
+
+1. Authenticates user with password grant
+2. Retrieves access token and refresh token
+3. Parses JWT claims
+4. Tests token refresh
+5. Displays decoded token information
+
+**Use Cases:**
+
+- Verifying user credentials work
+- Debugging authentication issues
+- Inspecting JWT token claims
+- Testing token refresh flow
+
+**Output:**
+
+- Authentication success/failure
+- Decoded JWT payload (iss, sub, preferred_username, email, roles)
+- Token expiration times
+- Refresh token test results
+
 ### Deployment Preparation
 
 #### build-all.sh
