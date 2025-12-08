@@ -157,81 +157,43 @@ angrybirdman/
 
 ## Getting Started
 
-### Prerequisites
+New to the project? Follow our comprehensive setup guide:
 
-- **Docker Desktop** 24+ (includes Docker Compose)
-- **Node.js** 20 LTS+ (for local development)
-- **Git** for version control
+**📖 [New Developer Guide](docs/new-developer-guide.md)**
 
-### Local Development Setup
+This guide walks you through:
 
-1. **Clone the repository**
+- Installing prerequisites (Docker, Node.js, etc.)
+- Cloning and configuring the repository
+- Setting up Keycloak and creating test users
+- Initializing and seeding the database
+- Running the application locally
+- Troubleshooting common issues
 
-   ```bash
-   git clone https://github.com/yourusername/angrybirdman.git
-   cd angrybirdman
-   ```
-
-2. **Start infrastructure services**
-
-   ```bash
-   docker-compose up -d
-   ```
-
-   This starts PostgreSQL, Keycloak, and Valkey.
-
-3. **Install dependencies**
-
-   ```bash
-   npm install
-   ```
-
-4. **Run database migrations**
-
-   ```bash
-   cd database
-   npx prisma migrate deploy
-   ```
-
-5. **Seed the database**
-
-   ```bash
-   npm run seed
-   ```
-
-   This creates:
-   - Action codes (HOLD, WARN, KICK, RESERVE, PASS, LEFT)
-   - System settings (including Master Battle schedule)
-   - Master Battle schedule (historical and next battle)
-   - Sample clans and test users
-   - Test users matching Keycloak credentials
-
-6. **Start development servers**
-
-   ```bash
-   # Terminal 1 - API
-   cd api
-   npm run dev
-
-   # Terminal 2 - Frontend
-   cd frontend
-   npm run dev
-   ```
-
-7. **Access the application**
-   - Frontend: http://localhost:3000
-   - API: http://localhost:3001
-   - Keycloak: http://localhost:8080
-
-### Docker-Only Development
-
-Alternatively, run everything in Docker:
+**Quick Start** (for experienced developers):
 
 ```bash
-docker-compose up
+# Clone and install
+git clone https://github.com/webzeppelin/angry-birdman.git
+cd angrybirdman
+npm install
+
+# Start infrastructure
+npm run docker:up
+
+# Set up Keycloak (requires KEYCLOAK_ADMIN_PASSWORD)
+./scripts/create-keycloak-realm.sh
+./scripts/create-keycloak-test-users.sh
+
+# Initialize database
+npm run db:migrate:deploy
+npm run db:seed
+
+# Start development servers
+npm run dev
 ```
 
-All services will start automatically with hot-reloading enabled.
+Access the application at http://localhost:3000
 
 ## Documentation
 
@@ -258,49 +220,26 @@ Additional documentation:
 
 ## Development Workflow
 
-### Branching Strategy
+See the **[New Developer Guide](docs/new-developer-guide.md)** for detailed
+workflow information, including common tasks, testing procedures, and
+troubleshooting.
 
-- `main` - Production-ready code
-- `develop` - Integration branch
-- `feature/*` - Individual features
-- `hotfix/*` - Urgent fixes
-
-### Commit Conventions
-
-Follow Conventional Commits format:
-
-- `feat:` - New features
-- `fix:` - Bug fixes
-- `docs:` - Documentation changes
-- `refactor:` - Code refactoring
-- `test:` - Test additions/changes
-- `chore:` - Maintenance tasks
-
-### Testing
+**Key Commands**:
 
 ```bash
-# Run all tests
-npm test
-
-# Run tests in watch mode
-npm test -- --watch
-
-# Run tests with coverage
-npm test -- --coverage
+npm run dev              # Start API and frontend dev servers
+npm test                 # Run all tests
+npm run lint             # Lint code
+npm run format           # Format code with Prettier
+npm run type-check       # TypeScript type checking
+npm run docker:up        # Start Docker services
+npm run docker:down      # Stop Docker services
+npm run db:studio        # Open Prisma Studio
 ```
 
-### Code Quality
-
-```bash
-# Lint code
-npm run lint
-
-# Format code
-npm run format
-
-# Type check
-npm run type-check
-```
+**Commit Conventions**: Follow
+[Conventional Commits](https://www.conventionalcommits.org/) format (`feat:`,
+`fix:`, `docs:`, `refactor:`, `test:`, `chore:`)
 
 ## Data Model Highlights
 
