@@ -50,6 +50,7 @@ tests/**/*.map
 
 # Database
 *.sql
+!database/postgres/init/*.sql
 *.dump
 *.backup
 backup/
