@@ -26,36 +26,42 @@ CREATE TABLE "master_battles" (
 -- CreateIndex
 CREATE INDEX "idx_master_battle_start" ON "master_battles"("start_timestamp");
 
--- Populate master_battles from existing clan_battles data
+-- Populate master_battles from existing clan_battles data (if table exists)
 -- Extract unique battle IDs and create corresponding master battle entries
-INSERT INTO master_battles (battle_id, start_timestamp, end_timestamp, created_by, notes, created_at, updated_at)
-SELECT DISTINCT
-    cb.battle_id,
-    -- Convert start_date (DATE) to timestamp at midnight GMT
-    cb.start_date::timestamp AT TIME ZONE 'GMT',
-    -- Convert end_date (DATE) to timestamp at 23:59:59 GMT
-    (cb.end_date::timestamp + interval '23 hours 59 minutes 59 seconds') AT TIME ZONE 'GMT',
-    NULL as created_by, -- NULL indicates these are historical/migrated battles
-    'Migrated from existing clan battle data' as notes,
-    CURRENT_TIMESTAMP as created_at,
-    CURRENT_TIMESTAMP as updated_at
-FROM clan_battles cb
-ORDER BY cb.battle_id;
+-- This is wrapped in a conditional block to handle fresh installations
+DO $$
+BEGIN
+    IF EXISTS (SELECT FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'clan_battles') THEN
+        INSERT INTO master_battles (battle_id, start_timestamp, end_timestamp, created_by, notes, created_at, updated_at)
+        SELECT DISTINCT
+            cb.battle_id,
+            -- Convert start_date (DATE) to timestamp at midnight GMT
+            cb.start_date::timestamp AT TIME ZONE 'GMT',
+            -- Convert end_date (DATE) to timestamp at 23:59:59 GMT
+            (cb.end_date::timestamp + interval '23 hours 59 minutes 59 seconds') AT TIME ZONE 'GMT',
+            NULL as created_by, -- NULL indicates these are historical/migrated battles
+            'Migrated from existing clan battle data' as notes,
+            CURRENT_TIMESTAMP as created_at,
+            CURRENT_TIMESTAMP as updated_at
+        FROM clan_battles cb
+        ORDER BY cb.battle_id;
+    END IF;
+END $$;
 
 -- Insert system settings
 -- Calculate next battle date as 3 days after the most recent battle
--- If no battles exist, use a default date
+-- If no battles exist, use a default date (3 days from now)
 INSERT INTO system_settings (key, value, description, "dataType", created_at, updated_at)
 VALUES (
     'nextBattleStartDate',
     -- Format as ISO 8601 string: most recent battle + 3 days at midnight EST
     -- EST is UTC-5 (never EDT), so we need to add 5 hours to get EST midnight in GMT
+    -- If clan_battles doesn't exist or is empty, default to 3 days from now
     (
-        SELECT COALESCE(
-            to_json((MAX(cb.start_date) + interval '3 days' + interval '5 hours')::timestamp AT TIME ZONE 'UTC')::text,
-            to_json((CURRENT_DATE + interval '3 days' + interval '5 hours')::timestamp AT TIME ZONE 'UTC')::text
-        )
-        FROM clan_battles cb
+        SELECT to_json((COALESCE(
+            (SELECT MAX(cb.start_date) FROM clan_battles cb WHERE EXISTS (SELECT FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'clan_battles')),
+            CURRENT_DATE
+        ) + interval '3 days' + interval '5 hours')::timestamp AT TIME ZONE 'UTC')::text
     ),
     'Next scheduled battle start date in Official Angry Birds Time (EST)',
     'date',
