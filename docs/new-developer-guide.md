@@ -177,15 +177,12 @@ with username-to-ID mappings. This is a known issue being addressed.
 
 ## Database Setup
 
-### 1. Configure Prisma Database Connection
+### 1. Generate Prisma Client
 
-Prisma needs the database URL to be explicitly configured in the schema file for
-deployment migrations:
+Generate the Prisma Client with the database configuration:
 
 ```bash
-cd database
 npm run db:generate
-cd ..
 ```
 
 This generates the Prisma Client with the correct database configuration from

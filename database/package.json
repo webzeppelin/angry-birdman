@@ -9,16 +9,16 @@
     ".": "./index.ts"
   },
   "scripts": {
-    "migrate:dev": "prisma migrate dev",
-    "migrate:deploy": "prisma migrate deploy",
-    "migrate:reset": "prisma migrate reset --force",
-    "generate": "prisma generate",
-    "studio": "prisma studio",
+    "migrate:dev": "cd .. && prisma migrate dev",
+    "migrate:deploy": "cd .. && prisma migrate deploy",
+    "migrate:reset": "cd .. && prisma migrate reset --force",
+    "generate": "cd .. && prisma generate",
+    "studio": "cd .. && prisma studio",
     "seed": "tsx prisma/seed.ts",
-    "db:push": "prisma db push",
-    "db:pull": "prisma db pull",
-    "format": "prisma format",
-    "validate": "prisma validate"
+    "db:push": "cd .. && prisma db push",
+    "db:pull": "cd .. && prisma db pull",
+    "format": "cd .. && prisma format",
+    "validate": "cd .. && prisma validate"
   },
   "keywords": [
     "angry-birds-2",
