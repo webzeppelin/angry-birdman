@@ -62,7 +62,7 @@ All commands should output their respective version numbers.
 
 ```bash
 git clone https://github.com/webzeppelin/angry-birdman.git
-cd angrybirdman
+cd angry-birdman
 ```
 
 ### 2. Configure Environment Variables
@@ -121,21 +121,32 @@ npm run docker:ps
 Look for "healthy" status for all services. If services show "starting", wait a
 bit longer.
 
-### 2. Create Keycloak Realm
+### 2. Get Keycloak Client Secret
 
-Create the `angrybirdman` realm with necessary clients and configurations:
+The `angrybirdman` realm is automatically created when Keycloak starts (the
+configuration is mounted into the container). You need to retrieve the API
+client secret:
 
-```bash
-export KEYCLOAK_ADMIN_PASSWORD='your_secure_password_here'
-./scripts/create-keycloak-realm.sh
-```
+1. **Open Keycloak Admin Console**: http://localhost:8080/admin
+   - Username: `admin`
+   - Password: `<your KEYCLOAK_ADMIN_PASSWORD from .env>`
 
-**Important**: The script will output a client secret. Copy this value and
-update your `.env` file:
+2. **Switch to the angrybirdman realm**:
+   - Click the realm dropdown in the top-left corner
+   - Select "angrybirdman"
 
-```bash
-KEYCLOAK_ADMIN_CLIENT_SECRET=<paste_secret_here>
-```
+3. **Navigate to the API client**:
+   - Click "Clients" in the left sidebar
+   - Click on `angrybirdman-api-service`
+
+4. **Get the client secret**:
+   - Click the "Credentials" tab
+   - Copy the "Client secret" value
+
+5. **Update your .env file**:
+   ```bash
+   KEYCLOAK_ADMIN_CLIENT_SECRET=<paste_secret_here>
+   ```
 
 ### 3. Create Keycloak Test Users
 
@@ -158,11 +169,29 @@ This creates the following test users:
 The script also generates `scripts/local-keycloak-test-users.json` with user ID
 mappings for database seeding.
 
+**Note**: If the generated JSON file contains ANSI color codes or console output
+mixed with the JSON data, manually edit the file to keep only the JSON object
+with username-to-ID mappings. This is a known issue being addressed.
+
 ---
 
 ## Database Setup
 
-### 1. Run Database Migrations
+### 1. Configure Prisma Database Connection
+
+Prisma needs the database URL to be explicitly configured in the schema file for
+deployment migrations:
+
+```bash
+cd database
+npm run db:generate
+cd ..
+```
+
+This generates the Prisma Client with the correct database configuration from
+your `.env` file.
+
+### 2. Run Database Migrations
 
 Apply all database migrations to create the schema:
 
@@ -172,7 +201,7 @@ npm run db:migrate:deploy
 
 This creates all tables, indexes, and constraints defined in the Prisma schema.
 
-### 2. Seed the Database
+### 3. Seed the Database
 
 Populate the database with test data:
 

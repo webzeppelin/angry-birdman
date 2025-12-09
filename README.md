@@ -175,17 +175,17 @@ This guide walks you through:
 ```bash
 # Clone and install
 git clone https://github.com/webzeppelin/angry-birdman.git
-cd angrybirdman
+cd angry-birdman
 npm install
 
-# Start infrastructure
+# Start infrastructure (Keycloak realm auto-created from mounted config)
 npm run docker:up
 
-# Set up Keycloak (requires KEYCLOAK_ADMIN_PASSWORD)
-./scripts/create-keycloak-realm.sh
+# Create test users in Keycloak
 ./scripts/create-keycloak-test-users.sh
 
 # Initialize database
+npm run db:generate
 npm run db:migrate:deploy
 npm run db:seed
 
@@ -194,6 +194,10 @@ npm run dev
 ```
 
 Access the application at http://localhost:3000
+
+**Note**: You'll need to get the `KEYCLOAK_ADMIN_CLIENT_SECRET` from the
+Keycloak admin console and add it to your `.env` file. See the
+[New Developer Guide](docs/new-developer-guide.md) for details.
 
 ## Documentation
 

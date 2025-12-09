@@ -101,7 +101,8 @@ create_user() {
     local password=$3
     local description=$4
     
-    echo -e "${YELLOW}👤 Processing user: ${username}${NC}"
+    # Output to stderr so it doesn't pollute the return value
+    echo -e "${YELLOW}👤 Processing user: ${username}${NC}" >&2
     
     # Check if user already exists
     EXISTING_USER=$(curl -s -X GET \
@@ -111,7 +112,7 @@ create_user() {
     USER_ID=$(echo "$EXISTING_USER" | grep -o '"id":"[^"]*' | head -1 | cut -d'"' -f4)
     
     if [ -n "$USER_ID" ]; then
-        echo -e "   ${YELLOW}⚠️  User already exists (ID: ${USER_ID})${NC}"
+        echo -e "   ${YELLOW}⚠️  User already exists (ID: ${USER_ID})${NC}" >&2
         
         # Update password
         RESET_RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X PUT \
@@ -121,9 +122,9 @@ create_user() {
           -d "{\"type\":\"password\",\"value\":\"${password}\",\"temporary\":false}")
         
         if [ "$RESET_RESPONSE" = "204" ]; then
-            echo -e "   ${GREEN}✅ Password updated${NC}"
+            echo -e "   ${GREEN}✅ Password updated${NC}" >&2
         else
-            echo -e "   ${YELLOW}⚠️  Password update returned HTTP ${RESET_RESPONSE}${NC}"
+            echo -e "   ${YELLOW}⚠️  Password update returned HTTP ${RESET_RESPONSE}${NC}" >&2
         fi
     else
         # Create new user
@@ -144,7 +145,7 @@ create_user() {
           }")
         
         if [ "$CREATE_RESPONSE" = "201" ]; then
-            echo -e "   ${GREEN}✅ User created${NC}"
+            echo -e "   ${GREEN}✅ User created${NC}" >&2
             
             # Get the newly created user ID
             EXISTING_USER=$(curl -s -X GET \
@@ -153,7 +154,7 @@ create_user() {
             
             USER_ID=$(echo "$EXISTING_USER" | grep -o '"id":"[^"]*' | head -1 | cut -d'"' -f4)
         else
-            echo -e "   ${RED}❌ Failed to create user (HTTP ${CREATE_RESPONSE})${NC}"
+            echo -e "   ${RED}❌ Failed to create user (HTTP ${CREATE_RESPONSE})${NC}" >&2
             return 1
         fi
     fi
@@ -174,14 +175,14 @@ create_user() {
           -d "[{\"id\":\"${ROLE_ID}\",\"name\":\"${ROLE_NAME}\"}]")
         
         if [ "$ASSIGN_RESPONSE" = "204" ]; then
-            echo -e "   ${GREEN}✅ Role 'user' assigned${NC}"
+            echo -e "   ${GREEN}✅ Role 'user' assigned${NC}" >&2
         fi
     fi
     
-    echo -e "   ${BLUE}Description: ${description}${NC}"
-    echo ""
+    echo -e "   ${BLUE}Description: ${description}${NC}" >&2
+    echo "" >&2
     
-    # Return user ID for mapping
+    # Return user ID for mapping (stdout only)
     echo "$USER_ID"
 }
 
