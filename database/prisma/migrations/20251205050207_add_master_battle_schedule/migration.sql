@@ -51,23 +51,36 @@ END $$;
 -- Insert system settings
 -- Calculate next battle date as 3 days after the most recent battle
 -- If no battles exist, use a default date (3 days from now)
-INSERT INTO system_settings (key, value, description, "dataType", created_at, updated_at)
-VALUES (
-    'nextBattleStartDate',
-    -- Format as ISO 8601 string: most recent battle + 3 days at midnight EST
-    -- EST is UTC-5 (never EDT), so we need to add 5 hours to get EST midnight in GMT
-    -- If clan_battles doesn't exist or is empty, default to 3 days from now
-    (
+-- This must also be conditional to handle fresh installations
+DO $$
+DECLARE
+    next_battle_date TEXT;
+BEGIN
+    -- Check if clan_battles exists and has data
+    IF EXISTS (SELECT FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'clan_battles') THEN
+        -- Table exists, try to get the most recent battle date
         SELECT to_json((COALESCE(
-            (SELECT MAX(cb.start_date) FROM clan_battles cb WHERE EXISTS (SELECT FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'clan_battles')),
+            (SELECT MAX(cb.start_date) FROM clan_battles cb),
             CURRENT_DATE
         ) + interval '3 days' + interval '5 hours')::timestamp AT TIME ZONE 'UTC')::text
-    ),
-    'Next scheduled battle start date in Official Angry Birds Time (EST)',
-    'date',
-    CURRENT_TIMESTAMP,
-    CURRENT_TIMESTAMP
-);
+        INTO next_battle_date;
+    ELSE
+        -- Table doesn't exist, use default (3 days from now)
+        SELECT to_json((CURRENT_DATE + interval '3 days' + interval '5 hours')::timestamp AT TIME ZONE 'UTC')::text
+        INTO next_battle_date;
+    END IF;
+    
+    -- Insert the calculated date
+    INSERT INTO system_settings (key, value, description, "dataType", created_at, updated_at)
+    VALUES (
+        'nextBattleStartDate',
+        next_battle_date,
+        'Next scheduled battle start date in Official Angry Birds Time (EST)',
+        'date',
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP
+    );
+END $$;
 
 -- Also insert the scheduler enabled setting
 INSERT INTO system_settings (key, value, description, "dataType", created_at, updated_at)
@@ -80,5 +93,10 @@ VALUES (
     CURRENT_TIMESTAMP
 );
 
--- AddForeignKey
-ALTER TABLE "clan_battles" ADD CONSTRAINT "clan_battles_battle_id_fkey" FOREIGN KEY ("battle_id") REFERENCES "master_battles"("battle_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+-- AddForeignKey (only if clan_battles table exists)
+DO $$
+BEGIN
+    IF EXISTS (SELECT FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'clan_battles') THEN
+        ALTER TABLE "clan_battles" ADD CONSTRAINT "clan_battles_battle_id_fkey" FOREIGN KEY ("battle_id") REFERENCES "master_battles"("battle_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+    END IF;
+END $$;
