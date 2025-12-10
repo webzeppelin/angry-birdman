@@ -21,8 +21,10 @@ import pg from 'pg';
 
 import { PrismaClient } from '../generated/client/client';
 
-// Load environment variables from prisma directory
-dotenvConfig({ path: './prisma/.env' });
+// Load environment variables from project root
+// When running as a workspace script, we're in the database directory
+// So we need to go up two levels to find the root .env file
+dotenvConfig({ path: join(__dirname, '../../../.env') });
 
 const connectionString = process.env.DATABASE_URL;
 if (!connectionString) {
