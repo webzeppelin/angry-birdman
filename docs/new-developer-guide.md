@@ -201,23 +201,13 @@ npm run db:migrate:deploy
 
 This creates all tables, indexes, and constraints defined in the Prisma schema.
 
-**Verify migrations**: You should see output indicating that **5 migrations**
-are being applied:
+**Verify migration**: You should see output indicating that **1 migration** is
+being applied:
 
-- `20251108002947_init` - Creates all core tables
-- `20251109144244_add_admin_requests_and_audit_logs`
-- `20251109210344_add_user_enabled_field`
-- `20251111033447_add_user_roles`
-- `20251205050207_add_master_battle_schedule` - Adds master battles and system
-  settings
+- `0_init` - Creates complete database schema
 
-If you only see "1 migration found", there's a configuration issue. Try running
-from the project root with an explicit config path:
-
-```bash
-cd /home/aford/projects/angry-birdman
-npx prisma migrate deploy --config ./prisma.config.ts
-```
+This single squashed migration contains all the schema from the project's
+development history.
 
 ### 3. Seed the Database
 
