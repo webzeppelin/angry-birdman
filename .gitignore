@@ -51,6 +51,7 @@ tests/**/*.map
 # Database
 *.sql
 !database/postgres/init/*.sql
+!database/prisma/migrations/**/*.sql
 *.dump
 *.backup
 backup/
