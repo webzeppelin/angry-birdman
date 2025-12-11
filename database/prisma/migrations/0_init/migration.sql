@@ -1,3 +1,6 @@
+-- CreateSchema
+CREATE SCHEMA IF NOT EXISTS "public";
+
 -- CreateTable
 CREATE TABLE "clans" (
     "clan_id" SERIAL NOT NULL,
@@ -19,10 +22,44 @@ CREATE TABLE "users" (
     "email" VARCHAR(255) NOT NULL,
     "clan_id" INTEGER,
     "owner" BOOLEAN NOT NULL DEFAULT false,
+    "enabled" BOOLEAN NOT NULL DEFAULT true,
+    "roles" TEXT[] DEFAULT ARRAY[]::TEXT[],
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("user_id")
+);
+
+-- CreateTable
+CREATE TABLE "admin_requests" (
+    "request_id" SERIAL NOT NULL,
+    "user_id" VARCHAR(255) NOT NULL,
+    "clan_id" INTEGER NOT NULL,
+    "message" VARCHAR(256),
+    "status" VARCHAR(20) NOT NULL,
+    "reviewed_by" VARCHAR(255),
+    "reviewed_at" TIMESTAMP(3),
+    "rejection_reason" TEXT,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "admin_requests_pkey" PRIMARY KEY ("request_id")
+);
+
+-- CreateTable
+CREATE TABLE "audit_logs" (
+    "log_id" SERIAL NOT NULL,
+    "actor_id" VARCHAR(255) NOT NULL,
+    "action_type" VARCHAR(50) NOT NULL,
+    "entity_type" VARCHAR(50) NOT NULL,
+    "entity_id" VARCHAR(255) NOT NULL,
+    "clan_id" INTEGER,
+    "target_user_id" VARCHAR(255),
+    "details" TEXT,
+    "result" VARCHAR(20) NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "audit_logs_pkey" PRIMARY KEY ("log_id")
 );
 
 -- CreateTable
@@ -38,6 +75,31 @@ CREATE TABLE "roster_members" (
     "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "roster_members_pkey" PRIMARY KEY ("player_id")
+);
+
+-- CreateTable
+CREATE TABLE "system_settings" (
+    "key" VARCHAR(100) NOT NULL,
+    "value" TEXT NOT NULL,
+    "description" TEXT,
+    "dataType" VARCHAR(50) NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "system_settings_pkey" PRIMARY KEY ("key")
+);
+
+-- CreateTable
+CREATE TABLE "master_battles" (
+    "battle_id" VARCHAR(8) NOT NULL,
+    "start_timestamp" TIMESTAMP(3) NOT NULL,
+    "end_timestamp" TIMESTAMP(3) NOT NULL,
+    "created_by" VARCHAR(255),
+    "notes" TEXT,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "master_battles_pkey" PRIMARY KEY ("battle_id")
 );
 
 -- CreateTable
@@ -217,6 +279,36 @@ CREATE INDEX "idx_user_clan_id" ON "users"("clan_id");
 CREATE INDEX "idx_user_email" ON "users"("email");
 
 -- CreateIndex
+CREATE INDEX "idx_admin_request_user" ON "admin_requests"("user_id");
+
+-- CreateIndex
+CREATE INDEX "idx_admin_request_clan" ON "admin_requests"("clan_id");
+
+-- CreateIndex
+CREATE INDEX "idx_admin_request_status" ON "admin_requests"("status");
+
+-- CreateIndex
+CREATE INDEX "idx_admin_request_created" ON "admin_requests"("created_at");
+
+-- CreateIndex
+CREATE INDEX "idx_audit_log_actor" ON "audit_logs"("actor_id");
+
+-- CreateIndex
+CREATE INDEX "idx_audit_log_action" ON "audit_logs"("action_type");
+
+-- CreateIndex
+CREATE INDEX "idx_audit_log_entity_type" ON "audit_logs"("entity_type");
+
+-- CreateIndex
+CREATE INDEX "idx_audit_log_clan" ON "audit_logs"("clan_id");
+
+-- CreateIndex
+CREATE INDEX "idx_audit_log_target" ON "audit_logs"("target_user_id");
+
+-- CreateIndex
+CREATE INDEX "idx_audit_log_created" ON "audit_logs"("created_at");
+
+-- CreateIndex
 CREATE INDEX "idx_roster_clan_id" ON "roster_members"("clan_id");
 
 -- CreateIndex
@@ -227,6 +319,9 @@ CREATE INDEX "idx_roster_player_name" ON "roster_members"("player_name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "roster_members_clan_id_player_name_key" ON "roster_members"("clan_id", "player_name");
+
+-- CreateIndex
+CREATE INDEX "idx_master_battle_start" ON "master_battles"("start_timestamp");
 
 -- CreateIndex
 CREATE INDEX "idx_battle_clan_id" ON "clan_battles"("clan_id");
@@ -277,10 +372,28 @@ CREATE INDEX "idx_yearly_individual_player" ON "yearly_individual_performance"("
 ALTER TABLE "users" ADD CONSTRAINT "users_clan_id_fkey" FOREIGN KEY ("clan_id") REFERENCES "clans"("clan_id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "admin_requests" ADD CONSTRAINT "admin_requests_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("user_id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "admin_requests" ADD CONSTRAINT "admin_requests_clan_id_fkey" FOREIGN KEY ("clan_id") REFERENCES "clans"("clan_id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "audit_logs" ADD CONSTRAINT "audit_logs_actor_id_fkey" FOREIGN KEY ("actor_id") REFERENCES "users"("user_id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "audit_logs" ADD CONSTRAINT "audit_logs_target_user_id_fkey" FOREIGN KEY ("target_user_id") REFERENCES "users"("user_id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "audit_logs" ADD CONSTRAINT "audit_logs_clan_id_fkey" FOREIGN KEY ("clan_id") REFERENCES "clans"("clan_id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "roster_members" ADD CONSTRAINT "roster_members_clan_id_fkey" FOREIGN KEY ("clan_id") REFERENCES "clans"("clan_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "clan_battles" ADD CONSTRAINT "clan_battles_clan_id_fkey" FOREIGN KEY ("clan_id") REFERENCES "clans"("clan_id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "clan_battles" ADD CONSTRAINT "clan_battles_battle_id_fkey" FOREIGN KEY ("battle_id") REFERENCES "master_battles"("battle_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "clan_battle_player_stats" ADD CONSTRAINT "clan_battle_player_stats_clan_id_battle_id_fkey" FOREIGN KEY ("clan_id", "battle_id") REFERENCES "clan_battles"("clan_id", "battle_id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -317,3 +430,4 @@ ALTER TABLE "yearly_individual_performance" ADD CONSTRAINT "yearly_individual_pe
 
 -- AddForeignKey
 ALTER TABLE "yearly_individual_performance" ADD CONSTRAINT "yearly_individual_performance_player_id_fkey" FOREIGN KEY ("player_id") REFERENCES "roster_members"("player_id") ON DELETE CASCADE ON UPDATE CASCADE;
+
