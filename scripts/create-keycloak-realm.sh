@@ -32,6 +32,15 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+REALM_FILE="${PROJECT_ROOT}/keycloak/config/angrybirdman-realm.json"
+
+# Load environment variables from .env file
+if [ -f "${PROJECT_ROOT}/.env" ]; then
+    export $(grep -v '^#' "${PROJECT_ROOT}/.env" | grep -v '^$' | xargs)
+fi
+
 # Configuration
 KEYCLOAK_URL="${KEYCLOAK_URL:-http://localhost:8080}"
 KEYCLOAK_ADMIN_USER="${KEYCLOAK_ADMIN_USER:-admin}"
@@ -39,10 +48,6 @@ KEYCLOAK_ADMIN_PASSWORD="${KEYCLOAK_ADMIN_PASSWORD}"
 REALM_NAME="angrybirdman"
 SERVICE_ACCOUNT_CLIENT="angrybirdman-api-service"
 CONTAINER_NAME="angrybirdman-keycloak"
-
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
-REALM_FILE="${PROJECT_ROOT}/keycloak/config/angrybirdman-realm.json"
 
 echo ""
 echo -e "${BLUE}╔═══════════════════════════════════════════════════════════════╗${NC}"
@@ -74,7 +79,10 @@ fi
 if [ -z "$KEYCLOAK_ADMIN_PASSWORD" ]; then
     echo -e "${RED}❌ Error: KEYCLOAK_ADMIN_PASSWORD not set${NC}"
     echo ""
-    echo "   Set the admin password:"
+    echo "   Add KEYCLOAK_ADMIN_PASSWORD to your .env file:"
+    echo "   KEYCLOAK_ADMIN_PASSWORD=your-admin-password"
+    echo ""
+    echo "   Or set it temporarily:"
     echo "   export KEYCLOAK_ADMIN_PASSWORD='your-admin-password'"
     echo ""
     exit 1

@@ -156,6 +156,9 @@ Create test users for development and testing:
 ./scripts/create-keycloak-test-users.sh
 ```
 
+**Note**: The script automatically loads configuration from your `.env` file,
+including `KEYCLOAK_ADMIN_PASSWORD`.
+
 This creates the following test users:
 
 | Username         | Password         | Role       | Clan                     |
