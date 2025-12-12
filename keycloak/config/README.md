@@ -58,20 +58,25 @@ Two OAuth2/OIDC clients are configured:
 - **PKCE**: Required (S256 method)
 - **Token Lifetime**: 15 minutes (900 seconds)
 
-#### 2. angrybirdman-api (Confidential Client)
+#### 2. angrybirdman-api-service (Service Account)
 
-- **Purpose**: Backend API service account
+- **Purpose**: Backend API service account for user management
 - **Flow**: Service account (client credentials)
-- **Bearer Only**: True (validates tokens, doesn't issue them)
+- **Use Case**: API calls to Keycloak Admin API
+- **Authorization**: Configured with minimal required permissions
 
 ### Client Scopes
 
-Custom client scope for multi-tenancy:
+Standard OpenID Connect scopes are configured:
 
-- **clan-context**: Includes `clanId` attribute in JWT tokens
-  - Enables clan-scoped authorization
-  - Added to access tokens and ID tokens
-  - Used for tenant isolation
+- **profile**: User profile information (username, given_name, family_name)
+- **email**: Email address and email verification status
+- **roles**: Realm and client role mappings
+- **web-origins**: Allowed web origins for CORS
+
+These scopes enable proper authentication and authorization while maintaining
+compatibility with standard OIDC flows. Clan associations are managed in the
+application database rather than in JWT tokens.
 
 ### Password Policy
 
@@ -194,16 +199,15 @@ To assign roles to users:
 
 ### Setting Clan Association
 
-To associate a user with a clan (required for clan-owner and clan-admin roles):
+Clan associations are managed in the application database, not in Keycloak.
+Users are linked to clans through the `roster_members` table, which tracks:
 
-1. Navigate to Users → Select user → Attributes tab
-2. Add attribute:
-   - **Key**: `clanId`
-   - **Value**: Numeric clan ID from database
-3. Save
+- Active membership status
+- Join/leave dates
+- Role assignments (owner, admin)
 
-This `clanId` attribute is included in JWT tokens via the `clan-context` client
-scope.
+The application queries the database to determine clan membership and
+permissions based on the authenticated user's ID.
 
 ## Security Considerations
 
