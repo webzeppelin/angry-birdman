@@ -122,7 +122,7 @@ export default function authRoutes(fastify: FastifyInstance, _opts: unknown, don
           client_id: KEYCLOAK_CLIENT_ID,
           username,
           password,
-          scope: 'openid profile email clan-context',
+          scope: 'openid profile email',
         };
 
         const response = await axios.post<KeycloakTokenResponse>(
