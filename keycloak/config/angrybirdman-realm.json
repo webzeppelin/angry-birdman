@@ -270,6 +270,22 @@
   "actionTokenGeneratedByUserLifespan": 300,
   "oauth2DeviceCodeLifespan": 600,
   "oauth2DevicePollingInterval": 5,
+  "users": [
+    {
+      "username": "service-account-angrybirdman-api-service",
+      "enabled": true,
+      "serviceAccountClientId": "angrybirdman-api-service",
+      "clientRoles": {
+        "realm-management": [
+          "manage-users",
+          "view-realm",
+          "view-users",
+          "manage-realm",
+          "query-users"
+        ]
+      }
+    }
+  ],
   "smtpServer": {},
   "eventsEnabled": false,
   "eventsListeners": ["jboss-logging"],
