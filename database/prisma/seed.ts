@@ -46,7 +46,9 @@ interface UserIdMapping {
 }
 
 function loadUserIdMappings(): UserIdMapping | null {
-  const mappingPath = join(__dirname, '../../scripts/local-keycloak-test-users.json');
+  // When running via npm workspace script, cwd is the database directory
+  // So we go up one level to project root, then into scripts
+  const mappingPath = join(process.cwd(), '../scripts/local-keycloak-test-users.json');
 
   try {
     if (existsSync(mappingPath)) {
