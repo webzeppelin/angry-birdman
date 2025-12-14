@@ -317,7 +317,15 @@ This should display the JWT token and decoded claims.
 
 ### 4. Run Automated Tests
 
-Run the test suite to verify everything is working:
+Before running tests, you need to create the test database. Tests use a separate
+database (`angrybirdman_test`) to avoid wiping your development data:
+
+```bash
+# Create the test database and run migrations
+npm run db:create-test
+```
+
+Now you can run the test suite to verify everything is working:
 
 ```bash
 # Run all tests
@@ -329,6 +337,9 @@ npm run test:coverage
 # Run tests in watch mode (for active development)
 npm run test:watch
 ```
+
+**Important**: Tests will automatically wipe the test database before each test
+run. This is why we use a separate database from your development environment.
 
 ### 5. Verify Database
 
@@ -389,6 +400,9 @@ npm run db:migrate:dev
 
 # Reset database (drops all data, reruns migrations and seed)
 npm run db:reset-dev
+
+# Create test database (required before running tests)
+npm run db:create-test
 
 # Backup database
 npm run db:backup

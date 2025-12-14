@@ -38,6 +38,7 @@
     "db:restore": "./scripts/restore-db.sh",
     "db:reset-dev": "./scripts/reset-db.sh",
     "db:validate": "cd database && tsx validate-database.ts",
+    "db:create-test": "./scripts/create-test-db.sh",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",
     "docker:logs": "docker-compose logs -f",
