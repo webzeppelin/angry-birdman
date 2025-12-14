@@ -68,7 +68,9 @@
       "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": true,
       "authorizationServicesEnabled": false,
-      "fullScopeAllowed": false,
+      "redirectUris": ["/*"],
+      "webOrigins": ["/*"],
+      "fullScopeAllowed": true,
       "defaultClientScopes": [],
       "optionalClientScopes": []
     }
@@ -270,6 +272,20 @@
   "actionTokenGeneratedByUserLifespan": 300,
   "oauth2DeviceCodeLifespan": 600,
   "oauth2DevicePollingInterval": 5,
+  "clientScopeMappings": {
+    "realm-management": [
+      {
+        "client": "angrybirdman-api-service",
+        "roles": [
+          "view-realm",
+          "manage-users",
+          "view-users",
+          "query-users",
+          "manage-realm"
+        ]
+      }
+    ]
+  },
   "users": [
     {
       "username": "service-account-angrybirdman-api-service",
