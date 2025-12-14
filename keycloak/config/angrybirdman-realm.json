@@ -49,12 +49,7 @@
       },
       "fullScopeAllowed": true,
       "defaultClientScopes": ["web-origins", "profile", "roles", "email"],
-      "optionalClientScopes": [
-        "address",
-        "phone",
-        "offline_access",
-        "microprofile-jwt"
-      ]
+      "optionalClientScopes": ["offline_access"]
     },
     {
       "clientId": "angrybirdman-api-service",
@@ -76,6 +71,15 @@
     }
   ],
   "clientScopes": [
+    {
+      "name": "offline_access",
+      "description": "OpenID Connect built-in scope: offline_access",
+      "protocol": "openid-connect",
+      "attributes": {
+        "consent.screen.text": "${offlineAccessScopeConsentText}",
+        "display.on.consent.screen": "true"
+      }
+    },
     {
       "name": "profile",
       "description": "OpenID Connect built-in scope: profile",
@@ -276,13 +280,7 @@
     "realm-management": [
       {
         "client": "angrybirdman-api-service",
-        "roles": [
-          "view-realm",
-          "manage-users",
-          "view-users",
-          "query-users",
-          "manage-realm"
-        ]
+        "roles": ["view-realm", "manage-users", "view-users", "query-users"]
       }
     ]
   },

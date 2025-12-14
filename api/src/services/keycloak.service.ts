@@ -140,6 +140,9 @@ export class KeycloakService {
 
       return userId;
     } catch (error: unknown) {
+      // Log the full error for debugging
+      console.error('[KeycloakService] Registration error:', error);
+
       if (error instanceof Error) {
         // Check for duplicate username/email errors
         if (error.message.includes('409')) {
