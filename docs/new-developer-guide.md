@@ -83,6 +83,15 @@ KEYCLOAK_ADMIN_PASSWORD=your_secure_password_here
 The other default values are suitable for local development. You'll update the
 `KEYCLOAK_ADMIN_CLIENT_SECRET` later after creating the Keycloak realm.
 
+**Also create the API environment file**:
+
+```bash
+cp api/.env.example api/.env
+```
+
+The API `.env` file will need to be updated with the Keycloak client secret
+after the realm is created (see step 2 under Database Setup).
+
 ### 3. Install Dependencies
 
 Install all project dependencies (frontend, backend, common, database):
@@ -143,10 +152,24 @@ client secret:
    - Click the "Credentials" tab
    - Copy the "Client secret" value
 
-5. **Update your .env file**:
+5. **Update your environment files**:
+
+   Add the secret to the **root `.env` file**:
+
    ```bash
    KEYCLOAK_ADMIN_CLIENT_SECRET=<paste_secret_here>
    ```
+
+   And also to the **`api/.env` file**:
+
+   ```bash
+   KEYCLOAK_ADMIN_CLIENT_ID=angrybirdman-api-service
+   KEYCLOAK_ADMIN_CLIENT_SECRET=<paste_secret_here>
+   ```
+
+   **Important**: Both files need the client secret. The root `.env` is used by
+   scripts, while `api/.env` is used by the API server for user registration and
+   password reset operations.
 
 ### 3. Create Keycloak Test Users
 

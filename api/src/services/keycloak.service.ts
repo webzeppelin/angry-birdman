@@ -443,7 +443,9 @@ export function createKeycloakService(app: FastifyInstance): KeycloakService {
 
   const service = new KeycloakService(
     config.KEYCLOAK_URL || process.env.KEYCLOAK_URL || 'http://localhost:8080',
-    config.KEYCLOAK_ADMIN_CLIENT_ID || process.env.KEYCLOAK_ADMIN_CLIENT_ID || 'angrybirdman-api',
+    config.KEYCLOAK_ADMIN_CLIENT_ID ||
+      process.env.KEYCLOAK_ADMIN_CLIENT_ID ||
+      'angrybirdman-api-service',
     config.KEYCLOAK_ADMIN_CLIENT_SECRET || process.env.KEYCLOAK_ADMIN_CLIENT_SECRET || '',
     config.KEYCLOAK_REALM || process.env.KEYCLOAK_REALM || 'angrybirdman'
   );
