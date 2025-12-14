@@ -82,6 +82,31 @@ export class KeycloakService {
         clientId: this.clientId,
         clientSecret: this.clientSecret,
       });
+
+      // Debug: Log access token claims to troubleshoot permissions
+      const accessToken = this.adminClient.accessToken;
+      if (accessToken) {
+        try {
+          // Decode the JWT to see the claims (simple base64 decode, not validating signature)
+          const parts = accessToken.split('.');
+          if (parts.length === 3) {
+            const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString()) as Record<
+              string,
+              unknown
+            >;
+            console.log('[KeycloakService] Access token claims:', {
+              realm_access: payload.realm_access,
+              resource_access: payload.resource_access,
+              scope: payload.scope,
+              azp: payload.azp,
+              client_id: payload.client_id,
+            });
+          }
+        } catch (decodeError) {
+          console.error('[KeycloakService] Failed to decode access token:', decodeError);
+        }
+      }
+
       this.initialized = true;
       console.log('[KeycloakService] Successfully authenticated');
     } catch (error) {
