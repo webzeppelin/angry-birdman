@@ -27,6 +27,12 @@
         "description": "Basic authenticated user",
         "composite": false,
         "clientRole": false
+      },
+      {
+        "name": "offline_access",
+        "description": "${role_offline-access}",
+        "composite": false,
+        "clientRole": false
       }
     ]
   },
@@ -276,6 +282,12 @@
   "actionTokenGeneratedByUserLifespan": 300,
   "oauth2DeviceCodeLifespan": 600,
   "oauth2DevicePollingInterval": 5,
+  "scopeMappings": [
+    {
+      "clientScope": "offline_access",
+      "roles": ["offline_access"]
+    }
+  ],
   "clientScopeMappings": {
     "realm-management": [
       {
@@ -289,6 +301,7 @@
       "username": "service-account-angrybirdman-api-service",
       "enabled": true,
       "serviceAccountClientId": "angrybirdman-api-service",
+      "realmRoles": ["default-roles-angrybirdman"],
       "clientRoles": {
         "realm-management": [
           "manage-users",
