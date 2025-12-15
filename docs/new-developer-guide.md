@@ -5,12 +5,17 @@ setting up your local development environment from scratch. By the end of this
 guide, you'll have a fully functional development environment with the
 application running locally.
 
+**Quick Start**: We provide an automated installation script that handles all
+setup steps in a single command. See
+[Automated Installation](#automated-installation-recommended) below to get
+started in minutes.
+
 ## Table of Contents
 
 - [Prerequisites](#prerequisites)
 - [Initial Setup](#initial-setup)
-- [Infrastructure Setup](#infrastructure-setup)
-- [Database Setup](#database-setup)
+  - [Automated Installation (Recommended)](#automated-installation-recommended)
+  - [Manual Installation (Alternative)](#manual-installation-alternative)
 - [Running the Application](#running-the-application)
 - [Verification & Testing](#verification--testing)
 - [Development Workflow](#development-workflow)
@@ -58,14 +63,51 @@ All commands should output their respective version numbers.
 
 ## Initial Setup
 
-### 1. Clone the Repository
+### Automated Installation (Recommended)
+
+We provide an automated installation script that handles all setup steps:
+
+```bash
+git clone https://github.com/webzeppelin/angry-birdman.git
+cd angry-birdman
+./scripts/install-dev.sh
+```
+
+The script will:
+
+1. ✅ Check prerequisites (Node.js, npm, Docker)
+2. ✅ Configure environment variables (.env files)
+3. ✅ Install dependencies
+4. ✅ Start Docker services (PostgreSQL, Keycloak, Valkey)
+5. ✅ Create Keycloak test users
+6. ✅ Generate Prisma Client
+7. ✅ Run database migrations
+8. ✅ Seed the database
+
+**Script Options:**
+
+- `--skip-env` - Skip environment file setup (use existing .env files)
+- `--force` - Force reinstall even if already installed
+- `--help` - Show help message
+
+The installation process takes about 5-10 minutes depending on your internet
+connection and system performance.
+
+---
+
+### Manual Installation (Alternative)
+
+If you prefer to run each step manually or need to troubleshoot issues, follow
+these steps:
+
+#### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/webzeppelin/angry-birdman.git
 cd angry-birdman
 ```
 
-### 2. Configure Environment Variables
+#### 2. Configure Environment Variables
 
 Create a `.env` file in the project root:
 
@@ -73,25 +115,17 @@ Create a `.env` file in the project root:
 cp .env.example .env
 ```
 
-**Important**: Update the following variables in your `.env` file:
+The default values are suitable for local development and will work out of the
+box, including the default Keycloak admin password (`admin`).
 
-```bash
-# Keycloak admin password (used for realm creation)
-KEYCLOAK_ADMIN_PASSWORD=your_secure_password_here
-```
-
-The other default values (including `KEYCLOAK_ADMIN_CLIENT_SECRET`) are suitable
-for local development and will work out of the box.
-
-**Also create the API environment file**:
+**Also create the API and frontend environment files**:
 
 ```bash
 cp api/.env.example api/.env
+cp frontend/.env.example frontend/.env
 ```
 
-The default values in both `.env` files are pre-configured and ready to use.
-
-### 3. Install Dependencies
+#### 3. Install Dependencies
 
 Install all project dependencies (frontend, backend, common, database):
 
@@ -101,11 +135,7 @@ npm install
 
 This installs dependencies for all workspaces in the monorepo.
 
----
-
-## Infrastructure Setup
-
-### 1. Start Docker Services
+#### 4. Start Docker Services
 
 Start PostgreSQL, Keycloak, and Valkey (Redis) containers:
 
@@ -129,7 +159,7 @@ npm run docker:ps
 Look for "healthy" status for all services. If services show "starting", wait a
 bit longer.
 
-### 2. Create Keycloak Test Users
+#### 5. Create Keycloak Test Users
 
 The `angrybirdman` realm is automatically created when Keycloak starts with the
 pre-configured client secret already set. Now create test users for development
@@ -159,11 +189,7 @@ mappings for database seeding.
 mixed with the JSON data, manually edit the file to keep only the JSON object
 with username-to-ID mappings. This is a known issue being addressed.
 
----
-
-## Database Setup
-
-### 1. Generate Prisma Client
+#### 6. Generate Prisma Client
 
 Generate the Prisma Client with the database configuration:
 
@@ -174,7 +200,7 @@ npm run db:generate
 This generates the Prisma Client with the correct database configuration from
 your `.env` file.
 
-### 2. Run Database Migrations
+#### 7. Run Database Migrations
 
 Apply all database migrations to create the schema:
 
@@ -192,7 +218,7 @@ being applied:
 This single squashed migration contains all the schema from the project's
 development history.
 
-### 3. Seed the Database
+#### 8. Seed the Database
 
 Populate the database with test data:
 
@@ -606,17 +632,18 @@ npm run check:ready
 ### Essential Commands
 
 ```bash
-# Start everything
-npm run docker:up && npm run dev
+# Fresh installation (one command)
+./scripts/install-dev.sh
+
+# Start development servers
+npm run dev
 
 # Stop everything
 npm run docker:down
 
 # Reset development environment
 npm run docker:clean
-npm run docker:up
-npm run db:migrate:deploy
-npm run db:seed
+./scripts/install-dev.sh --force
 
 # Run tests
 npm test
