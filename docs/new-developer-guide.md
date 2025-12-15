@@ -80,8 +80,8 @@ cp .env.example .env
 KEYCLOAK_ADMIN_PASSWORD=your_secure_password_here
 ```
 
-The other default values are suitable for local development. You'll update the
-`KEYCLOAK_ADMIN_CLIENT_SECRET` later after creating the Keycloak realm.
+The other default values (including `KEYCLOAK_ADMIN_CLIENT_SECRET`) are suitable
+for local development and will work out of the box.
 
 **Also create the API environment file**:
 
@@ -89,8 +89,7 @@ The other default values are suitable for local development. You'll update the
 cp api/.env.example api/.env
 ```
 
-The API `.env` file will need to be updated with the Keycloak client secret
-after the realm is created (see step 2 under Database Setup).
+The default values in both `.env` files are pre-configured and ready to use.
 
 ### 3. Install Dependencies
 
@@ -130,50 +129,11 @@ npm run docker:ps
 Look for "healthy" status for all services. If services show "starting", wait a
 bit longer.
 
-### 2. Get Keycloak Client Secret
+### 2. Create Keycloak Test Users
 
-The `angrybirdman` realm is automatically created when Keycloak starts (the
-configuration is mounted into the container). You need to retrieve the API
-client secret:
-
-1. **Open Keycloak Admin Console**: http://localhost:8080/admin
-   - Username: `admin`
-   - Password: `<your KEYCLOAK_ADMIN_PASSWORD from .env>`
-
-2. **Switch to the angrybirdman realm**:
-   - Click the realm dropdown in the top-left corner
-   - Select "angrybirdman"
-
-3. **Navigate to the API client**:
-   - Click "Clients" in the left sidebar
-   - Click on `angrybirdman-api-service`
-
-4. **Get the client secret**:
-   - Click the "Credentials" tab
-   - Copy the "Client secret" value
-
-5. **Update your environment files**:
-
-   Add the secret to the **root `.env` file**:
-
-   ```bash
-   KEYCLOAK_ADMIN_CLIENT_SECRET=<paste_secret_here>
-   ```
-
-   And also to the **`api/.env` file**:
-
-   ```bash
-   KEYCLOAK_ADMIN_CLIENT_ID=angrybirdman-api-service
-   KEYCLOAK_ADMIN_CLIENT_SECRET=<paste_secret_here>
-   ```
-
-   **Important**: Both files need the client secret. The root `.env` is used by
-   scripts, while `api/.env` is used by the API server for user registration and
-   password reset operations.
-
-### 3. Create Keycloak Test Users
-
-Create test users for development and testing:
+The `angrybirdman` realm is automatically created when Keycloak starts with the
+pre-configured client secret already set. Now create test users for development
+and testing:
 
 ```bash
 ./scripts/create-keycloak-test-users.sh

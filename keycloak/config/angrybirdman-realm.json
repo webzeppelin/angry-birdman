@@ -62,6 +62,7 @@
       "name": "Angry Birdman API Service",
       "description": "Backend service account for user management via Admin API",
       "enabled": true,
+      "secret": "SfsCtUHmSJpxKdCz6qgxC2h8vKD17U4j",
       "publicClient": false,
       "protocol": "openid-connect",
       "standardFlowEnabled": false,
