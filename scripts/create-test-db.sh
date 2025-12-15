@@ -93,16 +93,14 @@ echo -e "${YELLOW}[2/3] Running migrations on test database...${NC}"
 TEST_DB_URL="postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$TEST_DB_NAME?schema=public"
 
 # Run Prisma migrations using the test database URL
-cd database
+# Note: Must run from project root where prisma.config.ts is located
 DATABASE_URL="$TEST_DB_URL" npx prisma migrate deploy
 if [ $? -eq 0 ]; then
   echo -e "${GREEN}✓ Migrations applied successfully${NC}"
 else
   echo -e "${RED}✗ Migration failed${NC}"
-  cd ..
   exit 1
 fi
-cd ..
 echo
 
 # Step 3: Verify the test database
