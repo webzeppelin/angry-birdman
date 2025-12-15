@@ -63,12 +63,23 @@ if [ -f ".env" ]; then
   export $(grep -v '^#' .env | xargs)
 fi
 
-# Default database credentials
-DB_USER="${POSTGRES_USER:-angrybirdman}"
-DB_PASSWORD="${POSTGRES_PASSWORD:-angrybirdman_dev_password}"
-DB_HOST="${POSTGRES_HOST:-localhost}"
-DB_PORT="${POSTGRES_PORT:-5432}"
-TEST_DB_NAME="angrybirdman_test"
+# Use DATABASE_URL_TEST from .env if available, otherwise construct from individual vars
+# DATABASE_URL_TEST should use 'localhost' for host machine connections
+if [ -n "${DATABASE_URL_TEST:-}" ]; then
+  TEST_DB_URL="$DATABASE_URL_TEST"
+  # Extract database name from URL for docker exec commands
+  TEST_DB_NAME=$(echo "$TEST_DB_URL" | sed -n 's/.*\/\([^?]*\).*/\1/p')
+  # Extract user from URL for docker exec commands
+  DB_USER=$(echo "$TEST_DB_URL" | sed -n 's/.*:\/\/\([^:]*\):.*/\1/p')
+else
+  # Fallback to constructing URL from individual variables
+  DB_USER="${POSTGRES_USER:-angrybirdman}"
+  DB_PASSWORD="${POSTGRES_PASSWORD:-angrybirdman_dev_password}"
+  DB_HOST="localhost"  # Always use localhost when running from host machine
+  DB_PORT="${POSTGRES_PORT:-5432}"
+  TEST_DB_NAME="angrybirdman_test"
+  TEST_DB_URL="postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$TEST_DB_NAME?schema=public"
+fi
 
 # Step 1: Check if test database already exists
 echo -e "${YELLOW}[1/3] Checking if test database exists...${NC}"
@@ -88,9 +99,6 @@ echo
 
 # Step 2: Run migrations on the test database
 echo -e "${YELLOW}[2/3] Running migrations on test database...${NC}"
-
-# Construct the test database URL
-TEST_DB_URL="postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$TEST_DB_NAME?schema=public"
 
 # Run Prisma migrations using the test database URL
 # Note: Must run from project root where prisma.config.ts is located
