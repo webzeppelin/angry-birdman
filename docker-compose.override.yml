@@ -2,8 +2,6 @@
 # This file is automatically merged with docker-compose.yml when running docker-compose commands
 # Use this file for local customizations without modifying the base configuration
 
-version: '3.9'
-
 services:
   # PostgreSQL overrides for development
   postgres:

@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   # PostgreSQL - Primary database for application data and Keycloak
   postgres:
