@@ -1179,21 +1179,28 @@ exit
 
 # Now as your regular user (NOT angrybirdman), install the service
 # The service will run AS angrybirdman, but installation requires sudo
-# Note: Use sudo to access the angrybirdman home directory
-sudo /home/angrybirdman/actions-runner/svc.sh install angrybirdman
+# Start an elevated shell and navigate to the runner directory
+sudo bash
+cd /home/angrybirdman/actions-runner
+
+# Install runner service (runs as angrybirdman user)
+./svc.sh install angrybirdman
 
 # Start runner service
-sudo /home/angrybirdman/actions-runner/svc.sh start
+./svc.sh start
 
 # Check status
-sudo /home/angrybirdman/actions-runner/svc.sh status
+./svc.sh status
+
+# Exit the elevated shell
+exit
 ```
 
 **Important**: The runner configuration must be done AS the `angrybirdman` user,
-but the service installation/management commands must be run from your regular
-user account using `sudo` (since you can't access `/home/angrybirdman/` without
-elevated privileges). The service will run as `angrybirdman` even though it's
-installed by your sudo-enabled account.
+but the service installation/management commands must be run from an elevated
+shell using `sudo bash` (since the svc.sh script requires being in the runner
+directory, which requires elevated privileges to access). The service will run
+as `angrybirdman` even though it's installed from an elevated shell.
 
 **Get Registration Token**:
 
