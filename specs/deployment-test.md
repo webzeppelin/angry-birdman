@@ -112,7 +112,7 @@ test server on your home network.
 - **Docker Compose**: 2.20+
 - **Git**: For repository checkout
 - **GitHub Actions Runner**: Self-hosted runner service
-- **Node.js**: 20 LTS (for building and testing)
+- **Node.js**: 24 LTS (for building and testing)
 
 **Network Configuration**:
 
@@ -178,7 +178,7 @@ Production Dockerfile for React frontend using multi-stage build:
 
 ```dockerfile
 # Stage 1: Build
-FROM node:20-alpine AS builder
+FROM node:24-alpine AS builder
 
 WORKDIR /app
 
@@ -226,7 +226,7 @@ Production Dockerfile for Fastify API:
 
 ```dockerfile
 # Stage 1: Build
-FROM node:20-alpine AS builder
+FROM node:24-alpine AS builder
 
 WORKDIR /app
 
@@ -256,7 +256,7 @@ RUN npm run generate --workspace=database
 RUN npm run build --workspace=api
 
 # Stage 2: Production
-FROM node:20-alpine
+FROM node:24-alpine
 
 WORKDIR /app
 
@@ -1989,7 +1989,7 @@ Use this checklist when implementing the deployment pipeline:
 - [ ] Create deployment directory (/opt/angrybirdman)
 - [ ] Clone repository
 - [ ] Configure .env.test with strong passwords
-- [ ] Install Node.js 20 LTS
+- [ ] Install Node.js 24 LTS
 - [ ] Create GitHub Personal Access Token
 - [ ] Download and install GitHub Actions runner
 - [ ] Configure runner with repository
