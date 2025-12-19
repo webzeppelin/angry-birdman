@@ -1070,12 +1070,17 @@ sudo ufw status
 ### 4.2 Deploy Directory Setup
 
 ```bash
-# Create deployment directory
+# Create deployment directory (as your current user with sudo)
 sudo mkdir -p /opt/angrybirdman
 sudo chown angrybirdman:angrybirdman /opt/angrybirdman
+
+# Switch to angrybirdman user for all subsequent commands
+sudo su - angrybirdman
+
+# Now as angrybirdman user, navigate to deployment directory
 cd /opt/angrybirdman
 
-# Clone repository (or initialize)
+# Clone repository
 git clone https://github.com/webzeppelin/angry-birdman.git .
 
 # Create necessary directories
@@ -1086,9 +1091,14 @@ mkdir -p logs
 chmod +x scripts/*.sh
 ```
 
+**Note**: All remaining commands in sections 4.3-4.6 should be run as the
+`angrybirdman` user. Stay in the `angrybirdman` user session (don't exit) until
+you complete the initial setup.
+
 ### 4.3 Environment Configuration
 
 ```bash
+# These commands run as angrybirdman user (from previous section)
 # Copy environment template
 cd /opt/angrybirdman/docker
 cp .env.test.example .env.test
@@ -1129,8 +1139,8 @@ openssl rand -base64 32
 On the test server:
 
 ```bash
-# Switch to deployment user
-su - angrybirdman
+# If not already as angrybirdman user from previous section, switch now
+sudo su - angrybirdman
 cd ~
 
 # Create runner directory
@@ -1144,7 +1154,7 @@ curl -o actions-runner-linux-x64-2.311.0.tar.gz -L \
 # Extract
 tar xzf ./actions-runner-linux-x64-2.311.0.tar.gz
 
-# Configure runner
+# Configure runner (as angrybirdman user)
 ./config.sh --url https://github.com/webzeppelin/angry-birdman \
   --token YOUR_REGISTRATION_TOKEN \
   --name test-server-runner \
@@ -1152,7 +1162,7 @@ tar xzf ./actions-runner-linux-x64-2.311.0.tar.gz
   --work _work \
   --unattended
 
-# Install as service
+# Install as service (requires sudo, but will run as angrybirdman)
 sudo ./svc.sh install angrybirdman
 
 # Start runner service
@@ -1161,6 +1171,9 @@ sudo ./svc.sh start
 # Check status
 sudo ./svc.sh status
 ```
+
+**Note**: The runner service will run as the `angrybirdman` user, which is why
+we configured it while logged in as that user.
 
 **Get Registration Token**:
 
@@ -1180,8 +1193,12 @@ sudo ./svc.sh status
 Manual first-time setup:
 
 ```bash
-# SSH to test server
+# SSH to test server as angrybirdman user directly
 ssh angrybirdman@192.168.0.70
+
+# Or if you're already on the server as another user:
+# sudo su - angrybirdman
+
 cd /opt/angrybirdman
 
 # Pull base images
@@ -1211,6 +1228,9 @@ docker compose -f docker/docker-compose.test.yml --env-file docker/.env.test run
   -e DATABASE_URL="postgresql://angrybirdman_test:PASSWORD@postgres:5432/angrybirdman_test" \
   api npx prisma db seed
 ```
+
+**Note**: All deployment commands should be run as the `angrybirdman` user who
+owns the `/opt/angrybirdman` directory and the Docker containers.
 
 After initial setup, all subsequent deployments will be automated via GitHub
 Actions.
