@@ -1,0 +1,60 @@
+# Stage 1: Build
+FROM node:24-alpine AS builder
+
+WORKDIR /app
+
+# Copy package files for all workspaces
+COPY package*.json ./
+COPY api/package*.json ./api/
+COPY common/package*.json ./common/
+COPY database/package*.json ./database/
+
+# Install dependencies
+RUN npm ci --workspace=api --workspace=common --workspace=database
+
+# Copy source code
+COPY api/ ./api/
+COPY common/ ./common/
+COPY database/ ./database/
+COPY tsconfig.json ./
+COPY prisma.config.ts ./
+
+# Build common library first
+RUN npm run build --workspace=common
+
+# Generate Prisma client
+RUN npm run generate --workspace=database
+
+# Build API
+RUN npm run build --workspace=api
+
+# Stage 2: Production
+FROM node:24-alpine
+
+WORKDIR /app
+
+# Install production dependencies only
+COPY package*.json ./
+COPY api/package*.json ./api/
+COPY common/package*.json ./common/
+COPY database/package*.json ./database/
+
+RUN npm ci --workspace=api --workspace=common --workspace=database --omit=dev
+
+# Copy built artifacts
+COPY --from=builder /app/api/dist ./api/dist
+COPY --from=builder /app/common/dist ./common/dist
+COPY --from=builder /app/database/generated ./database/generated
+COPY --from=builder /app/database/prisma ./database/prisma
+
+# Copy Prisma config
+COPY prisma.config.ts ./
+
+# Expose port
+EXPOSE 3001
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=3 \
+  CMD wget --quiet --tries=1 --spider http://localhost:3001/health || exit 1
+
+CMD ["node", "api/dist/index.js"]
