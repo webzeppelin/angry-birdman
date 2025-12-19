@@ -3,6 +3,7 @@
 # Environment files with sensitive data
 .env
 .env.local
+.env.test
 .env.*.local
 
 # Docker override files with local customizations
