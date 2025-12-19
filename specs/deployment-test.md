@@ -1174,7 +1174,12 @@ tar xzf ./actions-runner-linux-x64-2.330.0.tar.gz
   --work _work \
   --unattended
 
-# Install as service (requires sudo, but will run as angrybirdman)
+# Exit back to your regular user account (the one with sudo privileges)
+exit
+
+# Now as your regular user (NOT angrybirdman), install the service
+# The service will run AS angrybirdman, but installation requires sudo
+cd /home/angrybirdman/actions-runner
 sudo ./svc.sh install angrybirdman
 
 # Start runner service
@@ -1184,8 +1189,10 @@ sudo ./svc.sh start
 sudo ./svc.sh status
 ```
 
-**Note**: The runner service will run as the `angrybirdman` user, which is why
-we configured it while logged in as that user.
+**Important**: The runner configuration must be done AS the `angrybirdman` user,
+but the service installation/management commands must be run from your regular
+user account that has sudo privileges. The service will run as `angrybirdman`
+even though it's installed by your sudo-enabled account.
 
 **Get Registration Token**:
 
