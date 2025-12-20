@@ -1336,9 +1336,16 @@ sudo systemctl status angrybirdman
 
 The deployment workflow consists of three jobs:
 
-1. **Test Job**: Runs linting, type checking, and unit tests
-2. **Build Job**: Builds Docker images and pushes to ghcr.io
-3. **Deploy Job**: SSH to test server and deploy containers
+1. **Test Job**: Runs linting, type checking, and unit tests on GitHub-hosted
+   runner
+2. **Build Job**: Builds Docker images and pushes to ghcr.io on GitHub-hosted
+   runner
+3. **Deploy Job**: Runs on self-hosted runner (test server) to deploy containers
+   locally
+
+**Key Point**: The Deploy job runs directly on the test server via the
+self-hosted runner. No SSH or external access to the server is required. The
+runner polls GitHub for jobs and executes them locally.
 
 Workflow triggers:
 
@@ -1424,7 +1431,10 @@ View workflow execution:
 
 - **Live logs**: Actions tab → Select workflow run → Click on job
 - **Deployment status**: Check status badge in README
-- **Test server**: `ssh angrybirdman@192.168.0.70` and run `docker ps`
+- **Test server**: If you have local access, `ssh angrybirdman@192.168.0.70` and
+  run `docker ps`
+  - Note: SSH access is for manual verification only, not used by GitHub Actions
+  - The self-hosted runner executes deployment commands directly on the server
 
 ---
 
