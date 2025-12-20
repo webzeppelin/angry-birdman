@@ -4,9 +4,11 @@ FROM node:24-alpine AS builder
 WORKDIR /app
 
 # Copy package files for all workspaces
-COPY package*.json ./
-COPY frontend/package*.json ./frontend/
-COPY common/package*.json ./common/
+# Note: Only copy package.json and package-lock.json from root
+# Workspace packages should only have package.json (no separate lock files)
+COPY package.json package-lock.json ./
+COPY frontend/package.json ./frontend/
+COPY common/package.json ./common/
 
 # Install dependencies
 RUN npm ci --workspace=frontend --workspace=common

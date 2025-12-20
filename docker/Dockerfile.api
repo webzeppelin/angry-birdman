@@ -4,10 +4,12 @@ FROM node:24-alpine AS builder
 WORKDIR /app
 
 # Copy package files for all workspaces
-COPY package*.json ./
-COPY api/package*.json ./api/
-COPY common/package*.json ./common/
-COPY database/package*.json ./database/
+# Note: Only copy package.json and package-lock.json from root
+# Workspace packages should only have package.json (no separate lock files)
+COPY package.json package-lock.json ./
+COPY api/package.json ./api/
+COPY common/package.json ./common/
+COPY database/package.json ./database/
 
 # Install dependencies
 RUN npm ci --workspace=api --workspace=common --workspace=database
@@ -34,10 +36,12 @@ FROM node:24-alpine
 WORKDIR /app
 
 # Install production dependencies only
-COPY package*.json ./
-COPY api/package*.json ./api/
-COPY common/package*.json ./common/
-COPY database/package*.json ./database/
+# Note: Only copy package.json and package-lock.json from root
+# Workspace packages should only have package.json (no separate lock files)
+COPY package.json package-lock.json ./
+COPY api/package.json ./api/
+COPY common/package.json ./common/
+COPY database/package.json ./database/
 
 RUN npm ci --workspace=api --workspace=common --workspace=database --omit=dev
 
