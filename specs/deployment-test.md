@@ -119,6 +119,7 @@ test server on your home network.
 - Static IP address: `192.168.0.70`
 - Ports open on server firewall:
   - `80` (HTTP - for web access from home network)
+  - `8000` (HTTP - for Keycloak admin and authentication)
 - **No inbound ports required for deployment**
 - Runner makes outbound HTTPS connections to:
   - `github.com` (443) - for job polling and updates
@@ -128,7 +129,8 @@ test server on your home network.
   - `3001` (API)
   - `5432` (PostgreSQL)
   - `6379` (Valkey)
-  - `8080` (Keycloak)
+- Exposed ports:
+  - `8080` (Keycloak internal) → `8000` (host)
 
 ### GitHub Requirements
 
@@ -148,7 +150,7 @@ test server on your home network.
 │  Home Network (192.168.0.x)                                 │
 │                                                             │
 │  Client Browser                                             │
-│         ↓ HTTP :80                                          │
+│         ↓ HTTP :80 (App) / :8000 (Keycloak)                │
 │  ┌──────────────────────────────────────────────────────┐  │
 │  │  Ubuntu Test Server (192.168.0.70)                   │  │
 │  │                                                       │  │
@@ -156,12 +158,14 @@ test server on your home network.
 │  │       ├─ / → Frontend :3000                          │  │
 │  │       └─ /api → Backend API :3001                    │  │
 │  │                                                       │  │
+│  │  Keycloak :8000 → :8080 (direct access)              │  │
+│  │                                                       │  │
 │  │  Docker Network (angrybirdman-test)                  │  │
 │  │    ├─ Frontend Container :3000                       │  │
 │  │    ├─ API Container :3001                            │  │
 │  │    ├─ PostgreSQL Container :5432                     │  │
 │  │    ├─ Valkey Container :6379                         │  │
-│  │    └─ Keycloak Container :8080                       │  │
+│  │    └─ Keycloak Container :8080 (exposed as :8000)    │  │
 │  └──────────────────────────────────────────────────────┘  │
 └────────────────────────────────────────────────────────────┘
 ```
@@ -407,6 +411,8 @@ services:
       KC_PROXY: edge
       KC_HEALTH_ENABLED: true
       KC_METRICS_ENABLED: true
+    ports:
+      - '${KEYCLOAK_PORT:-8000}:8080'
     volumes:
       - keycloak_data:/opt/keycloak/data
       - ../keycloak/config:/opt/keycloak/data/import:ro
@@ -618,6 +624,7 @@ VALKEY_MAXMEMORY=512mb
 KEYCLOAK_ADMIN_USER=admin
 KEYCLOAK_ADMIN_PASSWORD=CHANGE_ME_ADMIN_PASSWORD
 KEYCLOAK_HOSTNAME=192.168.0.70
+KEYCLOAK_PORT=8000
 KEYCLOAK_REALM=angrybirdman
 KEYCLOAK_CLIENT_ID=angrybirdman-api
 KEYCLOAK_CLIENT_SECRET=CHANGE_ME_CLIENT_SECRET
@@ -1072,6 +1079,7 @@ sudo ufw default deny incoming
 sudo ufw default allow outgoing
 sudo ufw allow ssh
 sudo ufw allow http
+sudo ufw allow 8000/tcp
 sudo ufw enable
 
 # Verify
@@ -1448,7 +1456,8 @@ From a browser on your home network:
 
 - **Application**: http://192.168.0.70
 - **API Health**: http://192.168.0.70/api/health
-- **Keycloak Admin**: http://192.168.0.70:8080 (if port exposed)
+- **Keycloak Admin**: http://192.168.0.70:8000
+- **Keycloak Realm**: http://192.168.0.70:8000/realms/angrybirdman
 
 ### 6.2 Viewing Logs
 
