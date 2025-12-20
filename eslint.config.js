@@ -193,15 +193,23 @@ export default [
     },
   },
 
-  // Route files and middleware have special considerations for Prisma operations and external libraries
+  // Route files, middleware, plugins, and services have special considerations for Prisma operations and external libraries
   {
-    files: ['api/src/routes/**/*.ts', 'api/src/middleware/**/*.ts'],
+    files: [
+      'api/src/routes/**/*.ts',
+      'api/src/middleware/**/*.ts',
+      'api/src/plugins/**/*.ts',
+      'api/src/services/**/*.ts',
+      'api/tests/**/*.ts',
+      'scripts/**/*.ts',
+    ],
     rules: {
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',
       '@typescript-eslint/no-unsafe-call': 'off',
       '@typescript-eslint/no-unsafe-argument': 'off',
       '@typescript-eslint/no-unsafe-return': 'off',
+      '@typescript-eslint/no-redundant-type-constituents': 'off',
       '@typescript-eslint/require-await': 'off',
     },
   },
