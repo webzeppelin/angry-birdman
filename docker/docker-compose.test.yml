@@ -11,7 +11,7 @@ services:
       POSTGRES_MULTIPLE_DATABASES: ${POSTGRES_DB},${KEYCLOAK_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./database/postgres/init:/docker-entrypoint-initdb.d:ro
+      - ../../database/postgres/init:/docker-entrypoint-initdb.d:ro
     networks:
       - angrybirdman-test
     healthcheck:
@@ -46,7 +46,7 @@ services:
     image: quay.io/keycloak/keycloak:25.0
     container_name: angrybirdman-test-keycloak
     restart: always
-    command: start
+    command: start --import-realm
     environment:
       KC_DB: postgres
       KC_DB_URL_HOST: postgres
@@ -63,6 +63,7 @@ services:
       KC_METRICS_ENABLED: true
     volumes:
       - keycloak_data:/opt/keycloak/data
+      - ../../keycloak/config:/opt/keycloak/data/import:ro
     networks:
       - angrybirdman-test
     depends_on:

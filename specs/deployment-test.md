@@ -336,6 +336,16 @@ server {
 
 Docker Compose configuration for test environment:
 
+**Important Notes**:
+
+- PostgreSQL automatically creates both databases (`angrybirdman_test` and
+  `keycloak_test`) using the init script mounted from `database/postgres/init/`
+- Keycloak automatically imports the `angrybirdman` realm configuration on first
+  start using the `--import-realm` flag and the config mounted from
+  `keycloak/config/`
+- These volume mounts ensure the test environment initializes consistently, just
+  like the development environment
+
 ```yaml
 services:
   # PostgreSQL - Primary database
@@ -350,7 +360,7 @@ services:
       POSTGRES_MULTIPLE_DATABASES: ${POSTGRES_DB},${KEYCLOAK_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./database/postgres/init:/docker-entrypoint-initdb.d:ro
+      - ../../database/postgres/init:/docker-entrypoint-initdb.d:ro
     networks:
       - angrybirdman-test
     healthcheck:
@@ -382,7 +392,7 @@ services:
     image: quay.io/keycloak/keycloak:25.0
     container_name: angrybirdman-test-keycloak
     restart: always
-    command: start
+    command: start --import-realm
     environment:
       KC_DB: postgres
       KC_DB_URL_HOST: postgres
@@ -399,6 +409,7 @@ services:
       KC_METRICS_ENABLED: true
     volumes:
       - keycloak_data:/opt/keycloak/data
+      - ../../keycloak/config:/opt/keycloak/data/import:ro
     networks:
       - angrybirdman-test
     depends_on:
@@ -1243,19 +1254,21 @@ cd /opt/angrybirdman
 # Pull base images
 docker compose -f docker/docker-compose.test.yml --env-file docker/.env.test pull postgres valkey keycloak
 
-# Start infrastructure services
+# Start infrastructure services (PostgreSQL will create both databases, Keycloak will import realm automatically)
 docker compose -f docker/docker-compose.test.yml --env-file docker/.env.test up -d postgres valkey keycloak
 
-# Wait for services to be ready (check with docker ps)
+# Wait for services to be ready (this may take 60-90 seconds for Keycloak to fully start)
 docker compose -f docker/docker-compose.test.yml ps
 
-# Initialize database
+# Verify PostgreSQL databases were created
 docker compose -f docker/docker-compose.test.yml --env-file docker/.env.test exec postgres \
   psql -U angrybirdman_test -d angrybirdman_test -c "SELECT 1;"
 
-# Setup Keycloak realm (import configuration)
-# Access Keycloak admin console at http://192.168.0.70:8080
-# Import realm from keycloak/config/angrybirdman-realm.json
+docker compose -f docker/docker-compose.test.yml --env-file docker/.env.test exec postgres \
+  psql -U angrybirdman_test -d keycloak_test -c "SELECT 1;"
+
+# Verify Keycloak realm was imported (check logs)
+docker logs angrybirdman-test-keycloak | grep -i "import"
 
 # Run initial database migrations
 docker compose -f docker/docker-compose.test.yml --env-file docker/.env.test run --rm \
