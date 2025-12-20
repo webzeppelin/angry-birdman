@@ -193,9 +193,9 @@ export default [
     },
   },
 
-  // Route files have special considerations for Prisma operations
+  // Route files and middleware have special considerations for Prisma operations and external libraries
   {
-    files: ['api/src/routes/**/*.ts'],
+    files: ['api/src/routes/**/*.ts', 'api/src/middleware/**/*.ts'],
     rules: {
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',
