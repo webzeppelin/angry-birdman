@@ -8,6 +8,7 @@ COPY package*.json ./
 COPY api/package*.json ./api/
 COPY common/package*.json ./common/
 COPY database/package*.json ./database/
+COPY database/package-lock.json ./database/
 
 # Install dependencies
 RUN npm ci --workspace=api --workspace=common --workspace=database
@@ -38,6 +39,7 @@ COPY package*.json ./
 COPY api/package*.json ./api/
 COPY common/package*.json ./common/
 COPY database/package*.json ./database/
+COPY database/package-lock.json ./database/
 
 RUN npm ci --workspace=api --workspace=common --workspace=database --omit=dev
 
