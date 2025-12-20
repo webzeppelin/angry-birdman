@@ -31,6 +31,8 @@ jobs:
 
       - name: Generate Prisma Client
         run: npm run generate --workspace=database
+        env:
+          DATABASE_URL: postgresql://dummy:dummy@localhost:5432/dummy
 
       - name: Run linting
         run: npm run lint
