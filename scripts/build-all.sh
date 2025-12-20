@@ -17,6 +17,9 @@
 #   --clean         Clean before building
 #   --skip-tests    Skip running tests before build
 #   --skip-lint     Skip linting before build
+#   --skip-typecheck Skip type checking before build
+#   --skip-prisma   Skip Prisma client generation (assumes already generated)
+#   --skip-validation Skip all validation steps (lint, typecheck, tests, prisma)
 #   -h, --help      Show this help message
 ################################################################################
 
@@ -34,6 +37,8 @@ NC='\033[0m' # No Color
 CLEAN=false
 SKIP_TESTS=false
 SKIP_LINT=false
+SKIP_TYPECHECK=false
+SKIP_PRISMA=false
 
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
@@ -48,6 +53,21 @@ while [[ $# -gt 0 ]]; do
       ;;
     --skip-lint)
       SKIP_LINT=true
+      shift
+      ;;
+    --skip-typecheck)
+      SKIP_TYPECHECK=true
+      shift
+      ;;
+    --skip-prisma)
+      SKIP_PRISMA=true
+      shift
+      ;;
+    --skip-validation)
+      SKIP_TESTS=true
+      SKIP_LINT=true
+      SKIP_TYPECHECK=true
+      SKIP_PRISMA=true
       shift
       ;;
     -h|--help)
@@ -130,10 +150,14 @@ fi
 print_success "Dependencies installed"
 
 # Generate Prisma Client
-print_step "Step 2: Generate Prisma Client"
-echo -e "${YELLOW}Generating Prisma Client...${NC}"
-npm run db:generate
-print_success "Prisma Client generated"
+if [ "$SKIP_PRISMA" = false ]; then
+  print_step "Step 2: Generate Prisma Client"
+  echo -e "${YELLOW}Generating Prisma Client...${NC}"
+  npm run db:generate
+  print_success "Prisma Client generated"
+else
+  echo -e "${YELLOW}⚠ Skipping Prisma generation (--skip-prisma flag used)${NC}"
+fi
 
 # Run linting
 if [ "$SKIP_LINT" = false ]; then
@@ -151,13 +175,17 @@ else
 fi
 
 # Run type checking
-print_step "Step 4: Type Checking"
-echo -e "${YELLOW}Running TypeScript type checking...${NC}"
-if npm run type-check; then
-  print_success "Type checking passed"
+if [ "$SKIP_TYPECHECK" = false ]; then
+  print_step "Step 4: Type Checking"
+  echo -e "${YELLOW}Running TypeScript type checking...${NC}"
+  if npm run type-check; then
+    print_success "Type checking passed"
+  else
+    print_error "Type checking failed"
+    exit 1
+  fi
 else
-  print_error "Type checking failed"
-  exit 1
+  echo -e "${YELLOW}⚠ Skipping type checking (--skip-typecheck flag used)${NC}"
 fi
 
 # Run tests

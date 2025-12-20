@@ -46,7 +46,10 @@ jobs:
       #   run: npm run test
 
       - name: Build all packages
-        run: npm run build
+        run: |
+          npm run build:common
+          npm run build:api
+          npm run build:frontend
         env:
           DATABASE_URL: postgresql://dummy:dummy@localhost:5432/dummy
 
