@@ -1280,12 +1280,12 @@ docker logs angrybirdman-test-keycloak | grep -i "import"
 
 # Run initial database migrations
 docker compose -f docker/docker-compose.test.yml --env-file docker/.env.test run --rm \
-  -e DATABASE_URL="postgresql://angrybirdman_test:PASSWORD@postgres:5432/angrybirdman_test" \
+  -e DATABASE_URL='postgresql://angrybirdman_test:PASSWORD@postgres:5432/angrybirdman_test' \
   api npx prisma migrate deploy
 
 # Seed initial data (optional)
 docker compose -f docker/docker-compose.test.yml --env-file docker/.env.test run --rm \
-  -e DATABASE_URL="postgresql://angrybirdman_test:PASSWORD@postgres:5432/angrybirdman_test" \
+  -e DATABASE_URL='postgresql://angrybirdman_test:PASSWORD@postgres:5432/angrybirdman_test' \
   api npx prisma db seed
 ```
 
