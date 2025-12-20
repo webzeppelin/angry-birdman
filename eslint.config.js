@@ -193,9 +193,10 @@ export default [
     },
   },
 
-  // Route files, middleware, plugins, and services have special considerations for Prisma operations and external libraries
+  // Route files, middleware, plugins, services, and entry points have special considerations for Prisma operations and external libraries
   {
     files: [
+      'api/src/index.ts',
       'api/src/routes/**/*.ts',
       'api/src/middleware/**/*.ts',
       'api/src/plugins/**/*.ts',
