@@ -89,7 +89,7 @@ export class KeycloakService {
         try {
           // Decode the JWT to see the claims (simple base64 decode, not validating signature)
           const parts = accessToken.split('.');
-          if (parts.length === 3) {
+          if (parts.length === 3 && parts[1]) {
             const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString()) as Record<
               string,
               unknown

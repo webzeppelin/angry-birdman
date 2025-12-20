@@ -4,6 +4,7 @@
  * Unit tests for MasterBattleService business logic
  */
 
+import { type Prisma } from '@angrybirdman/database';
 import { describe, it, expect, beforeEach } from 'vitest';
 
 import { MasterBattleService } from '../../src/services/masterBattle.service';
@@ -104,11 +105,11 @@ describe('MasterBattleService', () => {
       expect(battles[0]!.battleId).toBe('20251120');
     });
 
-    it('should sort battles with most recent first', async () => {
+    it('should sort battles by most recent first', async () => {
       const now = new Date();
-      const battles = [];
+      const battles: Prisma.MasterBattleCreateManyInput[] = [];
 
-      for (let i = 3; i > 0; i--) {
+      for (let i = 5; i > 0; i--) {
         const date = new Date(now);
         date.setDate(date.getDate() - i * 3);
         const battleId = date.toISOString().split('T')[0]!.replace(/-/g, '');

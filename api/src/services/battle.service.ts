@@ -452,7 +452,7 @@ export class BattleService {
           score: ps.score,
           fp: ps.fp,
           actionCode: ps.actionCode,
-          actionReason: ps.actionReason,
+          actionReason: ps.actionReason ?? undefined,
         })),
       nonplayerStats:
         data.nonplayerStats ||
@@ -461,7 +461,7 @@ export class BattleService {
           fp: nps.fp,
           reserve: nps.reserve,
           actionCode: nps.actionCode,
-          actionReason: nps.actionReason,
+          actionReason: nps.actionReason ?? undefined,
         })),
     };
 
@@ -504,7 +504,6 @@ export class BattleService {
 
     for (const player of data.playerStats) {
       if (player.actionCode === 'KICK') {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
         await tx.rosterMember.update({
           where: { playerId: player.playerId },
           data: {
@@ -513,7 +512,6 @@ export class BattleService {
           },
         });
       } else if (player.actionCode === 'RESERVE') {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
         await tx.rosterMember.update({
           where: { playerId: player.playerId },
           data: {
@@ -526,7 +524,6 @@ export class BattleService {
     // Process nonplayer action codes
     for (const nonplayer of data.nonplayerStats) {
       if (nonplayer.actionCode === 'KICK') {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
         await tx.rosterMember.update({
           where: { playerId: nonplayer.playerId },
           data: {
@@ -535,7 +532,6 @@ export class BattleService {
           },
         });
       } else if (nonplayer.actionCode === 'RESERVE') {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
         await tx.rosterMember.update({
           where: { playerId: nonplayer.playerId },
           data: {

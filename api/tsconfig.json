@@ -4,6 +4,7 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "types": ["node"],
+    "noImplicitAny": false, // Prisma operations result in 'any' types in callbacks
     "paths": {
       "@/*": ["./src/*"],
       "@angrybirdman/common": ["../common/src/index.ts"],

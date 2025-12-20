@@ -4,6 +4,7 @@
  * Tests for centralized battle schedule API endpoints
  */
 
+import { type Prisma } from '@angrybirdman/database';
 import { type FastifyInstance } from 'fastify';
 import { describe, it, expect, beforeEach } from 'vitest';
 
@@ -180,7 +181,7 @@ describe('Master Battle Routes', () => {
 
     it('should sort available battles with most recent first', async () => {
       const now = new Date();
-      const battles = [];
+      const battles: Prisma.MasterBattleCreateManyInput[] = [];
 
       for (let i = 5; i > 0; i--) {
         const date = new Date(now);
