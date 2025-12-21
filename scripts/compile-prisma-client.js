@@ -21,9 +21,36 @@ if (!existsSync(prismaClientPath)) {
 console.log('Compiling Prisma client TypeScript to JavaScript...');
 
 try {
+  // First, list all .ts files to compile
+  const tsFiles = [];
+  /**
+   * Recursively find all TypeScript files
+   * @param {string} dir - Directory path
+   */
+  function findTsFiles(dir) {
+    const entries = readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      const fullPath = join(dir, entry.name);
+      if (entry.isDirectory()) {
+        findTsFiles(fullPath);
+      } else if (entry.name.endsWith('.ts') && !entry.name.endsWith('.d.ts')) {
+        tsFiles.push(fullPath);
+      }
+    }
+  }
+  findTsFiles(prismaClientPath);
+  
+  if (tsFiles.length === 0) {
+    console.error('Error: No TypeScript files found in Prisma client directory');
+    process.exit(1);
+  }
+  
+  // eslint-disable-next-line no-console
+  console.log(`Found ${tsFiles.length} TypeScript files to compile`);
+  
   // Compile the TypeScript files in .prisma/client to JavaScript
   execSync(
-    `npx tsc ${prismaClientPath}/*.ts ${prismaClientPath}/**/*.ts --outDir ${prismaClientPath} --module esnext --target es2022 --moduleResolution bundler --allowJs --skipLibCheck`,
+    `npx tsc ${tsFiles.join(' ')} --outDir ${prismaClientPath} --module esnext --target es2022 --moduleResolution bundler --allowJs --skipLibCheck`,
     { stdio: 'inherit' }
   );
   
