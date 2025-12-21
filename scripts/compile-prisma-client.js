@@ -30,7 +30,9 @@ try {
   // Rewrite imports in JS files to use .js extensions
   // eslint-disable-next-line no-console
   console.log('Rewriting imports to use .js extensions...');
-  rewriteImports(prismaClientPath);
+  const rewriteCount = rewriteImports(prismaClientPath);
+  // eslint-disable-next-line no-console
+  console.log(`✓ Rewrote imports in ${rewriteCount} files`);
   
   // Remove all .ts files to prevent Node from importing them instead of .js
   // eslint-disable-next-line no-console
@@ -47,17 +49,20 @@ try {
 /**
  * Recursively rewrite imports in .js files to use .js extensions
  * @param {string} dir - Directory path
+ * @returns {number} Number of files modified
  */
 function rewriteImports(dir) {
   const entries = readdirSync(dir, { withFileTypes: true });
+  let count = 0;
   
   for (const entry of entries) {
     const fullPath = join(dir, entry.name);
     
     if (entry.isDirectory()) {
-      rewriteImports(fullPath);
+      count += rewriteImports(fullPath);
     } else if (entry.name.endsWith('.js')) {
       let content = readFileSync(fullPath, 'utf8');
+      const originalContent = content;
       
       // Replace relative imports without extensions with .js
       // Matches: from "./something" or from "../something" or from "./path/something"
@@ -70,6 +75,8 @@ function rewriteImports(dir) {
           if (path.match(/\.\w+$/)) {
             return match;
           }
+          // eslint-disable-next-line no-console
+          console.log(`  ${fullPath}: Rewriting "${match}" to add .js`);
            
           return match.replace(path, `${path}.js`);
         }
@@ -89,9 +96,14 @@ function rewriteImports(dir) {
         }
       );
       
-      writeFileSync(fullPath, content, 'utf8');
+      if (content !== originalContent) {
+        writeFileSync(fullPath, content, 'utf8');
+        count++;
+      }
     }
   }
+  
+  return count;
 }
 
 /**
