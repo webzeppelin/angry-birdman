@@ -56,6 +56,9 @@ RUN npm install --workspace=api --workspace=common --workspace=database --omit=d
 COPY --from=builder /app/api/dist ./api/dist
 COPY --from=builder /app/common/dist ./common/dist
 
+# Copy Prisma schema and migrations for database operations
+COPY --from=builder /app/database/prisma ./database/prisma
+
 # Copy Prisma config
 COPY prisma.config.ts ./
 
