@@ -10,8 +10,7 @@
     "paths": {
       "@/*": ["./src/*"],
       "@angrybirdman/common": ["../common/src/index.ts"],
-      "@angrybirdman/common/*": ["../common/src/*"],
-      "@angrybirdman/database": ["../database/index.ts"]
+      "@angrybirdman/common/*": ["../common/src/*"]
     }
   },
   "include": [
