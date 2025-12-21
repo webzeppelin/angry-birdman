@@ -11,7 +11,8 @@ COPY frontend/package.json ./frontend/
 COPY common/package.json ./common/
 
 # Install dependencies
-RUN npm ci --workspace=frontend --workspace=common
+# Note: --ignore-scripts prevents prepare script (husky) from running before all deps installed
+RUN npm ci --workspace=frontend --workspace=common --ignore-scripts
 
 # Copy source code
 COPY frontend/ ./frontend/

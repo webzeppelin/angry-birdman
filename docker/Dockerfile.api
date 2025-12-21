@@ -12,7 +12,8 @@ COPY common/package.json ./common/
 COPY database/package.json ./database/
 
 # Install dependencies
-RUN npm ci --workspace=api --workspace=common --workspace=database
+# Note: --ignore-scripts prevents prepare script (husky) from running before all deps installed
+RUN npm ci --workspace=api --workspace=common --workspace=database --ignore-scripts
 
 # Copy source code
 COPY api/ ./api/
@@ -43,7 +44,8 @@ COPY api/package.json ./api/
 COPY common/package.json ./common/
 COPY database/package.json ./database/
 
-RUN npm ci --workspace=api --workspace=common --workspace=database --omit=dev
+# Note: --ignore-scripts prevents prepare script (husky) from running before all deps installed
+RUN npm ci --workspace=api --workspace=common --workspace=database --omit=dev --ignore-scripts
 
 # Copy built artifacts
 COPY --from=builder /app/api/dist ./api/dist
