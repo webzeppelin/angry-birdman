@@ -5,6 +5,7 @@
     "moduleResolution": "bundler",
     "types": ["node"],
     "noImplicitAny": false, // Prisma operations result in 'any' types in callbacks
+    "skipLibCheck": true, // Skip type checking of declaration files (including @prisma/client)
     "baseUrl": ".",
     "outDir": "./dist",
     "paths": {

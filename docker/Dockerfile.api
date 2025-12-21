@@ -64,7 +64,7 @@ RUN npm run generate --workspace=database
 COPY --from=builder /app/api/dist ./api/dist
 COPY --from=builder /app/common/dist ./common/dist
 
-# Copy database source (TypeScript) - resolved by Node.js at runtime
+# Copy database source (TypeScript) - tsx will handle at runtime
 COPY --from=builder /app/database/index.ts ./database/index.ts
 COPY --from=builder /app/database/package.json ./database/package.json
 
@@ -75,5 +75,5 @@ EXPOSE 3001
 HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=3 \
   CMD wget --quiet --tries=1 --spider http://localhost:3001/health || exit 1
 
-# Use Node's experimental TypeScript support for the database package
-CMD ["node", "--experimental-strip-types", "--no-warnings", "api/dist/api/src/index.js"]
+# Use tsx to run API - handles TypeScript imports from database package and Prisma
+CMD ["npx", "tsx", "api/dist/api/src/index.js"]
