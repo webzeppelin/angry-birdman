@@ -134,8 +134,14 @@ jobs:
       - name: Run database migrations
         working-directory: /opt/angrybirdman
         run: |
+          # Load environment variables from .env.test
+          set -a
+          source docker/.env.test
+          set +a
+
+          # Run migrations with properly expanded DATABASE_URL
           docker compose -f docker/docker-compose.test.yml --env-file docker/.env.test run --rm \
-            -e DATABASE_URL="postgresql://\${POSTGRES_USER}:\${POSTGRES_PASSWORD}@postgres:5432/\${POSTGRES_DB}?schema=public" \
+            -e DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?schema=public" \
             api npx prisma migrate deploy
 
       - name: Deploy with Docker Compose
