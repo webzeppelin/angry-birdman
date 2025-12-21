@@ -4,11 +4,12 @@
   "description": "Database schema and migrations for Angry Birdman",
   "private": true,
   "type": "module",
-  "main": "./index.ts",
+  "main": "./dist/index.js",
   "exports": {
-    ".": "./index.ts"
+    ".": "./dist/index.js"
   },
   "scripts": {
+    "build": "tsc -p tsconfig.build.json",
     "migrate:dev": "cd .. && prisma migrate dev",
     "migrate:deploy": "cd .. && prisma migrate deploy",
     "migrate:reset": "cd .. && prisma migrate reset --force",

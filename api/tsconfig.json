@@ -11,9 +11,7 @@
       "@/*": ["./src/*"],
       "@angrybirdman/common": ["../common/src/index.ts"],
       "@angrybirdman/common/*": ["../common/src/*"],
-      "@angrybirdman/database": [
-        "../database/generated/prisma/client/index.d.ts"
-      ]
+      "@angrybirdman/database": ["../database/index.ts"]
     }
   },
   "include": [

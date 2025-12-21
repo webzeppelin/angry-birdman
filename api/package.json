@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch --clear-screen=false src/index.ts",
-    "build": "tsc",
+    "build": "tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
     "start": "node dist/api/src/index.js",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -49,6 +49,7 @@
     "@types/pg": "^8.15.6",
     "@vitest/coverage-v8": "^4.0.14",
     "prisma": "^7.1.0",
+    "tsc-alias": "^1.8.16",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "vitest": "^4.0.14"
