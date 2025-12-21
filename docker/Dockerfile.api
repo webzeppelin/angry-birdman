@@ -60,6 +60,9 @@ COPY --from=builder /app/common/dist ./common/dist
 COPY --from=builder /app/database/index.ts ./database/index.ts
 COPY --from=builder /app/database/package.json ./database/package.json
 
+# Copy generated Prisma client (TypeScript source files)
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+
 # Copy Prisma schema and migrations for database operations
 COPY --from=builder /app/database/prisma ./database/prisma
 
