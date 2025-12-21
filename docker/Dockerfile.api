@@ -54,9 +54,10 @@ RUN npm install --workspace=api --workspace=common --workspace=database --omit=d
 
 # Copy Prisma schema for generation
 COPY --from=builder /app/database/prisma ./database/prisma
+COPY --from=builder /app/scripts/compile-prisma-client.js ./scripts/
 COPY prisma.config.ts ./
 
-# Generate Prisma client in production stage
+# Generate Prisma client in production stage and compile to JavaScript
 ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
 RUN npm run generate --workspace=database
 
@@ -75,6 +76,5 @@ EXPOSE 3001
 HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=3 \
   CMD wget --quiet --tries=1 --spider http://localhost:3001/health || exit 1
 
-# Use tsx with loader hooks to handle TypeScript imports
-# The --import flag registers tsx's loader before running the file
-CMD ["node", "--import", "tsx/esm", "api/dist/api/src/index.js"]
+# Run API with standard Node (no tsx needed - Prisma client is now JavaScript)
+CMD ["node", "api/dist/api/src/index.js"]

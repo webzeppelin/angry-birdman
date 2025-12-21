@@ -12,7 +12,7 @@
     "migrate:dev": "cd .. && prisma migrate dev",
     "migrate:deploy": "cd .. && prisma migrate deploy",
     "migrate:reset": "cd .. && prisma migrate reset --force",
-    "generate": "cd .. && prisma generate",
+    "generate": "cd .. && prisma generate && node scripts/compile-prisma-client.js",
     "studio": "cd .. && prisma studio",
     "seed": "tsx prisma/seed.ts",
     "db:push": "cd .. && prisma db push",
