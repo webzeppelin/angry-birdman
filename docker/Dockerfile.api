@@ -27,13 +27,13 @@ COPY prisma.config.ts ./
 # Build common library first
 RUN npm run build --workspace=common
 
-# Build database re-export
-RUN npm run build --workspace=database
-
 # Generate Prisma client
 # Prisma requires DATABASE_URL env var even for type generation
 ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
 RUN npm run generate --workspace=database
+
+# Build database re-export (depends on generated Prisma client)
+RUN npm run build --workspace=database
 
 # Build API
 RUN npm run build --workspace=api
