@@ -52,6 +52,14 @@ COPY database/package.json ./database/
 # --ignore-scripts prevents prepare script (husky) from running before all deps installed
 RUN npm install --workspace=api --workspace=common --workspace=database --omit=dev --ignore-scripts
 
+# Copy Prisma schema for generation
+COPY --from=builder /app/database/prisma ./database/prisma
+COPY prisma.config.ts ./
+
+# Generate Prisma client in production stage
+ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
+RUN npm run generate --workspace=database
+
 # Copy built artifacts
 COPY --from=builder /app/api/dist ./api/dist
 COPY --from=builder /app/common/dist ./common/dist
@@ -59,15 +67,6 @@ COPY --from=builder /app/common/dist ./common/dist
 # Copy database source (TypeScript) - resolved by Node.js at runtime
 COPY --from=builder /app/database/index.ts ./database/index.ts
 COPY --from=builder /app/database/package.json ./database/package.json
-
-# Copy generated Prisma client (TypeScript source files)
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-
-# Copy Prisma schema and migrations for database operations
-COPY --from=builder /app/database/prisma ./database/prisma
-
-# Copy Prisma config
-COPY prisma.config.ts ./
 
 # Expose port
 EXPOSE 3001
