@@ -75,5 +75,6 @@ EXPOSE 3001
 HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=3 \
   CMD wget --quiet --tries=1 --spider http://localhost:3001/health || exit 1
 
-# Use tsx to run API - handles TypeScript imports from database package and Prisma
-CMD ["npx", "tsx", "api/dist/api/src/index.js"]
+# Use tsx with loader hooks to handle TypeScript imports
+# The --import flag registers tsx's loader before running the file
+CMD ["node", "--import", "tsx/esm", "api/dist/api/src/index.js"]
