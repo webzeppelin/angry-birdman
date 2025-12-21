@@ -32,9 +32,6 @@ RUN npm run build --workspace=common
 ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
 RUN npm run generate --workspace=database
 
-# Build database re-export (depends on generated Prisma client)
-RUN npm run build --workspace=database
-
 # Build API
 RUN npm run build --workspace=api
 
@@ -58,9 +55,6 @@ RUN npm install --workspace=api --workspace=common --workspace=database --omit=d
 # Copy built artifacts
 COPY --from=builder /app/api/dist ./api/dist
 COPY --from=builder /app/common/dist ./common/dist
-COPY --from=builder /app/database/dist ./database/dist
-COPY --from=builder /app/database/generated ./database/generated
-COPY --from=builder /app/database/prisma ./database/prisma
 
 # Copy Prisma config
 COPY prisma.config.ts ./
