@@ -44,10 +44,23 @@ out/
 coverage/
 .nyc_output/
 *.lcov
-# Don't commit compiled test files
-tests/**/*.js
-tests/**/*.d.ts
-tests/**/*.map
+
+# Compiled JavaScript and TypeScript declaration files
+# These are build artifacts and should not be committed
+# Keep TypeScript source files (.ts) but ignore compiled outputs
+*.js
+*.js.map
+*.d.ts
+*.d.ts.map
+# Exception: Keep config files that are intentionally JavaScript
+!*.config.js
+!eslint.config.js
+!vitest.config.js
+!vite.config.js
+!tailwind.config.js
+!prisma.config.js
+# Exception: Keep root-level setup files
+!*.setup.js
 
 # Database
 *.sql
