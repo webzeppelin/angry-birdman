@@ -10,6 +10,7 @@
     "checkJs": false,
     "outDir": "./dist",
     "rootDir": "./",
+    "baseUrl": ".",
     "removeComments": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -25,7 +26,10 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "./.prisma/client": ["../node_modules/.prisma/client"]
+    }
   },
   "include": ["index.ts"],
   "exclude": ["node_modules", "dist"]

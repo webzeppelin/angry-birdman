@@ -56,6 +56,10 @@ RUN npm install --workspace=api --workspace=common --workspace=database --omit=d
 COPY --from=builder /app/api/dist ./api/dist
 COPY --from=builder /app/common/dist ./common/dist
 
+# Copy database source (TypeScript) - resolved by Node.js at runtime
+COPY --from=builder /app/database/index.ts ./database/index.ts
+COPY --from=builder /app/database/package.json ./database/package.json
+
 # Copy Prisma schema and migrations for database operations
 COPY --from=builder /app/database/prisma ./database/prisma
 
@@ -69,4 +73,5 @@ EXPOSE 3001
 HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=3 \
   CMD wget --quiet --tries=1 --spider http://localhost:3001/health || exit 1
 
-CMD ["node", "api/dist/api/src/index.js"]
+# Use Node's experimental TypeScript support for the database package
+CMD ["node", "--experimental-strip-types", "--no-warnings", "api/dist/api/src/index.js"]
