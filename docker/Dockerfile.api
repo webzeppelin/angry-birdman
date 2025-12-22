@@ -78,9 +78,11 @@ COPY --from=builder /app/database/package.json ./database/package.json
 # Expose port
 EXPOSE 3001
 
-# Health check using curl (more reliable than wget)
-HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
-  CMD curl --fail --silent http://localhost:3001/health || exit 1
+# Health check using curl
+# Note: Using 127.0.0.1 instead of localhost to avoid DNS lookup
+# Longer start period to ensure server is fully initialized
+HEALTHCHECK --interval=10s --timeout=5s --start-period=60s --retries=5 \
+  CMD curl -f http://127.0.0.1:3001/health || exit 1
 
 # Run API with standard Node (no tsx needed - Prisma client is now JavaScript)
 CMD ["node", "api/dist/api/src/index.js"]
