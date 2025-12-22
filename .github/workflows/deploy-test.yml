@@ -131,12 +131,11 @@ jobs:
           docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_API }}:latest
           docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_FRONTEND }}:latest
 
-      - name: Update deployment files
+      - name: Update deployment directory
+        working-directory: /opt/angrybirdman
         run: |
-          # Copy updated docker compose and related files to deployment directory
-          cp -f docker/docker-compose.test.yml /opt/angrybirdman/docker/
-          cp -f docker/nginx-reverse-proxy.conf /opt/angrybirdman/docker/
-          cp -f docker/Dockerfile.* /opt/angrybirdman/docker/ 2>/dev/null || true
+          # Pull latest code to update docker-compose and config files
+          git pull origin main
 
       - name: Run database migrations
         working-directory: /opt/angrybirdman
