@@ -39,6 +39,9 @@ RUN npm run build --workspace=api
 # Stage 2: Production
 FROM node:24-alpine
 
+# Install curl for health checks
+RUN apk add --no-cache curl
+
 WORKDIR /app
 
 # Install production dependencies only
@@ -75,9 +78,9 @@ COPY --from=builder /app/database/package.json ./database/package.json
 # Expose port
 EXPOSE 3001
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=3 \
-  CMD wget --quiet --tries=1 --spider http://localhost:3001/health || exit 1
+# Health check using curl (more reliable than wget)
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
+  CMD curl --fail --silent http://localhost:3001/health || exit 1
 
 # Run API with standard Node (no tsx needed - Prisma client is now JavaScript)
 CMD ["node", "api/dist/api/src/index.js"]
