@@ -147,7 +147,11 @@ jobs:
       - name: Deploy with Docker Compose
         working-directory: /opt/angrybirdman
         run: |
-          docker compose -f docker/docker-compose.test.yml --env-file docker/.env.test up -d --remove-orphans
+          # Pull latest images
+          docker compose -f docker/docker-compose.test.yml --env-file docker/.env.test pull
+
+          # Recreate containers with latest images (--force-recreate ensures health checks are updated)
+          docker compose -f docker/docker-compose.test.yml --env-file docker/.env.test up -d --force-recreate --remove-orphans
 
       - name: Wait for services to be healthy
         run: sleep 30
