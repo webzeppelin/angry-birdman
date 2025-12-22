@@ -106,3 +106,4 @@ generated/
 
 # ESLint cache
 .eslintcache
+docker/ssl/
