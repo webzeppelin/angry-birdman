@@ -53,6 +53,9 @@ COPY database/package.json ./database/
 # --ignore-scripts prevents prepare script (husky) from running before all deps installed
 RUN npm install --workspace=api --workspace=common --workspace=database --omit=dev --ignore-scripts
 
+# Install Prisma CLI for migrations (it's a devDependency but needed for migrations)
+RUN npm install --workspace=database --ignore-scripts
+
 # Copy built artifacts from builder
 COPY --from=builder /app/api/dist ./api/dist
 COPY --from=builder /app/common/dist ./common/dist
@@ -60,6 +63,10 @@ COPY --from=builder /app/common/dist ./common/dist
 # Copy compiled Prisma client from builder (already compiled to JavaScript)
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
+
+# Copy Prisma schema and config for migrations
+COPY --from=builder /app/database/prisma ./database/prisma
+COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 
 # Copy database package files for module resolution
 COPY --from=builder /app/database/index.ts ./database/index.ts
