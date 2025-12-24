@@ -49,6 +49,8 @@ jobs:
         run: npm ci
 
       - name: Generate Prisma Client
+        env:
+          DATABASE_URL: postgresql://dummy:dummy@localhost:5432/dummy
         run: npm run db:generate
 
       - name: Run TypeScript type checking
@@ -75,6 +77,8 @@ jobs:
 
       - name: Generate Prisma Client
         if: matrix.workspace == 'api'
+        env:
+          DATABASE_URL: postgresql://dummy:dummy@localhost:5432/dummy
         run: npm run db:generate
 
       - name: Run tests for ${{ matrix.workspace }}
@@ -97,6 +101,8 @@ jobs:
         run: npm ci
 
       - name: Generate Prisma Client
+        env:
+          DATABASE_URL: postgresql://dummy:dummy@localhost:5432/dummy
         run: npm run db:generate
 
       - name: Run tests with coverage
@@ -132,6 +138,8 @@ jobs:
         run: npm ci
 
       - name: Generate Prisma Client
+        env:
+          DATABASE_URL: postgresql://dummy:dummy@localhost:5432/dummy
         run: npm run db:generate
 
       - name: Build all workspaces
