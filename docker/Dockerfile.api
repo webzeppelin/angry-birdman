@@ -28,7 +28,7 @@ COPY scripts/ ./scripts/
 # Build common library first
 RUN npm run build --workspace=common
 
-# Generate Prisma client and compile to JavaScript
+# Generate Prisma client and compile to JavaScript for production
 # Prisma requires DATABASE_URL env var even for type generation
 ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
 RUN npm run generate --workspace=database
