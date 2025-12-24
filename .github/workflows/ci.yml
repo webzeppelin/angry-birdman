@@ -103,6 +103,8 @@ jobs:
         run: npm run db:generate
 
       - name: Build all workspaces
+        env:
+          DATABASE_URL: postgresql://dummy:dummy@localhost:5432/dummy
         run: npm run build
 
       - name: Upload build artifacts
