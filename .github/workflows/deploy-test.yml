@@ -2,8 +2,8 @@ name: Deploy to Test Environment
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'test-*' # Deploy when pushing tags like test-2025-12-23.1
   workflow_dispatch: # Allow manual triggering
 
 env:
