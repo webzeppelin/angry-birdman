@@ -10,11 +10,9 @@ COPY common/package.json ./common/
 COPY database/package.json ./database/
 COPY tsconfig.json prisma.config.ts ./
 
-# Disable husky git hooks in Docker
-ENV HUSKY=0
-
 # Install all dependencies (including devDependencies for build)
-RUN npm ci
+# --ignore-scripts prevents prepare script (husky) from running
+RUN npm ci --ignore-scripts
 
 # Copy source code
 COPY api/ ./api/
@@ -47,11 +45,9 @@ COPY common/package.json ./common/
 COPY database/package.json ./database/
 COPY prisma.config.ts ./
 
-# Disable husky git hooks in Docker
-ENV HUSKY=0
-
 # Install production dependencies only
-RUN npm ci --omit=dev
+# --ignore-scripts prevents prepare script (husky) from running
+RUN npm ci --omit=dev --ignore-scripts
 
 # Install Prisma CLI for migrations (needed at runtime)
 RUN npm install prisma --workspace=database
