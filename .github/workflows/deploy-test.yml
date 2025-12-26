@@ -30,9 +30,15 @@ jobs:
         run: npm ci
 
       - name: Generate Prisma Client
-        run: npm run generate --workspace=database
         env:
           DATABASE_URL: postgresql://dummy:dummy@localhost:5432/dummy
+        run: npm run db:generate
+
+      - name: Build database package
+        run: npm run build --workspace=database
+
+      - name: Build common package
+        run: npm run build --workspace=common
 
       - name: Run linting
         run: npm run lint
@@ -45,13 +51,15 @@ jobs:
       # - name: Run unit tests
       #   run: npm run test
 
-      - name: Build all packages
-        run: |
-          npm run build:common
-          npm run build:api
-          npm run build:frontend
+      - name: Build API package
         env:
           DATABASE_URL: postgresql://dummy:dummy@localhost:5432/dummy
+        run: npm run build --workspace=api
+
+      - name: Build frontend package
+        env:
+          DATABASE_URL: postgresql://dummy:dummy@localhost:5432/dummy
+        run: npm run build --workspace=frontend
 
   build-and-push:
     name: Build and Push Docker Images
