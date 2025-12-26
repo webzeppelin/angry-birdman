@@ -29,6 +29,8 @@ const pool = new Pool({
 });
 
 // Create Prisma adapter using the connection pool
+// ESLint cannot properly infer adapter types in all environments
+
 const adapter = new PrismaPg(pool);
 
 // Create and export Prisma Client instance
