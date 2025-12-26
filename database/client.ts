@@ -9,7 +9,7 @@
 
 import 'dotenv/config';
 
-import { type DriverAdapter, PrismaPg } from '@prisma/adapter-pg';
+import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 
 import { PrismaClient } from './generated/prisma/client';
@@ -29,11 +29,10 @@ const pool = new Pool({
 });
 
 // Create Prisma adapter using the connection pool
-const adapter: DriverAdapter = new PrismaPg(pool);
+const adapter = new PrismaPg(pool);
 
 // Create and export Prisma Client instance
 export const prisma: PrismaClient = new PrismaClient({
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   adapter,
   log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
 });
