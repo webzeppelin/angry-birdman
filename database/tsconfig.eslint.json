@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "composite": false
+  },
+  "include": [
+    "index.ts",
+    "client.ts",
+    "test-prisma.ts",
+    "validate-database.ts",
+    "generated/**/*",
+    "prisma/**/*.ts"
+  ]
+}

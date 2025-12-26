@@ -23,8 +23,11 @@ export default [
       '**/coverage/**',
       '**/.turbo/**',
       '**/*.min.js',
+      '**/*.d.ts',
       'database/prisma/migrations/**',
       'database/generated/**',
+      'common/src/**/*.js',
+      'common/src/**/*.js.map',
       '**/tailwind.config.js',
       '**/postcss.config.js',
       'keycloak/test/**/*.js',
@@ -76,7 +79,7 @@ export default [
             './frontend/tsconfig.json',
             './api/tsconfig.json',
             './common/tsconfig.eslint.json',
-            './database/tsconfig.json',
+            './database/tsconfig.eslint.json',
           ],
         },
       },
@@ -234,6 +237,17 @@ export default [
     languageOptions: {
       parserOptions: {
         project: './common/tsconfig.eslint.json',
+        tsconfigRootDir: __dirname,
+      },
+    },
+  },
+
+  // Database package - use eslint-specific tsconfig that includes utility scripts
+  {
+    files: ['database/**/*.ts'],
+    languageOptions: {
+      parserOptions: {
+        project: './database/tsconfig.eslint.json',
         tsconfigRootDir: __dirname,
       },
     },

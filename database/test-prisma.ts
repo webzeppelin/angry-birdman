@@ -2,7 +2,7 @@
  * Simple test script to verify Prisma Client is working correctly
  */
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from './generated/prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -16,7 +16,7 @@ async function main() {
   // Test 2: List action codes
   const actionCodes = await prisma.actionCode.findMany();
   console.log(
-    `✅ Found ${actionCodes.length} action codes: ${actionCodes.map((a) => a.actionCode).join(', ')}`
+    `✅ Found ${actionCodes.length} action codes: ${actionCodes.map((a: { actionCode: string }) => a.actionCode).join(', ')}`
   );
 
   // Test 3: Get clan with users

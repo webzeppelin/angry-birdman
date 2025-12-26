@@ -8,6 +8,7 @@
  */
 
 import 'dotenv/config';
+
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 
@@ -31,7 +32,7 @@ const pool = new Pool({
 const adapter = new PrismaPg(pool);
 
 // Create and export Prisma Client instance
-export const prisma = new PrismaClient({
+export const prisma: PrismaClient = new PrismaClient({
   adapter,
   log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
 });

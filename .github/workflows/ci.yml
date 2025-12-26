@@ -53,6 +53,12 @@ jobs:
           DATABASE_URL: postgresql://dummy:dummy@localhost:5432/dummy
         run: npm run db:generate
 
+      - name: Build database package
+        run: npm run build --workspace=database
+
+      - name: Build common package
+        run: npm run build --workspace=common
+
       - name: Run TypeScript type checking
         run: npm run type-check
 

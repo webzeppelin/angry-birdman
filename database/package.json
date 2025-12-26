@@ -14,6 +14,7 @@
     "migrate:deploy": "cd .. && prisma migrate deploy",
     "migrate:reset": "cd .. && prisma migrate reset --force",
     "generate": "cd .. && prisma generate",
+    "build": "tsc",
     "studio": "cd .. && prisma studio",
     "seed": "tsx prisma/seed.ts",
     "db:push": "cd .. && prisma db push",
