@@ -99,6 +99,9 @@ Thumbs.db
 prisma/.env
 database/prisma/dev.db
 database/prisma/dev.db-journal
+
+# Prisma generated client (Prisma 7 generates TypeScript source code)
+database/generated/
 generated/
 
 # Husky

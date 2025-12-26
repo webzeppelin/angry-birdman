@@ -1,18 +1,34 @@
 /**
  * Database package entry point
  *
- * Re-exports Prisma Client and types for use by API and other services
+ * Re-exports Prisma Client and types for use throughout the application.
  *
- * Import strategy: Use dynamic import to avoid ESM/tsx resolution issues
- * This works around tsx having trouble with namespace exports in re-export syntax
+ * This file provides a stable import path that abstracts the actual
+ * Prisma client generation location. All application code should import
+ * from '@angrybirdman/database' rather than directly from generated files.
  */
 
-// Use dynamic import to load the compiled Prisma client
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-const prismaModule = await import('../node_modules/.prisma/client/client.js');
+// Import from generated Prisma client using standard static imports
+export { PrismaClient, Prisma } from './generated/prisma/client';
 
-// Re-export with explicit typing (eslint disabled due to dynamic import limitations)
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-export const PrismaClient = prismaModule.PrismaClient;
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-export const Prisma = prismaModule.Prisma;
+// Export the singleton client instance
+export { prisma } from './client';
+
+// Re-export useful types for external consumers
+export type {
+  Clan,
+  User,
+  RosterMember,
+  ClanBattle,
+  ClanBattlePlayerStats,
+  ClanBattleNonplayerStats,
+  MasterBattle,
+  SystemSetting,
+  ActionCode,
+  MonthlyIndividualPerformance,
+  YearlyIndividualPerformance,
+  MonthlyClanPerformance,
+  YearlyClanPerformance,
+  AuditLog,
+  AdminRequest,
+} from './generated/prisma/client';

@@ -1,32 +1,10 @@
 {
+  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "ESNext",
-    "lib": ["ES2022"],
-    "types": ["node"],
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "allowJs": true,
-    "checkJs": false,
     "outDir": "./dist",
-    "rootDir": "./",
-    "removeComments": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
-    "strictBindCallApply": true,
-    "strictPropertyInitialization": true,
-    "noImplicitThis": true,
-    "alwaysStrict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "skipLibCheck": true
+    "rootDir": ".",
+    "composite": true
   },
-  "include": ["prisma/**/*.ts", "*.ts"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["index.ts", "client.ts", "generated/**/*", "prisma/**/*.ts"],
+  "exclude": ["node_modules", "dist", "prisma/migrations"]
 }

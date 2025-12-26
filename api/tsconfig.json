@@ -8,6 +8,7 @@
     "skipLibCheck": true, // Skip type checking of declaration files (including @prisma/client)
     "baseUrl": ".",
     "outDir": "./dist",
+    "composite": true,
     "paths": {
       "@/*": ["./src/*"],
       "@angrybirdman/common": ["../common/src/index.ts"],
@@ -20,5 +21,6 @@
     "test-keycloak-auth.ts",
     "vitest.config.ts"
   ],
+  "references": [{ "path": "../database" }, { "path": "../common" }],
   "exclude": ["node_modules", "dist", "coverage"]
 }

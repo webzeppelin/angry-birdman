@@ -4,85 +4,65 @@ FROM node:24-alpine AS builder
 WORKDIR /app
 
 # Copy package files for all workspaces
-# Note: Only copy package.json and package-lock.json from root
-# Workspace packages should only have package.json (no separate lock files)
 COPY package.json package-lock.json ./
 COPY api/package.json ./api/
 COPY common/package.json ./common/
 COPY database/package.json ./database/
+COPY tsconfig.json prisma.config.ts ./
 
-# Install dependencies
-# Note: Using npm install instead of npm ci because workspace dependencies with different
-# transitive dep versions (picomatch 2.3.1 vs 4.0.3) cause npm ci to fail
-# --ignore-scripts prevents prepare script (husky) from running before all deps installed
-RUN npm install --workspace=api --workspace=common --workspace=database --ignore-scripts
+# Install all dependencies (including devDependencies for build)
+RUN npm ci
 
 # Copy source code
 COPY api/ ./api/
 COPY common/ ./common/
 COPY database/ ./database/
-COPY tsconfig.json ./
-COPY prisma.config.ts ./
 COPY scripts/ ./scripts/
 
-# Build common library first
+# Generate Prisma client (TypeScript source)
+ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
+RUN npm run db:generate
+
+# Build common library
 RUN npm run build --workspace=common
 
-# Generate Prisma client and compile to JavaScript for production
-# Prisma requires DATABASE_URL env var even for type generation
-ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
-RUN npm run generate --workspace=database
-
-# Build API
+# Build API (this compiles database imports too)
 RUN npm run build --workspace=api
 
 # Stage 2: Production
 FROM node:24-alpine
 
+WORKDIR /app
+
 # Install curl for health checks
 RUN apk add --no-cache curl
 
-WORKDIR /app
-
-# Install production dependencies only
-# Note: Only copy package.json and package-lock.json from root
-# Workspace packages should only have package.json (no separate lock files)
+# Copy package files
 COPY package.json package-lock.json ./
 COPY api/package.json ./api/
 COPY common/package.json ./common/
 COPY database/package.json ./database/
+COPY prisma.config.ts ./
 
-# Note: Using npm install instead of npm ci to avoid workspace lock file conflicts
-# --ignore-scripts prevents prepare script (husky) from running before all deps installed
-RUN npm install --workspace=api --workspace=common --workspace=database --omit=dev --ignore-scripts
+# Install production dependencies only
+RUN npm ci --omit=dev
 
-# Install Prisma CLI for migrations (it's a devDependency but needed for migrations)
-RUN npm install --workspace=database --ignore-scripts
+# Install Prisma CLI for migrations (needed at runtime)
+RUN npm install prisma --workspace=database
 
-# Copy built artifacts from builder
+# Copy built artifacts
 COPY --from=builder /app/api/dist ./api/dist
 COPY --from=builder /app/common/dist ./common/dist
 
-# Copy compiled Prisma client from builder (already compiled to JavaScript)
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-
-# Copy Prisma schema and config for migrations
+# Copy Prisma schema and migrations
 COPY --from=builder /app/database/prisma ./database/prisma
-COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
-
-# Copy database package files for module resolution
-COPY --from=builder /app/database/index.ts ./database/index.ts
-COPY --from=builder /app/database/package.json ./database/package.json
 
 # Expose port
 EXPOSE 3001
 
-# Health check using curl
-# Note: Using 127.0.0.1 instead of localhost to avoid DNS lookup
-# Longer start period to ensure server is fully initialized
+# Health check
 HEALTHCHECK --interval=10s --timeout=5s --start-period=60s --retries=5 \
   CMD curl -f http://127.0.0.1:3001/health || exit 1
 
-# Run API with standard Node (no tsx needed - Prisma client is now JavaScript)
+# Run with node (compiled JavaScript)
 CMD ["node", "api/dist/api/src/index.js"]

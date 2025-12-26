@@ -19,7 +19,7 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import { config as dotenvConfig } from 'dotenv';
 import pg from 'pg';
 
-import { PrismaClient } from '../generated/client/client';
+import { PrismaClient } from '../generated/prisma/client';
 
 // Load environment variables from project root
 // When running as a workspace script, we're in the database directory

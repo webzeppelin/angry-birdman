@@ -6,13 +6,14 @@
   "type": "module",
   "main": "./index.ts",
   "exports": {
-    ".": "./index.ts"
+    ".": "./index.ts",
+    "./client": "./client.ts"
   },
   "scripts": {
     "migrate:dev": "cd .. && prisma migrate dev",
     "migrate:deploy": "cd .. && prisma migrate deploy",
     "migrate:reset": "cd .. && prisma migrate reset --force",
-    "generate": "cd .. && prisma generate && node scripts/compile-prisma-client.js",
+    "generate": "cd .. && prisma generate",
     "studio": "cd .. && prisma studio",
     "seed": "tsx prisma/seed.ts",
     "db:push": "cd .. && prisma db push",
@@ -30,10 +31,15 @@
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^24.10.1",
+    "@types/pg": "^8.11.10",
     "prisma": "^7.1.0",
+    "tsx": "^4.19.2",
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@prisma/client": "^7.1.0"
+    "@prisma/adapter-pg": "^7.2.0",
+    "@prisma/client": "^7.1.0",
+    "dotenv": "^16.4.7",
+    "pg": "^8.13.1"
   }
 }
