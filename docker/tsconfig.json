@@ -1,0 +1,12 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": ".",
+    "composite": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true
+  },
+  "include": ["*.ts"],
+  "exclude": ["node_modules", "dist"]
+}

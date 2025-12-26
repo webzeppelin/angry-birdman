@@ -73,6 +73,47 @@ After starting the infrastructure for the first time:
 4. **Import Keycloak Realm (if not auto-imported):** See
    `keycloak/config/README.md` for instructions.
 
+### Deployed Environment Initialization
+
+For test/production deployments (not local development), after the
+infrastructure is running and database migrations have been applied, you need to
+complete the initialization by creating essential users and system data.
+
+**Prerequisites:**
+
+- Infrastructure containers are running (postgres, keycloak)
+- Database migrations have been applied via `npx prisma migrate deploy`
+- `docker/.env.test` file exists with proper configuration
+
+**Run the initialization script:**
+
+```bash
+./docker/finish-init.sh
+```
+
+**What this script does:**
+
+1. Creates a "superadmin" user in Keycloak (angrybirdman realm)
+   - Username: `superadmin`
+   - Password: Same as `KEYCLOAK_ADMIN_PASSWORD` from `.env.test`
+   - Email: `superadmin@angrybirdman.app`
+
+2. Creates essential database records:
+   - Action codes (HOLD, WARN, KICK, RESERVE, PASS)
+   - System settings (nextBattleStartDate, schedulerEnabled)
+   - Superadmin user profile (linked to Keycloak account)
+
+**Note for local development:**
+
+Local development uses different scripts that create additional test data:
+
+- `scripts/create-keycloak-test-users.sh` - Creates test users in Keycloak
+- `database/prisma/seed.ts` (via `npm run seed`) - Seeds database with sample
+  data
+
+Use `finish-init.sh` only for deployed environments where you don't want test
+data.
+
 ## Service Details
 
 ### PostgreSQL
