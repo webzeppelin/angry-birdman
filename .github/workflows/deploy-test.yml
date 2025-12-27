@@ -171,6 +171,17 @@ jobs:
             -e DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?schema=public" \
             api npx prisma migrate deploy
 
+      - name: Initialize environment (if needed)
+        working-directory: /opt/angrybirdman
+        run: |
+          # Load environment variables from .env.test
+          set -a
+          source docker/.env.test
+          set +a
+
+          # Run initialization script (idempotent - checks if already initialized)
+          ./docker/finish-init.sh
+
       - name: Deploy with Docker Compose
         working-directory: /opt/angrybirdman
         run: |

@@ -75,33 +75,28 @@ After starting the infrastructure for the first time:
 
 ### Deployed Environment Initialization
 
-For test/production deployments (not local development), after the
-infrastructure is running and database migrations have been applied, you need to
-complete the initialization by creating essential users and system data.
+For test/production deployments, the initialization of essential users and
+system data is handled automatically by the deployment pipeline. You do not need
+to run any manual initialization scripts.
 
-**Prerequisites:**
+**What gets initialized automatically:**
 
-- Infrastructure containers are running (postgres, keycloak)
-- Database migrations have been applied via `npx prisma migrate deploy`
-- `docker/.env.test` file exists with proper configuration
-
-**Run the initialization script:**
-
-```bash
-./docker/finish-init.sh
-```
-
-**What this script does:**
-
-1. Creates a "superadmin" user in Keycloak (angrybirdman realm)
+1. **Keycloak "superadmin" user** (angrybirdman realm)
    - Username: `superadmin`
    - Password: Same as `KEYCLOAK_ADMIN_PASSWORD` from `.env.test`
    - Email: `superadmin@angrybirdman.app`
 
-2. Creates essential database records:
+2. **Essential database records:**
    - Action codes (HOLD, WARN, KICK, RESERVE, PASS)
    - System settings (nextBattleStartDate, schedulerEnabled)
    - Superadmin user profile (linked to Keycloak account)
+
+**How it works:**
+
+The deployment pipeline automatically runs `docker/finish-init.sh` after
+applying database migrations. This script is idempotent and checks whether
+initialization is already complete before proceeding. If the superadmin user
+already exists in Keycloak, the script skips initialization.
 
 **Note for local development:**
 
@@ -111,8 +106,8 @@ Local development uses different scripts that create additional test data:
 - `database/prisma/seed.ts` (via `npm run seed`) - Seeds database with sample
   data
 
-Use `finish-init.sh` only for deployed environments where you don't want test
-data.
+The deployed environment initialization only creates the minimal essential data
+needed for production operation.
 
 ## Service Details
 

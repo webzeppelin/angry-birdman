@@ -20,24 +20,10 @@
  * Usage: tsx docker/finish-init-database.ts
  */
 
-import { existsSync } from 'fs';
-import { join } from 'path';
-
 import { PrismaPg } from '@prisma/adapter-pg';
-import { config as dotenvConfig } from 'dotenv';
 import pg from 'pg';
 
 import { PrismaClient } from '../database/generated/prisma/client';
-
-// Load environment variables from docker/.env.test
-const envPath = join(__dirname, '.env.test');
-if (!existsSync(envPath)) {
-  console.error(`\n❌ Error: ${envPath} not found`);
-  console.error('   Please ensure you are running this script from the project root directory.\n');
-  process.exit(1);
-}
-
-dotenvConfig({ path: envPath });
 
 // Validate required environment variables
 const connectionString = process.env.DATABASE_URL;
