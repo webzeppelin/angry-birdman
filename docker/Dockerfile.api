@@ -72,4 +72,4 @@ HEALTHCHECK --interval=10s --timeout=5s --start-period=60s --retries=5 \
   CMD curl -f http://127.0.0.1:3001/health || exit 1
 
 # Run with node (compiled JavaScript)
-CMD ["node", "api/dist/api/src/index.js"]
+CMD ["node", "api/dist/index.js"]
