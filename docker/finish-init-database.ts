@@ -28,10 +28,6 @@
 import { PrismaPg } from '@prisma/adapter-pg';
 import pg from 'pg';
 
-// When running via docker compose run, this script is mounted but dependencies are in /app
-// Use dynamic import to load Prisma client from the container's /app directory
-const { PrismaClient } = await import('/app/database/generated/prisma/client/index.js');
-
 // Validate required environment variables
 const connectionString = process.env.DATABASE_URL;
 if (!connectionString) {
@@ -46,112 +42,118 @@ if (!superadminKeycloakSub) {
   process.exit(1);
 }
 
-const pool = new pg.Pool({ connectionString });
-const adapter = new PrismaPg(pool);
-const prisma = new PrismaClient({ adapter });
-
 async function main() {
-  console.log('🔧 Starting database initialization for deployed environment...\n');
+  // When running via docker compose run, this script is mounted but dependencies are in /app
+  // Load Prisma client dynamically from the container's /app directory
+  const { PrismaClient } = await import('/app/database/generated/prisma/client/index.js');
 
-  // ============================================================================
-  // 1. Seed Action Codes
-  // ============================================================================
-  console.log('📋 Seeding action codes...');
-  const actionCodes = [
-    { actionCode: 'HOLD', displayName: 'Hold' },
-    { actionCode: 'WARN', displayName: 'Warn' },
-    { actionCode: 'KICK', displayName: 'Kick' },
-    { actionCode: 'RESERVE', displayName: 'Move to Reserve' },
-    { actionCode: 'PASS', displayName: 'Pass' },
-  ];
+  const pool = new pg.Pool({ connectionString });
+  const adapter = new PrismaPg(pool);
+  const prisma = new PrismaClient({ adapter });
 
-  for (const code of actionCodes) {
-    await prisma.actionCode.upsert({
-      where: { actionCode: code.actionCode },
+  try {
+    console.log('🔧 Starting database initialization for deployed environment...\n');
+
+    // ============================================================================
+    // 1. Seed Action Codes
+    // ============================================================================
+    console.log('📋 Seeding action codes...');
+    const actionCodes = [
+      { actionCode: 'HOLD', displayName: 'Hold' },
+      { actionCode: 'WARN', displayName: 'Warn' },
+      { actionCode: 'KICK', displayName: 'Kick' },
+      { actionCode: 'RESERVE', displayName: 'Move to Reserve' },
+      { actionCode: 'PASS', displayName: 'Pass' },
+    ];
+
+    for (const code of actionCodes) {
+      await prisma.actionCode.upsert({
+        where: { actionCode: code.actionCode },
+        update: {},
+        create: code,
+      });
+    }
+    console.log(`✅ Created ${actionCodes.length} action codes\n`);
+
+    // ============================================================================
+    // 2. Seed System Settings
+    // ============================================================================
+    console.log('⚙️ Seeding system settings...');
+
+    // Next battle date - set to 3 days from now
+    const nextBattleDate = new Date();
+    nextBattleDate.setDate(nextBattleDate.getDate() + 3);
+    nextBattleDate.setUTCHours(5, 0, 0, 0); // 00:00 EST (05:00 UTC)
+
+    await prisma.systemSetting.upsert({
+      where: { key: 'nextBattleStartDate' },
       update: {},
-      create: code,
+      create: {
+        key: 'nextBattleStartDate',
+        value: nextBattleDate.toISOString(),
+        description: 'Next scheduled battle start date in Official Angry Birds Time (EST)',
+        dataType: 'date',
+      },
     });
+
+    // Scheduler enabled flag
+    await prisma.systemSetting.upsert({
+      where: { key: 'schedulerEnabled' },
+      update: {},
+      create: {
+        key: 'schedulerEnabled',
+        value: 'true',
+        description: 'Enable/disable automatic battle creation via scheduler',
+        dataType: 'boolean',
+      },
+    });
+
+    console.log('✅ Created 2 system settings\n');
+
+    // ============================================================================
+    // 3. Create Superadmin User Profile
+    // ============================================================================
+    console.log('👤 Creating superadmin user profile...');
+
+    const superadminUserId = `keycloak:${superadminKeycloakSub}`;
+
+    await prisma.user.upsert({
+      where: { userId: superadminUserId },
+      update: {
+        username: 'superadmin',
+        email: 'superadmin@angrybirdman.app',
+        roles: ['superadmin'],
+      },
+      create: {
+        userId: superadminUserId,
+        username: 'superadmin',
+        email: 'superadmin@angrybirdman.app',
+        clanId: null,
+        owner: false,
+        roles: ['superadmin'],
+      },
+    });
+
+    console.log('✅ Created superadmin user profile\n');
+
+    // ============================================================================
+    // Summary
+    // ============================================================================
+    console.log('✨ Database initialization completed successfully!\n');
+    console.log('Summary:');
+    console.log(`  - ${actionCodes.length} action codes`);
+    console.log(`  - 2 system settings`);
+    console.log(`  - 1 superadmin user profile`);
+    console.log(`  - Next battle date: ${nextBattleDate.toISOString()}\n`);
+
+    await prisma.$disconnect();
+  } catch (e) {
+    console.error('❌ Error initializing database:', e);
+    process.exit(1);
   }
-  console.log(`✅ Created ${actionCodes.length} action codes\n`);
-
-  // ============================================================================
-  // 2. Seed System Settings
-  // ============================================================================
-  console.log('⚙️ Seeding system settings...');
-
-  // Next battle date - set to 3 days from now
-  const nextBattleDate = new Date();
-  nextBattleDate.setDate(nextBattleDate.getDate() + 3);
-  nextBattleDate.setUTCHours(5, 0, 0, 0); // 00:00 EST (05:00 UTC)
-
-  await prisma.systemSetting.upsert({
-    where: { key: 'nextBattleStartDate' },
-    update: {},
-    create: {
-      key: 'nextBattleStartDate',
-      value: nextBattleDate.toISOString(),
-      description: 'Next scheduled battle start date in Official Angry Birds Time (EST)',
-      dataType: 'date',
-    },
-  });
-
-  // Scheduler enabled flag
-  await prisma.systemSetting.upsert({
-    where: { key: 'schedulerEnabled' },
-    update: {},
-    create: {
-      key: 'schedulerEnabled',
-      value: 'true',
-      description: 'Enable/disable automatic battle creation via scheduler',
-      dataType: 'boolean',
-    },
-  });
-
-  console.log('✅ Created 2 system settings\n');
-
-  // ============================================================================
-  // 3. Create Superadmin User Profile
-  // ============================================================================
-  console.log('👤 Creating superadmin user profile...');
-
-  const superadminUserId = `keycloak:${superadminKeycloakSub}`;
-
-  await prisma.user.upsert({
-    where: { userId: superadminUserId },
-    update: {
-      username: 'superadmin',
-      email: 'superadmin@angrybirdman.app',
-      roles: ['superadmin'],
-    },
-    create: {
-      userId: superadminUserId,
-      username: 'superadmin',
-      email: 'superadmin@angrybirdman.app',
-      clanId: null,
-      owner: false,
-      roles: ['superadmin'],
-    },
-  });
-
-  console.log('✅ Created superadmin user profile\n');
-
-  // ============================================================================
-  // Summary
-  // ============================================================================
-  console.log('✨ Database initialization completed successfully!\n');
-  console.log('Summary:');
-  console.log(`  - ${actionCodes.length} action codes`);
-  console.log(`  - 2 system settings`);
-  console.log(`  - 1 superadmin user profile`);
-  console.log(`  - Next battle date: ${nextBattleDate.toISOString()}\n`);
 }
 
-main()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (e) => {
-    console.error('❌ Error initializing database:', e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });
+main().catch((e) => {
+  console.error('❌ Fatal error:', e);
+  process.exit(1);
+});
