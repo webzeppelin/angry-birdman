@@ -63,12 +63,8 @@ COPY --from=builder /app/api/dist ./api/dist
 COPY --from=builder /app/common/dist ./common/dist
 COPY --from=builder /app/database/dist ./database/dist
 
-# Copy Prisma schema, migrations, and generated client
+# Copy Prisma schema and migrations (needed for runtime migrations)
 COPY --from=builder /app/database/prisma ./database/prisma
-COPY --from=builder /app/database/generated ./database/generated
-
-# Copy Prisma client to where compiled database code expects it
-COPY --from=builder /app/database/generated ./database/dist/generated
 
 # Expose port
 EXPOSE 3001
