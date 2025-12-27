@@ -18,12 +18,19 @@
  * - SUPERADMIN_KEYCLOAK_SUB environment variable contains the Keycloak subject ID
  *
  * Usage: tsx docker/finish-init-database.ts
+ *
+ * Note: This file uses absolute imports for container execution and has linting disabled
  */
+
+/* eslint-disable */
+// @ts-nocheck
 
 import { PrismaPg } from '@prisma/adapter-pg';
 import pg from 'pg';
 
-import { PrismaClient } from '../database/generated/prisma/client';
+// When running via docker compose run, this script is mounted but dependencies are in /app
+// Use dynamic import to load Prisma client from the container's /app directory
+const { PrismaClient } = await import('/app/database/generated/prisma/client/index.js');
 
 // Validate required environment variables
 const connectionString = process.env.DATABASE_URL;
