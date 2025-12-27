@@ -52,12 +52,19 @@ RUN npm ci --omit=dev --ignore-scripts
 # Install Prisma CLI for migrations (needed at runtime)
 RUN npm install prisma --workspace=database
 
+# Install tsx for running TypeScript scripts (initialization)
+RUN npm install tsx
+
 # Copy built artifacts
 COPY --from=builder /app/api/dist ./api/dist
 COPY --from=builder /app/common/dist ./common/dist
 
-# Copy Prisma schema and migrations
+# Copy Prisma schema, migrations, and generated client
 COPY --from=builder /app/database/prisma ./database/prisma
+COPY --from=builder /app/database/generated ./database/generated
+
+# Copy initialization scripts
+COPY --from=builder /app/scripts ./scripts
 
 # Expose port
 EXPOSE 3001
