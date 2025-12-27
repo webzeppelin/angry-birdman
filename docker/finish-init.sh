@@ -213,12 +213,14 @@ export DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres
 
 # Run the TypeScript initialization script using docker compose
 # This ensures it has access to the database via the docker network
+# Mount the docker directory so the script is accessible
 cd "$PROJECT_ROOT"
 
 docker compose -f docker/docker-compose.test.yml run --rm \
+  -v "${PROJECT_ROOT}/docker:/docker-scripts:ro" \
   -e DATABASE_URL="$DATABASE_URL" \
   -e SUPERADMIN_KEYCLOAK_SUB="$SUPERADMIN_SUB" \
-  api npx tsx /app/docker/finish-init-database.ts
+  api npx tsx /docker-scripts/finish-init-database.ts
 
 if [ $? -ne 0 ]; then
     echo -e "${RED}❌ Database initialization failed${NC}"
