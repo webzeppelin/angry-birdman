@@ -67,6 +67,9 @@ COPY --from=builder /app/database/dist ./database/dist
 COPY --from=builder /app/database/prisma ./database/prisma
 COPY --from=builder /app/database/generated ./database/generated
 
+# Copy Prisma client to where compiled database code expects it
+COPY --from=builder /app/database/generated ./database/dist/generated
+
 # Expose port
 EXPOSE 3001
 
