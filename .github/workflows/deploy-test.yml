@@ -179,8 +179,8 @@ jobs:
           source docker/.env.test
           set +a
 
-          # Override KEYCLOAK_HOSTNAME to use localhost since we're running on the same host
-          export KEYCLOAK_HOSTNAME=localhost
+          # Override KEYCLOAK_HOSTNAME to use host.docker.internal for host-to-container communication
+          export KEYCLOAK_HOSTNAME=host.docker.internal
 
           # Run initialization script (idempotent - checks if already initialized)
           ./docker/finish-init.sh
