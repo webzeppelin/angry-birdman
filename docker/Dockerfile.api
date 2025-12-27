@@ -20,6 +20,9 @@ COPY common/ ./common/
 COPY database/ ./database/
 COPY scripts/ ./scripts/
 
+# Clean any stale TypeScript build cache files
+RUN find . -name "*.tsbuildinfo" -type f -delete
+
 # Generate Prisma client (TypeScript source)
 ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
 RUN npm run db:generate
