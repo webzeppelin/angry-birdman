@@ -236,7 +236,7 @@ jobs:
           set +a
 
           # Run initialization script (idempotent - checks if already initialized)
-          ./docker/finish-init.sh
+          ./scripts/finish-init.sh
 
       - name: Deploy with Docker Compose
         working-directory: /opt/angrybirdman
