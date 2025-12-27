@@ -179,8 +179,8 @@ jobs:
           source docker/.env.test
           set +a
 
-          # Override KEYCLOAK_HOSTNAME to use host.docker.internal for host-to-container communication
-          export KEYCLOAK_HOSTNAME=host.docker.internal
+          # Override KEYCLOAK_HOSTNAME to use Docker bridge IP for host-to-container communication on Linux
+          export KEYCLOAK_HOSTNAME=172.17.0.1
 
           # Run initialization script (idempotent - checks if already initialized)
           ./docker/finish-init.sh
