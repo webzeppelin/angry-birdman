@@ -77,9 +77,9 @@ KEYCLOAK_REALM="${KEYCLOAK_REALM:-angrybirdman}"
 # Build Keycloak URL
 KEYCLOAK_URL="http://${KEYCLOAK_HOSTNAME}:${KEYCLOAK_PORT}"
 
-# Check if Keycloak is accessible
+# Check if Keycloak is accessible by trying to get the master realm
 echo -e "${YELLOW}   Checking Keycloak at ${KEYCLOAK_URL}...${NC}"
-if ! curl -sf "${KEYCLOAK_URL}/health/ready" > /dev/null; then
+if ! curl -sf "${KEYCLOAK_URL}/realms/master" > /dev/null 2>&1; then
     echo -e "${RED}❌ Error: Cannot reach Keycloak at ${KEYCLOAK_URL}${NC}"
     echo "   Make sure Keycloak container is running and accessible."
     exit 1
