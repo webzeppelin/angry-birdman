@@ -9,10 +9,10 @@
  */
 
 // Import from generated Prisma client using standard static imports
-export { PrismaClient, Prisma } from './generated/prisma/client';
+export { PrismaClient, Prisma } from './generated/prisma/client.js';
 
 // Export the singleton client instance
-export { prisma } from './client';
+export { prisma } from './client.js';
 
 // Re-export useful types for external consumers
 export type {
