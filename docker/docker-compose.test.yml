@@ -84,7 +84,7 @@ services:
     container_name: angrybirdman-test-api
     restart: always
     environment:
-      NODE_ENV: test
+      NODE_ENV: production
       PORT: 3001
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?schema=public
       KEYCLOAK_URL: http://${KEYCLOAK_HOSTNAME}:${KEYCLOAK_PORT}
