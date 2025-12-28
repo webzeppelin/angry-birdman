@@ -27,9 +27,6 @@ RUN find . -name "*.tsbuildinfo" -type f -delete
 ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
 RUN npm run db:generate
 
-# Build database package
-RUN npm run build --workspace=database
-
 # Build common library
 RUN npm run build --workspace=common
 
@@ -61,7 +58,6 @@ RUN npm install prisma --workspace=database
 # Copy built artifacts
 COPY --from=builder /app/api/dist ./api/dist
 COPY --from=builder /app/common/dist ./common/dist
-COPY --from=builder /app/database/dist ./database/dist
 
 # Copy Prisma schema and migrations (needed for runtime migrations)
 COPY --from=builder /app/database/prisma ./database/prisma

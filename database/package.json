@@ -4,17 +4,11 @@
   "description": "Database schema and migrations for Angry Birdman",
   "private": true,
   "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./index.ts",
+  "types": "./index.ts",
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    },
-    "./client": {
-      "types": "./dist/client.d.ts",
-      "default": "./dist/client.js"
-    }
+    ".": "./index.ts",
+    "./client": "./client.ts"
   },
   "scripts": {
     "migrate:dev": "cd .. && prisma migrate dev",
