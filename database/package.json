@@ -15,7 +15,7 @@
     "migrate:deploy": "cd .. && prisma migrate deploy",
     "migrate:reset": "cd .. && prisma migrate reset --force",
     "generate": "cd .. && prisma generate",
-    "build": "tsc",
+    "build": "tsc && resolve-tspaths",
     "studio": "cd .. && prisma studio",
     "seed": "tsx prisma/seed.ts",
     "db:push": "cd .. && prisma db push",
@@ -35,6 +35,7 @@
     "@types/node": "^24.10.1",
     "@types/pg": "^8.11.10",
     "prisma": "^7.1.0",
+    "resolve-tspaths": "^0.8.23",
     "tsx": "^4.19.2",
     "typescript": "^5.9.3"
   },
