@@ -23,6 +23,7 @@ import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 const KEYCLOAK_URL = process.env.KEYCLOAK_URL || 'http://localhost:8080';
 const KEYCLOAK_REALM = process.env.KEYCLOAK_REALM || 'angrybirdman';
 const KEYCLOAK_CLIENT_ID = process.env.KEYCLOAK_CLIENT_ID || 'angrybirdman-frontend';
+const KEYCLOAK_CLIENT_SECRET = process.env.KEYCLOAK_CLIENT_SECRET || '';
 const TOKEN_ENDPOINT = `${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/token`;
 
 interface TokenExchangeBody {
@@ -117,13 +118,18 @@ export default function authRoutes(fastify: FastifyInstance, _opts: unknown, don
 
       try {
         // Use Direct Access Grants (Resource Owner Password Credentials)
-        const tokenParams = {
+        const tokenParams: Record<string, string> = {
           grant_type: 'password',
           client_id: KEYCLOAK_CLIENT_ID,
           username,
           password,
           scope: 'openid profile email',
         };
+
+        // Add client_secret if configured (for confidential clients)
+        if (KEYCLOAK_CLIENT_SECRET) {
+          tokenParams.client_secret = KEYCLOAK_CLIENT_SECRET;
+        }
 
         const response = await axios.post<KeycloakTokenResponse>(
           TOKEN_ENDPOINT,
@@ -221,13 +227,18 @@ export default function authRoutes(fastify: FastifyInstance, _opts: unknown, don
 
       try {
         // Exchange authorization code for tokens with PKCE
-        const tokenParams = {
+        const tokenParams: Record<string, string> = {
           grant_type: 'authorization_code',
           client_id: KEYCLOAK_CLIENT_ID,
           code,
           code_verifier: codeVerifier,
           redirect_uri: redirectUri,
         };
+
+        // Add client_secret if configured (for confidential clients)
+        if (KEYCLOAK_CLIENT_SECRET) {
+          tokenParams.client_secret = KEYCLOAK_CLIENT_SECRET;
+        }
 
         const response = await axios.post<KeycloakTokenResponse>(
           TOKEN_ENDPOINT,
@@ -333,13 +344,20 @@ export default function authRoutes(fastify: FastifyInstance, _opts: unknown, don
       }
 
       try {
+        const tokenParams: Record<string, string> = {
+          grant_type: 'refresh_token',
+          client_id: KEYCLOAK_CLIENT_ID,
+          refresh_token: refreshToken,
+        };
+
+        // Add client_secret if configured (for confidential clients)
+        if (KEYCLOAK_CLIENT_SECRET) {
+          tokenParams.client_secret = KEYCLOAK_CLIENT_SECRET;
+        }
+
         const response = await axios.post<KeycloakTokenResponse>(
           TOKEN_ENDPOINT,
-          new URLSearchParams({
-            grant_type: 'refresh_token',
-            client_id: KEYCLOAK_CLIENT_ID,
-            refresh_token: refreshToken,
-          }),
+          new URLSearchParams(tokenParams),
           {
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           }
@@ -421,17 +439,21 @@ export default function authRoutes(fastify: FastifyInstance, _opts: unknown, don
       if (refreshToken) {
         try {
           const REVOKE_ENDPOINT = `${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/revoke`;
-          await axios.post(
-            REVOKE_ENDPOINT,
-            new URLSearchParams({
-              client_id: KEYCLOAK_CLIENT_ID,
-              token: refreshToken,
-              token_type_hint: 'refresh_token',
-            }),
-            {
-              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            }
-          );
+
+          const revokeParams: Record<string, string> = {
+            client_id: KEYCLOAK_CLIENT_ID,
+            token: refreshToken,
+            token_type_hint: 'refresh_token',
+          };
+
+          // Add client_secret if configured (for confidential clients)
+          if (KEYCLOAK_CLIENT_SECRET) {
+            revokeParams.client_secret = KEYCLOAK_CLIENT_SECRET;
+          }
+
+          await axios.post(REVOKE_ENDPOINT, new URLSearchParams(revokeParams), {
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          });
           fastify.log.info('Successfully revoked refresh token with Keycloak');
         } catch (error) {
           // Log but don't fail logout if revocation fails
