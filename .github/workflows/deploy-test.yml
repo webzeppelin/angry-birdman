@@ -124,6 +124,7 @@ jobs:
             VITE_KEYCLOAK_URL=http://192.168.0.70:8000
             VITE_KEYCLOAK_REALM=angrybirdman
             VITE_KEYCLOAK_CLIENT_ID=angrybirdman-frontend
+            VITE_APP_URL=https://192.168.0.70
             VITE_APP_VERSION=${{ github.sha }}
             VITE_APP_ENVIRONMENT=test
 
