@@ -27,6 +27,12 @@ RUN find . -name "*.tsbuildinfo" -type f -delete
 ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
 RUN npm run db:generate
 
+# DEBUG: Check what Prisma generated
+RUN echo "=== After Prisma generation ===" && \
+    ls -la database/generated/ 2>&1 || echo "No database/generated/" && \
+    ls -la database/generated/prisma/ 2>&1 || echo "No database/generated/prisma/" && \
+    find database/generated -name "*.ts" | head -10 || echo "No TS files in generated"
+
 # Build database package
 RUN npm run build --workspace=database
 

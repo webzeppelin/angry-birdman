@@ -187,7 +187,7 @@ jobs:
         working-directory: /opt/angrybirdman
         run: |
           echo "=== Checking API container filesystem ==="
-          docker compose -f docker/docker-compose.test.yml exec -T api sh -c "
+          docker compose -f docker/docker-compose.test.yml --env-file docker/.env.test exec -T api sh -c "
             echo '--- database/ structure ---'
             ls -la /app/database/ || echo 'No /app/database/'
             echo '--- database/dist/ contents ---'
@@ -203,7 +203,7 @@ jobs:
           " || echo "Container not running, checking logs..."
 
           echo "=== API container logs (last 50 lines) ==="
-          docker compose -f docker/docker-compose.test.yml logs --tail=50 api
+          docker compose -f docker/docker-compose.test.yml --env-file docker/.env.test logs --tail=50 api
 
       - name: Wait for services to be healthy
         run: sleep 30
