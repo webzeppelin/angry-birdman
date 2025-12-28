@@ -182,6 +182,29 @@ jobs:
           # Recreate containers with latest images (--force-recreate ensures health checks are updated)
           docker compose -f docker/docker-compose.test.yml --env-file docker/.env.test up -d --force-recreate --remove-orphans
 
+      - name: Debug API container filesystem
+        if: always()
+        working-directory: /opt/angrybirdman
+        run: |
+          echo "=== Checking API container filesystem ==="
+          docker compose -f docker/docker-compose.test.yml exec -T api sh -c "
+            echo '--- database/ structure ---'
+            ls -la /app/database/ || echo 'No /app/database/'
+            echo '--- database/dist/ contents ---'
+            ls -la /app/database/dist/ 2>&1 || echo 'No /app/database/dist/'
+            echo '--- database/dist/generated/ check ---'
+            ls -la /app/database/dist/generated/ 2>&1 || echo 'No /app/database/dist/generated/'
+            echo '--- database/dist/generated/prisma/ check ---'
+            ls -la /app/database/dist/generated/prisma/ 2>&1 || echo 'No /app/database/dist/generated/prisma/'
+            echo '--- database/package.json ---'
+            cat /app/database/package.json
+            echo '--- First 20 lines of database/dist/index.js ---'
+            head -20 /app/database/dist/index.js 2>&1 || echo 'No database/dist/index.js'
+          " || echo "Container not running, checking logs..."
+
+          echo "=== API container logs (last 50 lines) ==="
+          docker compose -f docker/docker-compose.test.yml logs --tail=50 api
+
       - name: Wait for services to be healthy
         run: sleep 30
 

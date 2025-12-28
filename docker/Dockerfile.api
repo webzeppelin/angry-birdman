@@ -30,6 +30,14 @@ RUN npm run db:generate
 # Build database package
 RUN npm run build --workspace=database
 
+# DEBUG: List what was actually built
+RUN echo "=== Database build output ===" && \
+    ls -la database/dist/ && \
+    echo "=== Database dist structure ===" && \
+    find database/dist -type f -name "*.js" | head -20 && \
+    echo "=== Checking for Prisma client in dist ===" && \
+    ls -la database/dist/generated/prisma/ 2>&1 || echo "No database/dist/generated/prisma/"
+
 # Build common library
 RUN npm run build --workspace=common
 
@@ -68,6 +76,18 @@ COPY --from=builder /app/database/prisma ./database/prisma
 
 # Update database package.json to point to compiled JS (production runtime)
 RUN node -e "const pkg = require('./database/package.json'); pkg.main = './dist/index.js'; pkg.exports = { '.': './dist/index.js', './client': './dist/client.js' }; require('fs').writeFileSync('./database/package.json', JSON.stringify(pkg, null, 2));"
+
+# DEBUG: Show what's actually in production image
+RUN echo "=== Production database structure ===" && \
+    ls -la database/ && \
+    echo "=== database/dist contents ===" && \
+    ls -la database/dist/ && \
+    echo "=== Checking for Prisma client ===" && \
+    ls -la database/dist/generated/prisma/ 2>&1 || echo "NO database/dist/generated/prisma/" && \
+    echo "=== database/package.json ===" && \
+    cat database/package.json && \
+    echo "=== First few lines of database/dist/index.js ===" && \
+    head -20 database/dist/index.js
 
 # Expose port
 EXPOSE 3001
