@@ -190,29 +190,9 @@ export async function authenticate(request: FastifyRequest, reply: FastifyReply)
     // Verify and decode token
     const decoded = await verifyToken(token);
 
-    // TEMPORARY DEBUG: Log all token claims to diagnose missing sub
-    request.log.info(
-      {
-        tokenClaims: {
-          iss: decoded.iss,
-          sub: decoded.sub,
-          email: decoded.email,
-          preferred_username: decoded.preferred_username,
-          allKeys: Object.keys(decoded),
-        },
-      },
-      'TEMPORARY DEBUG: Decoded JWT token claims'
-    );
-
     // Construct composite user ID from issuer and subject
     const issuer = normalizeIssuer(decoded.iss);
     const compositeUserId = `${issuer}:${decoded.sub}`;
-
-    // TEMPORARY DEBUG: Log composite user ID construction
-    request.log.info(
-      { issuer, sub: decoded.sub, compositeUserId },
-      'TEMPORARY DEBUG: Composite user ID construction'
-    );
 
     // Look up user in database to get profile data and roles
     // Access Prisma client through server instance
