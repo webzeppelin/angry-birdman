@@ -89,13 +89,7 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
           },
         });
 
-        // 4. Assign 'user' role in Keycloak (for backward compatibility)
-        await keycloak.assignRole({
-          userId: keycloakSub,
-          role: 'user',
-        });
-
-        // 5. Log the registration action with composite ID
+        // 4. Log the registration action with composite ID
         await audit.log({
           actorId: userId,
           actionType: AuditAction.USER_REGISTERED,
@@ -153,7 +147,6 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
     async (request, reply) => {
       // Use composite userId from authenticated user (already in format: keycloak:{sub})
       const userId = request.authUser!.userId;
-      const keycloak = createKeycloakService(fastify);
       const audit = createAuditService(fastify.prisma);
 
       try {
@@ -197,18 +190,7 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
           },
         });
 
-        // 4. Assign clan-owner role in Keycloak (for backward compatibility)
-        // Extract Keycloak sub from composite ID (format: keycloak:{sub})
-        const keycloakSub = userId.split(':')[1];
-        if (!keycloakSub) {
-          throw new Error('Invalid composite user ID format');
-        }
-        await keycloak.assignRole({
-          userId: keycloakSub,
-          role: 'clan-owner',
-        });
-
-        // 5. Log clan creation
+        // 4. Log clan creation
         await audit.log({
           actorId: userId,
           actionType: AuditAction.CLAN_CREATED,
@@ -223,7 +205,7 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
           result: AuditResult.SUCCESS,
         });
 
-        // 6. Log user promotion to owner
+        // 5. Log user promotion to owner
         await audit.log({
           actorId: userId,
           actionType: AuditAction.USER_PROMOTED_TO_OWNER,
