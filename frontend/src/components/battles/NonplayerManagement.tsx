@@ -45,13 +45,13 @@ export default function NonplayerManagement({
       return response.data as unknown;
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['roster', clanId, { active: true }] });
+      void queryClient.invalidateQueries({ queryKey: ['roster', clanId, 'active'] });
     },
   });
 
   // Fetch active roster
   const { data: rosterData } = useQuery<RosterResponse>({
-    queryKey: ['roster', clanId, { active: true }],
+    queryKey: ['roster', clanId, 'active'],
     queryFn: async () => {
       const response = await fetch(`/api/clans/${clanId}/roster?active=true`, {
         credentials: 'include',

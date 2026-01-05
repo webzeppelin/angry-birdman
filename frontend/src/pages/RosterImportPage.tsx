@@ -53,6 +53,7 @@ export default function RosterImportPage() {
       // Invalidate roster query to refresh the list
       void queryClient.invalidateQueries({ queryKey: ['roster', clanId] });
       void queryClient.invalidateQueries({ queryKey: ['roster', Number(clanId)] });
+      void queryClient.invalidateQueries({ queryKey: ['roster', clanId, 'active'] });
     },
   });
 

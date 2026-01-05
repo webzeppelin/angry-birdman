@@ -116,6 +116,7 @@ export function RosterPage() {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['roster', clanId] });
+      void queryClient.invalidateQueries({ queryKey: ['roster', clanId, 'active'] });
     },
   });
 
@@ -126,6 +127,7 @@ export function RosterPage() {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['roster', clanId] });
+      void queryClient.invalidateQueries({ queryKey: ['roster', clanId, 'active'] });
     },
   });
 
@@ -136,6 +138,7 @@ export function RosterPage() {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['roster', clanId] });
+      void queryClient.invalidateQueries({ queryKey: ['roster', clanId, 'active'] });
     },
   });
 

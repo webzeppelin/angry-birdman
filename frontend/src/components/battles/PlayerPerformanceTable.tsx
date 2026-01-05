@@ -39,7 +39,7 @@ export default function PlayerPerformanceTable({
 
   // Fetch active roster
   const { data: rosterData } = useQuery<RosterResponse>({
-    queryKey: ['roster', clanId, { active: true }],
+    queryKey: ['roster', clanId, 'active'],
     queryFn: async () => {
       const response = await fetch(`/api/clans/${clanId}/roster?active=true`, {
         credentials: 'include',
@@ -47,6 +47,8 @@ export default function PlayerPerformanceTable({
       if (!response.ok) throw new Error('Failed to fetch roster');
       return response.json() as Promise<RosterResponse>;
     },
+    staleTime: 0,
+    refetchOnMount: true,
   });
 
   // Initialize player rows from roster

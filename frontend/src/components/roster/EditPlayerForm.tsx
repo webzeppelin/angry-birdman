@@ -74,7 +74,9 @@ export function EditPlayerForm({
       return response.data as unknown;
     },
     onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['roster', clanId] });
       void queryClient.invalidateQueries({ queryKey: ['roster', String(clanId)] });
+      void queryClient.invalidateQueries({ queryKey: ['roster', clanId, 'active'] });
       onSuccess?.();
       onClose();
     },

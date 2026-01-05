@@ -42,7 +42,7 @@ export default function ActionCodeAssignment({
 
   // Fetch active roster to get player names
   const { data: rosterData } = useQuery<RosterResponse>({
-    queryKey: ['roster', clanId, { active: true }],
+    queryKey: ['roster', clanId, 'active'],
     queryFn: async (): Promise<RosterResponse> => {
       const response = await fetch(`/api/clans/${clanId}/roster?active=true`, {
         credentials: 'include',
