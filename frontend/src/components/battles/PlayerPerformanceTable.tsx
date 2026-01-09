@@ -41,11 +41,23 @@ export default function PlayerPerformanceTable({
   const { data: rosterData } = useQuery<RosterResponse>({
     queryKey: ['roster', clanId, 'active'],
     queryFn: async () => {
-      const response = await fetch(`/api/clans/${clanId}/roster?active=true`, {
+      console.log('[PLAYER STATS DEBUG] Fetching roster for clanId:', clanId);
+      const url = `/api/clans/${clanId}/roster?active=true`;
+      console.log('[PLAYER STATS DEBUG] Fetch URL:', url);
+      const response = await fetch(url, {
         credentials: 'include',
       });
+      console.log('[PLAYER STATS DEBUG] Response status:', response.status, response.statusText);
       if (!response.ok) throw new Error('Failed to fetch roster');
-      return response.json() as Promise<RosterResponse>;
+      const data = (await response.json()) as RosterResponse;
+      console.log('[PLAYER STATS DEBUG] Roster data received:', {
+        totalPlayers: data.players?.length || 0,
+        pagination: data.pagination,
+      });
+      if (data.players?.length > 0) {
+        console.log('[PLAYER STATS DEBUG] First player sample:', data.players[0]);
+      }
+      return data;
     },
     staleTime: 0,
     refetchOnMount: true,
@@ -53,7 +65,16 @@ export default function PlayerPerformanceTable({
 
   // Initialize player rows from roster
   useEffect(() => {
+    console.log(
+      '[PLAYER STATS DEBUG] useEffect triggered, rosterData:',
+      rosterData ? `${rosterData.players.length} players` : 'null'
+    );
     if (rosterData) {
+      console.log(
+        '[PLAYER STATS DEBUG] Processing roster data with',
+        rosterData.players.length,
+        'players'
+      );
       // Create a map of existing player data to preserve entered values
       const existingPlayerData = new Map(players.map((p) => [p.playerId, p]));
 
@@ -111,6 +132,7 @@ export default function PlayerPerformanceTable({
         };
       });
 
+      console.log('[PLAYER STATS DEBUG] Setting', updatedPlayers.length, 'players to state');
       setPlayers(updatedPlayers);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

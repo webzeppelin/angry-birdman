@@ -388,9 +388,22 @@ const rosterRoutes: FastifyPluginAsync = async (fastify) => {
         where.playerName = { contains: search, mode: 'insensitive' };
       }
 
+      // DEBUG: Log roster query
+      console.log('[ROSTER DEBUG] Query params:', {
+        clanId,
+        active,
+        search,
+        sortBy,
+        sortOrder,
+        limit,
+        page,
+      });
+      console.log('[ROSTER DEBUG] Where clause:', JSON.stringify(where));
+
       try {
         // Get total count for pagination
         const total = await fastify.prisma.rosterMember.count({ where });
+        console.log('[ROSTER DEBUG] Total roster members found:', total);
 
         // Get paginated roster members
         const players = await fastify.prisma.rosterMember.findMany({
@@ -399,6 +412,14 @@ const rosterRoutes: FastifyPluginAsync = async (fastify) => {
           skip: (page - 1) * limit,
           take: limit,
         });
+        console.log('[ROSTER DEBUG] Players retrieved:', players.length);
+        if (players.length > 0) {
+          console.log('[ROSTER DEBUG] First player sample:', {
+            playerId: players[0]?.playerId,
+            playerName: players[0]?.playerName,
+            active: players[0]?.active,
+          });
+        }
 
         // Format dates as ISO strings
         const formattedPlayers = players.map((player) => ({
