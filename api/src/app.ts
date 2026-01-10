@@ -115,17 +115,17 @@ export async function buildApp() {
 
   // Register routes
   await fastify.register(authRoutes, { prefix: '/auth' });
-  await fastify.register(clanRoutes, { prefix: '/clans' });
-  await fastify.register(rosterRoutes, { prefix: '/clans' }); // Roster routes nested under /clans
-  await fastify.register(battlesRoutes, { prefix: '/clans' }); // Battle routes nested under /clans
-  await fastify.register(monthlyStatsRoutes, { prefix: '/clans' }); // Monthly stats routes
-  await fastify.register(yearlyStatsRoutes, { prefix: '/clans' }); // Yearly stats routes
-  await fastify.register(reportsRoutes, { prefix: '/clans' }); // Reports routes nested under /clans
-  await fastify.register(masterBattlesRoutes, { prefix: '/master-battles' }); // Master battle schedule
-  await fastify.register(usersRoutes, { prefix: '/users' });
-  await fastify.register(adminRequestsRoutes, { prefix: '/admin-requests' });
-  await fastify.register(auditLogRoutes, { prefix: '/audit-logs' });
-  await fastify.register(adminRoutes, { prefix: '/admin' });
+  await fastify.register(clanRoutes, { prefix: '/api/clans' });
+  await fastify.register(rosterRoutes, { prefix: '/api/clans' }); // Roster routes nested under /api/clans
+  await fastify.register(battlesRoutes, { prefix: '/api/clans' }); // Battle routes nested under /api/clans
+  await fastify.register(monthlyStatsRoutes, { prefix: '/api/clans' }); // Monthly stats routes
+  await fastify.register(yearlyStatsRoutes, { prefix: '/api/clans' }); // Yearly stats routes
+  await fastify.register(reportsRoutes, { prefix: '/api/clans' }); // Reports routes nested under /api/clans
+  await fastify.register(masterBattlesRoutes, { prefix: '/api/master-battles' }); // Master battle schedule
+  await fastify.register(usersRoutes, { prefix: '/api/users' });
+  await fastify.register(adminRequestsRoutes, { prefix: '/api/admin-requests' });
+  await fastify.register(auditLogRoutes, { prefix: '/api/audit-logs' });
+  await fastify.register(adminRoutes, { prefix: '/api/admin' });
   await fastify.register(healthRoutes);
 
   // Error handlers

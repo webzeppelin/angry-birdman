@@ -120,7 +120,7 @@ jobs:
           tags: ${{ steps.meta-frontend.outputs.tags }}
           labels: ${{ steps.meta-frontend.outputs.labels }}
           build-args: |
-            VITE_API_URL=https://192.168.0.70/api
+            VITE_API_URL=https://192.168.0.70
             VITE_KEYCLOAK_URL=http://192.168.0.70:8000
             VITE_KEYCLOAK_REALM=angrybirdman
             VITE_KEYCLOAK_CLIENT_ID=angrybirdman-frontend
