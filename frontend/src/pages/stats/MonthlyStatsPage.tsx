@@ -153,7 +153,9 @@ export default function MonthlyStatsPage() {
         const aVal = a[sortBy];
         const bVal = b[sortBy];
         const comparison =
-          typeof aVal === 'string' ? aVal.localeCompare(bVal as string) : aVal - (bVal as number);
+          typeof aVal === 'string'
+            ? aVal.localeCompare(bVal as string, undefined, { sensitivity: 'base' })
+            : aVal - (bVal as number);
         return sortOrder === 'asc' ? comparison : -comparison;
       })
     : [];

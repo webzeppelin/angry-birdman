@@ -394,12 +394,25 @@ const rosterRoutes: FastifyPluginAsync = async (fastify) => {
         const total = await fastify.prisma.rosterMember.count({ where });
 
         // Get paginated roster members
+        // Note: For playerName sorting, we'll fetch unsorted and sort in-memory for case-insensitive behavior
+        const shouldSortPlayerName = !sortBy || sortBy === 'playerName';
+
         const players = await fastify.prisma.rosterMember.findMany({
           where,
-          orderBy: sortBy ? { [sortBy]: sortOrder } : { playerName: 'asc' },
+          orderBy: shouldSortPlayerName ? undefined : { [sortBy]: sortOrder },
           skip: (page - 1) * limit,
           take: limit,
         });
+
+        // Apply case-insensitive sorting for playerName if needed
+        if (shouldSortPlayerName) {
+          players.sort((a, b) => {
+            const comparison = a.playerName.localeCompare(b.playerName, undefined, {
+              sensitivity: 'base',
+            });
+            return sortOrder === 'desc' ? -comparison : comparison;
+          });
+        }
 
         // Format dates as ISO strings
         const formattedPlayers = players.map((player) => ({
