@@ -148,6 +148,7 @@ model RosterMember {
   clanId      Int      @map("clan_id")
   playerName  String   @map("player_name") @db.VarChar(100)
   active      Boolean  @default(true)
+  reserved    Boolean  @default(false)
   joinedDate  DateTime @map("joined_date") @db.Date
   leftDate    DateTime? @map("left_date") @db.Date
   kickedDate  DateTime? @map("kicked_date") @db.Date

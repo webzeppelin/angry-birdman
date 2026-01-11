@@ -11,6 +11,7 @@ export interface RosterMember {
   playerName: string;
   fp?: number; // Optional - not returned by roster endpoint
   active: boolean;
+  reserved: boolean;
   joinedDate: string;
 }
 

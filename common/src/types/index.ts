@@ -88,6 +88,7 @@ export interface RosterMember {
   clanId: number;
   playerName: string;
   active: boolean;
+  reserved: boolean;
   joinedDate: Date;
   leftDate: Date | null;
   kickedDate: Date | null;

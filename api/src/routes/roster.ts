@@ -45,6 +45,7 @@ const rosterMemberResponseSchema = z.object({
   clanId: z.number(),
   playerName: z.string(),
   active: z.boolean(),
+  reserved: z.boolean(),
   joinedDate: z.string(), // ISO date string
   leftDate: z.string().nullable(),
   kickedDate: z.string().nullable(),

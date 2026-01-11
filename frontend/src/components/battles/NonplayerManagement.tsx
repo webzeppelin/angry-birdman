@@ -80,7 +80,7 @@ export default function NonplayerManagement({
             playerId: m.playerId,
             name: m.playerName,
             fp: m.fp || 0,
-            reserve: false,
+            reserve: m.reserved, // Use the reserved state from roster member
           }
         );
       });

@@ -515,7 +515,7 @@ export class BattleService {
         await tx.rosterMember.update({
           where: { playerId: player.playerId },
           data: {
-            active: false,
+            reserved: true,
           },
         });
       }
@@ -535,7 +535,7 @@ export class BattleService {
         await tx.rosterMember.update({
           where: { playerId: nonplayer.playerId },
           data: {
-            active: false,
+            reserved: true,
           },
         });
       }
