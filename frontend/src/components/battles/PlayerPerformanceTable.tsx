@@ -173,7 +173,7 @@ export default function PlayerPerformanceTable({
         rank: p.rank,
         score: p.score,
         fp: p.fp,
-        actionCode: 'HOLD', // Placeholder - will be set in step 5
+        actionCode: '', // Empty - will be set in step 5
       })),
     });
     onNext();

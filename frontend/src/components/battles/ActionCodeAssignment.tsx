@@ -59,10 +59,12 @@ export default function ActionCodeAssignment({
         const rosterMember = rosterData.players.find(
           (m: RosterMember) => m.playerId === p.playerId
         );
+        // Use default HOLD if actionCode is empty or not set
+        const actionCode = p.actionCode && p.actionCode.trim() !== '' ? p.actionCode : 'HOLD';
         return {
           playerId: p.playerId,
           playerName: rosterMember?.playerName || `Player ${p.playerId}`,
-          actionCode: p.actionCode || 'HOLD',
+          actionCode,
           actionReason: p.actionReason,
         };
       });
@@ -81,10 +83,13 @@ export default function ActionCodeAssignment({
         );
         // Default to RESERVE if the nonplayer was marked as reserved during data entry
         const defaultActionCode = np.reserve ? 'RESERVE' : 'HOLD';
+        // Use default if actionCode is empty or not set
+        const actionCode =
+          np.actionCode && np.actionCode.trim() !== '' ? np.actionCode : defaultActionCode;
         return {
           playerId: np.playerId,
           playerName: rosterMember?.playerName || `Player ${np.playerId}`,
-          actionCode: np.actionCode || defaultActionCode,
+          actionCode,
           actionReason: np.actionReason,
         };
       });

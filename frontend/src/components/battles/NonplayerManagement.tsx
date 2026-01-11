@@ -152,7 +152,7 @@ export default function NonplayerManagement({
         playerId: np.playerId,
         fp: np.fp,
         reserve: np.reserve,
-        actionCode: 'HOLD', // Placeholder - will be set in step 5
+        actionCode: '', // Empty - will be set based on reserve status in step 5
       })),
     });
     onNext();
