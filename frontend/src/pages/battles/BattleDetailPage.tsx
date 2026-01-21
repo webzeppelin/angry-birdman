@@ -402,11 +402,12 @@ export default function BattleDetailPage() {
               </p>
             </div>
             <div className="rounded-lg bg-white p-6 shadow">
-              <h3 className="mb-2 text-sm font-medium text-gray-600">Participation Rate</h3>
-              <p className="text-3xl font-bold text-gray-900">{participationRate}%</p>
+              <h3 className="mb-2 text-sm font-medium text-gray-600">FP Participation Rate</h3>
+              <p className="text-3xl font-bold text-gray-900">
+                {((1 - battle.nonplayingFpRatio / 100) * 100).toFixed(1)}%
+              </p>
               <p className="mt-1 text-xs text-gray-500">
-                {battle.playerStats?.length || 0} of{' '}
-                {(battle.playerStats?.length || 0) + battle.nonplayingCount} played
+                {(100 - battle.nonplayingFpRatio).toFixed(1)}% of total FP participated
               </p>
             </div>
           </div>
