@@ -22,6 +22,7 @@ interface PlayerRow {
   score: number;
   fp: number;
   played: boolean;
+  reserved: boolean;
 }
 
 export default function PlayerPerformanceTable({
@@ -35,6 +36,7 @@ export default function PlayerPerformanceTable({
   const [players, setPlayers] = useState<PlayerRow[]>([]);
   const [checksum, setChecksum] = useState({ totalScore: 0, totalFp: 0 });
   const rankInputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const reserveRankInputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const [isAddPlayerOpen, setIsAddPlayerOpen] = useState(false);
 
   // Fetch active roster
@@ -86,6 +88,7 @@ export default function PlayerPerformanceTable({
             score: playerStat.score,
             fp: playerStat.fp,
             played: true,
+            reserved: member.reserved,
           };
         }
 
@@ -98,6 +101,7 @@ export default function PlayerPerformanceTable({
             score: 0,
             fp: 0,
             played: false,
+            reserved: member.reserved,
           };
         }
 
@@ -109,6 +113,7 @@ export default function PlayerPerformanceTable({
           score: 0,
           fp: 0,
           played: false,
+          reserved: member.reserved,
         };
       });
 
@@ -128,7 +133,8 @@ export default function PlayerPerformanceTable({
   const updatePlayer = (
     index: number,
     field: keyof PlayerRow,
-    value: string | number | boolean
+    value: string | number | boolean,
+    isReserveTable = false
   ) => {
     const updated = [...players];
     updated[index] = { ...updated[index], [field]: value } as PlayerRow;
@@ -137,7 +143,11 @@ export default function PlayerPerformanceTable({
     // Auto-focus rank field when player is checked
     if (field === 'played' && value === true) {
       setTimeout(() => {
-        rankInputRefs.current[index]?.focus();
+        if (isReserveTable) {
+          reserveRankInputRefs.current[index]?.focus();
+        } else {
+          rankInputRefs.current[index]?.focus();
+        }
       }, 0);
     }
   };
@@ -181,6 +191,81 @@ export default function PlayerPerformanceTable({
 
   const isChecksumValid = checksum.totalScore === (data.score || 0);
 
+  // Split players into non-reserve and reserve groups
+  const nonReservePlayers = players.filter((p) => !p.reserved);
+  const reservePlayers = players.filter((p) => p.reserved);
+
+  // Helper function to render player table rows
+  const renderPlayerRows = (playerList: PlayerRow[], isReserveTable = false) => {
+    return playerList.map((player) => {
+      // Find the index in the original players array
+      const originalIndex = players.findIndex((p) => p.playerId === player.playerId);
+      const refIndex = isReserveTable
+        ? playerList.findIndex((p) => p.playerId === player.playerId)
+        : originalIndex;
+
+      return (
+        <tr key={player.playerId} className={player.played ? 'bg-white' : 'bg-gray-50'}>
+          <td className="border px-4 py-2 text-center">
+            <input
+              type="checkbox"
+              checked={player.played}
+              onChange={(e) =>
+                updatePlayer(originalIndex, 'played', e.target.checked, isReserveTable)
+              }
+              className="h-5 w-5"
+            />
+          </td>
+          <td className="border px-4 py-2">
+            <input
+              ref={(el) => {
+                if (isReserveTable) {
+                  reserveRankInputRefs.current[refIndex] = el;
+                } else {
+                  rankInputRefs.current[refIndex] = el;
+                }
+              }}
+              type="text"
+              inputMode="numeric"
+              value={player.rank > 0 ? player.rank : ''}
+              onChange={(e) =>
+                updatePlayer(originalIndex, 'rank', parseInt(e.target.value, 10) || 0)
+              }
+              placeholder="1-100"
+              className="w-20 rounded border border-gray-300 px-2 py-1"
+              disabled={!player.played}
+            />
+          </td>
+          <td className="border px-4 py-2">{player.playerName}</td>
+          <td className="border px-4 py-2">
+            <input
+              type="text"
+              inputMode="numeric"
+              value={player.score > 0 ? player.score : ''}
+              onChange={(e) =>
+                updatePlayer(originalIndex, 'score', parseInt(e.target.value, 10) || 0)
+              }
+              placeholder="Score"
+              className="w-32 rounded border border-gray-300 px-2 py-1"
+              disabled={!player.played}
+            />
+          </td>
+          <td className="border px-4 py-2">
+            <input
+              type="text"
+              inputMode="numeric"
+              value={player.fp > 0 ? player.fp : ''}
+              onChange={(e) => updatePlayer(originalIndex, 'fp', parseInt(e.target.value, 10) || 0)}
+              placeholder="FP"
+              className="w-24 rounded border border-gray-300 px-2 py-1"
+              disabled={!player.played}
+            />
+          </td>
+        </tr>
+      );
+    });
+  };
+
   return (
     <div className="space-y-6">
       {/* Checksum Display */}
@@ -212,6 +297,7 @@ export default function PlayerPerformanceTable({
 
       {/* Player Table */}
       <div className="overflow-x-auto">
+        <h3 className="mb-3 text-lg font-semibold text-gray-800">Active Players</h3>
         <table className="min-w-full border border-gray-300">
           <thead className="bg-gray-100">
             <tr>
@@ -222,59 +308,7 @@ export default function PlayerPerformanceTable({
               <th className="border px-4 py-2">FP</th>
             </tr>
           </thead>
-          <tbody>
-            {players.map((player, index) => (
-              <tr key={player.playerId} className={player.played ? 'bg-white' : 'bg-gray-50'}>
-                <td className="border px-4 py-2 text-center">
-                  <input
-                    type="checkbox"
-                    checked={player.played}
-                    onChange={(e) => updatePlayer(index, 'played', e.target.checked)}
-                    className="h-5 w-5"
-                  />
-                </td>
-                <td className="border px-4 py-2">
-                  <input
-                    ref={(el) => {
-                      rankInputRefs.current[index] = el;
-                    }}
-                    type="text"
-                    inputMode="numeric"
-                    value={player.rank > 0 ? player.rank : ''}
-                    onChange={(e) => updatePlayer(index, 'rank', parseInt(e.target.value, 10) || 0)}
-                    placeholder="1-100"
-                    className="w-20 rounded border border-gray-300 px-2 py-1"
-                    disabled={!player.played}
-                  />
-                </td>
-                <td className="border px-4 py-2">{player.playerName}</td>
-                <td className="border px-4 py-2">
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    value={player.score > 0 ? player.score : ''}
-                    onChange={(e) =>
-                      updatePlayer(index, 'score', parseInt(e.target.value, 10) || 0)
-                    }
-                    placeholder="Score"
-                    className="w-32 rounded border border-gray-300 px-2 py-1"
-                    disabled={!player.played}
-                  />
-                </td>
-                <td className="border px-4 py-2">
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    value={player.fp > 0 ? player.fp : ''}
-                    onChange={(e) => updatePlayer(index, 'fp', parseInt(e.target.value, 10) || 0)}
-                    placeholder="FP"
-                    className="w-24 rounded border border-gray-300 px-2 py-1"
-                    disabled={!player.played}
-                  />
-                </td>
-              </tr>
-            ))}
-          </tbody>
+          <tbody>{renderPlayerRows(nonReservePlayers, false)}</tbody>
         </table>
       </div>
 
@@ -315,6 +349,29 @@ export default function PlayerPerformanceTable({
           Next →
         </button>
       </div>
+
+      {/* Reserve Players Table (below navigation buttons) */}
+      {reservePlayers.length > 0 && (
+        <div className="mt-8 overflow-x-auto border-t-2 border-gray-300 pt-6">
+          <h3 className="mb-3 text-lg font-semibold text-gray-600">Reserve Players</h3>
+          <p className="mb-3 text-sm text-gray-500">
+            Reserve players are inactive roster members kept to manage clan FP. If a reserve player
+            participates in a battle, you can enter their stats here.
+          </p>
+          <table className="min-w-full border border-gray-300">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="border px-4 py-2">Played</th>
+                <th className="border px-4 py-2">Rank</th>
+                <th className="border px-4 py-2">Player</th>
+                <th className="border px-4 py-2">Score</th>
+                <th className="border px-4 py-2">FP</th>
+              </tr>
+            </thead>
+            <tbody>{renderPlayerRows(reservePlayers, true)}</tbody>
+          </table>
+        </div>
+      )}
 
       {/* Add Player Modal */}
       <AddPlayerForm
