@@ -5,7 +5,6 @@ import ActionCodeAssignment from './ActionCodeAssignment';
 import BattleMetadataForm from './BattleMetadataForm';
 import BattleReview from './BattleReview';
 import NonplayerManagement from './NonplayerManagement';
-import PerformanceDataForm from './PerformanceDataForm';
 import PlayerPerformanceTable from './PlayerPerformanceTable';
 
 import type { BattleEntry } from '@angrybirdman/common';
@@ -25,11 +24,10 @@ interface DraftData {
 
 const STEPS = [
   { id: 1, name: 'Battle Info', component: 'metadata' },
-  { id: 2, name: 'Performance', component: 'performance' },
-  { id: 3, name: 'Player Stats', component: 'players' },
-  { id: 4, name: 'Non-Players', component: 'nonplayers' },
-  { id: 5, name: 'Action Codes', component: 'actions' },
-  { id: 6, name: 'Review', component: 'review' },
+  { id: 2, name: 'Player Stats', component: 'players' },
+  { id: 3, name: 'Non-Players', component: 'nonplayers' },
+  { id: 4, name: 'Action Codes', component: 'actions' },
+  { id: 5, name: 'Review', component: 'review' },
 ];
 
 export default function BattleEntryWizard({
@@ -183,16 +181,6 @@ export default function BattleEntryWizard({
             data={battleData}
             onUpdate={updateBattleData}
             onNext={handleNext}
-            onCancel={handleCancel}
-          />
-        );
-      case 'performance':
-        return (
-          <PerformanceDataForm
-            data={battleData}
-            onUpdate={updateBattleData}
-            onNext={handleNext}
-            onBack={handleBack}
             onCancel={handleCancel}
           />
         );

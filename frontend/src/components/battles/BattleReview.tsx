@@ -72,7 +72,7 @@ export default function BattleReview({
           <h3 className="text-lg font-semibold">Performance</h3>
           <button
             type="button"
-            onClick={() => onJumpToStep(2)}
+            onClick={() => onJumpToStep(1)}
             className="text-primary text-sm hover:underline"
           >
             Edit
@@ -112,7 +112,7 @@ export default function BattleReview({
           <h3 className="text-lg font-semibold">Players ({data.playerStats?.length || 0})</h3>
           <button
             type="button"
-            onClick={() => onJumpToStep(3)}
+            onClick={() => onJumpToStep(2)}
             className="text-primary text-sm hover:underline"
           >
             Edit
@@ -143,7 +143,7 @@ export default function BattleReview({
             <h3 className="text-lg font-semibold">Non-Players ({data.nonplayerStats.length})</h3>
             <button
               type="button"
-              onClick={() => onJumpToStep(4)}
+              onClick={() => onJumpToStep(3)}
               className="text-primary text-sm hover:underline"
             >
               Edit
@@ -174,7 +174,7 @@ export default function BattleReview({
           <h3 className="text-lg font-semibold">Action Codes</h3>
           <button
             type="button"
-            onClick={() => onJumpToStep(5)}
+            onClick={() => onJumpToStep(4)}
             className="text-primary text-sm hover:underline"
           >
             Edit
