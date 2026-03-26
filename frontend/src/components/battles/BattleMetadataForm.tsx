@@ -157,6 +157,23 @@ export default function BattleMetadataForm({
           </div>
 
           <div>
+            <label
+              htmlFor="opponentRovioId"
+              className="mb-2 block text-sm font-medium text-gray-700"
+            >
+              Opponent Rovio ID
+            </label>
+            <input
+              type="text"
+              id="opponentRovioId"
+              value={opponentRovioId}
+              onChange={(e) => setOpponentRovioId(e.target.value)}
+              className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:outline-none"
+              placeholder="e.g., CLAN123"
+            />
+          </div>
+
+          <div>
             <label htmlFor="opponentFp" className="mb-2 block text-sm font-medium text-gray-700">
               Opponent FP <span className="text-red-500">*</span>
             </label>
@@ -185,23 +202,6 @@ export default function BattleMetadataForm({
               onChange={(e) => setOpponentCountry(e.target.value)}
               className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:outline-none"
               placeholder="e.g., US, UK, CA"
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="opponentRovioId"
-              className="mb-2 block text-sm font-medium text-gray-700"
-            >
-              Opponent Rovio ID
-            </label>
-            <input
-              type="text"
-              id="opponentRovioId"
-              value={opponentRovioId}
-              onChange={(e) => setOpponentRovioId(e.target.value)}
-              className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:outline-none"
-              placeholder="e.g., CLAN123"
             />
           </div>
         </div>
