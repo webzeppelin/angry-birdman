@@ -39,7 +39,9 @@ export default function ActionCodeAssignment({
 }: ActionCodeAssignmentProps) {
   const [playerActions, setPlayerActions] = useState<PlayerAction[]>([]);
   const [nonplayerActions, setNonplayerActions] = useState<PlayerAction[]>([]);
-  const [bulkActionCode, setBulkActionCode] = useState('HOLD');
+  const [bulkCodeActivNp, setBulkCodeActivNp] = useState('HOLD');
+  const [bulkCodeReserveNp, setBulkCodeReserveNp] = useState('HOLD');
+  const [bulkCodePlayers, setBulkCodePlayers] = useState('HOLD');
 
   // Fetch active roster to get player names
   const { data: rosterData } = useQuery<RosterResponse>({
@@ -115,16 +117,19 @@ export default function ActionCodeAssignment({
     setList(updated);
   };
 
-  const applyBulkAction = (section: 'players' | 'activeNonplayers' | 'reserveNonplayers') => {
+  const applyBulkAction = (
+    section: 'players' | 'activeNonplayers' | 'reserveNonplayers',
+    code: string
+  ) => {
     if (section === 'players') {
-      setPlayerActions(playerActions.map((a) => ({ ...a, actionCode: bulkActionCode })));
+      setPlayerActions(playerActions.map((a) => ({ ...a, actionCode: code })));
     } else if (section === 'activeNonplayers') {
       setNonplayerActions(
-        nonplayerActions.map((a) => (!a.reserve ? { ...a, actionCode: bulkActionCode } : a))
+        nonplayerActions.map((a) => (!a.reserve ? { ...a, actionCode: code } : a))
       );
     } else {
       setNonplayerActions(
-        nonplayerActions.map((a) => (a.reserve ? { ...a, actionCode: bulkActionCode } : a))
+        nonplayerActions.map((a) => (a.reserve ? { ...a, actionCode: code } : a))
       );
     }
   };
@@ -177,8 +182,8 @@ export default function ActionCodeAssignment({
             </h3>
             <div className="flex items-center space-x-2">
               <select
-                value={bulkActionCode}
-                onChange={(e) => setBulkActionCode(e.target.value)}
+                value={bulkCodeActivNp}
+                onChange={(e) => setBulkCodeActivNp(e.target.value)}
                 className="rounded border border-gray-300 px-3 py-1"
               >
                 {ACTION_CODES.map((ac) => (
@@ -189,7 +194,7 @@ export default function ActionCodeAssignment({
               </select>
               <button
                 type="button"
-                onClick={() => applyBulkAction('activeNonplayers')}
+                onClick={() => applyBulkAction('activeNonplayers', bulkCodeActivNp)}
                 className="hover:bg-secondary-dark bg-secondary rounded px-4 py-1 text-white"
               >
                 Apply to All Active Non-Players
@@ -255,13 +260,26 @@ export default function ActionCodeAssignment({
             <h3 className="text-lg font-semibold">
               Reserve Non-Players ({reserveNonplayerActions.length})
             </h3>
-            <button
-              type="button"
-              onClick={() => applyBulkAction('reserveNonplayers')}
-              className="hover:bg-secondary-dark bg-secondary rounded px-4 py-1 text-white"
-            >
-              Apply to All Reserve Non-Players
-            </button>
+            <div className="flex items-center space-x-2">
+              <select
+                value={bulkCodeReserveNp}
+                onChange={(e) => setBulkCodeReserveNp(e.target.value)}
+                className="rounded border border-gray-300 px-3 py-1"
+              >
+                {ACTION_CODES.map((ac) => (
+                  <option key={ac.code} value={ac.code}>
+                    {ac.label}
+                  </option>
+                ))}
+              </select>
+              <button
+                type="button"
+                onClick={() => applyBulkAction('reserveNonplayers', bulkCodeReserveNp)}
+                className="hover:bg-secondary-dark bg-secondary rounded px-4 py-1 text-white"
+              >
+                Apply to All Reserve Non-Players
+              </button>
+            </div>
           </div>
 
           <div className="overflow-x-auto">
@@ -319,13 +337,26 @@ export default function ActionCodeAssignment({
       <div>
         <div className="mb-4 flex items-center justify-between">
           <h3 className="text-lg font-semibold">Players ({playerActions.length})</h3>
-          <button
-            type="button"
-            onClick={() => applyBulkAction('players')}
-            className="hover:bg-secondary-dark bg-secondary rounded px-4 py-1 text-white"
-          >
-            Apply to All Players
-          </button>
+          <div className="flex items-center space-x-2">
+            <select
+              value={bulkCodePlayers}
+              onChange={(e) => setBulkCodePlayers(e.target.value)}
+              className="rounded border border-gray-300 px-3 py-1"
+            >
+              {ACTION_CODES.map((ac) => (
+                <option key={ac.code} value={ac.code}>
+                  {ac.label}
+                </option>
+              ))}
+            </select>
+            <button
+              type="button"
+              onClick={() => applyBulkAction('players', bulkCodePlayers)}
+              className="hover:bg-secondary-dark bg-secondary rounded px-4 py-1 text-white"
+            >
+              Apply to All Players
+            </button>
+          </div>
         </div>
 
         <div className="overflow-x-auto">
