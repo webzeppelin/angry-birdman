@@ -18,6 +18,7 @@ interface PlayerAction {
   playerName?: string; // For display only
   actionCode: string;
   actionReason?: string;
+  reserve?: boolean;
 }
 
 const ACTION_CODES = [
@@ -91,6 +92,7 @@ export default function ActionCodeAssignment({
           playerName: rosterMember?.playerName || `Player ${np.playerId}`,
           actionCode,
           actionReason: np.actionReason,
+          reserve: np.reserve,
         };
       });
       // Use startTransition to defer state update and avoid cascading render warning
@@ -113,12 +115,18 @@ export default function ActionCodeAssignment({
     setList(updated);
   };
 
-  const applyBulkAction = (isPlayer: boolean) => {
-    const list = isPlayer ? playerActions : nonplayerActions;
-    const setList = isPlayer ? setPlayerActions : setNonplayerActions;
-
-    const updated = list.map((a) => ({ ...a, actionCode: bulkActionCode }));
-    setList(updated);
+  const applyBulkAction = (section: 'players' | 'activeNonplayers' | 'reserveNonplayers') => {
+    if (section === 'players') {
+      setPlayerActions(playerActions.map((a) => ({ ...a, actionCode: bulkActionCode })));
+    } else if (section === 'activeNonplayers') {
+      setNonplayerActions(
+        nonplayerActions.map((a) => (!a.reserve ? { ...a, actionCode: bulkActionCode } : a))
+      );
+    } else {
+      setNonplayerActions(
+        nonplayerActions.map((a) => (a.reserve ? { ...a, actionCode: bulkActionCode } : a))
+      );
+    }
   };
 
   const handleNext = () => {
@@ -155,32 +163,169 @@ export default function ActionCodeAssignment({
     onNext();
   };
 
+  const activeNonplayerActions = nonplayerActions.filter((a) => !a.reserve);
+  const reserveNonplayerActions = nonplayerActions.filter((a) => a.reserve);
+
   return (
     <div className="space-y-6">
+      {/* Active Non-Players */}
+      {activeNonplayerActions.length > 0 && (
+        <div>
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="text-lg font-semibold">
+              Active Non-Players ({activeNonplayerActions.length})
+            </h3>
+            <div className="flex items-center space-x-2">
+              <select
+                value={bulkActionCode}
+                onChange={(e) => setBulkActionCode(e.target.value)}
+                className="rounded border border-gray-300 px-3 py-1"
+              >
+                {ACTION_CODES.map((ac) => (
+                  <option key={ac.code} value={ac.code}>
+                    {ac.label}
+                  </option>
+                ))}
+              </select>
+              <button
+                type="button"
+                onClick={() => applyBulkAction('activeNonplayers')}
+                className="hover:bg-secondary-dark bg-secondary rounded px-4 py-1 text-white"
+              >
+                Apply to All Active Non-Players
+              </button>
+            </div>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="min-w-full border border-gray-300">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="border px-4 py-2">Player</th>
+                  <th className="border px-4 py-2">Action Code</th>
+                  <th className="border px-4 py-2">Reason (Optional)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {activeNonplayerActions.map((action) => (
+                  <tr key={action.playerId}>
+                    <td className="border px-4 py-2">
+                      <span className="font-medium">
+                        {action.playerName || `Player ${action.playerId}`}
+                      </span>
+                    </td>
+                    <td className="border px-4 py-2">
+                      <select
+                        value={action.actionCode}
+                        onChange={(e) =>
+                          updateAction(action.playerId, 'actionCode', e.target.value, false)
+                        }
+                        className="w-full rounded border border-gray-300 px-2 py-1"
+                      >
+                        {ACTION_CODES.map((ac) => (
+                          <option key={ac.code} value={ac.code} title={ac.description}>
+                            {ac.label}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                    <td className="border px-4 py-2">
+                      <input
+                        type="text"
+                        value={action.actionReason || ''}
+                        onChange={(e) =>
+                          updateAction(action.playerId, 'actionReason', e.target.value, false)
+                        }
+                        className="w-full rounded border border-gray-300 px-2 py-1"
+                        placeholder="Optional reason"
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Reserve Non-Players */}
+      {reserveNonplayerActions.length > 0 && (
+        <div>
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="text-lg font-semibold">
+              Reserve Non-Players ({reserveNonplayerActions.length})
+            </h3>
+            <button
+              type="button"
+              onClick={() => applyBulkAction('reserveNonplayers')}
+              className="hover:bg-secondary-dark bg-secondary rounded px-4 py-1 text-white"
+            >
+              Apply to All Reserve Non-Players
+            </button>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="min-w-full border border-gray-300">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="border px-4 py-2">Player</th>
+                  <th className="border px-4 py-2">Action Code</th>
+                  <th className="border px-4 py-2">Reason (Optional)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {reserveNonplayerActions.map((action) => (
+                  <tr key={action.playerId}>
+                    <td className="border px-4 py-2">
+                      <span className="font-medium">
+                        {action.playerName || `Player ${action.playerId}`}
+                      </span>
+                    </td>
+                    <td className="border px-4 py-2">
+                      <select
+                        value={action.actionCode}
+                        onChange={(e) =>
+                          updateAction(action.playerId, 'actionCode', e.target.value, false)
+                        }
+                        className="w-full rounded border border-gray-300 px-2 py-1"
+                      >
+                        {ACTION_CODES.map((ac) => (
+                          <option key={ac.code} value={ac.code} title={ac.description}>
+                            {ac.label}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                    <td className="border px-4 py-2">
+                      <input
+                        type="text"
+                        value={action.actionReason || ''}
+                        onChange={(e) =>
+                          updateAction(action.playerId, 'actionReason', e.target.value, false)
+                        }
+                        className="w-full rounded border border-gray-300 px-2 py-1"
+                        placeholder="Optional reason"
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
       {/* Players */}
       <div>
         <div className="mb-4 flex items-center justify-between">
           <h3 className="text-lg font-semibold">Players ({playerActions.length})</h3>
-          <div className="flex items-center space-x-2">
-            <select
-              value={bulkActionCode}
-              onChange={(e) => setBulkActionCode(e.target.value)}
-              className="rounded border border-gray-300 px-3 py-1"
-            >
-              {ACTION_CODES.map((ac) => (
-                <option key={ac.code} value={ac.code}>
-                  {ac.label}
-                </option>
-              ))}
-            </select>
-            <button
-              type="button"
-              onClick={() => applyBulkAction(true)}
-              className="hover:bg-secondary-dark bg-secondary rounded px-4 py-1 text-white"
-            >
-              Apply to All Players
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => applyBulkAction('players')}
+            className="hover:bg-secondary-dark bg-secondary rounded px-4 py-1 text-white"
+          >
+            Apply to All Players
+          </button>
         </div>
 
         <div className="overflow-x-auto">
@@ -232,71 +377,6 @@ export default function ActionCodeAssignment({
           </table>
         </div>
       </div>
-
-      {/* Non-Players */}
-      {nonplayerActions.length > 0 && (
-        <div>
-          <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-lg font-semibold">Non-Players ({nonplayerActions.length})</h3>
-            <button
-              type="button"
-              onClick={() => applyBulkAction(false)}
-              className="hover:bg-secondary-dark bg-secondary rounded px-4 py-1 text-white"
-            >
-              Apply to All Non-Players
-            </button>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="min-w-full border border-gray-300">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="border px-4 py-2">Player</th>
-                  <th className="border px-4 py-2">Action Code</th>
-                  <th className="border px-4 py-2">Reason (Optional)</th>
-                </tr>
-              </thead>
-              <tbody>
-                {nonplayerActions.map((action) => (
-                  <tr key={action.playerId}>
-                    <td className="border px-4 py-2">
-                      <span className="font-medium">
-                        {action.playerName || `Player ${action.playerId}`}
-                      </span>
-                    </td>
-                    <td className="border px-4 py-2">
-                      <select
-                        value={action.actionCode}
-                        onChange={(e) =>
-                          updateAction(action.playerId, 'actionCode', e.target.value, false)
-                        }
-                        className="w-full rounded border border-gray-300 px-2 py-1"
-                      >
-                        {ACTION_CODES.map((ac) => (
-                          <option key={ac.code} value={ac.code} title={ac.description}>
-                            {ac.label}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
-                    <td className="border px-4 py-2">
-                      <input
-                        type="text"
-                        value={action.actionReason || ''}
-                        onChange={(e) =>
-                          updateAction(action.playerId, 'actionReason', e.target.value, false)
-                        }
-                        className="w-full rounded border border-gray-300 px-2 py-1"
-                        placeholder="Optional reason"
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
 
       {/* Action Code Legend */}
       <div className="rounded-md border border-blue-200 bg-blue-50 p-4">
