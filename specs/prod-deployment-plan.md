@@ -82,7 +82,7 @@ _Manual, one-time steps performed via SSH and the AWS console._
 
 ### 1.1 — Provision the LightSail Instance (AWS Console)
 
-- Create instance: platform **Amazon Linux 2023**, plan **$5/month** (1 GB / 2
+- Create instance: platform **Amazon Linux 2023**, plan **$7/month** (1 GB / 2
   vCPU / 40 GB SSD)
 - Allocate a **Static IP** from the LightSail Networking tab and attach it to
   the instance
@@ -141,7 +141,10 @@ sudo systemctl restart sshd
 
 ### 1.6 — OS Firewall (firewalld)
 
+`firewalld` is not installed by default on Amazon Linux 2023 — install it first:
+
 ```bash
+sudo dnf install -y firewalld
 sudo systemctl enable --now firewalld
 sudo firewall-cmd --permanent --add-service=ssh
 sudo firewall-cmd --permanent --add-service=http
