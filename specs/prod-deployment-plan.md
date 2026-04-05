@@ -812,17 +812,21 @@ crash-looping:
 
 ```bash
 cd /opt/angrybirdman
+# Ensure api and frontend containers exist (they may already be running/looping)
 docker compose -f docker/docker-compose.prod.yml --env-file docker/.env.prod \
-  up --no-deps -d api frontend nginx
+  up --no-deps -d api frontend
+# Start nginx directly — bypasses Docker Compose dependency health checks entirely
+docker start angrybirdman-prod-nginx
+docker logs --tail=20 angrybirdman-prod-nginx
 ```
 
-> **Why `--no-deps` for all three?** nginx resolves every upstream hostname
-> (`api:3001` and `frontend:3000`) at startup via Docker DNS. A _stopped_
-> container is removed from Docker's internal DNS entirely — nginx cannot
-> resolve the hostname and exits. Starting all three with `--no-deps` bypasses
-> the `depends_on` healthcheck chain. The `api` will crash-loop (migrations
-> haven't run yet) but its hostname stays registered in Docker DNS while the
-> container exists, so nginx starts successfully.
+> **Why `docker start` for nginx?** Even with `--no-deps`, Docker Compose's `up`
+> command still evaluates `depends_on` healthchecks for services being started —
+> if `api` is marked "unhealthy" (crash-looping before migrations), nginx is
+> blocked. `docker start` restarts the existing nginx container with no
+> dependency evaluation at all. The `api` container exists (crash-looping with
+> `restart: always`) and is registered in Docker's internal DNS, so nginx
+> successfully resolves `api:3001` and `frontend:3000` at startup.
 
 Navigate to `https://YOUR_DOMAIN:8443/admin` → log in with the
 `KEYCLOAK_ADMIN_USER` / `KEYCLOAK_ADMIN_PASSWORD` from `.env.prod`.
