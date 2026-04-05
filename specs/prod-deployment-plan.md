@@ -278,6 +278,7 @@ free -h
 ### 1.13 — Create Service Account and Clone Repository
 
 ```bash
+sudo dnf install -y git
 sudo useradd -m -s /bin/bash angrybirdman
 sudo usermod -aG docker angrybirdman
 sudo mkdir -p /opt/angrybirdman/backups /opt/angrybirdman/logs
