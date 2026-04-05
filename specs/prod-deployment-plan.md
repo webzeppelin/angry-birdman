@@ -692,7 +692,15 @@ Edit `.env.prod` and fill in:
 
 ### 5.2 — Configure Cron Jobs
 
-As `ec2-user` (sudoing to set up the angrybirdman user's crontab):
+`cronie` (the cron daemon) is not installed by default on Amazon Linux 2023 —
+install and enable it first:
+
+```bash
+sudo dnf install -y cronie
+sudo systemctl enable --now crond
+```
+
+Then set up the angrybirdman user's crontab:
 
 ```bash
 sudo -u angrybirdman crontab -e
