@@ -764,10 +764,12 @@ docker exec angrybirdman-prod-postgres psql -U "$POSTGRES_USER" -l
 The output must show **both** `angrybirdman` and `keycloak` databases. If
 `keycloak` is missing (this happens when the volume was initialized before
 `.env.prod` existed, since init scripts only run on a fresh empty volume),
-create it manually:
+create it manually (use `-d postgres` so psql connects to the always-present
+default database instead of trying to connect to a database named after the
+user, which does not exist):
 
 ```bash
-docker exec angrybirdman-prod-postgres psql -U "$POSTGRES_USER" \
+docker exec angrybirdman-prod-postgres psql -U "$POSTGRES_USER" -d postgres \
   -c "CREATE DATABASE keycloak OWNER $POSTGRES_USER"
 ```
 
