@@ -754,6 +754,31 @@ sleep 15
 docker compose -f docker/docker-compose.prod.yml --env-file docker/.env.prod ps
 ```
 
+**Verify both databases were created by the init scripts:**
+
+```bash
+source docker/.env.prod
+docker exec angrybirdman-prod-postgres psql -U "$POSTGRES_USER" -l
+```
+
+The output must show **both** `angrybirdman` and `keycloak` databases. If
+`keycloak` is missing (this happens when the volume was initialized before
+`.env.prod` existed, since init scripts only run on a fresh empty volume),
+create it manually:
+
+```bash
+docker exec angrybirdman-prod-postgres psql -U "$POSTGRES_USER" \
+  -c "CREATE DATABASE keycloak OWNER $POSTGRES_USER"
+```
+
+> **If postgres was already started and the volume needs full
+> re-initialization** (no application data yet, safe to destroy): stop all
+> containers and remove volumes, then re-run this step:
+>
+> ```bash
+> docker compose -f docker/docker-compose.prod.yml --env-file docker/.env.prod down -v
+> ```
+
 ### 6.2 — Start Keycloak (First Run — Realm Import)
 
 ```bash
