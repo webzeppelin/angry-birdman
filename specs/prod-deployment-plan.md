@@ -805,11 +805,17 @@ docker compose -f docker/docker-compose.prod.yml --env-file docker/.env.prod \
 
 ### 6.3 — Retrieve the Keycloak API Client Secret
 
-Start nginx temporarily so you can reach the Keycloak admin UI:
+The API cannot start yet because Prisma migrations haven't run (step 6.4). nginx
+normally depends on the API being healthy, so use `--no-deps` to start nginx
+alone, bypassing the dependency chain. Stop the API first if it is
+crash-looping:
 
 ```bash
+cd /opt/angrybirdman
 docker compose -f docker/docker-compose.prod.yml --env-file docker/.env.prod \
-  up -d nginx
+  stop api
+docker compose -f docker/docker-compose.prod.yml --env-file docker/.env.prod \
+  up --no-deps -d nginx
 ```
 
 Navigate to `https://YOUR_DOMAIN:8443/admin` → log in with the
