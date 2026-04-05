@@ -205,11 +205,22 @@ intervention. Feature updates are excluded to avoid breaking the application.
 
 ### 1.9 — Install Docker and Docker Compose Plugin
 
+`docker-compose-plugin` is not available in the Amazon Linux 2023 package
+repositories. Install Docker via `dnf`, then manually install the Compose plugin
+by downloading it directly from GitHub:
+
 ```bash
 sudo dnf install -y docker
 sudo systemctl enable --now docker
 sudo usermod -aG docker ec2-user
-sudo dnf install -y docker-compose-plugin
+
+# Install the Docker Compose CLI plugin (not available via dnf on AL2023)
+sudo mkdir -p /usr/libexec/docker/cli-plugins
+sudo curl -SL \
+  https://github.com/docker/compose/releases/latest/download/docker-compose-linux-$(uname -m) \
+  -o /usr/libexec/docker/cli-plugins/docker-compose
+sudo chmod +x /usr/libexec/docker/cli-plugins/docker-compose
+
 # Verify
 docker --version
 docker compose version
