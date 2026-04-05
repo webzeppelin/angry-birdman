@@ -1,0 +1,171 @@
+services:
+  # PostgreSQL - Primary database
+  postgres:
+    image: postgres:15-alpine
+    container_name: angrybirdman-prod-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_MULTIPLE_DATABASES: ${POSTGRES_DB},${KEYCLOAK_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../database/postgres/init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - angrybirdman-prod
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    # No external ports - internal traffic only
+
+  # Valkey - Session cache
+  valkey:
+    image: valkey/valkey:7.2-alpine
+    container_name: angrybirdman-prod-valkey
+    restart: always
+    command: >
+      valkey-server
+      --appendonly yes
+      --appendfsync everysec
+      --maxmemory ${VALKEY_MAXMEMORY:-256mb}
+      --maxmemory-policy allkeys-lru
+    volumes:
+      - valkey_data:/data
+    networks:
+      - angrybirdman-prod
+    healthcheck:
+      test: ['CMD', 'valkey-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    # No external ports - internal traffic only
+
+  # Keycloak - Identity Provider
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0
+    container_name: angrybirdman-prod-keycloak
+    restart: always
+    command: start --import-realm
+    environment:
+      KC_DB: postgres
+      KC_DB_URL_HOST: postgres
+      KC_DB_URL_DATABASE: ${KEYCLOAK_DB}
+      KC_DB_USERNAME: ${POSTGRES_USER}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
+      KC_DB_SCHEMA: public
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN_USER}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_HOSTNAME: ${KEYCLOAK_HOSTNAME}
+      KC_HTTP_ENABLED: true
+      KC_PROXY: edge
+      KC_HEALTH_ENABLED: true
+      KC_METRICS_ENABLED: true
+    # No external ports - nginx proxies port 8443 → keycloak:8080
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+      - ../keycloak/config-prod:/opt/keycloak/data/import:ro
+    networks:
+      - angrybirdman-prod
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD-SHELL', 'exec 3<>/dev/tcp/localhost/8080']
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 90s
+
+  # API Backend
+  api:
+    image: ghcr.io/webzeppelin/angry-birdman-api:latest
+    container_name: angrybirdman-prod-api
+    restart: always
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?schema=public
+      # Public Keycloak URL: used for redirects in API responses sent to the browser
+      KEYCLOAK_URL: https://${KEYCLOAK_HOSTNAME}:${KEYCLOAK_PORT}
+      KEYCLOAK_REALM: ${KEYCLOAK_REALM}
+      # Internal Keycloak URL: API talks directly to Keycloak via Docker network for token validation
+      KEYCLOAK_REALM_URL: http://keycloak:8080/realms/${KEYCLOAK_REALM}
+      KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID}
+      KEYCLOAK_ADMIN_CLIENT_ID: ${KEYCLOAK_ADMIN_CLIENT_ID}
+      KEYCLOAK_ADMIN_CLIENT_SECRET: ${KEYCLOAK_ADMIN_CLIENT_SECRET}
+      VALKEY_HOST: valkey
+      VALKEY_PORT: 6379
+      CORS_ORIGIN: https://${APP_HOSTNAME}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      valkey:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+    networks:
+      - angrybirdman-prod
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://127.0.0.1:3001/health']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+
+  # Frontend
+  frontend:
+    image: ghcr.io/webzeppelin/angry-birdman-frontend:latest
+    container_name: angrybirdman-prod-frontend
+    restart: always
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - angrybirdman-prod
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  # Nginx Reverse Proxy - TLS termination for app (443) and Keycloak (8443)
+  nginx:
+    image: nginx:alpine
+    container_name: angrybirdman-prod-nginx
+    restart: always
+    ports:
+      - '80:80'
+      - '443:443'
+      - '8443:8443'
+    volumes:
+      - ./nginx-proxy-prod.conf:/etc/nginx/conf.d/default.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /var/www/certbot:/var/www/certbot:ro
+    depends_on:
+      - frontend
+      - api
+    networks:
+      - angrybirdman-prod
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost/health']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+networks:
+  angrybirdman-prod:
+    name: angrybirdman-prod
+    driver: bridge
+
+volumes:
+  postgres_data:
+    name: angrybirdman-prod-postgres-data
+  valkey_data:
+    name: angrybirdman-prod-valkey-data
+  keycloak_data:
+    name: angrybirdman-prod-keycloak-data

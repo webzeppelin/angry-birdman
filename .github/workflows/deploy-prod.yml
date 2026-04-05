@@ -1,0 +1,171 @@
+name: Deploy to Production
+
+on:
+  push:
+    tags:
+      - 'prod-*' # Deploy when pushing tags like prod-2026-04-04.1
+  workflow_dispatch: # Allow manual triggering
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME_API: ${{ github.repository }}-api
+  IMAGE_NAME_FRONTEND: ${{ github.repository }}-frontend
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        env:
+          DATABASE_URL: postgresql://dummy:dummy@localhost:5432/dummy
+        run: npm run db:generate
+
+      - name: Build database package
+        run: npm run build --workspace=database
+
+      - name: Build common package
+        run: npm run build --workspace=common
+
+      - name: Run linting
+        run: npm run lint
+
+      - name: Run type checking
+        run: npm run type-check
+
+      - name: Build API package
+        env:
+          DATABASE_URL: postgresql://dummy:dummy@localhost:5432/dummy
+        run: npm run build --workspace=api
+
+      - name: Build frontend package
+        env:
+          DATABASE_URL: postgresql://dummy:dummy@localhost:5432/dummy
+        run: npm run build --workspace=frontend
+
+  build-and-push:
+    name: Build and Push Docker Images
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata for API
+        id: meta-api
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_API }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=tag
+            type=sha,prefix=sha-
+            type=raw,value=latest,enable=true
+
+      - name: Extract metadata for Frontend
+        id: meta-frontend
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_FRONTEND }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=tag
+            type=sha,prefix=sha-
+            type=raw,value=latest,enable=true
+
+      - name: Build and push API image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./docker/Dockerfile.api
+          push: true
+          tags: ${{ steps.meta-api.outputs.tags }}
+          labels: ${{ steps.meta-api.outputs.labels }}
+
+      - name: Build and push Frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./docker/Dockerfile.frontend
+          push: true
+          tags: ${{ steps.meta-frontend.outputs.tags }}
+          labels: ${{ steps.meta-frontend.outputs.labels }}
+          # VITE_* values are embedded statically into the bundle at build time by Vite.
+          # They are NOT read from .env.prod at runtime.
+          build-args: |
+            VITE_API_URL=https://www.angrybirdman.org
+            VITE_KEYCLOAK_URL=https://www.angrybirdman.org:8443
+            VITE_KEYCLOAK_REALM=angrybirdman
+            VITE_KEYCLOAK_CLIENT_ID=angrybirdman-frontend
+            VITE_APP_URL=https://www.angrybirdman.org
+            VITE_APP_VERSION=${{ github.sha }}
+            VITE_APP_ENVIRONMENT=production
+
+  deploy:
+    name: Deploy to Production
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_SSH_USER }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          envs: GITHUB_TOKEN,GITHUB_ACTOR
+          script: |
+            cd /opt/angrybirdman
+            git pull origin main
+            echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+            source docker/.env.prod
+            docker compose -f docker/docker-compose.prod.yml --env-file docker/.env.prod pull
+            docker compose -f docker/docker-compose.prod.yml --env-file docker/.env.prod run --rm \
+              -e DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?schema=public" \
+              api npx prisma migrate deploy
+            docker compose -f docker/docker-compose.prod.yml --env-file docker/.env.prod \
+              up -d --force-recreate --remove-orphans
+            sleep 30
+            for service in postgres valkey keycloak api frontend nginx; do
+              docker compose -f docker/docker-compose.prod.yml ps "$service" \
+                | grep -q "running" && echo "✓ $service running" \
+                || (echo "✗ $service failed" && exit 1)
+            done
+            curl -sf https://www.angrybirdman.org/health && echo "✓ Health check passed"
+            docker image prune -f
+
+      - name: Deployment notification
+        if: always()
+        run: |
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "✓ Deployment to production successful"
+            echo "Application URL: https://www.angrybirdman.org"
+          else
+            echo "✗ Deployment to production failed"
+          fi
