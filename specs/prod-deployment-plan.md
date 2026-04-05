@@ -679,9 +679,15 @@ sudo chmod 600 /opt/angrybirdman/docker/.env.prod
 Generate strong passwords:
 
 ```bash
-echo "POSTGRES_PASSWORD: $(openssl rand -base64 32)"
-echo "KEYCLOAK_ADMIN_PASSWORD: $(openssl rand -base64 32)"
+echo "POSTGRES_PASSWORD: $(openssl rand -hex 32)"
+echo "KEYCLOAK_ADMIN_PASSWORD: $(openssl rand -hex 32)"
 ```
+
+> **Important**: Use `openssl rand -hex 32` (not `-base64`). Base64 output
+> contains `+`, `/`, and `=` characters which are not URL-safe. The
+> `POSTGRES_PASSWORD` is embedded directly into a `postgresql://` connection URL
+> in the Docker Compose environment, so special characters will cause
+> `pg-connection-string` to fail parsing the URL and crash the API on startup.
 
 Edit `.env.prod` and fill in:
 
