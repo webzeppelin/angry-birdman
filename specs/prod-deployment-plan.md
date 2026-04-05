@@ -806,8 +806,8 @@ docker compose -f docker/docker-compose.prod.yml --env-file docker/.env.prod \
 ### 6.3 — Retrieve the Keycloak API Client Secret
 
 The API cannot start yet because Prisma migrations haven't run (step 6.4). nginx
-normally depends on the API being healthy, so use `--no-deps` to start nginx
-alone, bypassing the dependency chain. Stop the API first if it is
+and frontend both depend on the API being healthy, so use `--no-deps` to start
+them directly, bypassing the dependency chain. Stop the API first if it is
 crash-looping:
 
 ```bash
@@ -815,8 +815,13 @@ cd /opt/angrybirdman
 docker compose -f docker/docker-compose.prod.yml --env-file docker/.env.prod \
   stop api
 docker compose -f docker/docker-compose.prod.yml --env-file docker/.env.prod \
-  up --no-deps -d nginx
+  up --no-deps -d frontend nginx
 ```
+
+> **Why `frontend` too?** nginx resolves all upstream hostnames (`frontend:3000`
+> and `api:3001`) at startup via Docker DNS. If `frontend` is not running, nginx
+> cannot resolve the hostname and exits immediately. The `frontend` container is
+> a pre-built static file server — it starts fine without the API.
 
 Navigate to `https://YOUR_DOMAIN:8443/admin` → log in with the
 `KEYCLOAK_ADMIN_USER` / `KEYCLOAK_ADMIN_PASSWORD` from `.env.prod`.
