@@ -281,10 +281,12 @@ free -h
 sudo dnf install -y git
 sudo useradd -m -s /bin/bash angrybirdman
 sudo usermod -aG docker angrybirdman
-sudo mkdir -p /opt/angrybirdman/backups /opt/angrybirdman/logs
-sudo chown -R angrybirdman:angrybirdman /opt/angrybirdman
+# Clone first — git creates /opt/angrybirdman itself
 sudo -u angrybirdman git clone https://github.com/webzeppelin/angry-birdman.git \
   /opt/angrybirdman
+# Create additional directories needed at runtime
+sudo mkdir -p /opt/angrybirdman/backups /opt/angrybirdman/logs
+sudo chown -R angrybirdman:angrybirdman /opt/angrybirdman
 ```
 
 ---
