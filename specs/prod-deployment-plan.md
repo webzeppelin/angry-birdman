@@ -986,9 +986,9 @@ source /opt/angrybirdman/docker/.env.prod
 PGUSER=$POSTGRES_USER
 
 # Drop and recreate the database
-docker exec angrybirdman-prod-postgres psql -U "$PGUSER" \
+docker exec angrybirdman-prod-postgres psql -U "$PGUSER" -d postgres \
   -c "DROP DATABASE IF EXISTS angrybirdman"
-docker exec angrybirdman-prod-postgres psql -U "$PGUSER" \
+docker exec angrybirdman-prod-postgres psql -U "$PGUSER" -d postgres \
   -c "CREATE DATABASE angrybirdman OWNER $PGUSER"
 
 # Restore
@@ -1002,9 +1002,9 @@ echo "App database restored."
 
 ```bash
 # Drop and recreate
-docker exec angrybirdman-prod-postgres psql -U "$PGUSER" \
+docker exec angrybirdman-prod-postgres psql -U "$PGUSER" -d postgres \
   -c "DROP DATABASE IF EXISTS keycloak"
-docker exec angrybirdman-prod-postgres psql -U "$PGUSER" \
+docker exec angrybirdman-prod-postgres psql -U "$PGUSER" -d postgres \
   -c "CREATE DATABASE keycloak OWNER $PGUSER"
 
 # Restore
