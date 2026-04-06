@@ -893,8 +893,25 @@ curl -sf https://YOUR_DOMAIN/health
 # Application loads in browser
 # https://YOUR_DOMAIN — React app loads
 # https://YOUR_DOMAIN:8443 — Keycloak admin console loads over HTTPS
+```
 
-# Certbot dry-run (proves auto-renewal will work)
+**Switch Certbot renewal from standalone to webroot:**
+
+The initial certificate (Phase 2.2) was obtained with `--standalone`, which
+wrote `authenticator = standalone` into Certbot's renewal config. Now that nginx
+owns port 80, standalone renewal would fail because it cannot bind port 80.
+Reconfigure the renewal method to webroot (nginx is already serving
+`/.well-known/acme-challenge/`):
+
+```bash
+sudo certbot certonly --webroot -w /var/www/certbot \
+  -d YOUR_DOMAIN --agree-tos
+# Certbot updates the renewal config; the cert itself is not replaced (not yet due)
+```
+
+Then verify auto-renewal works:
+
+```bash
 sudo certbot renew --dry-run
 ```
 
