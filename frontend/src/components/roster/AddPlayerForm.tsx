@@ -22,6 +22,17 @@ interface AddPlayerFormProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess?: () => void;
+  /** Default joined date in YYYY-MM-DD format. Defaults to today's date in the local timezone. */
+  defaultDate?: string;
+}
+
+/** Returns today's date as YYYY-MM-DD using the local timezone (not UTC). */
+function getLocalTodayString(): string {
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
 }
 
 interface AddPlayerRequest {
@@ -29,10 +40,16 @@ interface AddPlayerRequest {
   joinedDate: string;
 }
 
-export function AddPlayerForm({ clanId, isOpen, onClose, onSuccess }: AddPlayerFormProps) {
+export function AddPlayerForm({
+  clanId,
+  isOpen,
+  onClose,
+  onSuccess,
+  defaultDate,
+}: AddPlayerFormProps) {
   const queryClient = useQueryClient();
   const [playerName, setPlayerName] = useState('');
-  const [joinedDate, setJoinedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [joinedDate, setJoinedDate] = useState(defaultDate ?? getLocalTodayString());
   const [error, setError] = useState<string | null>(null);
   const nameInputRef = useRef<HTMLInputElement>(null);
 
@@ -49,11 +66,11 @@ export function AddPlayerForm({ clanId, isOpen, onClose, onSuccess }: AddPlayerF
       // Use startTransition to defer state updates and avoid cascading render warning
       React.startTransition(() => {
         setPlayerName('');
-        setJoinedDate(new Date().toISOString().split('T')[0] as string);
+        setJoinedDate(defaultDate ?? getLocalTodayString());
         setError(null);
       });
     }
-  }, [isOpen]);
+  }, [isOpen, defaultDate]);
 
   const addPlayerMutation = useMutation({
     mutationFn: async (data: AddPlayerRequest) => {
@@ -96,7 +113,7 @@ export function AddPlayerForm({ clanId, isOpen, onClose, onSuccess }: AddPlayerF
 
     addPlayerMutation.mutate({
       playerName: playerName.trim(),
-      joinedDate: joinedDate as string,
+      joinedDate: joinedDate,
     });
   };
 

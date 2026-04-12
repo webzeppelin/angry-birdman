@@ -6,6 +6,21 @@ import { AddPlayerForm } from '../roster/AddPlayerForm';
 import type { RosterMember, RosterResponse } from '../../types/battle';
 import type { BattleEntry } from '@angrybirdman/common';
 
+/**
+ * Returns the date immediately before the battle start as YYYY-MM-DD.
+ * battleId is in YYYYMMDD format; players typically join the day before a battle starts.
+ */
+function getDayBeforeBattle(battleId: string): string {
+  const year = parseInt(battleId.slice(0, 4), 10);
+  const month = parseInt(battleId.slice(4, 6), 10) - 1; // 0-indexed
+  const day = parseInt(battleId.slice(6, 8), 10);
+  const d = new Date(year, month, day - 1);
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+
 interface PlayerPerformanceTableProps {
   clanId: number;
   data: Partial<BattleEntry>;
@@ -378,6 +393,7 @@ export default function PlayerPerformanceTable({
         clanId={clanId}
         isOpen={isAddPlayerOpen}
         onClose={() => setIsAddPlayerOpen(false)}
+        defaultDate={data.battleId ? getDayBeforeBattle(data.battleId) : undefined}
       />
     </div>
   );
