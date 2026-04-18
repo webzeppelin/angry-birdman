@@ -10,6 +10,7 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME_API: ${{ github.repository }}-api
   IMAGE_NAME_FRONTEND: ${{ github.repository }}-frontend
+  IMAGE_TAG: sha-${{ github.sha }}
 
 jobs:
   test:
@@ -83,7 +84,7 @@ jobs:
           tags: |
             type=ref,event=branch
             type=ref,event=tag
-            type=sha,prefix=sha-
+            type=sha,format=long,prefix=sha-
             type=raw,value=latest,enable=true
 
       - name: Extract metadata for Frontend
@@ -94,7 +95,7 @@ jobs:
           tags: |
             type=ref,event=branch
             type=ref,event=tag
-            type=sha,prefix=sha-
+            type=sha,format=long,prefix=sha-
             type=raw,value=latest,enable=true
 
       - name: Build and push API image
@@ -139,17 +140,17 @@ jobs:
           host: ${{ secrets.PROD_HOST }}
           username: ${{ secrets.PROD_SSH_USER }}
           key: ${{ secrets.PROD_SSH_KEY }}
-          envs: GITHUB_TOKEN,GITHUB_ACTOR
+          envs: GITHUB_TOKEN,GITHUB_ACTOR,IMAGE_TAG
           script: |
             cd /opt/angrybirdman
             git pull origin main
             echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
             source docker/.env.prod
-            docker compose -f docker/docker-compose.prod.yml --env-file docker/.env.prod pull
-            docker compose -f docker/docker-compose.prod.yml --env-file docker/.env.prod run --rm \
+            IMAGE_TAG=$IMAGE_TAG docker compose -f docker/docker-compose.prod.yml --env-file docker/.env.prod pull api frontend
+            IMAGE_TAG=$IMAGE_TAG docker compose -f docker/docker-compose.prod.yml --env-file docker/.env.prod run --rm \
               -e DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?schema=public" \
               api npx prisma migrate deploy
-            docker compose -f docker/docker-compose.prod.yml --env-file docker/.env.prod \
+            IMAGE_TAG=$IMAGE_TAG docker compose -f docker/docker-compose.prod.yml --env-file docker/.env.prod \
               up -d --force-recreate --remove-orphans
             sleep 30
             for service in postgres valkey keycloak api frontend nginx; do
@@ -158,6 +159,14 @@ jobs:
                 || (echo "✗ $service failed" && exit 1)
             done
             curl -sf https://www.angrybirdman.org/health && echo "✓ Health check passed"
+            # Remove old SHA-tagged versions of our app images that are no longer in use.
+            # Docker will refuse to remove images referenced by running containers, so this is safe.
+            # Third-party images (postgres, valkey, keycloak, nginx) are not touched.
+            docker images --format '{{.Repository}}:{{.Tag}}' \
+              | grep 'ghcr.io/webzeppelin/angry-birdman' \
+              | grep -v "$IMAGE_TAG" \
+              | xargs -r docker rmi 2>/dev/null || true
+            # Remove any remaining dangling (untagged) image layers
             docker image prune -f
 
       - name: Deployment notification
