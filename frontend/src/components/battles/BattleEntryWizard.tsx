@@ -121,6 +121,11 @@ export default function BattleEntryWizard({
     setBattleData((prev) => ({ ...prev, ...updates }));
   };
 
+  // Scroll to top whenever the step changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentStep]);
+
   const handleNext = () => {
     if (currentStep < STEPS.length) {
       setCurrentStep(currentStep + 1);
