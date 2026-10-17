@@ -71,7 +71,7 @@ export class MasterBattleService {
     const hasPrevious = page > 1;
 
     return {
-      battles: battles as MasterBattle[],
+      battles,
       total,
       page,
       limit,
@@ -104,7 +104,7 @@ export class MasterBattleService {
       take: 100, // Limit to last 100 battles
     });
 
-    return battles as MasterBattle[];
+    return battles;
   }
 
   /**
@@ -212,7 +212,7 @@ export class MasterBattleService {
       },
     });
 
-    return battle as MasterBattle;
+    return battle;
   }
 
   /**
@@ -260,8 +260,8 @@ export class MasterBattleService {
     const availableBattles = await this.getAvailableBattles();
 
     return {
-      currentBattle: currentBattle as MasterBattle | null,
-      nextBattle: battle as MasterBattle | null,
+      currentBattle,
+      nextBattle: battle,
       nextBattleStartDate,
       availableBattles,
     };
@@ -278,7 +278,7 @@ export class MasterBattleService {
       where: { battleId },
     });
 
-    return battle as MasterBattle | null;
+    return battle;
   }
 
   /**
@@ -295,6 +295,6 @@ export class MasterBattleService {
       take: count,
     });
 
-    return battles as MasterBattle[];
+    return battles;
   }
 }

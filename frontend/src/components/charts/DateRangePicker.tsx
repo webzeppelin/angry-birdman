@@ -31,12 +31,6 @@ export function DateRangePicker({ onDateRangeChange, className = '' }: DateRange
   const [endDate, setEndDate] = useState<string>('');
   const [selectedPreset, setSelectedPreset] = useState<number>(1); // Default: Last 90 Days
 
-  // Apply preset on mount
-  useEffect(() => {
-    applyPreset(1); // Last 90 Days
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const applyPreset = (index: number) => {
     setSelectedPreset(index);
     const preset = presets[index];
@@ -62,6 +56,13 @@ export function DateRangePicker({ onDateRangeChange, className = '' }: DateRange
       onDateRangeChange(startBattleId, endBattleId);
     }
   };
+
+  // Apply preset on mount
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    applyPreset(1); // Last 90 Days
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;

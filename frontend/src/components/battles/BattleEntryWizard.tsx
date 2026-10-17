@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import ActionCodeAssignment from './ActionCodeAssignment';
@@ -40,11 +40,11 @@ export default function BattleEntryWizard({
   const [currentStep, setCurrentStep] = useState(1);
   const [battleData, setBattleData] = useState<Partial<BattleEntry>>(initialData || {});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [draftRestoreAttempted, setDraftRestoreAttempted] = useState(false);
+  const draftRestoreAttempted = useRef(false);
 
   // Auto-save draft to localStorage
   useEffect(() => {
-    if (mode === 'create' && draftRestoreAttempted) {
+    if (mode === 'create' && draftRestoreAttempted.current) {
       const draftKey = `battle-draft-${clanId}`;
       const draftData: DraftData = {
         savedAt: new Date().toISOString(),
@@ -53,12 +53,12 @@ export default function BattleEntryWizard({
       };
       localStorage.setItem(draftKey, JSON.stringify(draftData));
     }
-  }, [battleData, currentStep, clanId, mode, draftRestoreAttempted]);
+  }, [battleData, currentStep, clanId, mode]);
 
   // Restore draft on mount (only once)
   useEffect(() => {
-    if (mode === 'create' && !initialData && !draftRestoreAttempted) {
-      setDraftRestoreAttempted(true);
+    if (mode === 'create' && !initialData && !draftRestoreAttempted.current) {
+      draftRestoreAttempted.current = true;
 
       const draftKey = `battle-draft-${clanId}`;
       const savedDraft = localStorage.getItem(draftKey);
@@ -103,7 +103,9 @@ export default function BattleEntryWizard({
         );
 
         if (shouldRestore) {
+          // eslint-disable-next-line react-hooks/set-state-in-effect
           setBattleData(draft.data);
+
           setCurrentStep(draft.currentStep || 1);
         } else {
           localStorage.removeItem(draftKey);

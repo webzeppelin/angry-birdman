@@ -132,6 +132,7 @@ export default function PlayerPerformanceTable({
         };
       });
 
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setPlayers(updatedPlayers);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -142,6 +143,7 @@ export default function PlayerPerformanceTable({
     const playedPlayers = players.filter((p) => p.played);
     const totalScore = playedPlayers.reduce((sum, p) => sum + p.score, 0);
     const totalFp = playedPlayers.reduce((sum, p) => sum + p.fp, 0);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setChecksum({ totalScore, totalFp });
   }, [players]);
 

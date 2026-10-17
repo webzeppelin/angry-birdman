@@ -100,6 +100,7 @@ export default function NonplayerManagement({
         );
       });
 
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setNonplayers(updatedNonplayers);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -124,6 +125,7 @@ export default function NonplayerManagement({
           reserve: np.reserve,
         };
       });
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setNonplayers(loadedNonplayers);
     }
   }, [data.nonplayerStats, nonplayers.length, rosterData]);

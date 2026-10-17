@@ -1,8 +1,8 @@
 import { type FastifyInstance } from 'fastify';
 
-import { buildApp } from '@/app';
-
 import { prisma } from '../setup';
+
+import { buildApp } from '@/app';
 
 /**
  * Create a test instance of the Fastify application

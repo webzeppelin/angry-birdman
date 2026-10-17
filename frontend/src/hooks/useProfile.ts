@@ -93,8 +93,8 @@ export function isApiError(error: unknown): error is { response: { data: { messa
     typeof error === 'object' &&
     error !== null &&
     'response' in error &&
-    typeof (error as { response: unknown }).response === 'object' &&
-    (error as { response: unknown }).response !== null &&
+    typeof (error as Record<string, unknown>).response === 'object' &&
+    (error as Record<string, unknown>).response !== null &&
     'data' in (error as { response: { data: unknown } }).response &&
     typeof (error as { response: { data: unknown } }).response.data === 'object' &&
     (error as { response: { data: unknown } }).response.data !== null &&
