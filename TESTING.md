@@ -84,6 +84,12 @@ describe('calculateRatio', () => {
 
 **Location**: `api/tests/`
 
+**Prerequisites**:
+
+- A PostgreSQL server must be reachable for `DATABASE_URL_TEST` (from `.env`),
+  typically `localhost:5432`.
+- Create the test database if needed: `npm run db:create-test`
+
 **Test Setup**:
 
 - `setup.ts` - Database setup with automatic cleanup
