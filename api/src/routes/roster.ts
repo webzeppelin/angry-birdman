@@ -91,14 +91,186 @@ const errorResponseSchema = z.object({
   message: z.string(),
 });
 
+const participationHistoryQuerySchema = z.object({
+  playerIds: z.string().min(1),
+  limit: z.coerce.number().int().min(1).max(10).optional().default(3),
+  excludeBattleId: z
+    .string()
+    .regex(/^\d{8}$/)
+    .optional(),
+});
+
+const participationHistoryResponseSchema = z.object({
+  players: z.array(
+    z.object({
+      playerId: z.number(),
+      hasPlayedBattle: z.boolean(),
+      totalPreviousBattles: z.number(),
+      recentParticipation: z.array(
+        z.object({
+          battleId: z.string(),
+          startDate: z.string(),
+          participated: z.boolean(),
+        })
+      ),
+    })
+  ),
+});
+
 type RosterListQuery = z.infer<typeof rosterListQuerySchema>;
 type AddPlayerBody = z.infer<typeof addPlayerSchema>;
 type UpdatePlayerBody = z.infer<typeof updatePlayerSchema>;
 type PlayerLeftBody = z.infer<typeof playerLeftSchema>;
 type PlayerKickedBody = z.infer<typeof playerKickedSchema>;
 type PlayerReactivateBody = z.infer<typeof playerReactivateSchema>;
+type ParticipationHistoryQuery = z.infer<typeof participationHistoryQuerySchema>;
 
 const rosterRoutes: FastifyPluginAsync = async (fastify) => {
+  /**
+   * GET /api/clans/:clanId/roster/participation-history
+   * Returns recent participation flags for a set of roster members.
+   */
+  fastify.get<{ Params: { clanId: string }; Querystring: ParticipationHistoryQuery }>(
+    '/:clanId/roster/participation-history',
+    {
+      schema: {
+        description: 'Get recent participation history for the specified roster members',
+        tags: ['Roster'],
+        params: clanIdParamSchema,
+        querystring: participationHistoryQuerySchema,
+        response: {
+          200: participationHistoryResponseSchema,
+          400: errorResponseSchema,
+        },
+      },
+    },
+    async (
+      request: FastifyRequest<{
+        Params: { clanId: string };
+        Querystring: ParticipationHistoryQuery;
+      }>,
+      reply: FastifyReply
+    ) => {
+      const clanId = parseInt(request.params.clanId, 10);
+      if (isNaN(clanId)) {
+        return reply.status(400).send({
+          error: 'Validation Error',
+          message: 'Invalid clan ID',
+        });
+      }
+
+      const playerIds = request.query.playerIds
+        .split(',')
+        .map((value) => value.trim())
+        .filter((value) => value.length > 0)
+        .map((value) => parseInt(value, 10));
+
+      if (playerIds.length === 0 || playerIds.some((id) => Number.isNaN(id) || id <= 0)) {
+        return reply.status(400).send({
+          error: 'Validation Error',
+          message: 'playerIds must be a comma-separated list of positive integers',
+        });
+      }
+
+      const uniquePlayerIds = Array.from(new Set(playerIds));
+      const { limit, excludeBattleId } = request.query;
+
+      const battleFilter = excludeBattleId ? { battleId: { not: excludeBattleId } } : {};
+
+      try {
+        const [playedStats, missedStats] = await Promise.all([
+          fastify.prisma.clanBattlePlayerStats.findMany({
+            where: {
+              clanId,
+              playerId: { in: uniquePlayerIds },
+              ...battleFilter,
+            },
+            select: {
+              playerId: true,
+              battleId: true,
+              battle: {
+                select: {
+                  startDate: true,
+                },
+              },
+            },
+          }),
+          fastify.prisma.clanBattleNonplayerStats.findMany({
+            where: {
+              clanId,
+              playerId: { in: uniquePlayerIds },
+              ...battleFilter,
+            },
+            select: {
+              playerId: true,
+              battleId: true,
+              battle: {
+                select: {
+                  startDate: true,
+                },
+              },
+            },
+          }),
+        ]);
+
+        const playedCountByPlayer = new Map<number, number>();
+        playedStats.forEach((stat) => {
+          playedCountByPlayer.set(stat.playerId, (playedCountByPlayer.get(stat.playerId) || 0) + 1);
+        });
+
+        const historyByPlayer = new Map<
+          number,
+          { battleId: string; startDate: Date; participated: boolean }[]
+        >();
+
+        playedStats.forEach((stat) => {
+          const existing = historyByPlayer.get(stat.playerId) || [];
+          existing.push({
+            battleId: stat.battleId,
+            startDate: stat.battle.startDate,
+            participated: true,
+          });
+          historyByPlayer.set(stat.playerId, existing);
+        });
+
+        missedStats.forEach((stat) => {
+          const existing = historyByPlayer.get(stat.playerId) || [];
+          existing.push({
+            battleId: stat.battleId,
+            startDate: stat.battle.startDate,
+            participated: false,
+          });
+          historyByPlayer.set(stat.playerId, existing);
+        });
+
+        const players = uniquePlayerIds.map((playerId) => {
+          const history = historyByPlayer.get(playerId) || [];
+          const sortedHistory = history.sort(
+            (a, b) => b.startDate.getTime() - a.startDate.getTime()
+          );
+          return {
+            playerId,
+            hasPlayedBattle: (playedCountByPlayer.get(playerId) || 0) > 0,
+            totalPreviousBattles: sortedHistory.length,
+            recentParticipation: sortedHistory.slice(0, limit).map((battle) => ({
+              battleId: battle.battleId,
+              startDate: battle.startDate.toISOString(),
+              participated: battle.participated,
+            })),
+          };
+        });
+
+        return reply.status(200).send({ players });
+      } catch (error) {
+        console.error('Error fetching participation history:', error);
+        return reply.status(500).send({
+          error: 'Internal Server Error',
+          message: 'Failed to fetch participation history',
+        });
+      }
+    }
+  );
+
   /**
    * GET /api/clans/:clanId/roster/:playerId/history
    * Story 3.8: View Player History

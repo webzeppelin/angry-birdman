@@ -87,3 +87,20 @@ export interface RosterResponse {
     totalPages: number;
   };
 }
+
+export interface RecentParticipationEntry {
+  battleId: string;
+  startDate: string;
+  participated: boolean;
+}
+
+export interface PlayerParticipationHistory {
+  playerId: number;
+  hasPlayedBattle: boolean;
+  totalPreviousBattles: number;
+  recentParticipation: RecentParticipationEntry[];
+}
+
+export interface ParticipationHistoryResponse {
+  players: PlayerParticipationHistory[];
+}

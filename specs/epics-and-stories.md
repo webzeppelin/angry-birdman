@@ -728,6 +728,11 @@ that** I can track participation and manage reserve players.
 - Shows all active roster members (players and non-players)
 - For each member: name, played status, action code dropdown, optional reason
   field
+- For non-playing active members (excluding reserves), show participation
+  context next to the action dropdown:
+  - Show `New` when the member has no prior battle participation history
+  - Otherwise show participation status for the previous 3 battles and clearly
+    indicate which battles were missed
 - Action codes: HOLD, WARN, KICK, RESERVE, PASS
 - Can set default action (e.g., HOLD) for all, then override individuals
 - Tab and Enter keys support rapid assignment

@@ -1,7 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
-import React, { useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 
-import type { RosterMember, RosterResponse } from '../../types/battle';
+import type {
+  ParticipationHistoryResponse,
+  PlayerParticipationHistory,
+  RosterMember,
+  RosterResponse,
+} from '../../types/battle';
 import type { BattleEntry } from '@angrybirdman/common';
 
 interface ActionCodeAssignmentProps {
@@ -170,6 +175,74 @@ export default function ActionCodeAssignment({
 
   const activeNonplayerActions = nonplayerActions.filter((a) => !a.reserve);
   const reserveNonplayerActions = nonplayerActions.filter((a) => a.reserve);
+  const activeNonplayerIds = activeNonplayerActions
+    .map((action) => action.playerId)
+    .sort((a, b) => a - b);
+  const activeNonplayerIdsKey = activeNonplayerIds.join(',');
+
+  const {
+    data: participationHistoryData,
+    isLoading: isParticipationHistoryLoading,
+    error: participationHistoryError,
+  } = useQuery<ParticipationHistoryResponse>({
+    queryKey: ['roster-participation-history', clanId, activeNonplayerIdsKey, data.battleId],
+    queryFn: async (): Promise<ParticipationHistoryResponse> => {
+      const params = new URLSearchParams({
+        playerIds: activeNonplayerIdsKey,
+        limit: '3',
+      });
+      if (data.battleId) {
+        params.set('excludeBattleId', data.battleId);
+      }
+      const response = await fetch(`/api/clans/${clanId}/roster/participation-history?${params}`, {
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch participation history');
+      }
+      return response.json() as Promise<ParticipationHistoryResponse>;
+    },
+    enabled: activeNonplayerIds.length > 0,
+  });
+
+  const participationByPlayer = useMemo(() => {
+    const historyMap = new Map<number, PlayerParticipationHistory>();
+    participationHistoryData?.players.forEach((playerHistory) => {
+      historyMap.set(playerHistory.playerId, playerHistory);
+    });
+    return historyMap;
+  }, [participationHistoryData]);
+
+  const renderParticipationHistory = (playerId: number) => {
+    if (isParticipationHistoryLoading) {
+      return <span className="text-xs text-gray-500">Loading...</span>;
+    }
+
+    const history = participationByPlayer.get(playerId);
+    if (!history) {
+      return <span className="text-xs text-gray-500">No prior battles</span>;
+    }
+
+    if (history.totalPreviousBattles === 0) {
+      return <span className="text-xs font-semibold text-amber-700">New</span>;
+    }
+
+    return (
+      <div className="flex flex-wrap gap-1">
+        {history.recentParticipation.map((battle) => (
+          <span
+            key={`${playerId}-${battle.battleId}`}
+            className={`rounded px-2 py-1 text-xs font-medium ${
+              battle.participated ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+            }`}
+            title={`${battle.battleId}: ${battle.participated ? 'Played' : 'Missed'}`}
+          >
+            {battle.participated ? 'Played' : 'Missed'}
+          </span>
+        ))}
+      </div>
+    );
+  };
 
   return (
     <div className="space-y-6">
@@ -208,6 +281,7 @@ export default function ActionCodeAssignment({
                 <tr>
                   <th className="border px-4 py-2">Player</th>
                   <th className="border px-4 py-2">Action Code</th>
+                  <th className="border px-4 py-2">Recent Participation (Last 3)</th>
                   <th className="border px-4 py-2">Reason (Optional)</th>
                 </tr>
               </thead>
@@ -235,6 +309,9 @@ export default function ActionCodeAssignment({
                       </select>
                     </td>
                     <td className="border px-4 py-2">
+                      {renderParticipationHistory(action.playerId)}
+                    </td>
+                    <td className="border px-4 py-2">
                       <input
                         type="text"
                         value={action.actionReason || ''}
@@ -250,6 +327,12 @@ export default function ActionCodeAssignment({
               </tbody>
             </table>
           </div>
+          {participationHistoryError && (
+            <div className="mt-3 rounded border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+              Could not load recent participation history for active non-players. You can still
+              assign actions manually.
+            </div>
+          )}
         </div>
       )}
 

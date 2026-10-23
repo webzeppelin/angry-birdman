@@ -420,6 +420,11 @@ counting against the kicking policies of the clan. We expect that more actions
 may be added in the future, so we are going to use a lookup table consisting of
 action codes and action names.
 
+When assigning actions for active non-players (excluding reserve non-players),
+the UI should also show participation context from the previous three battles to
+support policy decisions for warnings and kicks. If a non-player has never
+appeared in any prior battle history, this context is shown as **New**.
+
 | Field Name      | Field Type  | Description                                      | Source | Required |
 | :-------------- | :---------: | :----------------------------------------------- | :----: | :------: |
 | **actionCode**  | String (PK) | Concise, whitespace-free code for the action     | Input  |   Yes    |

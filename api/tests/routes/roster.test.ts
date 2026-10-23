@@ -175,6 +175,189 @@ describe('Roster Routes', () => {
     });
   });
 
+  describe('GET /api/clans/:clanId/roster/participation-history', () => {
+    it('should return recent participation for requested players with newest first', async () => {
+      await prisma.actionCode.createMany({
+        data: [
+          { actionCode: 'HOLD', displayName: 'Hold' },
+          { actionCode: 'WARN', displayName: 'Warn' },
+          { actionCode: 'KICK', displayName: 'Kick' },
+          { actionCode: 'RESERVE', displayName: 'Reserve' },
+          { actionCode: 'PASS', displayName: 'Pass' },
+        ],
+        skipDuplicates: true,
+      });
+
+      await prisma.masterBattle.createMany({
+        data: [
+          {
+            battleId: '20260101',
+            startTimestamp: new Date('2026-01-01T05:00:00.000Z'),
+            endTimestamp: new Date('2026-01-03T04:59:59.999Z'),
+            createdBy: null,
+            notes: null,
+          },
+          {
+            battleId: '20260104',
+            startTimestamp: new Date('2026-01-04T05:00:00.000Z'),
+            endTimestamp: new Date('2026-01-06T04:59:59.999Z'),
+            createdBy: null,
+            notes: null,
+          },
+          {
+            battleId: '20260107',
+            startTimestamp: new Date('2026-01-07T05:00:00.000Z'),
+            endTimestamp: new Date('2026-01-09T04:59:59.999Z'),
+            createdBy: null,
+            notes: null,
+          },
+          {
+            battleId: '20260110',
+            startTimestamp: new Date('2026-01-10T05:00:00.000Z'),
+            endTimestamp: new Date('2026-01-12T04:59:59.999Z'),
+            createdBy: null,
+            notes: null,
+          },
+        ],
+      });
+
+      const battles = [
+        { battleId: '20260101', startDate: '2026-01-01T05:00:00.000Z' },
+        { battleId: '20260104', startDate: '2026-01-04T05:00:00.000Z' },
+        { battleId: '20260107', startDate: '2026-01-07T05:00:00.000Z' },
+        { battleId: '20260110', startDate: '2026-01-10T05:00:00.000Z' },
+      ];
+
+      for (const battle of battles) {
+        await prisma.clanBattle.create({
+          data: {
+            battleId: battle.battleId,
+            clanId: testClanId,
+            startDate: new Date(battle.startDate),
+            endDate: new Date(new Date(battle.startDate).getTime() + 2 * 24 * 60 * 60 * 1000 - 1),
+            result: 1,
+            score: 100000,
+            fp: 5000,
+            baselineFp: 5000,
+            ratio: 200,
+            averageRatio: 200,
+            projectedScore: 100000,
+            opponentRovioId: 111111,
+            opponentName: 'Opponent',
+            opponentCountry: 'US',
+            opponentScore: 95000,
+            opponentFp: 4900,
+            marginRatio: 5,
+            fpMargin: 2,
+            nonplayingCount: 1,
+            nonplayingFpRatio: 10,
+            reserveCount: 0,
+            reserveFpRatio: 0,
+          },
+        });
+      }
+
+      await prisma.clanBattlePlayerStats.createMany({
+        data: [
+          {
+            battleId: '20260110',
+            clanId: testClanId,
+            playerId: testPlayer1Id,
+            rank: 1,
+            score: 50000,
+            fp: 2500,
+            ratio: 200,
+            ratioRank: 1,
+            actionCode: 'HOLD',
+          },
+          {
+            battleId: '20260104',
+            clanId: testClanId,
+            playerId: testPlayer1Id,
+            rank: 2,
+            score: 42000,
+            fp: 2400,
+            ratio: 175,
+            ratioRank: 2,
+            actionCode: 'HOLD',
+          },
+        ],
+      });
+
+      await prisma.clanBattleNonplayerStats.createMany({
+        data: [
+          {
+            battleId: '20260107',
+            clanId: testClanId,
+            playerId: testPlayer1Id,
+            fp: 2500,
+            reserve: false,
+            actionCode: 'WARN',
+          },
+          {
+            battleId: '20260101',
+            clanId: testClanId,
+            playerId: testPlayer1Id,
+            fp: 2400,
+            reserve: false,
+            actionCode: 'HOLD',
+          },
+          {
+            battleId: '20260110',
+            clanId: testClanId,
+            playerId: testPlayer2Id,
+            fp: 2200,
+            reserve: false,
+            actionCode: 'HOLD',
+          },
+        ],
+      });
+
+      const response = await app.inject({
+        method: 'GET',
+        url: `/api/clans/${testClanId}/roster/participation-history?playerIds=${testPlayer1Id},${testPlayer2Id}&limit=3`,
+      });
+
+      expect(response.statusCode).toBe(200);
+      const body = JSON.parse(response.body);
+
+      const playerOne = body.players.find(
+        (p: { playerId: number }) => p.playerId === testPlayer1Id
+      );
+      expect(playerOne).toBeDefined();
+      expect(playerOne.totalPreviousBattles).toBe(4);
+      expect(playerOne.hasPlayedBattle).toBe(true);
+      expect(playerOne.recentParticipation).toHaveLength(3);
+      expect(playerOne.recentParticipation[0].battleId).toBe('20260110');
+      expect(playerOne.recentParticipation[0].participated).toBe(true);
+      expect(playerOne.recentParticipation[1].battleId).toBe('20260107');
+      expect(playerOne.recentParticipation[1].participated).toBe(false);
+      expect(playerOne.recentParticipation[2].battleId).toBe('20260104');
+      expect(playerOne.recentParticipation[2].participated).toBe(true);
+
+      const playerTwo = body.players.find(
+        (p: { playerId: number }) => p.playerId === testPlayer2Id
+      );
+      expect(playerTwo).toBeDefined();
+      expect(playerTwo.hasPlayedBattle).toBe(false);
+      expect(playerTwo.totalPreviousBattles).toBe(1);
+      expect(playerTwo.recentParticipation).toHaveLength(1);
+      expect(playerTwo.recentParticipation[0].battleId).toBe('20260110');
+      expect(playerTwo.recentParticipation[0].participated).toBe(false);
+    });
+
+    it('should return 400 for invalid playerIds query parameter', async () => {
+      const response = await app.inject({
+        method: 'GET',
+        url: `/api/clans/${testClanId}/roster/participation-history?playerIds=abc`,
+      });
+
+      expect(response.statusCode).toBe(400);
+      const body = JSON.parse(response.body);
+      expect(body.message).toContain('playerIds');
+    });
+  });
+
   describe('POST /api/clans/:clanId/roster', () => {
     it('should create new player when authenticated', async () => {
       const newPlayer = {
