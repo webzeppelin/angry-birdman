@@ -281,7 +281,7 @@ export default function ActionCodeAssignment({
                 <tr>
                   <th className="border px-4 py-2">Player</th>
                   <th className="border px-4 py-2">Action Code</th>
-                  <th className="border px-4 py-2">Recent Participation (Last 3)</th>
+                  <th className="border px-4 py-2">Recent Participation</th>
                   <th className="border px-4 py-2">Reason (Optional)</th>
                 </tr>
               </thead>
