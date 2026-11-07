@@ -42,6 +42,14 @@ describe('Header', () => {
     expect(screen.getByRole('banner')).toBeInTheDocument(); // header element
   });
 
+  it('omits Home from navigation while keeping the logo linked to Home', async () => {
+    renderHeader();
+
+    expect(await screen.findByRole('link', { name: /browse clans/i })).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'Home' })).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /angry birdman/i })).toHaveAttribute('href', '/');
+  });
+
   it('should render without crashing', () => {
     const { container } = renderHeader();
     expect(container).toBeTruthy();

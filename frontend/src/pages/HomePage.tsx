@@ -1,10 +1,10 @@
 /**
  * Home Page / Landing Page
  *
- * Welcome page with introduction, CTAs, and clan selector.
+ * Welcome page shown to unauthenticated users.
  */
 
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -14,6 +14,10 @@ export function HomePage() {
   const handleSignIn = () => {
     login().catch(console.error);
   };
+
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   return (
     <div className="bg-gray-50">
@@ -29,14 +33,12 @@ export function HomePage() {
             >
               Browse Clans
             </Link>
-            {!isAuthenticated && (
-              <button
-                onClick={handleSignIn}
-                className="rounded-lg border-2 border-white bg-transparent px-8 py-3 text-lg font-semibold text-white transition-colors hover:bg-white/10"
-              >
-                Sign In
-              </button>
-            )}
+            <button
+              onClick={handleSignIn}
+              className="rounded-lg border-2 border-white bg-transparent px-8 py-3 text-lg font-semibold text-white transition-colors hover:bg-white/10"
+            >
+              Sign In
+            </button>
           </div>
         </div>
       </section>

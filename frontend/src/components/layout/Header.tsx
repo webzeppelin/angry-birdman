@@ -23,17 +23,13 @@ export function Header() {
   const isSuperadmin = isAuthenticated && user?.roles?.includes('superadmin');
 
   // Base navigation links (always shown)
-  const baseNavLinks = [
-    { path: '/', label: 'Home' },
-    { path: '/clans', label: 'Browse Clans' },
-  ];
+  const baseNavLinks = [{ path: '/clans', label: 'Browse Clans' }];
 
   // Build navigation links based on authentication and clan association
   let navLinks = [...baseNavLinks];
 
   if (isAuthenticated && hasClan) {
     navLinks = [
-      { path: '/', label: 'Home' },
       { path: `/clans/${user?.clanId}`, label: 'My Clan' },
       { path: '/dashboard', label: 'Dashboard' },
       { path: `/clans/${user?.clanId}/roster`, label: 'Roster' },
