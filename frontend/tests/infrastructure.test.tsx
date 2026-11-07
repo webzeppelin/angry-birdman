@@ -13,6 +13,19 @@ describe('Frontend Testing Infrastructure', () => {
     expect(document.body).toBeDefined();
   });
 
+  it('keeps the simplified homepage content and removes the hero image and redundant sections', () => {
+    renderWithProviders(<HomePage />);
+
+    expect(screen.getByRole('heading', { name: 'Angry Birdman' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'How It Works' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Browse Clans' })).toHaveAttribute('href', '/clans');
+    expect(screen.queryByRole('img', { name: 'Angry Birdman' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'Key Features' })).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/explore clan statistics and battle performance/i)
+    ).not.toBeInTheDocument();
+  });
+
   it('has access to screen queries from React Testing Library', () => {
     renderWithProviders(
       <div>
