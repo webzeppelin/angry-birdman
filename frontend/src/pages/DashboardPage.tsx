@@ -147,6 +147,61 @@ export function DashboardPage() {
           </p>
         </div>
 
+        {/* Quick Actions */}
+        <div className="mb-8 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <Link
+            to={`/clans/${clanId}/battles/new`}
+            className="shadow-card hover:shadow-card-hover flex items-center gap-4 rounded-lg bg-white p-6 transition-all hover:scale-105"
+          >
+            <div className="bg-primary/10 rounded-lg p-3">
+              <PlusCircleIcon className="text-primary h-8 w-8" />
+            </div>
+            <div>
+              <div className="font-semibold text-neutral-800">Record Battle</div>
+              <div className="text-sm text-neutral-600">Enter new CvC results</div>
+            </div>
+          </Link>
+
+          <Link
+            to={`/clans/${clanId}/roster`}
+            className="shadow-card hover:shadow-card-hover flex items-center gap-4 rounded-lg bg-white p-6 transition-all hover:scale-105"
+          >
+            <div className="bg-info/10 rounded-lg p-3">
+              <UsersIcon className="text-info h-8 w-8" />
+            </div>
+            <div>
+              <div className="font-semibold text-neutral-800">Manage Roster</div>
+              <div className="text-sm text-neutral-600">Add/edit clan members</div>
+            </div>
+          </Link>
+
+          <Link
+            to={`/clans/${clanId}/reports`}
+            className="shadow-card hover:shadow-card-hover flex items-center gap-4 rounded-lg bg-white p-6 transition-all hover:scale-105"
+          >
+            <div className="bg-success/10 rounded-lg p-3">
+              <ChartBarIcon className="text-success h-8 w-8" />
+            </div>
+            <div>
+              <div className="font-semibold text-neutral-800">View Reports</div>
+              <div className="text-sm text-neutral-600">Analytics & trends</div>
+            </div>
+          </Link>
+
+          <Link
+            to={`/clans/${clanId}/stats/months/${currentMonth.monthId}`}
+            className="shadow-card hover:shadow-card-hover flex items-center gap-4 rounded-lg bg-white p-6 transition-all hover:scale-105"
+          >
+            <div className="bg-warning/10 rounded-lg p-3">
+              <CalendarIcon className="text-warning h-8 w-8" />
+            </div>
+            <div>
+              <div className="font-semibold text-neutral-800">Monthly Stats</div>
+              <div className="text-sm text-neutral-600">Current month summary</div>
+            </div>
+          </Link>
+        </div>
+
         {/* Key Metrics - Month and Year */}
         <div className="mb-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {/* Current Month Win Rate */}
@@ -249,61 +304,6 @@ export function DashboardPage() {
               </div>
             </div>
           )}
-        </div>
-
-        {/* Quick Actions */}
-        <div className="mb-8 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Link
-            to={`/clans/${clanId}/battles/new`}
-            className="shadow-card hover:shadow-card-hover flex items-center gap-4 rounded-lg bg-white p-6 transition-all hover:scale-105"
-          >
-            <div className="bg-primary/10 rounded-lg p-3">
-              <PlusCircleIcon className="text-primary h-8 w-8" />
-            </div>
-            <div>
-              <div className="font-semibold text-neutral-800">Record Battle</div>
-              <div className="text-sm text-neutral-600">Enter new CvC results</div>
-            </div>
-          </Link>
-
-          <Link
-            to={`/clans/${clanId}/roster`}
-            className="shadow-card hover:shadow-card-hover flex items-center gap-4 rounded-lg bg-white p-6 transition-all hover:scale-105"
-          >
-            <div className="bg-info/10 rounded-lg p-3">
-              <UsersIcon className="text-info h-8 w-8" />
-            </div>
-            <div>
-              <div className="font-semibold text-neutral-800">Manage Roster</div>
-              <div className="text-sm text-neutral-600">Add/edit clan members</div>
-            </div>
-          </Link>
-
-          <Link
-            to={`/clans/${clanId}/reports`}
-            className="shadow-card hover:shadow-card-hover flex items-center gap-4 rounded-lg bg-white p-6 transition-all hover:scale-105"
-          >
-            <div className="bg-success/10 rounded-lg p-3">
-              <ChartBarIcon className="text-success h-8 w-8" />
-            </div>
-            <div>
-              <div className="font-semibold text-neutral-800">View Reports</div>
-              <div className="text-sm text-neutral-600">Analytics & trends</div>
-            </div>
-          </Link>
-
-          <Link
-            to={`/clans/${clanId}/stats/months/${currentMonth.monthId}`}
-            className="shadow-card hover:shadow-card-hover flex items-center gap-4 rounded-lg bg-white p-6 transition-all hover:scale-105"
-          >
-            <div className="bg-warning/10 rounded-lg p-3">
-              <CalendarIcon className="text-warning h-8 w-8" />
-            </div>
-            <div>
-              <div className="font-semibold text-neutral-800">Monthly Stats</div>
-              <div className="text-sm text-neutral-600">Current month summary</div>
-            </div>
-          </Link>
         </div>
 
         {/* Recent Battles */}
