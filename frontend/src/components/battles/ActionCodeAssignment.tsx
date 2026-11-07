@@ -21,6 +21,7 @@ interface ActionCodeAssignmentProps {
 interface PlayerAction {
   playerId: number;
   playerName?: string; // For display only
+  fp: number;
   actionCode: string;
   actionReason?: string;
   reserve?: boolean;
@@ -72,6 +73,7 @@ export default function ActionCodeAssignment({
         return {
           playerId: p.playerId,
           playerName: rosterMember?.playerName || `Player ${p.playerId}`,
+          fp: p.fp,
           actionCode,
           actionReason: p.actionReason,
         };
@@ -97,6 +99,7 @@ export default function ActionCodeAssignment({
         return {
           playerId: np.playerId,
           playerName: rosterMember?.playerName || `Player ${np.playerId}`,
+          fp: np.fp,
           actionCode,
           actionReason: np.actionReason,
           reserve: np.reserve,
@@ -281,7 +284,7 @@ export default function ActionCodeAssignment({
                 <tr>
                   <th className="border px-4 py-2">Player</th>
                   <th className="border px-4 py-2">Action Code</th>
-                  <th className="border px-4 py-2">Recent Participation</th>
+                  <th className="border px-4 py-2">Current FP / Recent Participation</th>
                   <th className="border px-4 py-2">Reason (Optional)</th>
                 </tr>
               </thead>
@@ -309,7 +312,12 @@ export default function ActionCodeAssignment({
                       </select>
                     </td>
                     <td className="border px-4 py-2">
-                      {renderParticipationHistory(action.playerId)}
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="rounded bg-blue-100 px-2 py-1 text-xs font-semibold text-blue-800">
+                          FP: {action.fp.toLocaleString()}
+                        </span>
+                        {renderParticipationHistory(action.playerId)}
+                      </div>
                     </td>
                     <td className="border px-4 py-2">
                       <input
