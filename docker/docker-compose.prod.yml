@@ -23,7 +23,7 @@ services:
 
   # Valkey - Session cache
   valkey:
-    image: valkey/valkey:7.2-alpine
+    image: valkey/valkey:9.1-alpine
     container_name: angrybirdman-prod-valkey
     restart: always
     command: >
