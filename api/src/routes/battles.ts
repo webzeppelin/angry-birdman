@@ -44,16 +44,12 @@ const battlesRoutes: FastifyPluginAsync = async (fastify) => {
         description: 'Get list of all available action codes',
         tags: ['Battles', 'Action Codes'],
         response: {
-          200: {
-            type: 'array',
-            items: {
-              type: 'object',
-              properties: {
-                actionCode: { type: 'string' },
-                displayName: { type: 'string' },
-              },
-            },
-          },
+          200: z.array(
+            z.object({
+              actionCode: z.string(),
+              displayName: z.string(),
+            })
+          ),
         },
       },
     },

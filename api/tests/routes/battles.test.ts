@@ -111,6 +111,24 @@ describe('Battle Routes with Master Battle Integration', () => {
     });
   });
 
+  describe('GET /api/clans/action-codes', () => {
+    it('returns the available action codes and display names', async () => {
+      const response = await app.inject({
+        method: 'GET',
+        url: '/api/clans/action-codes',
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.json()).toEqual(
+        expect.arrayContaining([
+          { actionCode: 'HOLD', displayName: 'Hold' },
+          { actionCode: 'WARN', displayName: 'Warn' },
+        ])
+      );
+      expect(response.json()).toHaveLength(5);
+    });
+  });
+
   describe('POST /api/clans/:clanId/battles', () => {
     it('should create battle with valid battleId', async () => {
       const battleData = {
