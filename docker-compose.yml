@@ -25,7 +25,7 @@ services:
 
   # Valkey - Redis fork for session state and caching
   valkey:
-    image: valkey/valkey:7.2-alpine
+    image: valkey/valkey:9.1-alpine
     container_name: angrybirdman-valkey
     restart: unless-stopped
     command: >
