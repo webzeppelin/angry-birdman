@@ -154,7 +154,7 @@ jobs:
               up -d --force-recreate --remove-orphans
             sleep 30
             for service in postgres valkey keycloak api frontend nginx; do
-              docker compose -f docker/docker-compose.prod.yml ps "$service" \
+              docker compose -f docker/docker-compose.prod.yml --env-file docker/.env.prod ps "$service" \
                 | grep -q "running" && echo "✓ $service running" \
                 || (echo "✗ $service failed" && exit 1)
             done

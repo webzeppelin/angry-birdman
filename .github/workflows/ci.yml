@@ -144,7 +144,3 @@ jobs:
       - name: Run npm audit
         run: npm audit --audit-level=moderate
         continue-on-error: true
-
-      - name: Run npm audit fix (dry-run)
-        run: npm audit fix --dry-run
-        continue-on-error: true
