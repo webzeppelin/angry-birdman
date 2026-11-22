@@ -48,7 +48,7 @@ services:
 
   # Keycloak - Identity Provider for authentication and user management
   keycloak:
-    image: quay.io/keycloak/keycloak:23.0
+    image: quay.io/keycloak/keycloak:26.8
     container_name: angrybirdman-keycloak
     restart: unless-stopped
     command: start-dev
