@@ -45,7 +45,7 @@ services:
 
   # Keycloak - Identity Provider
   keycloak:
-    image: quay.io/keycloak/keycloak:25.0
+    image: quay.io/keycloak/keycloak:26.8
     container_name: angrybirdman-prod-keycloak
     restart: always
     command: start --import-realm
