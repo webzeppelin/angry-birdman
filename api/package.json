@@ -35,7 +35,7 @@
     "dotenv": "^17.2.3",
     "fastify": "^5.12.5",
     "fastify-plugin": "^5.1.0",
-    "fastify-type-provider-zod": "^6.1.0",
+    "fastify-type-provider-zod": "^7.0.0",
     "jsonwebtoken": "^9.0.2",
     "jwks-rsa": "^3.2.0",
     "node-cron": "^4.2.1",
