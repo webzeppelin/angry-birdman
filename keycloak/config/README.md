@@ -55,6 +55,7 @@ Two OAuth2/OIDC clients are configured:
 - **Redirect URIs**:
   - `http://localhost:3000/*` (production build)
   - `http://localhost:5173/*` (Vite dev server)
+- **Post-logout redirect URI**: `http://localhost:5173`
 - **PKCE**: Required (S256 method)
 - **Token Lifetime**: 15 minutes (900 seconds)
 
@@ -64,6 +65,8 @@ Two OAuth2/OIDC clients are configured:
 - **Flow**: Service account (client credentials)
 - **Use Case**: API calls to Keycloak Admin API
 - **Authorization**: Configured with minimal required permissions
+- **Admin API scope**: `kc-admin-api` is assigned by default and includes the
+  Admin API audience mapper required by Keycloak 26.8.2.
 
 ### Client Scopes
 
@@ -107,7 +110,7 @@ Development password policy (should be strengthened for production):
 To automatically import the realm when Keycloak starts:
 
 1. Ensure `angrybirdman-realm.json` is in the `keycloak/config/` directory
-2. Uncomment the import command in `docker-compose.override.yml`:
+2. The development override enables the import command:
    ```yaml
    keycloak:
      command: start-dev --import-realm
@@ -115,7 +118,16 @@ To automatically import the realm when Keycloak starts:
 3. Start Keycloak: `docker-compose up keycloak`
 
 **Note**: The `--import-realm` flag imports all JSON files from
-`/opt/keycloak/data/import` directory.
+`/opt/keycloak/data/import` directory, but skips realms already in the database.
+Changes to this file do not update a persisted realm. Apply and verify client
+scope and redirect changes in the Admin Console or Admin API as well.
+
+The local Compose configuration pins Keycloak 26.8.2, advertises
+`http://localhost:8080` by default, and checks readiness on its internal
+management port 9000. The bootstrap-admin variables only create an initial
+administrator when the master realm does not already exist. Preserve existing
+administrator access and consult the Keycloak bootstrap-admin recovery
+documentation before attempting recovery.
 
 ### Manual Import via Admin Console
 

@@ -48,7 +48,7 @@ services:
 
   # Keycloak - Identity Provider for authentication and user management
   keycloak:
-    image: quay.io/keycloak/keycloak:23.0
+    image: quay.io/keycloak/keycloak:26.8.2@sha256:7e66a96e4739239070aeaf72e4c5decf0f7f682cfc725b9f7ea2b336eaba38b3
     container_name: angrybirdman-keycloak
     restart: unless-stopped
     command: start-dev
@@ -62,22 +62,12 @@ services:
       KC_DB_SCHEMA: public
 
       # Keycloak admin credentials
-      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN_USER:-admin}
-      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USER:-admin}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
 
-      # Hostname configuration for development (WSL2 compatible)
-      KC_HOSTNAME_STRICT: false
-      KC_HOSTNAME_STRICT_HTTPS: false
+      # Fixed public URL for direct local access, without proxy headers
+      KC_HOSTNAME: http://localhost:${KEYCLOAK_PORT:-8080}
       KC_HTTP_ENABLED: true
-
-      # Proxy configuration (for future production deployment)
-      KC_PROXY: edge
-
-      # Fix for admin console iframe/cookie issues in development
-      KC_SPI_LOGIN_PROTOCOL_OPENID_CONNECT_LEGACY_LOGOUT_REDIRECT_URI: true
-
-      # WSL2 networking fixes - disable hostname validation
-      KC_HOSTNAME_PORT: 8080
 
       # Health check configuration
       KC_HEALTH_ENABLED: true
@@ -96,7 +86,7 @@ services:
       test:
         [
           'CMD-SHELL',
-          "exec 3<>/dev/tcp/localhost/8080 && echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && cat <&3 | grep -q '200 OK'",
+          "exec 3<>/dev/tcp/localhost/9000 && echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && cat <&3 | grep -q '200 OK'",
         ]
       interval: 30s
       timeout: 10s

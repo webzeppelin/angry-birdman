@@ -119,14 +119,19 @@ Specific project impacts found:
    service client as a default scope in the declarative realm exports and in any
    already-provisioned realm; do not assume `--import-realm` reapplies changes
    to an existing realm in the persistent database. Check that the service
-   account retains the required realm-management roles.
+   account retains the required realm-management roles. A fresh import of this
+   repository's partial realm export does not create the built-in scope
+   automatically: its definition and admin-audience mapper must be included in
+   the export before assigning it. The local export includes them; prepare and
+   verify the production export in its own phase.
 4. **Sessions and database load change.** Keycloak 25 introduced persistent
    sessions as an opt-in feature; Keycloak 26 persists user sessions by default.
    Review the 25.0 session-migration instructions for the local 23.0 deployment
    and rehearse the expected migration. Expect more PostgreSQL activity on
-   login, refresh, and logout. Decide from rehearsal whether sessions survive;
-   if not proven, schedule user reauthentication rather than risking the realm
-   database.
+   login, refresh, and logout. The 26.0 migration notes say the old caches are
+   cleared; preserving sessions requires upgrading to 25 and enabling persistent
+   sessions first. The direct local upgrade accepts session loss and requires
+   reauthentication; do not assume session preservation in test or production.
 5. **OIDC claim changes need regression tests.** Keycloak 25 adds the `basic`
    client scope and removes the `session_state` token claim. The application
    uses `sub` for its `keycloak:<sub>` user ID and has no discovered
@@ -143,6 +148,15 @@ Specific project impacts found:
    do not start Keycloak or exercise the API against a real Keycloak instance. A
    passing PR check is necessary but not a replacement for the
    environment-specific smoke tests below.
+8. **Admin user updates changed in 24.0.4.** User-profile updates containing
+   attributes must include all writable attributes that should be retained;
+   omitted attributes can be removed. Review any consumers of the Keycloak
+   service's partial user-update method before enabling them.
+9. **Logout confirmation changes in 26.** With only a client ID and an active
+   SSO session, the browser logout endpoint shows a confirmation. End the
+   session server-side with the refresh token before the browser redirect; if
+   that operation fails, the logged warning and Keycloak confirmation are the
+   fallback.
 
 ## 2. Shared Preparation: Application Compatibility
 
@@ -253,6 +267,40 @@ terminal against the Docker Desktop engine; realm and service-account checks
 pass; all auth flows pass; backup/restore has been proven; no required local
 data or volumes were lost. Only then change the test Compose image/configuration
 to the same pinned target.
+
+### Local execution record (2026-11-24)
+
+- Upgraded the existing local database and Keycloak container to 26.8.2, image
+  digest
+  `sha256:7e66a96e4739239070aeaf72e4c5decf0f7f682cfc725b9f7ea2b336eaba38b3`. The
+  old 23.0.7 image and database backup remain available.
+- The protected pre-upgrade backup is
+  `/home/aford/keycloak-upgrade-backups/keycloak_full_20261124_071919.dump`,
+  SHA-256 `41a3ab62e65b26e524cc22d221660213f77511305db1d5010a550c4a24c4055f`.
+  Its archive and checksum were verified; an earlier pre-upgrade dump was
+  restored and tested with the old image in isolation. The recorded backup
+  contains a disposable `upgrade_smoke_` user, which was removed from the live
+  environment and would need cleanup again after a restore.
+- The persisted realm has the local post-logout redirect, the `kc-admin-api`
+  default scope, and `manage-realm`, `manage-users`, `query-users`,
+  `view-realm`, and `view-users` service-account roles. A sanitized client and
+  scope export is stored outside Git with the backups.
+- Browser login, identity mapping, refresh, both logout paths, invalid logout
+  redirect rejection, registration, password change, role changes, and user
+  lookup passed against the migrated instance. A new Keycloak 26 session
+  survived a Keycloak-only restart; the Keycloak 23 session required a fresh
+  login. Final counts after removing smoke users were 2 realms, 16 clients, and
+  22 users. Readiness was healthy and the issuer was the local URL.
+- Startup logs include Keycloak deprecation and OpenTelemetry warnings, and the
+  frontend and service client still have the deprecated full-scope setting.
+  Review these separately before later upgrades; they did not block the local
+  smoke tests. Database size increased from 12,841,775 to 13,783,855 bytes after
+  migration.
+- The local upgrade is on the isolated `copilot/keycloak-local-upgrade`
+  worktree/branch, not the original `main` checkout. Until the user integrates
+  it, **do not run Compose from the original checkout**: its Keycloak 23
+  configuration could start against the migrated database. User testing is the
+  gate before any Phase Two work.
 
 ## 4. Phase Two: Home-LAN Test Server
 
