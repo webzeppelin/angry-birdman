@@ -24,6 +24,18 @@ const KEYCLOAK_URL = process.env.KEYCLOAK_URL || 'http://localhost:8080';
 const KEYCLOAK_REALM = process.env.KEYCLOAK_REALM || 'angrybirdman';
 const KEYCLOAK_CLIENT_ID = process.env.KEYCLOAK_CLIENT_ID || 'angrybirdman-frontend';
 const TOKEN_ENDPOINT = `${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/token`;
+const LOGOUT_ENDPOINT = `${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/logout`;
+
+async function endKeycloakSession(refreshToken: string): Promise<void> {
+  await axios.post(
+    LOGOUT_ENDPOINT,
+    new URLSearchParams({
+      client_id: KEYCLOAK_CLIENT_ID,
+      refresh_token: refreshToken,
+    }),
+    { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+  );
+}
 
 interface TokenExchangeBody {
   code: string;
@@ -152,6 +164,12 @@ export default function authRoutes(fastify: FastifyInstance, _opts: unknown, don
             'Disabled user attempted to login'
           );
 
+          try {
+            await endKeycloakSession(refresh_token);
+          } catch (error) {
+            fastify.log.warn(error, 'Failed to end disabled user Keycloak session');
+          }
+
           // Generate Keycloak logout URL to clear their session
           const logoutUrl = `${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/logout`;
 
@@ -255,6 +273,12 @@ export default function authRoutes(fastify: FastifyInstance, _opts: unknown, don
             { userId: compositeUserId, username: user.username },
             'Disabled user attempted to login via OAuth'
           );
+
+          try {
+            await endKeycloakSession(refresh_token);
+          } catch (error) {
+            fastify.log.warn(error, 'Failed to end disabled user Keycloak session');
+          }
 
           // Generate Keycloak logout URL to clear their session
           const logoutUrl = `${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/logout`;
@@ -417,25 +441,13 @@ export default function authRoutes(fastify: FastifyInstance, _opts: unknown, don
       void reply.clearCookie('access_token', { path: '/' });
       void reply.clearCookie('refresh_token', { path: '/' });
 
-      // Optionally revoke refresh token with Keycloak
+      // End the Keycloak session before redirecting the browser.
       if (refreshToken) {
         try {
-          const REVOKE_ENDPOINT = `${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/revoke`;
-          await axios.post(
-            REVOKE_ENDPOINT,
-            new URLSearchParams({
-              client_id: KEYCLOAK_CLIENT_ID,
-              token: refreshToken,
-              token_type_hint: 'refresh_token',
-            }),
-            {
-              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            }
-          );
-          fastify.log.info('Successfully revoked refresh token with Keycloak');
+          await endKeycloakSession(refreshToken);
+          fastify.log.info('Successfully ended Keycloak session');
         } catch (error) {
-          // Log but don't fail logout if revocation fails
-          fastify.log.warn(error, 'Failed to revoke refresh token with Keycloak');
+          fastify.log.warn(error, 'Failed to end Keycloak session');
         }
       }
 

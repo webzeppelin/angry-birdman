@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useAuth } from '@/contexts/AuthContext';
-import { exchangeCodeForToken } from '@/lib/auth-config';
+import { exchangeCodeForToken, getLogoutUrl } from '@/lib/auth-config';
 
 export function CallbackPage() {
   const [error, setError] = useState<string | null>(null);
@@ -89,7 +89,7 @@ export function CallbackPage() {
           if (result.logoutUrl) {
             // Small delay to show the error message, then redirect to logout
             setTimeout(() => {
-              window.location.href = `${result.logoutUrl}?redirect_uri=${encodeURIComponent(window.location.origin)}`;
+              window.location.href = getLogoutUrl();
             }, 2000);
           }
         } else {

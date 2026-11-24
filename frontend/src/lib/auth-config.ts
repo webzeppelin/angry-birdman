@@ -94,22 +94,14 @@ export async function exchangeCodeForToken(
     // Retrieve PKCE code_verifier from session storage (stored by oidc-client-ts)
     let codeVerifier: string | undefined;
 
-    // Search all sessionStorage keys for PKCE data
-    for (let i = 0; i < sessionStorage.length; i++) {
-      const key = sessionStorage.key(i);
-      if (key?.includes(state) || key?.includes('oidc')) {
-        const data = sessionStorage.getItem(key);
-        if (data) {
-          try {
-            const parsed = JSON.parse(data) as { code_verifier?: string; code_challenge?: string };
-            if (parsed.code_verifier) {
-              codeVerifier = parsed.code_verifier;
-              break;
-            }
-          } catch {
-            // Not JSON, skip
-          }
-        }
+    const stateKey = `oidc.${state}`;
+    const data = sessionStorage.getItem(stateKey);
+    if (data) {
+      try {
+        const parsed = JSON.parse(data) as { code_verifier?: string };
+        codeVerifier = parsed.code_verifier;
+      } catch {
+        console.error('Invalid PKCE state in storage');
       }
     }
 
@@ -139,6 +131,7 @@ export async function exchangeCodeForToken(
 
       // Return detailed error for disabled accounts
       if (response.status === 403 && error.error === 'Account disabled') {
+        sessionStorage.removeItem(stateKey);
         return {
           success: false,
           error: error.error,
@@ -150,13 +143,8 @@ export async function exchangeCodeForToken(
       return { success: false, error: error.error || 'Authentication failed' };
     }
 
-    // Clean up PKCE state after successful exchange
-    for (let i = sessionStorage.length - 1; i >= 0; i--) {
-      const key = sessionStorage.key(i);
-      if (key?.includes(state) || key?.includes('oidc')) {
-        sessionStorage.removeItem(key);
-      }
-    }
+    // Clean up the state consumed by this exchange.
+    sessionStorage.removeItem(stateKey);
 
     return { success: true };
   } catch (error) {
@@ -184,6 +172,13 @@ export async function refreshToken(): Promise<boolean> {
   }
 }
 
+export function getLogoutUrl(): string {
+  const url = new URL(END_SESSION_ENDPOINT);
+  url.searchParams.set('client_id', KEYCLOAK_CLIENT_ID);
+  url.searchParams.set('post_logout_redirect_uri', APP_URL);
+  return url.toString();
+}
+
 /**
  * Logout and clear authentication cookies
  * Also redirects to Keycloak logout to end the session there
@@ -197,13 +192,11 @@ export async function logout(): Promise<void> {
     });
 
     // Redirect to Keycloak logout
-    const logoutUrl = `${END_SESSION_ENDPOINT}?redirect_uri=${encodeURIComponent(APP_URL)}`;
-    window.location.href = logoutUrl;
+    window.location.href = getLogoutUrl();
   } catch (error) {
     console.error('Logout failed:', error);
     // Still redirect to Keycloak logout even if backend logout fails
-    const logoutUrl = `${END_SESSION_ENDPOINT}?redirect_uri=${encodeURIComponent(APP_URL)}`;
-    window.location.href = logoutUrl;
+    window.location.href = getLogoutUrl();
   }
 }
 
