@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "putty": {
+      "type": "http",
+      "url": "http://172.25.240.1:8000/mcp"
+    }
+  }
+}
