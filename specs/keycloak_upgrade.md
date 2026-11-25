@@ -374,6 +374,31 @@ restore the old Keycloak image/configuration, and restart Keycloak. Do not
 attempt to run Keycloak 25 against a database already migrated by Keycloak 26.
 Validate recovery with login and API checks before closing the incident.
 
+### Test preparation record (2026-11-25)
+
+- Deployed application compatibility commit
+  `77c2fe44fa3bc01ff9c73f52efa9d40e7430fd2f` as `test-2026-11-25.1` while
+  retaining Keycloak 25.0.6, image digest
+  `sha256:82c5b7a110456dbd42b86ea572e728878549954cc8bd03cd65410d75328095d2`. The
+  persisted frontend client permits the exact test application URL,
+  `https://192.168.0.70`, as well as its previous redirect patterns.
+- The existing realm required first and last names even though application
+  registration deliberately does not collect them. A newly registered user could
+  not complete password login. The persisted test realm's user profile now makes
+  both fields optional; registration, password login, secure cookies, API JWT
+  verification, user association, refresh, and logout passed on 25.0.6. Realm
+  import does not update an existing realm. If rebuilding the test realm from
+  the development export, configure the test client URLs and this user profile
+  before using it.
+- The pre-compatibility and pre-profile-change application and Keycloak dumps
+  were checksum-verified on the server and copied to protected workstation
+  storage. An isolated restore of the 25.0.6 database successfully ran the old
+  image, service-account operations, user creation, and password login. An
+  isolated 26.8.2 migration was also healthy. Its service account required the
+  `kc-admin-api` default scope before Admin API operations succeeded. Create and
+  verify a fresh backup after the realm changes immediately before the live
+  cutover, and retain the earlier recovery points and old image.
+
 **Test exit gate:** All migration and smoke tests pass, the service-account
 Admin API check passes from the running API, the backup restore has been
 rehearsed, and the agreed soak period completes without unresolved auth or data
