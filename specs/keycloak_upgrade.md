@@ -399,6 +399,51 @@ Validate recovery with login and API checks before closing the incident.
   verify a fresh backup after the realm changes immediately before the live
   cutover, and retain the earlier recovery points and old image.
 
+### Test execution record (2026-11-25)
+
+- Upgraded only the test Keycloak container to 26.8.2 at image digest
+  `sha256:7e66a96e4739239070aeaf72e4c5decf0f7f682cfc725b9f7ea2b336eaba38b3`
+  using Compose commit `9d177c5dd05fab2cb62a82a8990a36c72a97b6e4`. The test
+  runner was stopped during the cutover and restarted afterward; PostgreSQL,
+  Valkey, API, frontend, and Nginx containers were not recreated.
+- The quiesced pre-upgrade Keycloak backup is `keycloak_20261125_070742.sql.gz`,
+  SHA-256 `23eb7d8e31251b4fa13aaf3b1a0f75daacf20b83d5e1de6be35116f76bf5479e`.
+  The application backup is `angrybirdman_20261125_070742.sql.gz`, SHA-256
+  `04669e1a1379e573a93fdc770a6b12e84a58e48ecb940dcc042418b4f54d9925`. Both were
+  checksum-verified on the server and in the protected workstation backup
+  directory. The old image and the previous Compose configuration remain
+  available.
+- The exact quiesced Keycloak backup was restored into a separate empty database
+  with `psql -v ON_ERROR_STOP=1`, and the old Keycloak 25.0.6 image started
+  against it. Service-account lookup, user creation, role assignment/removal,
+  password reset, login, and refresh passed. For a live rollback, stop the API
+  and Keycloak, restore into a clean `keycloak_test` database rather than
+  overlaying the old dump onto the migrated schema, and start the old image
+  using its matching Compose configuration. Verify the target names before any
+  database replacement; the generic restore scripts are not sufficient proof
+  that migrated-only objects were removed.
+- Migration and readiness succeeded. The persisted API client has the
+  `kc-admin-api` default scope; its token contains the admin API audience and
+  user lookup, creation, role changes, and password reset passed. Existing
+  Keycloak subject IDs matched the pre-upgrade backup. Final counts were 2
+  realms, 15 clients, and 4 users; Keycloak database size increased from
+  12,803,431 to 13,639,015 bytes.
+- Application registration, password login, secure cookies, JWT validation,
+  identity association, refresh, authorization-code/PKCE exchange, normal
+  logout, disabled-account logout, and invalid logout redirect rejection passed
+  in automated HTTP checks. A newly created session survived a Keycloak-only
+  restart and refresh; pre-upgrade session preservation was not tested. The
+  interactive browser check remains open because the browser tool rejected the
+  test server's self-signed HTTPS certificate.
+- Keycloak warned about direct HTTP, non-secure/cross-origin cookies, deprecated
+  full-scope client settings and other deprecations, and OpenTelemetry usage.
+  These warnings require observation, particularly during interactive browser
+  testing. All test containers were healthy after the restart.
+- The observation period starts at 07:14 on 2026-11-25 local server time. Use at
+  least 24 hours, including one normal use cycle, and retain rollback assets
+  until the test exit gate is explicitly approved. Production remains out of
+  scope until then.
+
 **Test exit gate:** All migration and smoke tests pass, the service-account
 Admin API check passes from the running API, the backup restore has been
 rehearsed, and the agreed soak period completes without unresolved auth or data
