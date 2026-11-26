@@ -529,6 +529,48 @@ unexamined Keycloak-only upgrade.
   audience and Admin API access succeeded. A separate fresh import verified the
   production realm's default scope, audience mapper, and logout redirect.
 
+### Production cutover record (2026-11-26)
+
+- Operator: Copilot acting with the owner's approval. The Keycloak-only cutover
+  used commit `f8864555f50d90249f5f55faf7ff18016e6b167c` and Keycloak 26.8.2 at
+  digest `sha256:7e66a96e4739239070aeaf72e4c5decf0f7f682cfc725b9f7ea2b336eaba38b3`.
+  The new container started at 12:41 UTC and was healthy; the API restarted at
+  12:44 UTC. Other existing containers were not recreated.
+- Immediately before migration, quiesced application and Keycloak backups were
+  retained on EC2 and copied to protected workstation storage:
+  `angrybirdman_20261126_123930.sql.gz` (SHA-256
+  `4f725fca33acc58b8c7c2075ed812df8e95a100d60cb0779486927a22feb9207`)
+  and `keycloak_20261126_123930.sql.gz` (SHA-256
+  `ef176c96bf5806b5175562bd43aacea7bb20723a6488f2b0bc7367344b9e05f2`).
+  The exact Keycloak backup was restored and tested with the old image in an
+  isolated workstation database. Keep the old image, rollback Compose file,
+  backups, and the quiesced Valkey archive.
+- Migration completed without migration errors. Five Keycloak users remained;
+  the sorted subject-ID checksum was unchanged
+  (`89c89a90c2745180a70993ea65389786`). The migrated service account needed the
+  `kc-admin-api` default scope assigned through the Admin API; its token then
+  carried the expected scope and audience, and Admin API access succeeded.
+  Startup and PostgreSQL cutover logs are retained in protected EC2 storage at
+  `/home/ec2-user/keycloak-upgrade-20261126/`.
+- Automated checks passed for registration, role removal and reassignment,
+  password reset, login, secure cookies, user-ID mapping, refresh, logout,
+  PKCE, and disabled-account rejection. A real browser completed registration,
+  sign-out, Keycloak login/callback, identity matching, and sign-out.
+  Disposable users were removed from both databases. Public discovery and the
+  application returned HTTP 200; the permitted logout redirect returned 302 and
+  an invalid redirect returned 400.
+- At 12:50 UTC all six containers were healthy with zero restarts. Approximately
+  222 MiB of 916 MiB RAM was available, 623 MiB of swap was in use, and the root
+  filesystem was 19% used. Monitor memory and swap. Keycloak startup included
+  deprecation and OpenTelemetry warnings. PostgreSQL logs also contain repeated
+  pre-existing readiness-probe failures for the nonexistent database named
+  after the PostgreSQL user; the probe reports healthy despite those log
+  entries. This predates the cutover and warrants separate correction.
+- The production deployment workflow was re-enabled after validation. The
+  production monitoring period and final completion gate remain open: no
+  observation duration or retention policy was agreed, and no completed soak
+  is claimed.
+
 ### Upgrade production Keycloak
 
 1. Pause user traffic or put the application into its planned maintenance mode.
