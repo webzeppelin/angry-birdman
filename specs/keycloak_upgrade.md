@@ -495,6 +495,40 @@ unexamined Keycloak-only upgrade.
    PostgreSQL service, `keycloak` database, and credentials. Do not assume the
    generic `restore-keycloak-db.sh` targets are correct for production.
 
+### Production preparation record (2026-11-26)
+
+- The owner approved production after testing the LAN server and explicitly
+  waived the final hour of its 24-hour soak. The owner also approved the Valkey
+  7.2-to-9.1 update included in the compatibility deployment.
+- Release `prod-2026-11-26.1` deployed compatibility commit
+  `fd0edbbc580f9665e18c6da8a484c71b9ac2caf3`, with Keycloak still on 25.0.6 at
+  digest
+  `sha256:82c5b7a110456dbd42b86ea572e728878549954cc8bd03cd65410d75328095d2`.
+  Valkey 9.1.4 and all containers were healthy.
+- Production's frontend client permits the exact application logout URL. As on
+  the test server, the existing user profile required first and last names that
+  the application does not collect. Both are now optional; the previous profile
+  was retained separately. Registration, password login, secure cookies,
+  identity mapping, refresh, logout, PKCE, disabled-account rejection, and
+  logout redirect validation passed on Keycloak 25 using disposable users.
+- Before the compatibility deployment, the application and Keycloak dumps
+  `angrybirdman_20261126_120638.sql.gz` and `keycloak_20261126_120638.sql.gz`
+  were checksum-verified on EC2 and in protected workstation storage. Their
+  respective SHA-256 values were
+  `418b94a27879f9615d2653907fd4d2b7a4ccb1955127037fc15d1decc8596251` and
+  `8e05aed37b827deeafbb638bd1d57f7c2e8aeec1305713ec3414cfe6db369833`. The
+  quiesced pre-upgrade Valkey volume was also archived and verified off-host.
+  Create a fresh database backup after the realm changes immediately before the
+  Keycloak cutover.
+- The production Keycloak dump was restored into a separate workstation
+  database. The old 25.0.6 image started successfully against it, and disposable
+  user creation, password login, refresh, and service-account Admin API checks
+  passed. An isolated 26.8.2 migration of that dump was also healthy and
+  preserved the user subject IDs. Its service account was rejected until the
+  `kc-admin-api` scope was assigned, then its token carried the expected
+  audience and Admin API access succeeded. A separate fresh import verified the
+  production realm's default scope, audience mapper, and logout redirect.
+
 ### Upgrade production Keycloak
 
 1. Pause user traffic or put the application into its planned maintenance mode.

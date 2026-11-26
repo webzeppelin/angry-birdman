@@ -129,6 +129,14 @@ administrator when the master realm does not already exist. Preserve existing
 administrator access and consult the Keycloak bootstrap-admin recovery
 documentation before attempting recovery.
 
+The production Compose configuration pins the same Keycloak image, advertises
+`https://www.angrybirdman.org:8443`, and trusts the forwarded headers supplied
+by its Nginx reverse proxy. The production realm export defines the Admin API
+scope and exact post-logout redirect. When provisioning a production realm,
+configure its user profile to make first and last names optional: the
+application does not collect them. Existing realms require these changes through
+the Admin API or console because the startup import does not update them.
+
 ### Manual Import via Admin Console
 
 1. Access Keycloak Admin Console: http://localhost:8080
