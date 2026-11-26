@@ -1,7 +1,7 @@
 services:
   # PostgreSQL - Primary database for application data and Keycloak
   postgres:
-    image: postgres:15-alpine
+    image: postgres:19-alpine
     container_name: angrybirdman-postgres
     restart: unless-stopped
     environment:
